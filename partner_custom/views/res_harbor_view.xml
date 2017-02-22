@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="res_harbor_tree" model="ir.ui.view">
+        <field name="name">res.harbor.tree</field>
+        <field name="model">res.harbor</field>
+        <field name="arch" type="xml">
+            <tree string="Harbors">
+                <field name="name"/>
+                <field name="code"/>
+		<field name="country_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="res_harbor_form" model="ir.ui.view">
+        <field name="name">res.harbor.form</field>
+        <field name="model">res.harbor</field>
+        <field name="arch" type="xml">
+            <form string="Harbor">
+                <sheet>
+                    <group>
+			<field name="name"/>
+			<field name="code"/>
+			<field name="country_id"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="res_harbor_filter" model="ir.ui.view">
+        <field name="name">res.harbor.filter</field>
+        <field name="model">res.harbor</field>
+        <field name="arch" type="xml">
+            <search string="Harbors">
+                <field name="name"/>
+                <field name="code"/>
+		<field name="country_id"/>
+		<group expand="0" name="group_by" string="Group By">
+		    <filter string="Country" context="{'group_by': 'country_id'}"/>
+		</group>
+           </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_res_harbor">
+        <field name="name">Harbors</field>
+        <field name="res_model">res.harbor</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="res_harbor_tree"/>
+        <field name="search_view_id" ref="res_harbor_filter"/>
+    </record>
+
+    <menuitem name="Harbors" parent="sales_team.menu_localisation" action="action_res_harbor" id="res_harbor_menu"/>
+	
+</odoo>
