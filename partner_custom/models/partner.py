@@ -10,3 +10,5 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
 
     harbor_ids = fields.Many2many("res.harbor", string="Harbors")
+    propietary = fields.\
+        Char("Propietary", default=lambda self: self.env.user.company_id.ref)

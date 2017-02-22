@@ -9,6 +9,9 @@
 	    <group name="purchase" position="inside">
 		<field name="harbor_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
 	    </group>
+	    <field name="company_id" position="after">
+		<field name="propietary"/>
+	    </field>
 	</field>
     </record>
     

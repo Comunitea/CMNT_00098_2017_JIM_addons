@@ -13,8 +13,9 @@
     'summary': '''Several customizations on partner models''',
     'website': 'http://www.comunitea.com',
     'data': ['views/res_harbor_view.xml',
-	     'views/res_partner_view.xml',
-	     'security/ir.model.access.csv'],
+             'views/res_partner_view.xml',
+             'views/res_company_view.xml',
+             'security/ir.model.access.csv'],
     'installable': True,
     'auto_install': False,
 }
