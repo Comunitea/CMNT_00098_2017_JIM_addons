@@ -2,17 +2,20 @@
 <odoo>
 
     <record id="view_partner_form_add_harbor" model="ir.ui.view">
-	<field name="name">res.partner.form.add_harbor</field>
-	<field name="model">res.partner</field>
-	<field name="inherit_id" ref="base.view_partner_form"/>
-	<field name="arch" type="xml">
-	    <group name="purchase" position="inside">
-		<field name="harbor_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
-	    </group>
-	    <field name="company_id" position="after">
-		<field name="propietary"/>
-	    </field>
-	</field>
+        <field name="name">res.partner.form.add_harbor</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <group name="purchase" position="inside">
+                <field name="harbor_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
+            </group>
+            <field name="user_id" position="after">
+                <field name="partner_discount"/>
+            </field>
+            <field name="company_id" position="after">
+                <field name="propietary"/>
+            </field>
+        </field>
     </record>
     
 </odoo>
