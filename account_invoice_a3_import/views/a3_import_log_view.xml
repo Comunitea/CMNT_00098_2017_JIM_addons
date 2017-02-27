@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="a3_import_log_tree" model="ir.ui.view">
+        <field name="name">a3.import.log.tree</field>
+        <field name="model">a3.import.log</field>
+        <field name="arch" type="xml">
+            <tree string="Importation Logs" colors="red:state=='error';" create="0">
+                <field name="name"/>
+                <field name="state"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="a3_import_log_form" model="ir.ui.view">
+        <field name="name">a3.import.log.form</field>
+        <field name="model">a3.import.log</field>
+        <field name="arch" type="xml">
+            <form string="Importation Log" edit="0" create="0">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="state"/>
+                        <separator string="Errors" colspan="4"/>
+                        <field name="errors" colspan="4" nolabel="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="a3_import_log_filter" model="ir.ui.view">
+        <field name="name">a3.import.log.filter</field>
+        <field name="model">a3.import.log</field>
+        <field name="arch" type="xml">
+            <search string="Importation Logs">
+                <field name="name"/>
+                <field name="state"/>
+                <group expand="0" name="group_by" string="Group By">
+                    <filter string="State" context="{'group_by': 'state'}"/>
+                </group>
+           </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_a3_import_log">
+        <field name="name">A3 Importation Log</field>
+        <field name="res_model">a3.import.log</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="a3_import_log_tree"/>
+        <field name="search_view_id" ref="a3_import_log_filter"/>
+    </record>
+
+    <menuitem name="Log" parent="base.menu_custom" id="audit_log_menu" sequence="800"/>
+
+    <menuitem name="A3 Importation Log" parent="audit_log_menu" action="action_a3_import_log" id="a3_import_log_menu"/>
+    
+</odoo>
