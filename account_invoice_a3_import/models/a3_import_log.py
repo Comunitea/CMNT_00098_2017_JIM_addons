@@ -5,10 +5,19 @@
 from odoo import models, fields, api, _, exceptions
 import os
 import codecs
+import re
 from datetime import datetime
 from odoo.modules.registry import RegistryManager
 import logging
 _logger = logging.getLogger(__name__)
+
+SerialMap = {'C': 'Canarias', 'D': 'Transporte', 'G': 'Inmovilizado',
+             'J': 'Gastos financieros', 'M': 'Patrocinios',
+             'AXM': 'La Caixa', 'F': 'Obras', 'H': 'Software',
+             'AL': 'Alquileres', 'RC': 'Canarias', 'RD': 'Transporte',
+             'RG': 'Inmovilizado', 'RJ': 'Gastos financieros',
+             'RM': 'Patrocinios', 'DXM': 'La Caixa', 'RF': 'Obras',
+             'RH': 'Software', 'RAL': 'Alquileres'}
 
 
 class A3ImportLog(models.Model):
@@ -31,17 +40,26 @@ class A3ImportLog(models.Model):
 
     @api.model
     def import_invoice(self, line, company, refund=False):
+        invoice_number = line[58:68].strip()
+        letters = re.findall('\d*\D+', invoice_number)
+        tag_ids = []
+        if letters and letters[0] in SerialMap:
+            tags = self.env["account.invoice.tag"].\
+                search([('name', '=', SerialMap[letters[0]])])
+            if tags:
+                tag_ids.append(tags[0].id)
         invoice_vals = {
             'type': refund and 'out_refund' or 'out_invoice',
             'journal_id': self.env["account.journal"].
             search([('type', '=', 'sale'),
                     ('company_id', '=', company.id)])[0].id,
             'currency_id': company.currency_id.id,
-            'number': line[58:68].strip(),
-            'invoice_number': line[58:68].strip(),
+            'number': invoice_number,
+            'invoice_number': invoice_number,
             'date_invoice': datetime.
             strftime(datetime.strptime(line[6:14], "%Y%m%d"), "%Y-%m-%d"),
-            'company_id': company.id
+            'company_id': company.id,
+            'tag_ids': [(6, 0, tag_ids)]
         }
         return invoice_vals
 
@@ -111,15 +129,15 @@ class A3ImportLog(models.Model):
                 'ref': partner_ref,
                 'customer': True,
                 'is_company': True,
-                'name': line[27:59].strip(),
-                'street': line[93:136].strip(),
-                'city': line[136:156].strip(),
-                'zip': line[156:161].strip(),
-                'phone': line[179:191].strip(),
+                'name': line[27:57].strip(),
+                'street': line[93:133].strip(),
+                'city': line[134:154].strip(),
+                'zip': line[154:159].strip(),
+                'phone': line[177:187].strip(),
                 'to_review': True
             }
             partner = self.env["res.partner"].create(partner_vals)
-            vat = line[79:93].strip()
+            vat = line[77:91].strip()
             if vat:
                 try:
                     country = self.env["res.country"].\

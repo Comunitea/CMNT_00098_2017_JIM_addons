@@ -7,6 +7,7 @@
     'version': '10.0.1.0.0',
     'depends': [
         'account_payment_partner',
+        'account_invoice_tag'
     ],
     'author': "Comunitea",
     'license': "AGPL-3",
