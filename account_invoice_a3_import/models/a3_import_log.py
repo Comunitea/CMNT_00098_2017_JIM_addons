@@ -73,25 +73,26 @@ class A3ImportLog(models.Model):
         fiscal_position_code = line[99:101]
         tax_domain = [('type_tax_use', '=', 'sale'),
                       ('company_id', '=', company.id)]
+
         iva_tax = float(line[115:120])
-        if iva_tax:
-            iva_domain = [('amount', '=', iva_tax)]
-            iva_domain.extend(tax_domain)
-            if fiscal_position_code == "01":
-                iva_domain.append(('description', 'in', national_valid_codes))
-            elif fiscal_position_code == "03":
-                iva_domain.append(('description', 'in',
-                                   intracomunity_valid_codes))
-            elif fiscal_position_code == "05":
-                iva_domain.append(('description', 'in',
-                                   extracomunity_valid_codes))
-            else:
-                raise exceptions.\
-                    UserError(_("Fiscal position code %s has not a parser") %
-                              fiscal_position_code)
-            iva = self.env["account.tax"].search(iva_domain)
-            if iva:
-                taxes += iva[0]
+        iva_domain = [('amount', '=', iva_tax)]
+        iva_domain.extend(tax_domain)
+        if fiscal_position_code == "01":
+            iva_domain.append(('description', 'in', national_valid_codes))
+        elif fiscal_position_code == "03":
+            iva_domain.append(('description', 'in',
+                               intracomunity_valid_codes))
+        elif fiscal_position_code == "05":
+            iva_domain.append(('description', 'in',
+                               extracomunity_valid_codes))
+        else:
+            raise exceptions.\
+                UserError(_("Fiscal position code %s has not a parser") %
+                          fiscal_position_code)
+        iva = self.env["account.tax"].search(iva_domain)
+        if iva:
+            taxes += iva[0]
+
         re_tax = float(line[134:139])
         if re_tax:
             re_domain = [('amount', '=', re_tax),
