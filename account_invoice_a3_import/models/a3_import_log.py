@@ -66,7 +66,7 @@ class A3ImportLog(models.Model):
     @api.model
     def import_invoice_line(self, line, company):
         taxes = self.env["account.tax"]
-        national_valid_codes = ['S_IVA21B', 'S_IVA4B', 'S_IVA0', 'S_IVA10B']
+        national_valid_codes = ['S_IVA21B', 'S_IVA4B', 'S_IVA_NS', 'S_IVA10B']
         intracomunity_valid_codes = ['S_IVA0_IC']
         extracomunity_valid_codes = ['S_IVA0_E']
         recharge_valid_code = ['S_REQ05', 'S_REQ014', 'S_REQ52']
