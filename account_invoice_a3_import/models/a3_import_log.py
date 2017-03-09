@@ -82,7 +82,7 @@ class A3ImportLog(models.Model):
         elif fiscal_position_code == "03":
             iva_domain.append(('description', 'in',
                                intracomunity_valid_codes))
-        elif fiscal_position_code == "05":
+        elif fiscal_position_code in ["05", "06"]:
             iva_domain.append(('description', 'in',
                                extracomunity_valid_codes))
         else:
@@ -123,7 +123,7 @@ class A3ImportLog(models.Model):
     def import_partner(self, line, company):
         partner_ref = "C" + line[20:25]
         partner = self.env["res.partner"].\
-            with_context(company_id=company.id).\
+            with_context(force_company=company.id).\
             search([('ref', '=', partner_ref)])
         if not partner:
             partner_vals = {
@@ -135,9 +135,12 @@ class A3ImportLog(models.Model):
                 'city': line[134:154].strip(),
                 'zip': line[154:159].strip(),
                 'phone': line[177:187].strip(),
-                'to_review': True
+                'to_review': True,
+                'company_id': False,
+                'propietary': company.ref
             }
-            partner = self.env["res.partner"].create(partner_vals)
+            partner = self.env["res.partner"].\
+                with_context(force_company=company.id).create(partner_vals)
             vat = line[77:91].strip()
             if vat:
                 try:
