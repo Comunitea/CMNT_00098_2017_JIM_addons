@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+
+
+        <menuitem id="menu_sga_carrier" name="Sga Carrier" parent="stock.menu_stock_config_settings" groups="group_sga_file_manager"
+            sequence="25" />
+
+
+        <record id="sga_carrier_action_view" model="ir.actions.act_window">
+            <field name="name">Sga Carrier</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sga.carrier</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to define a new Sga Carrier.
+                </p>
+            </field>
+        </record>
+
+        <menuitem action="sga_carrier_action_view" id="sga_carrier_menu_action_view" parent="menu_sga_carrier" sequence="1" />
+
+
+
+        # Carrier to Mecalux
+        <record id="sga_carrier_action_export_to_mecalux" model="ir.actions.server">
+            <field name="name">Export changes to Mecalux</field>
+            <field name="model_id" ref="model_sga_carrier"/>
+            <field name="state">code</field>
+            <field name="condition">True</field>
+            <field name="code">records.new_mecalux_file()</field>
+        </record>
+        <record id="sga_carrier_menu_export_to_mecalux" model="ir.values">
+            <field name="name">sga.carrier.menu.export.to.mecalux</field>
+            <field name="model">sga.carrier</field>
+            <field name="key" >action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,%d'%sga_carrier_action_export_to_mecalux"/>
+        </record>
+
+    </data>
+</openerp>

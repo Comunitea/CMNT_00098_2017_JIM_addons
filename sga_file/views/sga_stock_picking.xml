@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        # Stock Picking to Mecalux
+
+        <record id="stock_picking_action_export_to_mecalux" model="ir.actions.server">
+            <field name="name">Export changes to Mecalux</field>
+            <field name="model_id" ref="model_stock_picking"/>
+            <field name="state">code</field>
+            <field name="condition">True</field>
+            <field name="code">records.new_mecalux_file()</field>
+        </record>
+
+        <record id="stock_picking_menu_export_to_mecalux" model="ir.values">
+            <field name="name">stock.picking.menu.export.to.mecalux</field>
+            <field name="model">stock.picking</field>
+            <field name="key" >action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,%d'%stock_picking_action_export_to_mecalux"/>
+        </record>
+
+        <record model="ir.ui.view" id="view_picking_type_form_sga">
+            <field name="name">view.picking.type.form.sga</field>
+            <field name="model">stock.picking.type</field>
+            <field name="inherit_id" ref="stock.view_picking_type_form"/>
+            <field name="arch" type="xml">
+                <field name="warehouse_id" position="before">
+                    <field name="sga_integrated"/>
+                </field>
+            </field>
+        </record>
+
+
+    </data>
+</openerp>
