@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<templates id="template" inherit_id="telesale.template_new_order">
+
+    <t t-extend="ProductInfo-Order-Widget">
+        <t t-jquery="tr:last" t-operation="append">
+            <tr>
+                <th scope="row">Warehouse</th>
+                <td><t t-esc="widget.route"/></td>
+            </tr>
+            <tr>
+                <th scope="row">LQDR</th>
+                <td><t t-esc="widget.lqdr"/></td>
+            </tr>
+        </t>
+    </t>
+
+</templates>
