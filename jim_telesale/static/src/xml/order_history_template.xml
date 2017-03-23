@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<templates id="template_order_history" inherit_id="telesale.template_order_history">
+
+    <t t-extend="History-Line-Widget">
+        <t t-jquery=".cell-state .history-cell" t-operation="append">
+            <t t-if="widget.order.state == 'lqdr'">
+                LQDR
+            </t>
+            <t t-if="widget.order.state == 'pending'">
+                Pending Approval
+            </t>
+        </t>
+    </t>
+
+</templates>

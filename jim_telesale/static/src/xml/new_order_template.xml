@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<templates id="template" inherit_id="telesale.template_new_order">
+<templates id="template_new_order" inherit_id="telesale.template_new_order">
 
     <t t-extend="ProductInfo-Order-Widget">
         <t t-jquery="tr:last" t-operation="append">
@@ -12,6 +12,17 @@
                 <th scope="row">LQDR</th>
                 <td><t t-esc="widget.lqdr"/></td>
             </tr>
+        </t>
+    </t>
+
+     <t t-extend="Order-Widget">
+        <t t-jquery=".span-state" t-operation="append">
+            <t t-if="widget.ts_model.get('selectedOrder').get('state') == 'lqdr'">
+                (LQDR)
+            </t>
+            <t t-if="widget.ts_model.get('selectedOrder').get('state') == 'pending'">
+                (Pending Approval)
+            </t>
         </t>
     </t>
 
