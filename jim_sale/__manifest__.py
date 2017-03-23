@@ -9,13 +9,16 @@
     "category": "Custom",
     'license': 'AGPL-3',
     'depends': [
-        'sale',
+        'sale_stock',
+        'product'
     ],
     'contributors': [
         "Comunitea ",
         "Javier Colmenero <javier@comunitea.com>"
     ],
     "data": [
+        'views/product_view.xml',
+        'views/sale_view.xml',
     ],
-    "installable": False
+    "installable": True
 }

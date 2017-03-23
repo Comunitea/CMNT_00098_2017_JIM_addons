@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Ads lqdr and pending approval states -->
+        <record id="view_order_form_add_states" model="ir.ui.view">
+            <field name="name">sale.order.form.add.states</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="state" position="attributes">
+                    <attribute name="statusbar_visible">draft,sent,lqdr,pending,sale</attribute>
+                </field>
+
+                <!-- Add button to pass to lqdr or pending state -->
+                <button name="print_quotation" position="after">
+                    <button name="action_lqdr_pending" states="draft" string="Wait approval" class="o_sale_confirm" type="object" />
+                    <button name="action_lqdr_pending" states="sent" string="Wait approval" class="btn-primary o_sale_confirm" type="object" />
+                    <button name="action_pending" states="lqdr" string="Wait approval" class="o_sale_confirm" type="object" />
+                </button>
+
+                <!-- Change action_confirm button, only visible in pending state -->
+                <xpath expr="//button[@name='action_confirm'][1]" position="attributes">
+                    <attribute name="states">pending</attribute>
+                </xpath>
+                <!-- Invisible button in action_confirm -->
+                <xpath expr="//button[@name='action_confirm'][2]" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+
+                <!-- Cancel button to pass to lqdr or pending state -->
+                <button name="action_cancel"  position="attributes">
+                    <attribute name="states">draft,sent,sale,lqdr,pending</attribute>
+                </button>
+            </field>
+        </record>
+
+    </data>
+</odoo>
