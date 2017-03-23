@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<templates id="template_summary_order" inherit_id="telesale.template_summary_order">
+
+    <t t-extend="Summary-Line-Widget">
+        <t t-jquery=".summary-cell-state .summary-cell" t-operation="append">
+            <t t-if="widget.order.state == 'lqdr'">
+                LQDR
+            </t>
+            <t t-if="widget.order.state == 'pending'">
+                Pending Approval
+            </t>
+        </t>
+    </t>
+
+</templates>

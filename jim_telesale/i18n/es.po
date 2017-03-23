@@ -1,0 +1,78 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* jim_telesale
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-03-23 16:56+0000\n"
+"PO-Revision-Date: 2017-03-23 16:56+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:20
+#, python-format
+msgid "(LQDR)"
+msgstr "(LQDR)"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:23
+#, python-format
+msgid "(Pending Approval)"
+msgstr "(Pendiente aprobación)"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:12
+#: code:addons/jim_telesale/static/src/xml/order_history_template.xml:7
+#: code:addons/jim_telesale/static/src/xml/summary_order_template.xml:7
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_lqdr
+#, python-format
+msgid "LQDR"
+msgstr "LQDR"
+
+#. module: jim_telesale
+#: code:addons/jim_telesale/models/product.py:17
+#, python-format
+msgid "No"
+msgstr "No"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/order_history_template.xml:10
+#: code:addons/jim_telesale/static/src/xml/summary_order_template.xml:10
+#, python-format
+msgid "Pending Approval"
+msgstr "Pendiente aprobación"
+
+#. module: jim_telesale
+#: model:ir.model,name:jim_telesale.model_product_product
+msgid "Product"
+msgstr "Producto"
+
+#. module: jim_telesale
+#: model:ir.model,name:jim_telesale.model_sale_order
+msgid "Sales Order"
+msgstr "Pedido de venta"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:8
+#, python-format
+msgid "Warehouse"
+msgstr "Almacén"
+
+#. module: jim_telesale
+#: code:addons/jim_telesale/models/product.py:17
+#, python-format
+msgid "Yes"
+msgstr "Si"
+
