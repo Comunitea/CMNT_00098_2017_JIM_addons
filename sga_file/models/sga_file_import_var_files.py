@@ -197,7 +197,6 @@ class ModelSgafile2(models.Model):
 
 
         for var in fields:
-            #import ipdb; ipdb.set_trace()
 
             val = {
                 'name':var[0],

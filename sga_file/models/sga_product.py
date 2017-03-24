@@ -54,8 +54,7 @@ class SGAProductPackaging(models.Model):
 
     @api.model
     def default_get(self, fields):
-        import ipdb;
-        ipdb.set_trace()
+
         res = super(SGAProductPackaging, self).default_get(fields)
         if self._context.get('template_id') and 'model_id' in fields and not res.get('model_id'):
             res['model_id'] = self.env['mail.template'].browse(self._context['template_id']).model_id.id
@@ -63,18 +62,15 @@ class SGAProductPackaging(models.Model):
 
     @api.model
     def create(self, vals):
-        import ipdb;
-        ipdb.set_trace()
 
         new_sga = super(SGAProductPackaging, self).create(vals)
-
         res = new_sga.product_tmpl_id.new_mecalux_file()
         new_sga.sga_operation = "M"
         return new_sga
 
     @api.multi
     def write(self, vals):
-        import ipdb; ipdb.set_trace()
+
         if vals == {'sga_operation': 'M'}:
             res = self.product_tmpl_id.new_mecalux_file()
         return super(SGAProductPackaging, self).write(vals)
