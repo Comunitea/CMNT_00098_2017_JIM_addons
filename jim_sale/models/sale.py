@@ -53,3 +53,10 @@ class SaleOrderLine(models.Model):
         if self.product_id.route_ids:
             self.route_id = self.product_id.route_ids[0]
         return res
+
+    @api.onchange('warehouse_id')
+    def _onchange_warehouse_id(self):
+        """
+        Avoid change warehouse_company_id
+        """
+        return
