@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="view_sga_config_settings" model="ir.ui.view">
+            <field name="name">sga.stock.config.settings</field>
+            <field name="model">stock.config.settings</field>
+            <field name="inherit_id" ref="stock.view_stock_config_settings"/>
+            <field name="arch" type="xml">
+                 <xpath expr="//group[last()]" position="after">
+                    <group string="Mecalux files exchange">
+                        <label for="path_files"/>
+                        <div>
+                            <div>
+                                <field name="path_files"/>
+                            </div>
+                        </div>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <menuitem id="menu_sga_mecalux" name="Sga Mecalux" parent="stock.menu_stock_config_settings" groups="group_sga_file_manager"
+            sequence="25" />
+
+
+        <record id="sga_file_action_view" model="ir.actions.act_window">
+            <field name="name">Sga File</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sga.file</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <!--<field name="context">{"search_default_stage_id": 1, 'default_type': 'in'}</field>-->
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to define a new Sga Line.
+                </p>
+            </field>
+        </record>
+
+        <menuitem action="sga_file_action_view" id="Processed Files" parent="menu_sga_mecalux" sequence="1" />
+
+
+        <record id="sga_file_line_action_view" model="ir.actions.act_window">
+            <field name="name">Sga File Line</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sga.file.line</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <!--<field name="context">{"search_default_stage_id": 1, 'default_type': 'in'}</field>-->
+            <field name="help" type="html">
+                 <p class="oe_view_nocontent_create">
+                    Click to define a new Sga Line.
+                </p>
+            </field>
+        </record>
+
+        <menuitem action="sga_file_line_action_view" id="Processed Lines" parent="menu_sga_mecalux" sequence="2" />
+
+
+
+        <record id="model_sgafile_action_view" model="ir.actions.act_window">
+            <field name="name">Model Sgafile</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sgavar.file</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+            <!--<field name="context">{"search_default_stage_id": 1, 'default_type': 'in'}</field>-->
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to define a new Sga Line.
+                </p>
+                </field>
+        </record>
+        <record id="model_sgafile_var_form_view" model="ir.ui.view">
+            <field name="name">sgavar.file.var.form.view</field>
+            <field name="model">sgavar.file.var</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="odoo_model"/>
+                            <field name="odoo_name"/>
+                            <field name="odoo_many_name"/>
+
+                        </group>
+                        <group>
+                            <field name="length"/>
+                            <field name="length_int"/>
+                            <field name="length_dec"/>
+                            <field name="mecalux_type"/>
+                            <field name="default"/>
+                            <field name="fillchar"/>
+                        </group>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="model_sgafile_tree_view" model="ir.ui.view">
+            <field name="name">sgavar.file.tree.view</field>
+            <field name="model">sgavar.file</field>
+            <field name="view_type">tree</field>
+            <field name="view_mode">form</field>
+            <field name="arch" type="xml">
+                <tree >
+                    <field name="name"/>
+                    <field name="code"/>
+                    <field name="version"/>
+                    <field name ="odoo_model"/>
+                    <field name ="cte_name"/>
+                </tree>
+            </field>
+        </record>
+        <record id="model_sgafile_form_view" model="ir.ui.view">
+            <field name="name">sgavar.file.form.view</field>
+            <field name="model">sgavar.file</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="arch" type="xml">
+                <form >
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="code"/>
+                            <field name="version"/>
+                            <field name="bytes"/>
+                        </group>
+                        <group>
+                            <field name="odoo_model"/>
+                            <field name="model"/>
+                            <field name="cte_name"/>
+                        </group>
+                    </group>
+
+                        <field name="sga_file_var_ids">
+                            <tree >
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                                <field name="mecalux_type"/>
+                                <field name="odoo_name"/>
+                                <field name="odoo_model"/>
+                                <field name="length"/>
+                                <field name="length_int"/>
+                                <field name="length_dec"/>
+                                <field name="default"/>
+                                <field name="fillchar"/>
+                                <field name="sga_file_id"/>
+                            </tree>
+                        </field>
+
+                    <!--<button name="import_ctes" string="Import Ctes" type="object" groups="base.group_user"/>-->
+                </form>
+            </field>
+        </record>
+
+
+        <menuitem action="model_sgafile_action_view" id="Models SGAfiles" parent="menu_sga_mecalux" sequence="3"/>
+
+    </data>
+
+</openerp>
+
+

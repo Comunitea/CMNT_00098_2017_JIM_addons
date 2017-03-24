@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data><!--
+        <record id="view_delivery_carrier_form_sga" model="ir.ui.view">
+            <field name="name">view.delivery.carrier.form.sga</field>
+            <field name="model">delivery.carrier</field>
+            <field name="inherit_id" ref="delivery.view_delivery_carrier_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//h1" position="after">
+                    <div>
+
+                    </div><field name="sga_carrier_code"/>
+                </xpath>
+           </field>
+         </record>
+-->
+         <record id="product_category_form_view_sga" model="ir.ui.view">
+            <field name="name">product.category.form.view.sga</field>
+            <field name="model">product.category</field>
+            <field name="inherit_id" ref="product.product_category_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//h1" position="after">
+                    <group>
+                        <field name="sga_producttype_code"/>
+                    </group>
+                </xpath>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="sga_product_packaging_form_view">
+            <field name="name">sga.product.packaging.form</field>
+            <field name="model">product.packaging</field>
+            <field name="inherit_id" ref="product.product_packaging_form_view"/>
+            <field name="arch" type="xml">
+                <field name="qty" position="before">
+                    <field name="sga_containertype_code_id"/>
+                </field>
+                <field name="qty" position="after">
+
+                        <!--<field name="sga_uom_base_code"/>
+                        <field name="sga_desc_uom_base_code"/>-->
+                        <field name="sga_complete_percent"/>
+                        <field name="sga_min_quantity"/>
+                        <!--<field name="product_tmpl_id"/>-->
+
+                </field>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="sga_product_packaging_tree">
+            <field name="name">sga.product.packaging.tree</field>
+            <field name="model">product.packaging</field>
+            <field name="inherit_id" ref="product.product_packaging_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="qty" position="before">
+                    <field name="sga_containertype_code_id"/>
+
+                </field>
+            </field>
+        </record>
+
+        <record id="product_uom_form_view_sga" model="ir.ui.view">
+            <field name="name">product.uom.form.view.sga</field>
+            <field name="model">product.uom</field>
+            <field name="inherit_id" ref="product.product_uom_form_view"/>
+            <field name="arch" type="xml">
+                <field name="name" position="after">
+                    <field name="sga_uom_base_code"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="product_template_action_export_to_mecalux" model="ir.actions.server">
+            <field name="name">Export changes to Mecalux</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="state">code</field>
+            <field name="condition">True</field>
+            <field name="code">records.new_mecalux_file()</field>
+        </record>
+        <record id="product_template_export_to_mecalux" model="ir.values">
+            <field name="name">product.template.action.export.to.mecalux</field>
+            <field name="model">product.template</field>
+            <field name="key" >action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,%d'%product_template_action_export_to_mecalux"/>
+        </record>
+
+        # Check Mecalux Stock
+        <record id="product_template_action_check_stock" model="ir.actions.server">
+            <field name="name">Check Mecalux Stock</field>
+            <field name="model_id" ref="product.model_product_template"/>
+            <field name="state">code</field>
+            <field name="condition">True</field>
+            <field name="code">records.check_mecalux_stock()</field>
+        </record>
+        <record id="product_template_check_mecalux_stock" model="ir.values">
+            <field name="name">product.template.action.check.mecalux.stock</field>
+            <field name="model">product.template</field>
+            <field name="key" >action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,%d'%product_template_action_check_stock"/>
+        </record>
+
+        # Partner to Mecalux
+        <record id="res_partner_action_export_to_mecalux" model="ir.actions.server">
+            <field name="name">Export changes to Mecalux</field>
+            <field name="model_id" ref="product.model_res_partner"/>
+            <field name="state">code</field>
+            <field name="condition">True</field>
+            <field name="code">records.new_mecalux_file()</field>
+        </record>
+        <record id="res_partner_menu_export_to_mecalux" model="ir.values">
+            <field name="name">res.partner.menu.export.to.mecalux</field>
+            <field name="model">res.partner</field>
+            <field name="key" >action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,%d'%res_partner_action_export_to_mecalux"/>
+        </record>
+
+
+        <!--<record id="action_purge_data_line" model="ir.actions.server">
+            <field name="name">New Mecalux FIle</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="sga_file.model_sgafile_tree_view" />
+            <field name="code">self.new_mecalux_txt(context.get('active_ids))</field>
+        </record>
+
+        <record id="Crear Mecalux" model="ir.values">
+            <field name="name">Creara Mecalux</field>
+            <field name="key">action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="model">res.partner</field>
+            <field name="value" eval="'ir.actions.server,%d' % ref('sgavar_file.new_mecalux_file()')" />
+        </record>
+-->
+    </data>
+</openerp>
