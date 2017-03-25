@@ -12,6 +12,7 @@
         'sale',
         'purchase',
         'sale_stock',
+        'inter_company_rules'
     ],
     'contributors': [
         "Comunitea ",
