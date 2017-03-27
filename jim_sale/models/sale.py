@@ -53,6 +53,8 @@ class SaleOrderLine(models.Model):
         ('cancel', 'Cancelled'),
     ])
 
+    lqdr = fields.Boolean(related="product_id.lqdr", store=False)
+
     @api.multi
     @api.onchange('product_id')
     def product_id_change(self):

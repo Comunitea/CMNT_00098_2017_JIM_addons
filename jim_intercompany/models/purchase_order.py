@@ -40,3 +40,9 @@ class purchase_order(models.Model):
             'auto_purchase_order_id': self.id,
             'partner_shipping_id': direct_delivery_address or partner_addr['delivery']
         }
+
+    @api.model
+    def _prepare_sale_order_line_data(self, line, company, sale_id):
+        vals = super(purchase_order, self)._prepare_sale_order_line_data(line, company, sale_id)
+        vals['route_id'] = line.product_id.route_ids[0]
+        return vals
