@@ -32,6 +32,13 @@ class SaleOrder(models.Model):
             order.state = 'pending'
         return True
 
+    @api.onchange('warehouse_id')
+    def _onchange_warehouse_id(self):
+        """
+        Avoid change warehouse_company_id
+        """
+        return
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -54,9 +61,4 @@ class SaleOrderLine(models.Model):
             self.route_id = self.product_id.route_ids[0]
         return res
 
-    @api.onchange('warehouse_id')
-    def _onchange_warehouse_id(self):
-        """
-        Avoid change warehouse_company_id
-        """
-        return
+

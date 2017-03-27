@@ -2,17 +2,14 @@
 <odoo>
     <data>
         <!-- Ads lqdr boolean field -->
-        <record id="product_template_form_view" model="ir.ui.view">
-            <field name="name">product.template.common.form,lqdr</field>
+        <record id="product_template_lqdr_form" model="ir.ui.view">
+            <field name="name">product.template.lqdr.form</field>
             <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_form_view"/>
+            <field name="inherit_id" ref="stock.view_template_property_form"/>
             <field name="arch" type="xml">
-                <div name="options" position="inside">
-                    <div>
+                <field name="route_ids" position="before">
                         <field name="lqdr"/>
-                        <label for="lqdr"/>
-                    </div>
-                </div>
+                </field>
             </field>
         </record>
 

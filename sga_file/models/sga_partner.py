@@ -18,9 +18,9 @@ class ResPartnerSGA(models.Model):
 
     sga_operation = fields.Selection([('A', 'Alta'), ('M', 'Modificacion'),
                                       ('B', 'Baja'), ('F', 'Modificacion + Alta')], default='F')
-    sga_outbound_priority = fields.Integer('Outbound Priority', required=True, default=50)
+    sga_outbound_priority = fields.Integer('Outbound Priority')
     sga_addr_name = fields.Char('Address Name', size=255)
-    sga_active_fusion = fields.Boolean('Activer Fusion', required=True, default=False)
+    sga_active_fusion = fields.Boolean('Activer Fusion')
 
     @api.multi
     def new_mecalux_file(self):
