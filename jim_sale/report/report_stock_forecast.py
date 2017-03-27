@@ -69,7 +69,8 @@ class ReportStockForecat(models.Model):
             ELSE date_trunc('week', to_date(to_char(CURRENT_DATE, 'YYYY/MM/DD'), 'YYYY/MM/DD')) END
             AS date,
             SUM(sm.product_qty) AS product_qty,
-            sm.location_id, sm.company_id,
+            sm.location_dest_id,
+            sm.company_id,
             SUM(0.0) AS real_qty,
             SUM(sm.product_qty) AS in_qty,
             SUM(0.0) AS out_qty
@@ -84,7 +85,7 @@ class ReportStockForecat(models.Model):
             WHERE
             sm.state IN ('confirmed','assigned','waiting') and
             source_location.usage != 'internal' and dest_location.usage = 'internal'
-            GROUP BY sm.date_expected,sm.product_id, sm.location_id, sm.company_id
+            GROUP BY sm.date_expected,sm.product_id, sm.location_dest_id, sm.company_id
             UNION ALL
             SELECT
                 MIN(-sm.id) as id,
@@ -115,9 +116,11 @@ class ReportStockForecat(models.Model):
             SELECT
                 MIN(-sol.id) as id,
                 sol.product_id,
-                CURRENT_DATE AS date,
+                CASE WHEN sale_order.requested_date is not null and sale_order.requested_date > CURRENT_DATE
+                    THEN date_trunc('week', to_date(to_char(sale_order.requested_date, 'YYYY/MM/DD'), 'YYYY/MM/DD'))
+                    ELSE date_trunc('week', to_date(to_char(CURRENT_DATE, 'YYYY/MM/DD'), 'YYYY/MM/DD')) END,
                 SUM(-(sol.product_uom_qty)) AS product_qty,
-                stock_picking_type.default_location_src_id as location_id,
+                procurement_rule.location_src_id as location_id,
                 sale_order.company_id as company_id,
                 SUM(0.0) AS real_qty,
                 SUM(0.0) AS in_qty,
@@ -129,12 +132,12 @@ class ReportStockForecat(models.Model):
                 LEFT JOIN
                 sale_order ON sale_order.id = sol.order_id
                 LEFT JOIN
-                stock_warehouse ON stock_warehouse.id = sale_order.warehouse_id
+                stock_location_route ON stock_location_route.id = sol.route_id
                 LEFT JOIN
-                stock_picking_type ON stock_picking_type.id = stock_warehouse.out_type_id
+                procurement_rule ON procurement_rule.route_id = stock_location_route.id
             WHERE
                 sol.state IN ('lqdr','pending')
-            GROUP BY sol.product_id, location_id, sale_order.company_id
+            GROUP BY sol.product_id, procurement_rule.location_src_id, sale_order.company_id,sale_order.requested_date
             )
          as MAIN
      LEFT JOIN
