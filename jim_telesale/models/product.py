@@ -15,9 +15,5 @@ class ProductProduct(models.Model):
         product_obj = self.browse(product_id)
         route = product_obj.route_ids[0].name if product_obj.route_ids else ""
         lqdr = _("Yes") if product_obj.lqdr else _("No")
-
-        if product_obj.route_ids:
-            route = product_obj.route_ids.name
-
         res.update({'route': route, 'lqdr': lqdr})
         return res

@@ -224,7 +224,7 @@ class SGAFiles(models.Model):
 
     @api.model
     def create_new_sga_file(self, sga_filename, dest_path = 'in', create = True):
-        ##import ipdb; ipdb.set_trace()
+
         icp = self.env['ir.config_parameter']
         path = icp.get_param(
             'path_files', 'path_files'
@@ -254,8 +254,6 @@ class SGAFiles(models.Model):
 
     @api.model
     def create(self, vals):
-        ##import ipdb; ipdb.set_trace()
-
         sga_file = super(SGAFiles, self).create(vals)
         if sga_file:
             res = self.touch(sga_file.sga_file)
@@ -343,7 +341,7 @@ class SGAFiles(models.Model):
         #lo abro y lo leo
         #primera linea es cabecera (si, no)
         print "Proceso archivo %s"%self.file_name
-        ##import ipdb; ipdb.set_trace()
+
         try:
             sga_file = open(self.file_path, 'r')
             sga_file_lines = sga_file.readlines()
@@ -373,7 +371,6 @@ class SGAFiles(models.Model):
                 new_name = os.path.join(ARCHIVE_FOLDER, self.name)
                 print "Movemos de %s a %s" % (new_name, self.file_path)
                 os.rename(self.file_path, new_name)
-                ##import ipdb; ipdb.set_trace()
                 self.file_path = new_name
 
 
@@ -509,8 +506,7 @@ class SGAFiles(models.Model):
 
             meca_field = val.name
 
-            if meca_field=='product_code':
-                import ipdb; ipdb.set_trace()
+
             length = [val.length, val.length_int,  val.length_dec]
             fillchar = val.fillchar
             type_field = val.mecalux_type
@@ -541,8 +537,6 @@ class SGAFiles(models.Model):
                 var_str = ''
                 for val in sgavar.sga_file_var_ids:
 
-                    if val.name=='container_height':
-                        import ipdb; ipdb.set_trace()
                     if val.mecalux_type != "L":
                         var_str = get_val_line(val, model)
                     else:
@@ -623,7 +617,6 @@ class SGAFiles(models.Model):
             else:
                 # Formato decimal
                 value = float(value)
-                #import ipdb; ipdb.set_trace()
                 int_ = int(value)
                 dec_ = int((value - int_) * 10**length_dec)
                 int_ = str(int_)
