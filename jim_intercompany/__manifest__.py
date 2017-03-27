@@ -10,6 +10,7 @@
     'license': 'AGPL-3',
     'depends': [
         'sale',
+        'stock',
         'purchase',
         'sale_stock',
         'inter_company_rules'
