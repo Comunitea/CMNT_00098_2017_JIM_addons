@@ -49,5 +49,5 @@ msgstr "Línea de pedido de venta"
 #. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.view_order_form_add_states
 msgid "Wait approval"
-msgstr "Pendiente aprobación"
+msgstr "Esperando aprobación"
 

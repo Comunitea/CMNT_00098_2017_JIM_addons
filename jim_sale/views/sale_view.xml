@@ -13,9 +13,9 @@
 
                 <!-- Add button to pass to lqdr or pending state -->
                 <button name="print_quotation" position="after">
-                    <button name="action_lqdr_pending" states="draft" string="Wait approval" class="o_sale_confirm" type="object" />
-                    <button name="action_lqdr_pending" states="sent" string="Wait approval" class="btn-primary o_sale_confirm" type="object" />
-                    <button name="action_pending" states="lqdr" string="Wait approval" class="o_sale_confirm" type="object" />
+                    <button name="action_lqdr_pending" states="draft" string="Confirm Sale" class="o_sale_confirm" type="object" />
+                    <button name="action_lqdr_pending" states="sent" string="Confirm Sale" class="btn-primary o_sale_confirm" type="object" />
+                    <button name="action_pending" states="lqdr" string="LQDR Done" class="o_sale_confirm" type="object" />
                 </button>
 
                 <!-- Change action_confirm button, only visible in pending state -->
@@ -37,12 +37,32 @@
         <record id="sale_order_view_search_inherit_quotation" model="ir.ui.view">
             <field name="name">sale.order.view.search.inherit.quotation.lqdr.pending</field>
             <field name="model">sale.order</field>
-            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_quotation"/>
+            <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
             <field name="arch" type="xml">
                 <filter name="sales" position="after">
                     <filter string="LQDR order" name="lqdr" domain="[('state','=','lqdr')]"/>
                     <filter string="Pending Approval" name="lqdr" domain="[('state','=','pending')]"/>
                 </filter>
+            </field>
+        </record>
+
+         <record id="sale.action_quotations" model="ir.actions.act_window">
+            <field name="domain">[('state', 'in', ('draft', 'sent', 'cancel'))]</field>
+        </record>
+
+         <record id="sale.action_orders" model="ir.actions.act_window">
+            <field name="domain">[('state', 'not in', ('draft', 'sent', 'cancel'))]</field>
+        </record>
+
+
+        <record id="sale_order_view_tree_inherit_states" model="ir.ui.view">
+            <field name="name">sale.order.view.tree.inherit.states</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_tree"/>
+            <field name="arch" type="xml">
+                <field name="state" position="replace">
+                    <field name="state" />
+                </field>
             </field>
         </record>
 
