@@ -11,6 +11,9 @@ class ReportStockForecat(models.Model):
                                   readonly=True)
     company_id = fields.Many2one('res.company', 'Company',
                                  readonly=True)
+    out_qty = fields.Float(readonly=True, string='Outgoing qty')
+    in_qty = fields.Float(readonly=True, string='Incoming qty')
+    real_qty = fields.Float(readonly=True, string='Real qty')
 
     @api.model_cr
     def init(self):
@@ -22,7 +25,10 @@ class ReportStockForecat(models.Model):
         sum(product_qty) AS quantity,
         sum(sum(product_qty)) OVER (PARTITION BY product_id ORDER BY date) AS cumulative_quantity,
         location_id as location_id,
-        company_id as company_id
+        company_id as company_id,
+        sum(real_qty) as real_qty,
+        sum(in_qty) as in_qty,
+        sum(out_qty) as out_qty
         FROM
         (SELECT
         MIN(id) as id,
@@ -30,6 +36,9 @@ class ReportStockForecat(models.Model):
         SUB.date as date,
         MAIN.location_id as location_id,
         MAIN.company_id as company_id,
+        sum(MAIN.real_qty)as real_qty,
+        sum(MAIN.in_qty)as in_qty,
+        sum(MAIN.out_qty) as out_qty,
         CASE WHEN MAIN.date = SUB.date THEN sum(MAIN.product_qty) ELSE 0 END as product_qty
         FROM
         (SELECT
@@ -38,7 +47,10 @@ class ReportStockForecat(models.Model):
             date_trunc('week', to_date(to_char(CURRENT_DATE, 'YYYY/MM/DD'), 'YYYY/MM/DD')) as date,
             SUM(sq.qty) AS product_qty,
             sq.location_id,
-            sq.company_id
+            sq.company_id,
+            SUM(sq.qty) AS real_qty,
+            SUM(0.0) as in_qty,
+            SUM(0.0) as out_qty
             FROM
             stock_quant as sq
             LEFT JOIN
@@ -57,7 +69,10 @@ class ReportStockForecat(models.Model):
             ELSE date_trunc('week', to_date(to_char(CURRENT_DATE, 'YYYY/MM/DD'), 'YYYY/MM/DD')) END
             AS date,
             SUM(sm.product_qty) AS product_qty,
-            sm.location_id, sm.company_id
+            sm.location_id, sm.company_id,
+            SUM(0.0) AS real_qty,
+            SUM(sm.product_qty) AS in_qty,
+            SUM(0.0) AS out_qty
             FROM
                stock_move as sm
             LEFT JOIN
@@ -80,7 +95,10 @@ class ReportStockForecat(models.Model):
                 AS date,
                 SUM(-(sm.product_qty)) AS product_qty,
                 sm.location_id,
-                sm.company_id
+                sm.company_id,
+                SUM(0.0) AS real_qty,
+                SUM(0.0) AS in_qty,
+                SUM(sm.product_qty) AS out_qty
             FROM
                stock_move as sm
             LEFT JOIN
@@ -100,7 +118,10 @@ class ReportStockForecat(models.Model):
                 CURRENT_DATE AS date,
                 SUM(-(sol.product_uom_qty)) AS product_qty,
                 stock_picking_type.default_location_src_id as location_id,
-                sale_order.company_id as company_id
+                sale_order.company_id as company_id,
+                SUM(0.0) AS real_qty,
+                SUM(0.0) AS in_qty,
+                SUM(sol.product_uom_qty) AS out_qty
                 FROM
                    sale_order_line as sol
                 LEFT JOIN
