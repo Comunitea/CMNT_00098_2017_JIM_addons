@@ -74,8 +74,6 @@
         <record id="model_sgafile_var_form_view" model="ir.ui.view">
             <field name="name">sgavar.file.var.form.view</field>
             <field name="model">sgavar.file.var</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
             <field name="arch" type="xml">
                 <form >
                     <group>
@@ -102,8 +100,6 @@
         <record id="model_sgafile_tree_view" model="ir.ui.view">
             <field name="name">sgavar.file.tree.view</field>
             <field name="model">sgavar.file</field>
-            <field name="view_type">tree</field>
-            <field name="view_mode">form</field>
             <field name="arch" type="xml">
                 <tree >
                     <field name="name"/>
@@ -117,8 +113,6 @@
         <record id="model_sgafile_form_view" model="ir.ui.view">
             <field name="name">sgavar.file.form.view</field>
             <field name="model">sgavar.file</field>
-            <field name="view_type">form</field>
-            <field name="view_mode">form</field>
             <field name="arch" type="xml">
                 <form >
                     <group>
@@ -155,9 +149,43 @@
                 </form>
             </field>
         </record>
+        <record id="model_sgafile_var_tree_view" model="ir.ui.view">
+            <field name="name">sgavar.file.var.tree.view</field>
+            <field name="model">sgavar.file.var</field>
+            <field name="arch" type="xml">
+                <tree >
+                    <field name="sequence" widget="handle"/>
+                    <field name="name"/>
+                    <field name="mecalux_type"/>
+                    <field name="odoo_name"/>
+                    <field name="odoo_model"/>
+                    <field name="length"/>
+                    <field name="length_int"/>
+                    <field name="length_dec"/>
+                    <field name="default"/>
+                    <field name="fillchar"/>
+                    <field name="sga_file_id"/>
+                </tree>
+            </field>
+        </record>
 
+
+        <record id="model_sgafile_var_action_view" model="ir.actions.act_window">
+            <field name="name">Model Sgafile Var</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sgavar.file.var</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to define a new Sga Line.
+                </p>
+                </field>
+        </record>
 
         <menuitem action="model_sgafile_action_view" id="Models SGAfiles" parent="menu_sga_mecalux" sequence="3"/>
+        <menuitem action="model_sgafile_var_action_view" id="Vars SGAfiles" parent="menu_sga_mecalux" sequence="4"/>
 
     </data>
 

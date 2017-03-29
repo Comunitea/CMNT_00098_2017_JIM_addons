@@ -18,23 +18,31 @@ import re
 #import settings_sga_file
 #IN_FOLDER = settings_sga_file.IN_FOLDER
 
-IN_FOLDER = '//home/kiko/py10/e10/project-addons/sga_file/sgafolder/in'
-OUT_FOLDER = '//home/kiko/py10/e10/project-addons/sga_file/sgafolder/out'
-ERROR_FOLDER = '//home/kiko/py10/e10/project-addons/sga_file/sgafolder/error'
-DELETE_FOLDER = '//home/kiko/py10/e10/project-addons/sga_file/sgafolder/delete'
-ARCHIVE_FOLDER = '//home/kiko/py10/e10/project-addons/sga_file/sgafolder/archive'
+IN_FOLDER = '/opt/sgafolder/in'
+OUT_FOLDER = '/opt/sgafolder/out'
+ERROR_FOLDER = '/opt/sgafolder/error'
+DELETE_FOLDER = '/opt/sgafolder/delete'
+ARCHIVE_FOLDER = '/opt/sgafolder/archive'
 ZIP_FOLDER = ''
 DELETE_FILE = False
 ERRORS = 3
 
 
 def format_to_mecalux_date(date):
+
     return u'%04d%02d%02d%02d%02d%02d' % (
         date.year, date.month, date.day, date.hour, date.minute,
         date.second)
 
+def format_from_mecalux_date(mec_date):
+    if not mec_date:
+        return False
+    return datetime(int(mec_date[0:4]),
+                    int(mec_date[5:7]),
+                    int(mec_date[7:9]))
 
 def get_file_time(sga_filename):
+
     if sga_filename:
         return datetime(int(sga_filename[5:9]),
                         int(sga_filename[9:11]),
@@ -45,9 +53,6 @@ def get_file_time(sga_filename):
                         )
     else:
         return False
-
-
-
 
 class PathFiles(models.TransientModel):
 
@@ -71,9 +76,7 @@ class PathFiles(models.TransientModel):
             icp.set_param('path_files',
                           self.path_files)
 
-
-
-class ModelSgafileVar(models.Model):
+class ModelSgaVarFileVar(models.Model):
 
     _name ='sgavar.file.var'
     _order = "sequence, id asc"
@@ -93,13 +96,12 @@ class ModelSgafileVar(models.Model):
     fillchar = fields.Char("Char to fill", size=1)
     sga_file_id = fields.Many2one("sgavar.file")
 
+
     @api.onchange('length','length_dec')
     def onchange_length(self):
         self.length_int = self.length - self.length_dec
 
-
-
-class ModelSgafile(models.Model):
+class ModelSgaVarfile(models.Model):
 
     _name = 'sgavar.file'
 
@@ -126,7 +128,7 @@ class ModelSgafile(models.Model):
 
     @api.constrains('version', 'version_active')
     def _check_active_version(self):
-        domain = [('code','=', self.code), ('version_active','=', True)]
+        domain = [('code', '=', self.code), ('version_active','=', True)]
         pool = self.search(domain)
         if len(pool) > 1:
             raise ValidationError("You have yet a version active for this code")
@@ -163,7 +165,7 @@ class SGAFiles(models.Model):
     name = fields.Char()
     sga_file = fields.Char('Data File')  # ruta completa donde esta el archivo
     sga_path = fields.Char('File path', default='', help="File folder. Zip file if archived")
-    file_code = fields.Selection([('TPR', 'Product type'), ('DEF', 'Default')])
+    file_code = fields.Char('File Type', size=3)
 
     state = fields.Selection([('W', 'Waiting'), ('P', 'Processed'), ('E', 'Error')])
     errors = fields.Integer('Errors', help="Number of errors before move to error folder", default=1)
@@ -172,13 +174,16 @@ class SGAFiles(models.Model):
     file_time = fields.Datetime(string='File date/time')
     version = fields.Integer('Version Control (Only dev mode)')
 
-    @api.model
-    def set_file_name(self, type = False, version = False, file_date = False):
 
-        if type and version and datetime == False:
+
+    @api.model
+    def set_file_name(self, type=False, version=False, file_date=False):
+
+        if type and version and datetime==False:
             return False
         else:
-            filename = u'%s%s%04d%02d%02d%02d%02d%02d' %(type, version, file_date.year, file_date.month, file_date.day, file_date.hour, file_date.minute, file_date.second)
+            version = int(version)
+            filename = u'%s%02d%04d%02d%02d%02d%02d%02d' %(type, version, file_date.year, file_date.month, file_date.day, file_date.hour, file_date.minute, file_date.second)
             return filename
 
     @api.model
@@ -224,7 +229,6 @@ class SGAFiles(models.Model):
 
     @api.model
     def create_new_sga_file(self, sga_filename, dest_path = 'in', create = True):
-
         icp = self.env['ir.config_parameter']
         path = icp.get_param(
             'path_files', 'path_files'
@@ -235,20 +239,18 @@ class SGAFiles(models.Model):
         sga_file_time = self.get_file_time(sga_filename)
         sga_state = 'W'
         vals = {
-            'code': sga_type,
+            'file_code': sga_type,
             'name': sga_filename,
             'sga_file': sga_file,
-            #'type' : dest_path,
             'state': sga_state,
             'file_time': sga_file_time,
             'sga_path': sga_path
+
         }
-        print vals
         new_sga_file = self.create(vals)
 
-        #creo el fichero a aunque sea vacio
         if create and new_sga_file:
-            self.touch(sga_file)
+            self.touch_file(sga_file)
 
         return new_sga_file
 
@@ -256,17 +258,14 @@ class SGAFiles(models.Model):
     def create(self, vals):
         sga_file = super(SGAFiles, self).create(vals)
         if sga_file:
-            res = self.touch(sga_file.sga_file)
+            res = self.touch_file(sga_file.sga_file)
             if res:
                 return sga_file
             else:
                 raise ValidationError(_('Error ! SGA file object cant be created because not file created.'))
         return sga_file
 
-
-    def touch(self, sga_file):
-
-
+    def touch_file(self, sga_file):
         try:
             basedir = os.path.dirname(sga_file)
             if not os.path.exists(basedir):
@@ -278,22 +277,16 @@ class SGAFiles(models.Model):
             return False
         return True
 
-
     def check_sga_name_xmlrpc(self):
+
         filename = self._context.get('xmlrpc_filename', False)
         path = self._context.get('xmlrpc_path', False)
-
         sga_file, new = self.check_sga_name(filename, path)
-        res ={'sga_file':sga_file.id,
-              'new': new}
+        res = {'sga_file': sga_file.id, 'new': new}
         return res
 
     def format_to_mecalux_date(self, date):
-
-        return u'%04d%02d%02d%02d%02d%02d' % (
-        date.year, date.month, date.day, date.hour, date.minute,
-        date.second)
-
+        return u'%04d%02d%02d%02d%02d%02d' % (date.year, date.month, date.day, date.hour, date.minute, date.second)
 
     @api.model
     def check_sga_name(self, filename, path):
@@ -307,11 +300,6 @@ class SGAFiles(models.Model):
             raise ValidationError(_('Error ! SGA file object cant be created.'))
         return sga_file, new
 
-    def process_header(self, line):
-        #Aqui proceso la cabecera
-        self.text = line.split(',')[0]
-
-        return True
 
     def process_line(self, line, line_number):
 
@@ -323,55 +311,38 @@ class SGAFiles(models.Model):
                 }
         print "Creo linea con %s"%vals
         res = self.file_line_ids.create(vals)
-        return  res
+        return res
 
 
     def sga_process_file_xmlrpc(self):
         return self.sga_process_file(self._context.get('header_only', False))
 
-
     def get_stage(self, stage_name):
-        res = self.env['sga.file.stage'].search([(stage_name,'=',True)], limit=1).id
+        res = self.env['sga.file.stage'].search([(stage_name, '=', True)], limit=1).id
         return res and res.id
 
 
-
-    def sga_process_file(self, header_only=False):
+    def sga_process_file(self):
         #procesar el archivo
         #lo abro y lo leo
         #primera linea es cabecera (si, no)
-        print "Proceso archivo %s"%self.file_name
 
+        print "Proceso archivo %s"%self.name
+        process = False
+
+        if self.file_code == "CSO":
+            process = self.env['sale.order'].import_sga_sale_order(self.id)
+        elif self.file_code == 'STO':
+            process = self.env['stock.inventory'].import_sga_new_inventory(self.id)
+        import ipdb;
+        ipdb.set_trace()
         try:
-            sga_file = open(self.file_path, 'r')
-            sga_file_lines = sga_file.readlines()
-            sga_file.close()
-            print "proceso estas lineas %s"%sga_file_lines
-            res = False
-
-            line_number = 0
-            new_sga_file_line_ids = self.env['sga.file.line']
-
-            first = True
-            if first:
-                line_number += 1
-                line = sga_file_lines[0]
-                res_header = self.process_header(line)
-                self.stage_id = self.get_stage('process_stage')
-
-            if not header_only:
-                for line in sga_file_lines[1:]:
-                    line_number += 1
-                    res = self.process_line(line, line_number)
-                    if res:
-                        new_sga_file_line_ids += res
-                self.stage_id = self.get_stage('archive_stage')
-                self.file_line_ids = [(6, 0, new_sga_file_line_ids.ids)]
-                #lo movemos si procede ....
+            if process:
                 new_name = os.path.join(ARCHIVE_FOLDER, self.name)
-                print "Movemos de %s a %s" % (new_name, self.file_path)
-                os.rename(self.file_path, new_name)
-                self.file_path = new_name
+                print "Movemos de %s a %s" % (self.sga_file, new_name)
+                os.rename(self.sga_file, new_name)
+                self.sga_file = new_name
+                self.sga_path = ARCHIVE_FOLDER
 
 
         except:
@@ -379,34 +350,28 @@ class SGAFiles(models.Model):
             self.errors += self.errors
             if self.errors == ERRORS:
                 new_name = os.path.join(ERROR_FOLDER, self.name)
+                print "Movemos de %s a %s" % (new_name, self.file_path)
+                os.rename(self.file_path, new_name)
 
         return True
 
-
-
-
     #este es la accion que recorre la carpeta de ficheros provenientes del SGA
     @api.model
-    def process_sga_files(self, process = True):
+    def process_sga_files(self, process = True, file_type=''):
 
-        print "Recorremos directorio: %s"%IN_FOLDER
-        print "Ficheros:"
         res_file = False
-        for path,dir,files in os.walk(IN_FOLDER, topdown=False):
+        for path, directories, files in os.walk(IN_FOLDER, topdown=False):
             for name in files:
-                print ">>>%s"%name
+                if file_type:
+                    if name[0:3] != file_type:
+                        continue
+                print "SGA file >>> %s" %name
                 sga_file, new = self.check_sga_name(name, path)
-                print "Encuentro o creo %s"%sga_file
-
-                if new:
-                    res_file = sga_file.sga_process_file(header_only=process)
-                elif process:
-                    res_file = sga_file.sga_process_file()
-
+                res_file = sga_file.sga_process_file()
         return res_file
 
     def get_folders(self):
-        #in_folder, out_folder, error_folder, delete_folder, archive_folder, delete_file = self.get_folders()
+        # in_folder, out_folder, error_folder, delete_folder, archive_folder, delete_file = self.get_folders()
         return IN_FOLDER, OUT_FOLDER, ERROR_FOLDER, DELETE_FOLDER, ARCHIVE_FOLDER, DELETE_FILE
 
 
@@ -421,70 +386,13 @@ class SGAFiles(models.Model):
             f.close()
         return path
 
-    def check_folder(self, path=[]):
-        for file in path:
-            try:
-                res = True
-            except:
-                res = False
-            return res
-
-    def read_sga_file(self, file):
-        try:
-            res = True
-        except:
-            res=False
-        return res
-
-    def write_sga_file(self, file):
-        try:
-            res = True
-        except:
-            res=False
-        return res
-
-
-    def move_sga_file(self, file, to_path):
-        try:
-            res = True
-        except:
-            res=False
-        return res
-
-
-    def process_file(self, file):
-        try:
-            res = True
-        except:
-            res = False
-        return res
-
-
-    def zipped_file(self, files):
-        try:
-            res = True
-        except:
-            res = False
-        return res
-
-    def archive_sga_files(self):
-        try:
-            res = True
-        except:
-            res = False
-        return res
-
-
 
     @api.multi
     def sga_file_generate(self, code, ids=[], create=True):
 
         domain = [('code', '=', code)]
         sga_file = self.env['sga.file'].search(domain)
-        sga_file.check_sga_file(sga_file.odoo_model, ids=ids, create=create)#,
-                                #code=code, version=sga_file.version,
-                                #field_list=sga_file.sga_file_var_ids,
-                                #field_ids=False, field_list_ids=False)
+        sga_file.check_sga_file(sga_file.odoo_model, ids=ids, create=create)
         return True
 
     @api.multi
@@ -500,13 +408,10 @@ class SGAFiles(models.Model):
         # field_ids si tiene lista de filas (sale_order_line estan en este campo
         # con la lista de campos/longitud field_list_ids
 
-
+        import ipdb; ipdb.set_trace()
         def get_val_line(val, model):
 
-
             meca_field = val.name
-
-
             length = [val.length, val.length_int,  val.length_dec]
             fillchar = val.fillchar
             type_field = val.mecalux_type
@@ -531,6 +436,7 @@ class SGAFiles(models.Model):
             return res
 
         def get_line(sgavar, model_pool):
+            import ipdb; ipdb.set_trace()
             for model in model_pool:
                 more = False
                 model_str=''
@@ -659,7 +565,6 @@ class SGAFiles(models.Model):
         else:
             return ''
 
-
 class SGAfilesline(models.Model):
     _name = "sga.file.line"
 
@@ -667,6 +572,21 @@ class SGAfilesline(models.Model):
     stock_move_id = fields.Many2one("stock.move")
     line = fields.Char('File line')
     name = fields.Char('Line name')
+
+class SGAfileerror(models.Model):
+
+    _name = "sga.file.error"
+
+    sga_file_id = fields.Many2one('sga.file')
+    file_name = fields.Char(related='sga_file_id.name', string='File name', size=10)
+    line_number = fields.Integer('Line number')
+    object_type = fields.Char('Object type', size = 3)
+    version = fields.Integer ('version')
+    object_id = fields.Char("Object id", size=50)
+    error_code = fields.Integer('Error code')
+    error_message = fields.Char("Error message", size = 255)
+    date = fields.Date('Error date')
+
 
 
 

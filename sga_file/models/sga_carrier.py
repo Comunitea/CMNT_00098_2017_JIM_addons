@@ -13,19 +13,21 @@ import os
 import re
 
 
-class CarrierSGA(models.Model):
+class DeliveryCarrierSGA(models.Model):
 
     # TODO res.partner with carrier = True ????????????????'
 
-    _name = "sga.carrier"
+    _inherit = "delivery.carrier"
 
     sga_operation = fields.Selection([('A', 'Alta'), ('M', 'Modificacion'),
                                       ('B', 'Baja'), ('F', 'Modificacion + Alta')], default='F')
-    carrier_code = fields.Char("Carrier Code", required=True, size=20)
-    carrier_name = fields.Char("Carrier Name", size=40)
+    carrier_code = fields.Char("Carrier Code", required=True, size=20, help ="SGA code to mecalux")
     description = fields.Char("Description")
     contact = fields.Char("Contact")
 
+    _sql_constraints = [
+        ('carrier_code_uniq', 'unique (carrier_code)', "Carrier code already exists !"),
+    ]
 
     @api.multi
     def new_mecalux_file(self):

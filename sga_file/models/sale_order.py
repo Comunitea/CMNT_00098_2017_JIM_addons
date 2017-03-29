@@ -31,8 +31,6 @@ class SaleOrderLineSGA (models.Model):
 
 class SaleOrderSGA(models.Model):
 
-    #
-
     _inherit = "sale.order"
 
     sga_operation = fields.Selection([('A', 'Alta'), ('M', 'Modificacion'),
@@ -45,10 +43,6 @@ class SaleOrderSGA(models.Model):
     account_code = fields.Char(related="partner_id.ref")
     delivery_inst = fields.Char("Delivery warnings", size=255)
     verify_stock = fields.Boolean("Verify Stock", default=0)
-
-
-
-
 
     @api.multi
     def new_mecalux_file(self):

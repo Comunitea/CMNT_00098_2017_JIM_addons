@@ -23,7 +23,7 @@ import re
 
 class SGAProductCategory(models.Model):
 
-    _inherit="product.category"
+    _inherit = "product.category"
     sga_producttype_code = fields.Char("Sga Producttype Code", size=12)
     sga_parent_producttype_code= fields.Char(related="parent_id.sga_producttype_code")
 
@@ -105,6 +105,11 @@ class SGAProductTemplate(models.Model):
         new_sga_file = self.env['sga.file'].check_sga_file('product.template', ids, code='PST')
 
         return True
+
+
+
+
+
 
 class SGAProductUOM(models.Model):
     _inherit = "product.uom"

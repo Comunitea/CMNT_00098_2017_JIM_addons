@@ -34,7 +34,6 @@ class StockPackOperationSGA(models.Model):
     uom_code = fields.Char(related="product_uom_id.sga_uom_base_code")
     line_number = fields.Integer("Number line")
 
-
 class StockPickingSGA(models.Model):
 
     _inherit = "stock.picking"

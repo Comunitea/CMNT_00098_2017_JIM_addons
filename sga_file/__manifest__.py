@@ -13,7 +13,7 @@
     'depends': [
         'stock',
         'sale',
-        'sale_stock'
+        'sale_stock',
     ],
     'contributors': [
         "Comunitea",
@@ -26,6 +26,8 @@
         'views/sga_sale_order.xml',
         'views/sga_purchase_order.xml',
         'views/sga_stock_picking.xml',
+        'views/sga_stock_inventory.xml',
+        'security/ir.model.access.csv',
 
     ],
     "demo": [
@@ -36,3 +38,4 @@
     ],
     'installable': True
 }
+
