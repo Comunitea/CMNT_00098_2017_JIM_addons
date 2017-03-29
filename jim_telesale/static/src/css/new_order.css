@@ -1,0 +1,7 @@
+.telesale  #leftpart .order-container .order-line-table th.header-product{
+    width: 20%;
+}
+
+.telesale  #leftpart .order-container .order-line-table th.header-global-stock{
+    width: 10%;
+}

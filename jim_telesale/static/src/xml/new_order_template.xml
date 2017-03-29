@@ -2,6 +2,7 @@
 
 <templates id="template_new_order" inherit_id="telesale.template_new_order">
 
+    <!-- Add route and lqdr field to ProductInfoWidget -->
     <t t-extend="ProductInfo-Order-Widget">
         <t t-jquery="tr:last" t-operation="append">
             <tr>
@@ -15,7 +16,8 @@
         </t>
     </t>
 
-     <t t-extend="Order-Widget">
+    <!-- Add states Pending Approval and LQDR to order Widget -->
+    <t t-extend="Order-Widget">
         <t t-jquery=".span-state" t-operation="append">
             <t t-if="widget.ts_model.get('selectedOrder').get('state') == 'lqdr'">
                 (LQDR)
@@ -23,6 +25,21 @@
             <t t-if="widget.ts_model.get('selectedOrder').get('state') == 'pending'">
                 (Pending Approval)
             </t>
+        </t>
+    </t>
+
+    <!-- Add column global stock to order lines -->
+    <t t-extend="Order-Widget">
+        <t t-jquery=".header-product" t-operation="after">
+            <th class="header-global-stock">Global Stock</th>
+        </t>
+    </t>
+
+    <t t-extend="Order-line-Widget">
+        <t t-jquery=".cell-product" t-operation="after">
+             <td class="cell-global-stock">
+                <input type="search" class='col-global-stock mandatory' readonly="True" t-att-value="widget.model.get('global_stock')"/>
+            </td>
         </t>
     </t>
 

@@ -3,27 +3,20 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 {
-    'name': 'Jim Telesale',
+    'name': 'Jim Stock',
     'version': '10.0.0.0.0',
     'author': 'Comunitea ',
     "category": "Custom",
     'license': 'AGPL-3',
     'depends': [
-        'jim_sale',
-        'jim_stock',
-        'telesale'
+        'stock',
     ],
     'contributors': [
         "Comunitea ",
         "Javier Colmenero <javier@comunitea.com>"
     ],
     "data": [
-        'views/telesale_assets.xml'
-    ],
-    'qweb': [
-        'static/src/xml/new_order_template.xml',
-        'static/src/xml/summary_order_template.xml',
-        'static/src/xml/order_history_template.xml',
+        'views/product_view.xml',
     ],
     "installable": True
 }
