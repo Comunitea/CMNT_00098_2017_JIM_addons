@@ -10,6 +10,7 @@
     'license': 'AGPL-3',
     'depends': [
         'jim_sale',
+        'jim_stock',
         'telesale'
     ],
     'contributors': [
