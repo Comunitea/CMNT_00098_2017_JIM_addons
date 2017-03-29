@@ -16,17 +16,22 @@ class ProductTemplate(models.Model):
     global_available_stock = fields.Float('Global Available Stock',
                                           compute='_compute_global_stock',
                                           digits=dp.get_precision
-                                          ('Product Unit of Measure'))
+                                          ('Product Unit of Measure'),
+                                          help="Real stock minus outgoing "
+                                          " in all companies.")
 
     def _compute_global_stock(self):
-        global_real_stock = 10.0
-        global_available_stock = 20.0
-        for product in self:
-            product.global_real_stock = global_real_stock
-            product.global_available_stock = global_available_stock
+        global_real_stock = 0.0
+        global_available_stock = 0.0
+        for template in self:
+            for p in template.product_variant_ids:
+                global_real_stock += p.global_real_stock
+                global_available_stock += p.global_available_stock
+        template.global_real_stock = global_real_stock
+        template.global_available_stock = global_available_stock
 
 
-class Productroduct(models.Model):
+class ProductProduct(models.Model):
     _inherit = "product.product"
 
     global_real_stock = fields.Float('Global Real Stock',
@@ -37,11 +42,12 @@ class Productroduct(models.Model):
     global_available_stock = fields.Float('Global Available Stock',
                                           compute='_compute_global_stock',
                                           digits=dp.get_precision
-                                          ('Product Unit of Measure'))
+                                          ('Product Unit of Measure'),
+                                          help="Real stock minus outgoing "
+                                          " in all companies.")
 
     def _compute_global_stock(self):
-        global_real_stock = 1.0
-        global_available_stock = 2.0
         for product in self:
-            product.global_real_stock = global_real_stock
-            product.global_available_stock = global_available_stock
+            product.global_real_stock = product.sudo().qty_available
+            product.global_available_stock = product.sudo().qty_available -  \
+                product.sudo().outgoing_qty
