@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_template_property_form_global_stocks" model="ir.ui.view" >
+            <field name="name">view_template_property_form_view_global_stocks</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.view_template_property_form"/>
+            <field name="arch" type="xml">
+                <group name="stock_property" position="after">
+                    <group name="global_stocks">
+                        <field name="global_real_stock"/>
+                        <field name="global_available_stock"/>
+                    </group>
+                </group>
+            </field>
+        </record>
+    </data>
+</odoo>
