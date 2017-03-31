@@ -17,3 +17,16 @@ class ProductProduct(models.Model):
         lqdr = _("Yes") if product_obj.lqdr else _("No")
         res.update({'route': route, 'lqdr': lqdr})
         return res
+
+    @api.model
+    def ts_get_global_stocks(self, product_id):
+        """ Return data of widget productInfo """
+        res = {'global_available_stock': 0.0}
+        if product_id:
+            product_obj = self.browse(product_id)
+            res.update({'global_available_stock':
+                        product_obj.global_available_stock})
+        print "####################################################"
+        print res
+        print "####################################################"
+        return res
