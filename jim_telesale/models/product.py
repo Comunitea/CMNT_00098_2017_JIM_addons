@@ -26,7 +26,4 @@ class ProductProduct(models.Model):
             product_obj = self.browse(product_id)
             res.update({'global_available_stock':
                         product_obj.global_available_stock})
-        print "####################################################"
-        print res
-        print "####################################################"
         return res

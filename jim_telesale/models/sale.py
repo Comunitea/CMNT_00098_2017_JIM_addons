@@ -14,17 +14,15 @@ class SaleOrder(models.Model):
         """
         self.browse(order_id).action_lqdr_pending()
 
-
-class SaleOrderLine(models.Model):
-    _inherit = 'sale.order.line'
-
     @api.model
-    def ts_product_id_change(self, product_id, partner_id):
-        res = super(SaleOrderLine, self).ts_product_id_change(product_id,
-                                                              partner_id)
+    def _get_ts_line_vals(self, order_obj, line):
+        """
+        Get the firtst product route to the line
+        """
+        t_product = self.env['product.product']
+        product_obj = t_product.browse(line['product_id'])
+        vals = super(SaleOrder, self)._get_ts_line_vals(order_obj, line)
 
-        product = self.env['product.product'].browse(product_id)
-        res.update({
-            'global_available_stock': product.global_available_stock
-        })
-        return res
+        if product_obj.route_ids:
+            vals.update({'route_id': product_obj.route_ids[0].id})
+        return vals
