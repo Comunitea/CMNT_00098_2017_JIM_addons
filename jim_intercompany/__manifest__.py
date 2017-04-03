@@ -19,6 +19,7 @@
         "Comunitea ",
     ],
     "data": [
+        'wizard/propagate_partner_properties_view.xml'
     ],
     "installable": True
 }
