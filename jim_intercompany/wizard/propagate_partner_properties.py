@@ -40,7 +40,7 @@ class PropagatePartnerProperties(models.TransientModel):
                     field_eval = 'partner.' + field
                     model_value = eval(field_eval, eval_dic)
                     if model_value:
-                        # vals[field] = model_value.id
+                        # WRITE in new company
                         partner2.sudo().write({field: model_value.id})
 
                 # NON SHARED objects between companies
@@ -57,5 +57,5 @@ class PropagatePartnerProperties(models.TransientModel):
                         model_obj = self.env[model_name].sudo().search(domain,
                                                                        limit=1)
                         if model_obj:
-                            # vals[field] = model_obj.id
+                            # WRITE in new company
                             partner2.sudo().write({field: model_obj.id})

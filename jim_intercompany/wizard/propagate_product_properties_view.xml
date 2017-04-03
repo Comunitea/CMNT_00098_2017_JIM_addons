@@ -2,9 +2,9 @@
 <openerp>
     <data>
 
-        <record id="propagate_partner_properties_form_view" model="ir.ui.view">
-            <field name="name">propagate.partner.properties.form.view</field>
-            <field name="model">propagate.partner.properties</field>
+        <record id="propagate_product_properties_form_view" model="ir.ui.view">
+            <field name="name">propagate.product.properties.form.view</field>
+            <field name="model">propagate.product.properties</field>
             <field name="arch" type="xml">
                 <form>
                     <group>
@@ -13,12 +13,8 @@
                         </p>
                         <br/>
                             <ul>
-                              <li>Payment Term</li>
-                              <li>Supplier Payment Term</li>
-                              <li>Account Receivable</li>
-                              <li>Account Payable</li>
-                              <li>Fiscal Position</li>
-                              <li>Sale Priecelist</li>
+                              <li>Customer Taxes</li>
+                              <li>Supplier Taxes</li>
                             </ul>  
                     </group>
                     <footer>
@@ -30,11 +26,11 @@
             </field>
         </record>
 
-         <act_window id="propagate_partner_fields_action"
+         <act_window id="propagate_product_fields_action"
              name="Propagate property fields"
              key2="client_action_multi"
-             src_model="res.partner"
-             res_model="propagate.partner.properties"
+             src_model="product.template"
+             res_model="propagate.product.properties"
              view_mode="form"
              view_type="form"
              target="new"
