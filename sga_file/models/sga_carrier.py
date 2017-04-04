@@ -30,8 +30,8 @@ class DeliveryCarrierSGA(models.Model):
     ]
 
     @api.multi
-    def new_mecalux_file(self):
+    def export_mecalux_file(self):
         ids = [x.id for x in self]
         print ids
-        new_sga_file = self.env['sga.file'].check_sga_file('sga.carrier', ids, code='CAR')
+        new_sga_file = self.env['sga.file'].check_sga_file('delivery.carrier', ids, code='CAR')
         return True

@@ -197,36 +197,8 @@ class ConnectOdoo:
 
 
     def process_hot_folders(self):
-        res = self.execute('product.category', 'sga_file_generate', [], context = False)
-        print res
-        return res
-        res_file = False
-        print "-----------------------------------------------------\n" \
-              "\n\n\nBuscando ficheros en carpeta \n          %s\n"%IN_FOLDER
-        for path, dir, files in os.walk(IN_FOLDER, topdown=False):
-            if dir:
-                print "         Subcarpeta %s"%dir
 
-            for name in files:
-                print "         Encontrado >>> %s" % name
-                #mira si hay asociado un sga.file, si no lo crea; devuelve el id y si es nuevo
-                res = self.execute('sga.file', 'check_sga_name_xmlrpc',[], {'xmlrpc_filename': name, 'xmlrpc_path': path})
-                sga_file = res['sga_file']
-                new = res['new']
-
-
-
-                if new:
-                    print "         Se ha creado sga.file con id: %s"%res['sga_file']
-                    res_file = self.execute('sga.file', 'sga_process_file_xmlrpc',[res['sga_file']], {'xmlrpc_header_only': PROCESS})
-
-                elif PROCESS:
-
-                    res_file = self.execute('sga.file', 'sga_process_file_xmlrpc',[res['sga_file']])
-                    print "         Se ha procesado el fichero (sga.file [%s])" % res['sga_file']
-
-                print "\n"
-        print "-----------------------------------------------------\n"
+        res_file = self.execute('sga.file', 'sga_process_file_xmlrpc',[res['sga_file']], {'xmlrpc_header_only': PROCESS})
 
 if __name__ == "__main__":
 

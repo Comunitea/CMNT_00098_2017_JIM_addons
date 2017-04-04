@@ -15,7 +15,7 @@ import re
 class Product(models.Model):
     _inherit = "product.product"
 
-    def _get_domain_locations(self):
+    def _get_domain_locations2(self):
 
         domain_quant_loc, domain_move_in_loc, domain_move_out_loc = super(Product,self)._get_domain_locations()
 
@@ -26,7 +26,6 @@ class Product(models.Model):
             domain_move_out_loc += domain_company
 
         return domain_quant_loc, domain_move_in_loc, domain_move_out_loc
-
 
 class StockInventoryLineSGA(models.Model):
 
@@ -62,8 +61,7 @@ class StockInventoryLineSGA(models.Model):
     def _get_move_values(self, qty, location_id, location_dest_id):
 
         res = super(StockInventoryLineSGA, self)._get_move_values(qty, location_id, location_dest_id)
-
-        # res['company_id'] = inventory_id.company_id.id >> move company ...
+       # res['company_id'] = inventory_id.company_id.id >> move company ...
         res['company_id'] = self.company_id.id
         return res
 
@@ -74,7 +72,6 @@ class StockInventoryLineSGA(models.Model):
             self.company_id = self.product_id.company_id
         return self.onchange_product()
 
-
 class StockInventorySGA(models.Model):
 
     _inherit = "stock.inventory"
@@ -84,11 +81,17 @@ class StockInventorySGA(models.Model):
 
     def new_stock_query_to_mecalux(self):
 
-        ids = [x.product_id.product_tmpl_id.id for x in self.line_ids]
-        new_sga_file = self.env['sga.file'].check_sga_file('product.template', ids, code='PST')
+        if not self.location_id.get_warehouse().sga_integrated:
+            raise ValidationError ("Solo puedes consultar en stock en almacenes con Mecalux")
+
+        if self.state != 'confirm':
+            raise ValidationError("Solo puedes consultar inventarios con estado: 'En Proceso'")
+
+        ids = [x.product_id.id for x in self.line_ids]
+        new_sga_file = self.env['sga.file'].check_sga_file('product.product', ids, code='PST')
         return new_sga_file
 
-    def import_sga_new_inventory(self, file_id):
+    def import_inventory_STO(self, file_id):
 
         sga_file = self.env['sga.file'].browse(file_id)
         sga_file = open(sga_file.sga_file, 'r')
@@ -134,22 +137,22 @@ class StockInventorySGA(models.Model):
 
             product_id = self.env['product.product'].search([('default_code', '=', product_code)])
             if not product_id:
-                raise ValidationError("Product not found")
+                raise ValidationError("Referencia no encontrada")
 
             company_id = product_id.company_id
 
             warehouse_id = self.env['stock.warehouse'].search([('code', '=', warehouse_code)])
             # POR SEGURIDAD
-            if warehouse_code !="PLS":
-                raise ValidationError ("Solo el almacen de PALAS")
+            if not warehouse_id.sga_integrated:
+                raise ValidationError ("Solo almacenes con gestion SGA")
 
             if not warehouse_id:
-                raise ValidationError("Warehouse not found")
+                raise ValidationError("Codigo de almacen no encontrado")
 
             ctx = dict(product_id._context)
             location_id = warehouse_id.lot_stock_id
 
-            ctx.update({'company_sga': company_id.id, 'location_id': [location_id.id]})
+            ctx.update({'force_company': company_id.id, 'location_id': [location_id.id]})
 
             total_qties = product_id.sudo()._product_available()
             qty = total_qties[product_id.id]['qty_available']
@@ -182,30 +185,3 @@ class StockInventorySGA(models.Model):
                 stock_inv.sudo().action_done()
 
         return True
-
-
-
-    def create_from_sga(self, vals):
-
-        for val in vals:
-            f=1
-
-
-    def get_vals_to_create(self, warehouse_code, product_code, quantity):
-
-        domain=[('code','=', warehouse_code)]
-        warehouse = self.env['stock.warehouse'].search(domain)
-        if not warehouse:
-            raise ValidationError ('Almacen no encontrado')
-
-        domain = [('default_code', '=', product_code)]
-        product = self.env['product.template'].search(domain)
-        if not product:
-            raise ValidationError('Producto no encontrado')
-
-        company_id = warehouse.company_id.id
-        location_id = warehouse.lot_stock_id.id
-        filter = 'product'#'partial'
-        product_id = product.id
-        unidades = product.uom_id.id
-

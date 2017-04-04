@@ -18,43 +18,11 @@ import re
 #import settings_sga_file
 #IN_FOLDER = settings_sga_file.IN_FOLDER
 
-IN_FOLDER = '/opt/sgafolder/in'
-OUT_FOLDER = '/opt/sgafolder/out'
-ERROR_FOLDER = '/opt/sgafolder/error'
-DELETE_FOLDER = '/opt/sgafolder/delete'
-ARCHIVE_FOLDER = '/opt/sgafolder/archive'
-ZIP_FOLDER = ''
 DELETE_FILE = False
 ERRORS = 3
 
 
-def format_to_mecalux_date(date):
-
-    return u'%04d%02d%02d%02d%02d%02d' % (
-        date.year, date.month, date.day, date.hour, date.minute,
-        date.second)
-
-def format_from_mecalux_date(mec_date):
-    if not mec_date:
-        return False
-    return datetime(int(mec_date[0:4]),
-                    int(mec_date[5:7]),
-                    int(mec_date[7:9]))
-
-def get_file_time(sga_filename):
-
-    if sga_filename:
-        return datetime(int(sga_filename[5:9]),
-                        int(sga_filename[9:11]),
-                        int(sga_filename[11:13]),
-                        int(sga_filename[13:15]),
-                        int(sga_filename[15:17]),
-                        int(sga_filename[17:19]),
-                        )
-    else:
-        return False
-
-class PathFiles(models.TransientModel):
+class ConfigPathFiles(models.TransientModel):
 
     _inherit = 'stock.config.settings'
 
@@ -71,40 +39,53 @@ class PathFiles(models.TransientModel):
 
     @api.multi
     def set_path_files(self):
+        # folder exists
+        import os
+        if os.path.isdir(self.path_files):
+            try:
+                for folder in ('in', 'out', 'error', 'archive', 'zip', 'delete', 'log'):
+                    new_path = "%s/%s" % (self.path_files, folder)
+                    if not os.path.exists(new_path):
+                        os.makedirs(new_path)
+            except:
+                raise UserError("Error creating directories in %s" % self.path_files)
+        else:
+            raise UserError("Folder not exists %s" % self.path_files)
+
         if self.path_files:
             icp = self.env['ir.config_parameter']
             icp.set_param('path_files',
                           self.path_files)
 
-class ModelSgaVarFileVar(models.Model):
+class MecaluxVars(models.Model):
 
     _name ='sgavar.file.var'
     _order = "sequence, id asc"
 
     sequence = fields.Integer("Sequence", defaul = 50)
-    name = fields.Char("Mecalux field")
-    odoo_name = fields.Many2one("ir.model.fields", domain="[('model_id','=',odoo_model)]", string="Odoo field" )
-    odoo_many_name = fields.Char(string="Odoo Many - field",
-                                help="if odoo _name is many field, get the field in related model")
+    name = fields.Char("Campo Mecalux")
+    odoo_name = fields.Many2one("ir.model.fields", domain="[('model_id','=',odoo_model)]", string="Campo Odoo (si existe)" )
+    odoo_many_name = fields.Char(string="Odoo 'related'",
+                                help="Nombre del campo related")
     odoo_model = fields.Many2one(related="sga_file_id.odoo_model")
-    length = fields.Integer("Length", help="Numeric field.")
-    length_int = fields.Integer("Length Int", help="Length (Int part of float number)")
-    length_dec = fields.Integer("Length Dec", help="Length (dec part of float number)")
+    length = fields.Integer("Longitud", help="Campo numerico.")
+    length_int = fields.Integer("L. Entera", help="Longitud entera(nº de digitos de la parte entera en un tipo 'float')")
+    length_dec = fields.Integer("L. Decimal", help="Longitud decimal(nº de digitos de la parte decimal en un tipo 'float')")
     mecalux_type = fields.Selection([('A', 'Alfanumerico'), ('N', 'Numerico'),
-                                    ('B', 'Booleano'), ('D', 'Fecha'), ('V', 'Atributo/Variable'), ('L', '2many')])
-    default = fields.Char("Default Value")
-    fillchar = fields.Char("Char to fill", size=1)
+                                    ('B', 'Booleano'), ('D', 'Fecha'), ('V', 'Atributo/Variable'), ('L', 'one2many')])
+    default = fields.Char("V. por defecto")
+    fillchar = fields.Char("Caracter de relleno", size=1)
     sga_file_id = fields.Many2one("sgavar.file")
+    required = fields.Boolean("Obligatorio", default=False)
 
 
     @api.onchange('length','length_dec')
     def onchange_length(self):
         self.length_int = self.length - self.length_dec
 
-class ModelSgaVarfile(models.Model):
+class MecaluxFile(models.Model):
 
     _name = 'sgavar.file'
-
 
     def _get_name(self):
         for sgavar_file in self:
@@ -123,7 +104,6 @@ class ModelSgaVarfile(models.Model):
 
     _sql_constraints = [
         ('code_uniq', 'unique (code, version)', 'Este codigo/version de archivo ya existe!'),
-
     ]
 
     @api.constrains('version', 'version_active')
@@ -131,7 +111,7 @@ class ModelSgaVarfile(models.Model):
         domain = [('code', '=', self.code), ('version_active','=', True)]
         pool = self.search(domain)
         if len(pool) > 1:
-            raise ValidationError("You have yet a version active for this code")
+            raise ValidationError("Solo puedes tener una version activa para coada codigo de fichero")
 
     @api.multi
     def write(self, vals):
@@ -139,7 +119,7 @@ class ModelSgaVarfile(models.Model):
         for var in self.sga_file_var_ids:
             var_bytes += var.length
         vals['bytes'] = var_bytes
-        return super(ModelSgafile, self).write(vals)
+        return super(MecaluxFile, self).write(vals)
 
     def reset_sequence(self):
 
@@ -148,7 +128,7 @@ class ModelSgaVarfile(models.Model):
 
         for pool in pool_files:
             min_id = 10000
-            print "Actuializando %s" % pool.code
+            print "Actualizando %s" % pool.code
             for var in pool.sga_file_var_ids:
                 min_id = min(min_id, var.id)
             for var in pool.sga_file_var_ids:
@@ -157,33 +137,40 @@ class ModelSgaVarfile(models.Model):
 
         return
 
-class SGAFiles(models.Model):
+class MecaluxFileHeader(models.Model):
 
     #Historico de ficheros donde guardar
     _name = "sga.file"
 
     name = fields.Char()
-    sga_file = fields.Char('Data File')  # ruta completa donde esta el archivo
-    sga_path = fields.Char('File path', default='', help="File folder. Zip file if archived")
-    file_code = fields.Char('File Type', size=3)
+    sga_file = fields.Char('Fichero')  # ruta completa donde esta el archivo
+    sga_path = fields.Char('Carpeta', default='', help="Carpeta del archivo")
+    file_code = fields.Char('Codigo del fichero', size=3)
 
-    state = fields.Selection([('W', 'Waiting'), ('P', 'Processed'), ('E', 'Error')])
-    errors = fields.Integer('Errors', help="Number of errors before move to error folder", default=1)
-    type = fields.Selection ([('in', 'In'), ('out', 'Out')], string ="File type", translate=True)
+    state = fields.Selection([('W', 'En espera'), ('P', 'Procesado'), ('E', 'Error')])
+    errors = fields.Integer('Errores', help="Numero de veces que debe aparecer el error antes de mover a error", default=1)
+    type = fields.Selection ([('in', 'De Mecalux a Odoo'), ('out', 'De Odoo a Mecalux')], string ="Tipo de fichero (I/O)", translate=True)
 
-    file_time = fields.Datetime(string='File date/time')
-    version = fields.Integer('Version Control (Only dev mode)')
+    file_time = fields.Datetime(string='Fecha/hora del archivo')
+    version = fields.Integer('Version (Solo modo dev.)')
 
+    log_name = fields.Char("Fichero log asociado")
 
 
     @api.model
     def set_file_name(self, type=False, version=False, file_date=False):
 
-        if type and version and datetime==False:
+        if type and version and datetime == False:
             return False
         else:
             version = int(version)
-            filename = u'%s%02d%04d%02d%02d%02d%02d%02d' %(type, version, file_date.year, file_date.month, file_date.day, file_date.hour, file_date.minute, file_date.second)
+            filename = u'%s%02d%04d%02d%02d%02d%02d%02d' %(type, version,
+                                                           file_date.year,
+                                                           file_date.month,
+                                                           file_date.day,
+                                                           file_date.hour,
+                                                           file_date.minute,
+                                                           file_date.second)
             return filename
 
     @api.model
@@ -210,8 +197,7 @@ class SGAFiles(models.Model):
 
     @api.model
     def get_file_time(self, sga_filename):
-
-        if sga_filename:
+        try:
             return datetime(int(sga_filename[5:9]),
                             int(sga_filename[9:11]),
                             int(sga_filename[11:13]),
@@ -219,24 +205,119 @@ class SGAFiles(models.Model):
                             int(sga_filename[15:17]),
                             int(sga_filename[17:19]),
                             )
-        else:
+        except:
             return False
 
     @api.model
     def default_stage_id(self):
         return self.stage_id.get_default()
 
+    def format_to_mecalux_float(self, value, length_in=(12, 7, 5), default=False, fillchar='0'):
+
+        length, length_int, length_dec = length_in
+        value = value or default
+        if not value:
+            val = "0" * length
+            return val
+
+        if length_dec == 0:
+            # Formato entero
+            val = '%s' % int(value)
+            val = val.rjust(length, fillchar)
+        else:
+            # Formato decimal
+            value = float(value)
+            int_ = int(value)
+            dec_ = int((value - int_) * 10 ** length_dec)
+            val = str(int_).rjust(length_int, fillchar)
+            val += str(dec_).ljust(length_dec, fillchar)
+
+        return val
+
+    def format_from_mecalux_number(self, value, length_in=(12, 7, 5), default=False, fillchar='0'):
+
+        length, length_int, length_dec = length_in
+        value = str(value)
+        if length_dec>0:
+            res = value[0:length_int] + '.' + value[length_int: length_int + length_dec]
+            return float(res)
+        else:
+            res = value[0:length_int]
+            return int(res)
+
+    def format_to_mecalux_date(self, date):
+
+        return u'%04d%02d%02d%02d%02d%02d' % (
+            date.year, date.month, date.day, date.hour, date.minute,
+            date.second)
+
+    def format_from_mecalux_date(self, mec_date, long=True):
+
+        if not mec_date:
+            return False
+        if long:
+            return datetime(int(mec_date[0:4]),
+                            int(mec_date[4:6]),
+                            int(mec_date[6:8]),
+                            int(mec_date[8:10]),
+                            int(mec_date[10:12]),
+                            int(mec_date[12:14]))
+
+        else:
+            return datetime(int(mec_date[0:4]),
+                        int(mec_date[4:6]),
+                        int(mec_date[6:8]))
+
+    def write_log(self, str_log):
+
+        log_name = u"%04d%02d%02d.log" % (datetime.now().year, datetime.now().month, datetime.now().day)
+        log_path = u'%s/%s/%s'%(self.get_global_path(), 'log', log_name)
+
+        header = u'%s ' % datetime.now()
+        if self:
+            header += u'\n       %s ' % self.name
+
+        if not os.path.exists(log_path):
+            self.touch_file(log_path)
+        f = open(log_path, 'a')
+        if f:
+            str_log = u'%s >> %s\r' %(header, str_log)
+            print "------------------- %s" % log_path
+            f.write(str_log.encode('utf-8'))
+            f.close()
+
+        return True
+
+    def get_global_path(self):
+
+        icp = self.env['ir.config_parameter']
+        path = icp.get_param('path_files', 'path_files')
+        return path
+
+    def create_new_sga_file_error(self, error_str):
+        self.write_log(error_str)
+        self.move_file('error')
+        return False
 
     @api.model
-    def create_new_sga_file(self, sga_filename, dest_path = 'in', create = True):
-        icp = self.env['ir.config_parameter']
-        path = icp.get_param(
-            'path_files', 'path_files'
-        )
+    def create_new_sga_file(self, sga_filename, dest_path='in', create=True):
+
+        path = self.get_global_path()
         sga_path = u'%s/%s'%(path, dest_path)
+        error = False
+        error_str = ''
+
+        if len(sga_filename) != 19:
+            error_str = u"Error en nombre de archivo: %s caracteres"% len(sga_filename)
+            return self.create_new_sga_file_error(error_str)
+
         sga_file = os.path.join(sga_path, sga_filename)
         sga_type = self.get_sga_type(sga_filename)
         sga_file_time = self.get_file_time(sga_filename)
+        if not sga_file_time:
+            error_str = u"Error en la fecha de archivo %s " % sga_filename
+            return self.create_new_sga_file_error(error_str)
+
         sga_state = 'W'
         vals = {
             'file_code': sga_type,
@@ -244,25 +325,34 @@ class SGAFiles(models.Model):
             'sga_file': sga_file,
             'state': sga_state,
             'file_time': sga_file_time,
-            'sga_path': sga_path
-
+            'sga_path': sga_path,
+            'global_path': path,
+            'log_name': u"%04d%02d%02d.log" % (datetime.now().year, datetime.now().month, datetime.now().day)
         }
+
+        if create:
+            error = self.touch_file(sga_file)
+            if not error:
+                error_str = "Error al acceder al archivo %s" % sga_file
+                return self.create_new_sga_file_error(error_str)
+
         new_sga_file = self.create(vals)
+        if not new_sga_file:
+            error_str = "Error al crear SGA en la BD"
+            return self.create_new_sga_file_error(error_str)
 
-        if create and new_sga_file:
-            self.touch_file(sga_file)
-
+        self.write_log('Creado .... (%s)' % sga_filename)
         return new_sga_file
 
     @api.model
     def create(self, vals):
-        sga_file = super(SGAFiles, self).create(vals)
+        sga_file = super(MecaluxFileHeader, self).create(vals)
         if sga_file:
             res = self.touch_file(sga_file.sga_file)
             if res:
                 return sga_file
             else:
-                raise ValidationError(_('Error ! SGA file object cant be created because not file created.'))
+                raise ValidationError(_('Error al acceder/crear el archivo:\n%s.' % sga_file.sga_file))
         return sga_file
 
     def touch_file(self, sga_file):
@@ -277,129 +367,95 @@ class SGAFiles(models.Model):
             return False
         return True
 
-    def check_sga_name_xmlrpc(self):
-
-        filename = self._context.get('xmlrpc_filename', False)
-        path = self._context.get('xmlrpc_path', False)
-        sga_file, new = self.check_sga_name(filename, path)
-        res = {'sga_file': sga_file.id, 'new': new}
-        return res
-
-    def format_to_mecalux_date(self, date):
-        return u'%04d%02d%02d%02d%02d%02d' % (date.year, date.month, date.day, date.hour, date.minute, date.second)
-
     @api.model
     def check_sga_name(self, filename, path):
+        # compruebo que el fichero no este en la bd.
+        # si esta lo borro y creo uno nuevo
+
+        self.write_log("Proceso ... (%s)" % filename)
         domain = [('name', '=', filename)]
         sga_file = self.env['sga.file'].search(domain)
-        new = False
+        if sga_file:
+            sga_file.unlink()
+        sga_file = self.create_new_sga_file(filename, 'in', create=False)
         if not sga_file:
-            sga_file = self.create_new_sga_file(filename, 'in', create = False)
-            new = True
-        if not sga_file:
-            raise ValidationError(_('Error ! SGA file object cant be created.'))
-        return sga_file, new
+            error_str = 'Error al crear %s en la BD' % filename
+            sga_file.write_log(error_str)
+            return False
 
-
-    def process_line(self, line, line_number):
-
-        #procesamos una linea: sga_fiel_line
-        #res = self.file_line_ids.process_line(line)
-        vals = {'name': '%s [%s]'%(self.name, line_number),
-                'sga_file_id': self.id,
-                'line': line
-                }
-        print "Creo linea con %s"%vals
-        res = self.file_line_ids.create(vals)
-        return res
-
-
-    def sga_process_file_xmlrpc(self):
-        return self.sga_process_file(self._context.get('header_only', False))
-
-    def get_stage(self, stage_name):
-        res = self.env['sga.file.stage'].search([(stage_name, '=', True)], limit=1).id
-        return res and res.id
-
+        return sga_file
 
     def sga_process_file(self):
-        #procesar el archivo
-        #lo abro y lo leo
-        #primera linea es cabecera (si, no)
 
-        print "Proceso archivo %s"%self.name
         process = False
 
         if self.file_code == "CSO":
-            process = self.env['sale.order'].import_sga_sale_order(self.id)
+            self.write_log("Desde mecalux picking CSO ...")
+            process = self.env['stock.picking'].import_mecalux_CSO(self.id)
+
         elif self.file_code == 'STO':
-            process = self.env['stock.inventory'].import_sga_new_inventory(self.id)
-        import ipdb;
-        ipdb.set_trace()
+            self.write_log("Desde mecalux inventory STO ...")
+            process = self.env['stock.inventory'].import_inventory_STO(self.id)
+
+        elif self.file_code == 'CRP':
+            self.write_log("Desde mecalux picking CRP ...")
+            process = self.env['stock.picking'].import_mecalux_CRP(self.id)
+
+        elif self.file_code == 'EIM':
+            self.write_log("Desde mecalux error EIM ...")
+            process = self.env['sga.file.error'].import_mecalux_EIM(self.id)
+
         try:
             if process:
-                new_name = os.path.join(ARCHIVE_FOLDER, self.name)
-                print "Movemos de %s a %s" % (self.sga_file, new_name)
-                os.rename(self.sga_file, new_name)
-                self.sga_file = new_name
-                self.sga_path = ARCHIVE_FOLDER
-
+                self.write_log("-- OK >> %s" % self.sga_file)
+                self.move_file('archive', self.name)
 
         except:
-            print "ERROR -------------------"
             self.errors += self.errors
             if self.errors == ERRORS:
-                new_name = os.path.join(ERROR_FOLDER, self.name)
-                print "Movemos de %s a %s" % (new_name, self.file_path)
-                os.rename(self.file_path, new_name)
-
+                self.write_log("-- ERROR >> %s" % self.sga_file)
+                self.move_file('error', self.name)
         return True
 
     #este es la accion que recorre la carpeta de ficheros provenientes del SGA
-    @api.model
-    def process_sga_files(self, process = True, file_type=''):
+    def sga_process_file_xmlrpc(self):
+        return self.process_sga_files()
+
+    def process_sga_files(self, file_type=False, folder='in'):
 
         res_file = False
-        for path, directories, files in os.walk(IN_FOLDER, topdown=False):
+        global_path = u'%s/%s' %(self.get_global_path(), folder)
+        self.write_log("Buscando ficheros en >> %s" % global_path)
+
+        for path, directories, files in os.walk(global_path, topdown=False):
             for name in files:
                 if file_type:
                     if name[0:3] != file_type:
                         continue
-                print "SGA file >>> %s" %name
-                sga_file, new = self.check_sga_name(name, path)
-                res_file = sga_file.sga_process_file()
+                sga_file = self.check_sga_name(name, path)
+                if sga_file:
+                    # lo proceso
+                    res_file = sga_file.sga_process_file()
         return res_file
 
-    def get_folders(self):
-        # in_folder, out_folder, error_folder, delete_folder, archive_folder, delete_file = self.get_folders()
-        return IN_FOLDER, OUT_FOLDER, ERROR_FOLDER, DELETE_FOLDER, ARCHIVE_FOLDER, DELETE_FILE
+    def move_file(self, folder, file_name=False):
+        new_path = False
 
-
-    def save_file(self, name, value):
-        path = os.path.abspath(os.path.dirname(__file__))
-        path += '/icecat/%s' % name
-        path = re.sub('wizard/', '', path)
-        f = open(path, 'w')
         try:
-            f.write(value)
-        finally:
-            f.close()
-        return path
-
-
-    @api.multi
-    def sga_file_generate(self, code, ids=[], create=True):
-
-        domain = [('code', '=', code)]
-        sga_file = self.env['sga.file'].search(domain)
-        sga_file.check_sga_file(sga_file.odoo_model, ids=ids, create=create)
-        return True
+            new_path = u'%s/%s' % (self.get_global_path(), folder)
+            new_name = os.path.join(new_path, self.name)
+            os.rename(self.sga_file, new_name)
+            self.sga_file = new_name
+            self.sga_path = new_path
+            self.write_log("-- Movemos  >> %s a %s" %(self.name, new_path))
+        except:
+            self.write_log("-- Error al mover >> %s a %s" %(self.name, new_path))
 
     @api.multi
-    def check_sga_file(self, model, ids = [], code = False, create = True):
+    def check_sga_file(self, model, ids=[], code=False, create=True):
         # code = False,  version = False, field_list = False, field_ids = False, field_list_ids = False):
-        # model modelo principal sale_order
-        # ids si se especifica recorre solo estos id, si no busca por dominio, y si no todos
+        # model modelo principal
+        # ids si se especifica recorre solo estos id,
         # create fuerza la creacion del fichero
         # code codigo de aplicacion del fichero
         # version version del fichero
@@ -408,87 +464,82 @@ class SGAFiles(models.Model):
         # field_ids si tiene lista de filas (sale_order_line estan en este campo
         # con la lista de campos/longitud field_list_ids
 
-        import ipdb; ipdb.set_trace()
-        def get_val_line(val, model):
-
-            meca_field = val.name
-            length = [val.length, val.length_int,  val.length_dec]
-            fillchar = val.fillchar
-            type_field = val.mecalux_type
-            default_value = val.default
-
-            odoo_field = val.odoo_name.name
-            # meca_field = meca_field in model.fields_get_keys() and model.fields_get()[meca_field]
-
-            # Si el campo no es de odoo, rellena con lo que sea necesario
-            if not odoo_field:
-                res = self.odoo_to_mecalux(False, length, type_field, default_value, fillchar)
-                return res
-
-            # Si el campo esta en odoo:
-            if 'many' in type_field:
-                # Si es un campo many ... voy a intentar evitar esto efiniendo related en los modelos
-                value = model[odoo_field] and model[odoo_field][val.odoo_many_name] or False
-            else:
-                value = model[odoo_field]
-
-            res = self.odoo_to_mecalux(value, length, type_field, default_value, fillchar)
-            return res
-
         def get_line(sgavar, model_pool):
-            import ipdb; ipdb.set_trace()
+            # TODO Revisar si hace falta contador para los
+            # todo numeros de lineas o vale el id de los _ids
+            cont = 0
+            res = ''
+            line_ids = False
             for model in model_pool:
-                more = False
-                model_str=''
+                cont += 1
+                model_str = ''
                 var_str = ''
+                new_sga_file.write_log('--> Modelo %s'%model)
+
                 for val in sgavar.sga_file_var_ids:
+                    length = [val.length, val.length_int, val.length_dec]
 
                     if val.mecalux_type != "L":
-                        var_str = get_val_line(val, model)
-                    else:
-
-                        new_model = model_pool[val.odoo_name.name]
-                        new_sgavar = self.env['sgavar.file'].search([('code', '=', val.default)], order="version desc", limit=1)
-                        if len(new_model) > 0:
-                            more = True
-                            var_str = self.odoo_to_mecalux(False, (10, 10, 0), 'N', len(new_model), '0')
+                        if val.name == "line_number" and not val.odoo_name:
+                            value = cont
+                        elif val.odoo_name:
+                            value = model[val.odoo_name.name]
                         else:
-                            var_str = self.odoo_to_mecalux(False, (10, 10, 0), 'N', 0, '0')
-                    print "-----------------------Evaluamos %s con resultado %s"%(val.name, var_str)
+                            value = ''
+                        var_str = self.odoo_to_mecalux(value, length, val.mecalux_type, val.default, val.fillchar)
+                    else:
+                        new_model = model_pool[val.odoo_name.name]
+                        new_sgavar = self.env['sgavar.file'].search([('code', '=', val.default)], limit=1)
+                        value = len(new_model) or 0
+                        var_str = self.odoo_to_mecalux(value, length, val.mecalux_type, '', val.fillchar)
+                        line_ids = True
                     model_str += var_str
-                f.write(model_str + "\n")
-                if more:
-                    var_str_ids = get_line(new_sgavar, new_model)
-            return True
+
+                res += model_str + '\n'
+                # f.write(model_str + "\n")
+
+                if line_ids:
+                    res += get_line(new_sgavar, new_model)
+            return res
 
         domain = [('code', '=', code)]
         sgavar = self.env['sgavar.file'].search(domain)
         if not sgavar:
-            raise  "No se ha encontrado"
+            raise ValidationError("No se ha encontrado un modelo para ese tipo de fichero %s" % code)
 
+        if not ids:
+            raise ValidationError("No se ha encontrado ningun registro para procesar")
         model_pool = self.env[model].browse(ids)
 
-        sga_file = self.env['sga.file']
+        if not model_pool:
+            raise ValidationError("No se ha encontrado ningun registro de %s" % model)
+
         data_file = datetime.now()
         sga_file_name = self.set_file_name(sgavar.code, sgavar.version, data_file)
-        new_sga_file = self.create_new_sga_file(sga_file_name, 'out', create=create)
+        if not sga_file_name:
+            raise ValidationError("Error en el nombre del fichero")
 
+        new_sga_file = self.create_new_sga_file(sga_file_name, 'out', create=create)
+        if not new_sga_file:
+            raise ValidationError("Error. Revisa el fichero del log para mas detalles")
+
+        new_sga_file.write_log('Compruebo fichero ...')
 
         if new_sga_file:
-            f = open(new_sga_file.sga_file, 'w')
+            f = open(new_sga_file.sga_file, 'a')
             if f:
-                get_line(sgavar, model_pool)
+                file_str = get_line(sgavar, model_pool)
+                f.write(file_str.encode('utf-8'))
                 f.close()
+            else:
+                raise ValidationError("Error al escribir los datos en %s" % new_sga_file.sga_file)
 
         return new_sga_file
 
-    def odoo_to_mecalux(self, value, length_in, type, default, fillchar):
-        # formatea el valor value segun la longitud de la cadena y el tipo de variable de mecalux
-        # print type, value, length
-
+    def odoo_to_mecalux(self, value, length_in, type, default="", fillchar=" "):
 
         def type_A(value):
-            #Tipo string
+            # Tipo string
             if not default and not value:
                 val = " " * length_int
             else:
@@ -497,45 +548,23 @@ class SGAFiles(models.Model):
             return val
 
         def type_B(value):
-            #Tipo string
-            if value == "1" or value == True:
+            # Tipo string
+            if value == '':
+                new_val = " "
+            if value == "1" or value is True:
                 new_val = "1"
-            else:
+            elif value == "0" or value is False:
                 new_val = "0"
-
-            #val = new_val.ljust(length_int, fillchar)
+            else:
+                new_val = " "
             return new_val
 
         def type_N(value):
 
-            if not value:
-                if not default:
-                    val = "0" * length
-                    return val
-                else:
-                    value = default
-
-            if length_dec == 0:
-                # Formato de entero
-                value = int(value)
-                new_val = '%s' % value
-                val = new_val.rjust(length, fillchar)
-            else:
-                # Formato decimal
-                value = float(value)
-                int_ = int(value)
-                dec_ = int((value - int_) * 10**length_dec)
-                int_ = str(int_)
-                dec_ = str(dec_)
-                val = int_.rjust(length_int, fillchar)
-                val += dec_.ljust(length_dec, fillchar)
-            print "-------------Devuelvo %s"%val
+            val = self.format_to_mecalux_float(value, length_in, default=False, fillchar='0')
             return val
 
         length, length_int, length_dec = length_in
-
-        print "Longitud: %s,%s,%s" %(length_int, length_dec, length)
-
         fillchar = str(fillchar)
 
         if type == 'A':
@@ -543,15 +572,21 @@ class SGAFiles(models.Model):
             return type_A(value)
 
         elif type == 'B':
-            # Mecaluc Boolean
+            # Mecalux Boolean
+            if value == "":
+                value == default or fillchar
+
             return type_B(value)
 
         elif type == 'N':
             # Mecalux Numeric
             return type_N(value)
 
+        elif type == 'L':
+            # One2many, pero es Mecalux Numeric
+            return type_N(value)
+
         elif type == "D":
-            fillchar = ' '
             if value:
                 value = self.format_to_mecalux_date(datetime.strptime(value, tools.DEFAULT_SERVER_DATETIME_FORMAT))
             else:
@@ -565,27 +600,13 @@ class SGAFiles(models.Model):
         else:
             return ''
 
-class SGAfilesline(models.Model):
+class MecaluxFileLine(models.Model):
     _name = "sga.file.line"
 
     sga_file_id = fields.Many2one('sga.file')
     stock_move_id = fields.Many2one("stock.move")
     line = fields.Char('File line')
     name = fields.Char('Line name')
-
-class SGAfileerror(models.Model):
-
-    _name = "sga.file.error"
-
-    sga_file_id = fields.Many2one('sga.file')
-    file_name = fields.Char(related='sga_file_id.name', string='File name', size=10)
-    line_number = fields.Integer('Line number')
-    object_type = fields.Char('Object type', size = 3)
-    version = fields.Integer ('version')
-    object_id = fields.Char("Object id", size=50)
-    error_code = fields.Integer('Error code')
-    error_message = fields.Char("Error message", size = 255)
-    date = fields.Date('Error date')
 
 
 

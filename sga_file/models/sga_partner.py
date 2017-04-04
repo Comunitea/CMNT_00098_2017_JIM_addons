@@ -18,9 +18,9 @@ class ResPartnerSGA(models.Model):
 
     sga_operation = fields.Selection([('A', 'Alta'), ('M', 'Modificacion'),
                                       ('B', 'Baja'), ('F', 'Modificacion + Alta')], default='F')
-    sga_outbound_priority = fields.Integer('Outbound Priority')
+    sga_outbound_priority = fields.Integer('Outbound Priority', default=50)
     sga_addr_name = fields.Char('Address Name', size=255)
-    sga_active_fusion = fields.Boolean('Activer Fusion')
+    sga_active_fusion = fields.Selection([('1', 'True'), ('0', 'False')], 'Active Fusion', default='0')
 
     @api.multi
     def new_mecalux_file(self):
@@ -29,12 +29,3 @@ class ResPartnerSGA(models.Model):
         new_sga_file = self.env['sga.file'].check_sga_file('res.partner', ids, code='ACC')
 
         return True
-
-    @api.model
-    def get_sga_line(self, type='ACC', version='04'):
-        if type=='ACC' and version=='04':
-            line = (u'%s%s%s%s%s%s%s%s%s')%(self.sga_operation, self.sga.account_code.rjust(12), self.name.rjust(80),
-                              self.sga_outbound_priority.rjust(80), self.sga_addr_name.rjust(255),self.sga_white_space.rjust(""),
-                                      self.sga_active_fusion.rjust(1), self.sga_atribute.rjust(20), self.sga_line_number.rjust(10))
-        else:
-            return False

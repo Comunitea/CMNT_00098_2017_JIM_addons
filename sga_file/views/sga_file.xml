@@ -82,13 +82,14 @@
                             <field name="odoo_model"/>
                             <field name="odoo_name"/>
                             <field name="odoo_many_name"/>
-
+                            <field name="mecalux_type"/>
                         </group>
                         <group>
+
                             <field name="length"/>
                             <field name="length_int"/>
                             <field name="length_dec"/>
-                            <field name="mecalux_type"/>
+
                             <field name="default"/>
                             <field name="fillchar"/>
                         </group>
@@ -130,9 +131,10 @@
                     </group>
 
                         <field name="sga_file_var_ids">
-                            <tree >
+                            <tree editable="top">
                                 <field name="sequence" widget="handle"/>
                                 <field name="name"/>
+                                <field name="required"/>
                                 <field name="mecalux_type"/>
                                 <field name="odoo_name"/>
                                 <field name="odoo_model"/>
@@ -155,6 +157,7 @@
             <field name="arch" type="xml">
                 <tree >
                     <field name="sequence" widget="handle"/>
+                    <field name="required"/>
                     <field name="name"/>
                     <field name="mecalux_type"/>
                     <field name="odoo_name"/>

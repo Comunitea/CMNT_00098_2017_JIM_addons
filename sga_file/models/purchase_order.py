@@ -32,6 +32,7 @@ class PurchaseOrderSGA(models.Model):
 
     @api.multi
     def new_mecalux_file(self):
+        raise ValidationError("De momento, desde albaranes")
 
         ids = [x.id for x in self]
         print ids
