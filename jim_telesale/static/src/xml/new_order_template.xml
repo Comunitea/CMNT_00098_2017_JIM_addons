@@ -31,14 +31,14 @@
     <!-- Add column global stock to order lines -->
     <t t-extend="Order-Widget">
         <t t-jquery=".header-product" t-operation="after">
-            <th class="header-global-stock">Global Stock</th>
+            <th class="header-global-stock">Available</th>
         </t>
     </t>
 
     <t t-extend="Order-line-Widget">
         <t t-jquery=".cell-product" t-operation="after">
              <td class="cell-global-stock">
-                <input type="search" class='col-global-stock mandatory' readonly="True" t-att-value="widget.model.get('global_stock')"/>
+                <input type="search" class='col-global-stock' readonly="True" t-att-value="widget.model.get('global_available_stock').toFixed(2)"/>
             </td>
         </t>
     </t>

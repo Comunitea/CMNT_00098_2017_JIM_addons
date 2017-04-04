@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+    <data>
+
+        <record id="propagate_partner_properties_form_view" model="ir.ui.view">
+            <field name="name">propagate.partner.properties.form.view</field>
+            <field name="model">propagate.partner.properties</field>
+            <field name="arch" type="xml">
+                <form>
+                    <group>
+                        <p>
+                        This wizard will propagate the nextone fields to the equivalent in other companies.
+                        </p>
+                        <br/>
+                            <ul>
+                              <li>Payment Term</li>
+                              <li>Supplier Payment Term</li>
+                              <li>Account Receivable</li>
+                              <li>Account Payable</li>
+                              <li>Fiscal Position</li>
+                              <li>Sale Priecelist</li>
+                            </ul>  
+                    </group>
+                    <footer>
+                        <button name="do_propagate" string="Propagate" type="object" class="oe_stat_button"
+                                icon="fa-arrow-circle-right"/>
+                        <button name="cancel" string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+         <act_window id="propagate_partner_fields_action"
+             name="Propagate property fields"
+             key2="client_action_multi"
+             src_model="res.partner"
+             res_model="propagate.partner.properties"
+             view_mode="form"
+             view_type="form"
+             target="new"
+            />
+       
+    </data>
+</openerp>
