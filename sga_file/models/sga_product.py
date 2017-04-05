@@ -3,7 +3,6 @@
 # Kiko Sanchez (<kiko@comunitea.com>)
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-
 from odoo import fields, models, tools, api, _
 
 from odoo.exceptions import AccessError, UserError, ValidationError
@@ -12,29 +11,26 @@ from datetime import datetime, timedelta
 import os
 import re
 
-#ADDR_LINE1=30
-#ADDR_LINE2=30
-#CITY=25
-#STATE=2
-#COUNTRY=15
-#ZIP=10
-#CONTA
-#....
-
 class SGAProductCategory(models.Model):
 
-    _inherit="product.category"
-    sga_producttype_code = fields.Char("Sga Producttype Code", size=12)
-    sga_parent_producttype_code= fields.Char(related="parent_id.sga_producttype_code")
+    _inherit = "product.category"
+    sga_producttype_code = fields.Char("Codigo de categoria", size=12)
+    sga_parent_producttype_code = fields.Char(related="parent_id.sga_producttype_code")
 
+    @api.multi
+    def export_category_to_mecalux(self):
+        ids = [x.id for x in self]
+        print ids
+        new_sga_file = self.env['sga.file'].check_sga_file('product.category', ids, code='TPR')
 
+        return True
 
 class SGAContainerTypeCode(models.Model):
+
     _name ="sga.containertype"
 
-
-    name = fields.Char("SGA container type code", size=10)
-    sga_desc_containertype_code = fields.Char("SGA container description")
+    name = fields.Char("Codigo de contenedor (SGA)", size=10)
+    sga_desc_containertype_code = fields.Char("Descripcion de contenedor (SGA)")
 
 class SGAProductPackaging(models.Model):
 
@@ -75,26 +71,25 @@ class SGAProductPackaging(models.Model):
             res = self.product_tmpl_id.new_mecalux_file()
         return super(SGAProductPackaging, self).write(vals)
 
-class SGAProductTemplate(models.Model):
+class SGAProductProduct(models.Model):
 
-    _inherit = "product.template"
+    _inherit = "product.product"
+    sga_prod_shortdesc = fields.Char("Descripcion corta (SGA)", size=50)
+    sga_stock = fields.Float('Stock (SGA)', help="Last PST from Mecalux")
 
-    sga_change_material_abc= fields.Selection ([(0, "NO"),(1,"SI")], default=1)
-    sga_material_abc_code = fields.Selection ([('A', 'A'), ('B', 'B'), ('C', 'C')], default="C")
+    sga_change_material_abc = fields.Selection([('0', "NO"), ('1', "SI")], default='1')
+    sga_material_abc_code = fields.Selection([('A', 'A'), ('B', 'B'), ('C', 'C')], default="C")
     sga_product_type_code = fields.Char(related='categ_id.sga_producttype_code')
     sga_uom_base_code = fields.Char(related='uom_id.sga_uom_base_code')
-    sga_desc_uom_base_code= fields.Char(related='uom_id.name')
-    sga_stock = fields.Float('SGA Stock', help="Last PST from Mecalux")
+    sga_desc_uom_base_code = fields.Char(related='uom_id.name')
     # sga_code = fields.Char("SGA Code File", default="PRO")
-    sga_prod_shortdesc = fields.Char("SGA short description", size=50)
     sga_warehouse_code = fields.Char(related="warehouse_id.code")
-
 
     @api.multi
     def new_mecalux_file(self):
         ids = [x.id for x in self]
         print ids
-        new_sga_file = self.env['sga.file'].check_sga_file('product.template', ids, code='PRO')
+        new_sga_file = self.env['sga.file'].check_sga_file('product.product', ids, code='PRO')
 
         return True
 
@@ -102,16 +97,26 @@ class SGAProductTemplate(models.Model):
     def check_mecalux_stock(self):
         ids = [x.id for x in self]
         print ids
-        new_sga_file = self.env['sga.file'].check_sga_file('product.template', ids, code='PST')
-
+        new_sga_file = self.env['sga.file'].check_sga_file('product.product', ids, code='PST')
         return True
+
+class SGAProductTemplate(models.Model):
+
+    _inherit = "product.template"
+
+    sga_change_material_abc = fields.Selection ([('0', "NO"),('1',"SI")], default='1')
+    sga_material_abc_code = fields.Selection ([('A', 'A'), ('B', 'B'), ('C', 'C')], default="C")
+    sga_product_type_code = fields.Char(related='categ_id.sga_producttype_code')
+    sga_uom_base_code = fields.Char(related='uom_id.sga_uom_base_code')
+    sga_desc_uom_base_code= fields.Char(related='uom_id.name')
+    # sga_code = fields.Char("SGA Code File", default="PRO")
+    sga_warehouse_code = fields.Char(related="warehouse_id.code")
 
 class SGAProductUOM(models.Model):
     _inherit = "product.uom"
 
-    sga_uom_base_code = fields.Char("Sga uom base code", size=12, required=True)
+    sga_uom_base_code = fields.Char("Codigo de u.m.(SGA)", size=12, required=True)
     # sga_desc_uom_base_code = fields.Char("Sga description", size=30)
-
 
 class ProductSupplier(models.Model):
 

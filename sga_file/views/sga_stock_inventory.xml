@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        # Stock Picking to Mecalux
+
+        <record id="stock_inventory_query_to_mecalux_act" model="ir.actions.server">
+            <field name="name">Export Query to Mecalux</field>
+            <field name="model_id" ref="model_stock_inventory"/>
+            <field name="state">code</field>
+            <field name="condition">True</field>
+            <field name="code">records.new_stock_query_to_mecalux()</field>
+        </record>
+
+        <record id="stock_inventory_query_to_mecalux" model="ir.values">
+            <field name="name">stock.inventory.query.to.mecalux</field>
+            <field name="model">stock.inventory</field>
+            <field name="key" >action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,%d'%stock_inventory_query_to_mecalux_act"/>
+        </record>
+
+        <record id="stock_inventory_query_from_mecalux_act" model="ir.actions.server">
+            <field name="name">Import Query to Mecalux</field>
+            <field name="model_id" ref="model_stock_inventory"/>
+            <field name="state">code</field>
+            <field name="condition">True</field>
+            <field name="code">records.get_stock_query_from_mecalux()</field>
+        </record>
+
+        <record id="stock_inventory_query_from_mecalux" model="ir.values">
+            <field name="name">stock.inventory.query.from.mecalux</field>
+            <field name="model">stock.inventory</field>
+            <field name="key" >action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,%d'%stock_inventory_query_from_mecalux_act"/>
+        </record>
+
+
+        <record model="ir.ui.view" id="view_inventory_form_no_company">
+            <field name="name">view.inventory.form.no_company</field>
+            <field name="model">stock.inventory</field>
+            <field name="inherit_id" ref="stock.view_inventory_form"/>
+            <field name="arch" type="xml">
+                <field name="theoretical_qty" position="before">
+                    <field name="global_qty"/>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</openerp>

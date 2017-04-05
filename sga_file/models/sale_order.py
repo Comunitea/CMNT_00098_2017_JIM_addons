@@ -31,8 +31,6 @@ class SaleOrderLineSGA (models.Model):
 
 class SaleOrderSGA(models.Model):
 
-    #
-
     _inherit = "sale.order"
 
     sga_operation = fields.Selection([('A', 'Alta'), ('M', 'Modificacion'),
@@ -43,16 +41,12 @@ class SaleOrderSGA(models.Model):
     sale_order_type_description = fields.Char(related="sale_order_type_id.description")
     sga_priority = fields.Integer("Priority", defatult=100)
     account_code = fields.Char(related="partner_id.ref")
-    delivery_inst = fields.Char("Delivery warnings", size=255)
-    verify_stock = fields.Boolean("Verify Stock", default=0)
-
-
-
-
+    delivery_inst = fields.Char("Notas en la entrega", size=255)
+    verify_stock = fields.Boolean("Se verifica stock", default=0)
 
     @api.multi
     def new_mecalux_file(self):
-
+        raise ValidationError("De momento, desde albaranes")
         ids = [x.id for x in self]
         print ids
         new_sga_file = self.env['sga.file'].check_sga_file('sale.order', ids, code='SOR')

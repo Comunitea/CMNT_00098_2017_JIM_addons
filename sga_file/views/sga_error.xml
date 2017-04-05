@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+    <data>
+        <record id="model_sgafile__error_form_view" model="ir.ui.view">
+            <field name="name">sgavar.file.error.form.view</field>
+            <field name="model">sga.file.error</field>
+            <field name="arch" type="xml">
+                <form  create="false" edit="false">
+                    <group>
+                        <group>
+                            <field name="file_name"/>
+                            <field name="line_number"/>
+                            <field name="object_type"/>
+                            <field name="version"/>
+                        </group>
+                        <group>
+                            <field name="object_id"/>
+                            <field name="error_code"/>
+                            <field name="date_error"/>
+                            <field name="error_message"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="sga_file_id"/>
+                    </group>
+                </form>
+            </field>
+        </record>
+
+        <record id="model_sgafile_error_tree_view" model="ir.ui.view">
+            <field name="name">sga.file.error.tree.view</field>
+            <field name="model">sga.file.error</field>
+            <field name="arch" type="xml">
+                <tree editable="0" create="0">
+                    <field name="file_name" />
+                    <field name="line_number"/>
+                    <field name="object_type"/>
+                    <field name="version"/>
+                    <field name="object_id"/>
+                    <field name="error_code"/>
+                    <field name="error_message"/>
+                    <field name="date_error"/>
+                    <field name="sga_file_id"/>
+                </tree>
+            </field>
+        </record>
+        <record id="model_sgafile_error_action_view" model="ir.actions.act_window">
+            <field name="name">Errores de importacion</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sga.file.error</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_type">form</field>
+
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    No hay ficheros
+                </p>
+            </field>
+        </record>
+        <menuitem action="model_sgafile_error_action_view" id="Error SGAfiles" parent="menu_sga_mecalux" sequence="5"/>
+    </data>
+</openerp>

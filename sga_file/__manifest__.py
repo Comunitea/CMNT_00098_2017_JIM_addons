@@ -13,11 +13,13 @@
     'depends': [
         'stock',
         'sale',
-        'sale_stock'
+        'sale_stock',
+        'jim_stock'
     ],
     'contributors': [
         "Comunitea",
         "Kiko Sanchez<kiko@comunitea.com>",    ],
+
     "data": [
         'data/sga_data.xml',
         'views/sga_file.xml',
@@ -26,6 +28,10 @@
         'views/sga_sale_order.xml',
         'views/sga_purchase_order.xml',
         'views/sga_stock_picking.xml',
+        'views/sga_stock_inventory.xml',
+        'views/sga_res_partner.xml',
+        'views/sga_error.xml',
+        'security/ir.model.access.csv',
 
     ],
     "demo": [
@@ -36,3 +42,4 @@
     ],
     'installable': True
 }
+
