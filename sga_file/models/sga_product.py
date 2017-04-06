@@ -60,7 +60,7 @@ class SGAProductPackaging(models.Model):
     def create(self, vals):
 
         new_sga = super(SGAProductPackaging, self).create(vals)
-        res = new_sga.product_tmpl_id.new_mecalux_file()
+        res = new_sga.product_tmpl_id.product_variant_ids.new_mecalux_file()
         new_sga.sga_operation = "M"
         return new_sga
 
@@ -68,7 +68,7 @@ class SGAProductPackaging(models.Model):
     def write(self, vals):
 
         if vals == {'sga_operation': 'M'}:
-            res = self.product_tmpl_id.new_mecalux_file()
+            res = self.product_tmpl_id.product_variant_ids.new_mecalux_file()
         return super(SGAProductPackaging, self).write(vals)
 
 class SGAProductProduct(models.Model):
