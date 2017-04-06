@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-03 17:54+0000\n"
-"PO-Revision-Date: 2017-04-03 17:54+0000\n"
+"POT-Creation-Date: 2017-04-05 15:30+0000\n"
+"PO-Revision-Date: 2017-04-05 15:30+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -66,6 +66,17 @@ msgid "ID"
 msgstr "ID"
 
 #. module: jim_intercompany
+#: code:addons/jim_intercompany/models/procurement.py:17
+#, python-format
+msgid "Intercompany Buy"
+msgstr "Compra intercompañía"
+
+#. module: jim_intercompany
+#: model:ir.model.fields,field_description:jim_intercompany.field_product_template_intercompany_price
+msgid "Intercompany Price"
+msgstr "Precio intercompañía"
+
+#. module: jim_intercompany
 #: model:ir.model,name:jim_intercompany.model_stock_inventory
 msgid "Inventory"
 msgstr "Inventario"
@@ -89,6 +100,12 @@ msgid "Last Updated on"
 msgstr "Última actualización el"
 
 #. module: jim_intercompany
+#: code:addons/jim_intercompany/models/procurement.py:51
+#, python-format
+msgid "No company to product %s.                     Please set one to fix this procurement."
+msgstr "No hay compañía en el producto %s. Por fvor, establezca una para corregir el abastecimiento."
+
+#. module: jim_intercompany
 #: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view
 msgid "Payment Term"
 msgstr "Plazo de pago"
@@ -102,6 +119,11 @@ msgstr "Abastecimiento"
 #: model:ir.model,name:jim_intercompany.model_procurement_rule
 msgid "Procurement Rule"
 msgstr "Regla de abastecimiento"
+
+#. module: jim_intercompany
+#: model:ir.model,name:jim_intercompany.model_product_template
+msgid "Product Template"
+msgstr "Plantilla de producto"
 
 #. module: jim_intercompany
 #: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view
@@ -134,6 +156,12 @@ msgstr "Plazo de pago proveedor"
 #: model:ir.ui.view,arch_db:jim_intercompany.propagate_product_properties_form_view
 msgid "Supplier Taxes"
 msgstr "Impuestos de proveedor"
+
+#. module: jim_intercompany
+#: code:addons/jim_intercompany/models/procurement.py:82
+#, python-format
+msgid "This purchase order has been created from:                     <a href=# data-oe-model=procurement.order                     data-oe-id=%d>%s</a>"
+msgstr "Estas órdenes de compara fueron creadas:                     <a href=# data-oe-model=procurement.order                     data-oe-id=%d>%s</a>"
 
 #. module: jim_intercompany
 #: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view

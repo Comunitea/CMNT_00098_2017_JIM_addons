@@ -44,11 +44,11 @@ class StockInventoryLineSGA(models.Model):
     def _compute_global_qty(self):
         if not self.product_id:
             self.global_qty = 0
-            return
+        else:
             global_qty = sum([x.qty for x in self._get_quants_global()])
-        if global_qty and self.product_uom_id and self.product_id.uom_id != self.product_uom_id:
-            global_qty = self.product_id.uom_id._compute_quantity(global_qty, self.product_uom_id)
-        self.global_qty = global_qty
+            if global_qty and self.product_uom_id and self.product_id.uom_id != self.product_uom_id:
+                global_qty = self.product_id.uom_id._compute_quantity(global_qty, self.product_uom_id)
+            self.global_qty = global_qty
 
     def _get_quants_global(self):
         return self.env['stock.quant'].search([

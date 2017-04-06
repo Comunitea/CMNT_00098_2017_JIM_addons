@@ -4,3 +4,4 @@
 import procurement
 import purchase_order
 import stock_inventory
+import product
