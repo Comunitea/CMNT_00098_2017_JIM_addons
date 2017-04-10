@@ -12,6 +12,7 @@
         'sale',
         'stock',
         'purchase',
+        'procurement',
         'sale_stock',
         'inter_company_rules'
     ],
