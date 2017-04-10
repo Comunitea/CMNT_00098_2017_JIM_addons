@@ -27,8 +27,8 @@ class ProductTemplate(models.Model):
             for p in template.product_variant_ids:
                 global_real_stock += p.global_real_stock
                 global_available_stock += p.global_available_stock
-        template.global_real_stock = global_real_stock
-        template.global_available_stock = global_available_stock
+            template.global_real_stock = global_real_stock
+            template.global_available_stock = global_available_stock
 
 
 class ProductProduct(models.Model):
