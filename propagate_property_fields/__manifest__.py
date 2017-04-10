@@ -3,24 +3,21 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 {
-    'name': 'Jim Intercompany',
+    'name': 'Propagate Property Fields',
     'version': '10.0.0.0.0',
     'author': 'Comunitea ',
     "category": "Custom",
     'license': 'AGPL-3',
     'depends': [
-        'sale',
         'stock',
-        'purchase',
-        'procurement',
-        'sale_stock',
-        'inter_company_rules'
     ],
     'contributors': [
         "Comunitea ",
+        "Javier Colmenero <javier@comunitea.com>"
     ],
     "data": [
-        'views/product_view.xml',
+        'wizard/propagate_partner_properties_view.xml',
+        'wizard/propagate_product_properties_view.xml'
     ],
     "installable": True
 }

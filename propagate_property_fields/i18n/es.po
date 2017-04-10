@@ -1,0 +1,91 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* propagate_property_fields
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-04-10 17:56+0000\n"
+"PO-Revision-Date: 2017-04-10 17:56+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: propagate_property_fields
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_partner_properties_form_view
+msgid "Account Payable"
+msgstr "Cuenta a pagar"
+
+#. module: propagate_property_fields
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_partner_properties_form_view
+msgid "Account Receivable"
+msgstr "Cuenta a cobrar"
+
+#. module: propagate_property_fields
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_partner_properties_form_view
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_product_properties_form_view
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: propagate_property_fields
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_product_properties_form_view
+msgid "Customer Taxes"
+msgstr "Impuestos de cliente"
+
+#. module: propagate_property_fields
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_partner_properties_form_view
+msgid "Fiscal Position"
+msgstr "Posición fiscal"
+
+#. module: propagate_property_fields
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_partner_properties_form_view
+msgid "Payment Term"
+msgstr "Plazo de pago"
+
+#. module: propagate_property_fields
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_partner_properties_form_view
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_product_properties_form_view
+msgid "Propagate"
+msgstr "Propagar"
+
+#. module: propagate_property_fields
+#: model:ir.actions.act_window,name:propagate_property_fields.propagate_partner_fields_action
+#: model:ir.actions.act_window,name:propagate_property_fields.propagate_product_fields_action
+msgid "Propagate property fields"
+msgstr "Propagar campos multicompañía"
+
+#. module: propagate_property_fields
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_partner_properties_form_view
+msgid "Sale Priecelist"
+msgstr "Tarifa de venta"
+
+#. module: propagate_property_fields
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_partner_properties_form_view
+msgid "Supplier Payment Term"
+msgstr "Plazo de pago proveedor"
+
+#. module: propagate_property_fields
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_product_properties_form_view
+msgid "Supplier Taxes"
+msgstr "Impuestos de proveedor"
+
+#. module: propagate_property_fields
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_partner_properties_form_view
+#: model:ir.ui.view,arch_db:propagate_property_fields.propagate_product_properties_form_view
+msgid "This wizard will propagate the nextone fields to the equivalent in other companies."
+msgstr "Este asistente propagará los siguientes campos a sus equivalentes en las otras compañías:"
+
+#. module: propagate_property_fields
+#: model:ir.model,name:propagate_property_fields.model_propagate_partner_properties
+msgid "propagate.partner.properties"
+msgstr "propagate.partner.properties"
+
+#. module: propagate_property_fields
+#: model:ir.model,name:propagate_property_fields.model_propagate_product_properties
+msgid "propagate.product.properties"
+msgstr "propagate.product.properties"
+
