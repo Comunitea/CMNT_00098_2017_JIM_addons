@@ -21,6 +21,12 @@ class ProcurementRule(models.Model):
 class ProcurementOrder(models.Model):
     _inherit = "procurement.order"
 
+    @api.model
+    def create(self, values):
+        if self.env.context.get('user_company'):
+            values.update({'company_id': self.env.context.get('user_company')})
+        return super(ProcurementOrder, self).create(values)
+
     def _get_stock_move_values(self):
         vals = super(ProcurementOrder, self)._get_stock_move_values()
         if vals['procure_method'] == 'company':
@@ -185,3 +191,13 @@ class ProcurementOrder(models.Model):
             'procurement_ids': [(4, self.id)],
             'order_id': po.id,
         }
+
+class MakeProcurement(models.TransientModel):
+    _inherit = 'make.procurement'
+
+    @api.multi
+    def make_procurement(self):
+        """ Creates procurement order for selected product. """
+        return super(MakeProcurement, self.with_context(user_company=self.env.user.company_id.id)).make_procurement()
+
+
