@@ -8,3 +8,11 @@
 .telesale  #leftpart .order-container .order-line-table td.col-global-stock{
     text-align: right;
 }
+
+/* Ocultamos la columna unidad */
+.telesale #leftpart .order-container .order-line-table th.header-unit{
+    display: none;
+}
+.telesale  #leftpart .order-container .order-line-table td.cell-unit{
+    display: none;
+}
