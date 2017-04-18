@@ -1,18 +1,37 @@
+/* Header Product resize */
 .telesale  #leftpart .order-container .order-line-table th.header-product{
     width: 25%;
 }
 
+/* Global Stock*/
 .telesale  #leftpart .order-container .order-line-table th.header-global-stock{
     width: 5%;
 }
-.telesale  #leftpart .order-container .order-line-table td.col-global-stock{
+.telesale  #leftpart .order-container .order-line-table .col-global-stock{
     text-align: right;
 }
 
-/* Ocultamos la columna unidad */
+/* Hide unit field */
 .telesale #leftpart .order-container .order-line-table th.header-unit{
     display: none;
 }
 .telesale  #leftpart .order-container .order-line-table td.cell-unit{
     display: none;
+}
+
+
+/* Header and cell LQDR field*/
+.telesale  #leftpart .order-container .order-line-table th.header-lqdr{
+    width: 5%;
+}
+.telesale  #leftpart .order-container .order-line-table .col-lqdr{
+    text-align: center;
+}
+
+/* Header and cell warehouse route*/
+.telesale  #leftpart .order-container .order-line-table th.header-route{
+    width: 8%;
+}
+.telesale  #leftpart .order-container .order-line-table .col-route{
+    text-align: center;
 }
