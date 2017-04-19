@@ -73,9 +73,6 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
             this.model.set('lqdr', lqdr);
             this.model.set('route_name', product_obj.route_name);
         }
-        else{
-            this.model.set('global_available_stock', 0.0)
-        }
         this._super();
     }
 });
