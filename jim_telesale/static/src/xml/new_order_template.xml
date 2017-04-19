@@ -35,6 +35,9 @@
             <th class="header-route">Wareouse</th>
             <th class="header-global-stock">Available</th>
         </t>
+        <t t-jquery=".header-disc" t-operation="after">
+            <th class="header-plus-discount">Disc</th>
+        </t>
     </t>
 
     <t t-extend="Order-line-Widget">
@@ -54,6 +57,13 @@
             <!-- Global Stock column -->
             <td class="cell-global-stock">
                 <input type="search" class='col-global-stock' readonly="True" t-att-value="widget.model.get('global_available_stock').toFixed(2)"/>
+            </td>
+        </t>
+
+        <!-- Add cell discount, with plus funcionality -->
+        <t t-jquery=".cell-discount" t-operation="after">
+            <td class="cell-plus-discount">
+                <input type="text" class='col-plus_discount mandatory' t-att-value="widget.model.get('plus_discount')"/>
             </td>
         </t>
     </t>

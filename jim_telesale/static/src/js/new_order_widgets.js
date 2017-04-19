@@ -5,35 +5,6 @@ var NewOrderWidgets = require('telesale.new_order_widgets');
 var core = require('web.core');
 var _t = core._t;
 
-// Ejemplo de como añadir al widget de producto nuevos campos
-// var ProductInfoOrderWidget = NewOrderWidgets.ProductInfoOrderWidget.include({
-//     set_default_values: function(){
-//         this._super();
-//         this.route = ""; 
-//         this.lqdr = "";
-//     },
-//     change_product: function(){
-//         this._super();
-//         var self = this
-//         var line_product = this.selected_line.get("product")
-//         self.n_line = self.selected_line.get('n_line') + " / " + self.ts_model.get('selectedOrder').get('orderLines').length;
-//         if (line_product != ""){
-//             var product_id = this.ts_model.db.product_name_id[line_product]
-//             var partner_name = this.ts_model.get('selectedOrder').get('partner');
-//             var partner_id = this.ts_model.db.partner_name_id[partner_name];
-//             if (product_id && partner_id){
-//                 var model = new Model('product.product');
-//                 model.call("get_product_info",[product_id,partner_id])
-//                     .then(function(result){
-//                         self.route = result.route;
-//                         self.lqdr = result.lqdr;
-//                         self.renderElement();
-//                     });
-//             }   
-//         }
-//     },
-// });
-
 var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
     refresh: function(focus_key){
         /*
@@ -73,8 +44,45 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
             this.model.set('lqdr', lqdr);
             this.model.set('route_name', product_obj.route_name);
         }
+
+        //set handler for fiscount plus field.
         this._super();
-    }
+        this.$('.col-plus_discount').change(_.bind(this.set_value, this, 'plus_discount'));
+        this.$('.col-plus_discount').focus(_.bind(this.click_handler, this, 'plus_discount'));
+    },
+    set_value: function(key) {
+        this._super(key)
+        if (key == 'plus_discount'){
+            // this.model.set('discount', 50.0);
+            // this.refresh();
+            var value = this.$('.col-plus_discount').val();
+            var split_disc = value.split('+')
+            var discount = 0.0
+            var fail = false
+            var disc = 0 
+            for (var i in split_disc){
+                disc = split_disc[i]
+                if (isNaN(disc)) {
+                    fail = true;
+                    break; 
+                }
+                else{
+                  discount = discount + parseFloat(disc);
+                }
+            }
+
+            if (fail){
+                alert('Discount format not valid. It must be somethiong like 23+5.2+1')
+                this.model.set('discount', 0.0);
+                this.model.set('plus_discount', 0.0);
+            }
+            else{
+                this.model.set('discount', discount);
+            }
+            this.refresh();
+           
+        }
+    },
 });
 
 var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
@@ -140,6 +148,34 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
     },
 });
 
+// Ejemplo de como añadir al widget de producto nuevos campos
+// var ProductInfoOrderWidget = NewOrderWidgets.ProductInfoOrderWidget.include({
+//     set_default_values: function(){
+//         this._super();
+//         this.route = ""; 
+//         this.lqdr = "";
+//     },
+//     change_product: function(){
+//         this._super();
+//         var self = this
+//         var line_product = this.selected_line.get("product")
+//         self.n_line = self.selected_line.get('n_line') + " / " + self.ts_model.get('selectedOrder').get('orderLines').length;
+//         if (line_product != ""){
+//             var product_id = this.ts_model.db.product_name_id[line_product]
+//             var partner_name = this.ts_model.get('selectedOrder').get('partner');
+//             var partner_id = this.ts_model.db.partner_name_id[partner_name];
+//             if (product_id && partner_id){
+//                 var model = new Model('product.product');
+//                 model.call("get_product_info",[product_id,partner_id])
+//                     .then(function(result){
+//                         self.route = result.route;
+//                         self.lqdr = result.lqdr;
+//                         self.renderElement();
+//                     });
+//             }   
+//         }
+//     },
+// });
 });
 
 

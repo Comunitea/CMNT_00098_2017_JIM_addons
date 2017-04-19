@@ -17,7 +17,7 @@ TsModels.TsModel = TsModels.TsModel.extend({
 });
 
 // Orderline exists inside a collection, no possible to inherit trivially, so..
-// Overwrite to add global_stock_available, lqdr, route
+// Overwrite to add global_stock_available, lqdr, route, plus_discount
 TsModels.Orderline.prototype.initialize = function(options){
     this.set({
         n_line: '',
@@ -30,10 +30,12 @@ TsModels.Orderline.prototype.initialize = function(options){
         //to calc totals
         margin: 0,
         taxes_ids: [],
+        discount: 0.0,
         // ADD NEW FIELDS
         global_available_stock: 0.0,
         lqdr: '',
-        route: ''
+        route: '',
+        plus_discount: 0.0
     });
     this.ts_model = options.ts_model;
     this.order = options.order;

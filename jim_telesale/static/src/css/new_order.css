@@ -18,6 +18,13 @@
 .telesale  #leftpart .order-container .order-line-table td.cell-unit{
     display: none;
 }
+/* Hide discount field */
+/*.telesale #leftpart .order-container .order-line-table th.header-disc{
+    display: none;
+}
+.telesale  #leftpart .order-container .order-line-table td.cell-discount{
+    display: none;
+}*/
 
 
 /* Header and cell LQDR field*/
@@ -35,3 +42,8 @@
 .telesale  #leftpart .order-container .order-line-table .col-route{
     text-align: center;
 }
+/* Header and cell warehouse route*/
+.telesale  #leftpart .order-container .order-line-table th.header-plus-discount{
+    width: 5%;
+}
+
