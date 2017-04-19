@@ -64,6 +64,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         self.$('.col-'+ focus_key).focus()
     },
     renderElement: function() {
+        // Set lqdr route_name and global_available_stock
         var prod_name = this.$('.col-product').val();
         var product_id = this.ts_model.db.product_name_id[prod_name];
         if (product_id){
@@ -77,6 +78,69 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         }
         this._super();
     }
+});
+
+var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
+    // Overwrited to show warning  orblocking menssage menssagge
+    // Maybe an improvement geting warning mode and message from the customer
+    // and calling super after do the warning checks
+    perform_onchange: function(key, value) {
+        var self=this;
+        if (!value) {return;}
+        if (key == "partner"){
+            var partner_id = self.ts_model.db.partner_name_id[value];
+
+            // Not partner found in backbone model
+            if (!partner_id){
+                var alert_msg = _t("Customer name '" + value + "' does not exist");
+                alert(alert_msg);
+                self.order_model.set('partner', "");
+                self.refresh();
+            }
+            else {
+                var partner_obj = self.ts_model.db.get_partner_by_id(partner_id);
+                var model = new Model("sale.order");
+                model.call("ts_onchange_partner_id", [partner_id])
+                .then(function(result){
+                    var cus_name = self.ts_model.getComplexName(partner_obj);
+                    self.order_model.set('partner', cus_name);
+                    self.order_model.set('partner_code', partner_obj.ref ? partner_obj.ref : "");
+                    
+                    self.order_model.set('customer_comment', partner_obj.comment);
+                    // TODO nan_partner_risk migrar a la 10
+                    // self.order_model.set('limit_credit', self.ts_model.my_round(partner_obj.credit_limit,2));
+                    // self.order_model.set('customer_debt', self.ts_model.my_round(partner_obj.credit,2));
+
+                    self.order_model.set('comercial', partner_obj.user_id ? partner_obj.user_id[1] : "");
+                    var partner_shipp_obj = self.ts_model.db.get_partner_by_id(result.partner_shipping_id);
+                    var shipp_addr =self.ts_model.getComplexName(partner_shipp_obj);
+                    self.order_model.set('shipp_addr', shipp_addr);
+
+                    // Get alert if warning is not false
+                    if (result.warning){
+                        alert(result.warning);
+                        if (result.mode == 'block'){
+                            self.order_model.set('partner', "");
+                        }
+                        
+                    }
+                    self.refresh();
+                    // New line and VUA button when chang
+                    // Only do it when partner is setted
+                    if (self.order_model.get('partner')){
+                        $('#vua-button').click();
+                    }
+                    if(self.order_model.get('orderLines').length == 0 && self.order_model.get('partner')){
+                        $('.add-line-button').click()
+                    }
+                    else{
+                        self.$('#date_order').focus();
+                    }
+
+                });
+            }
+        }
+    },
 });
 
 });
