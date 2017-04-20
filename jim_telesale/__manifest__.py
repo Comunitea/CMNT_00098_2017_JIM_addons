@@ -23,7 +23,6 @@
     ],
     'qweb': [
         'static/src/xml/new_order_template.xml',
-        'static/src/xml/summary_order_template.xml',
         'static/src/xml/order_history_template.xml',
     ],
     "installable": True

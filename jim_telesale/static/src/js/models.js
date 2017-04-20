@@ -14,28 +14,33 @@ TsModels.TsModel = TsModels.TsModel.extend({
         res.push('lqdr', 'route_name')
         return res
     },
+    get_line_vals: function(line, order_model){
+        var res = TsModelSuper.prototype.get_line_vals.call(this, line, order_model);
+        res.chained_discount = line.chained_discount || '0.00';
+        return res
+    }
 });
 
 // Orderline exists inside a collection, no possible to inherit trivially, so..
 // Overwrite to add global_stock_available, lqdr, route, chained_discount
 TsModels.Orderline.prototype.initialize = function(options){
     this.set({
-        n_line: '',
-        code: '',
-        product: '',
-        qty: 1,
-        unit: '',
-        pvp: 0,
-        total: 0,
+        n_line: options.n_line || '',
+        code: options.code || '',
+        product: options.product || '',
+        qty: options.qty || 1,
+        unit: options.unit || '',
+        pvp: options.pvp || 0,
+        total: options.total || 0,
         //to calc totals
-        margin: 0,
-        taxes_ids: [],
-        discount: 0.0,
+        margin: options.margin || 0,
+        taxes_ids:  options.taxes_ids || [],
+        discount:  options.discount ||0.0,
         // ADD NEW FIELDS
-        global_available_stock: 0.0,
-        lqdr: '',
-        route: '',
-        chained_discount: 0.0
+        global_available_stock:  options.global_available_stock ||0.0,
+        lqdr:  options.lqdr ||'',
+        route:  options.route ||'',
+        chained_discount:  options.chained_discount || 0.0
     });
     this.ts_model = options.ts_model;
     this.order = options.order;

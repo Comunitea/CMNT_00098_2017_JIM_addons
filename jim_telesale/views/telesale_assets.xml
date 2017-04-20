@@ -5,6 +5,7 @@
             <xpath expr="." position="inside">
                 <link rel="stylesheet" href="/jim_telesale/static/src/css/new_order.css" id="ts-stylesheet"/>
                 <script type="text/javascript" src="/jim_telesale/static/src/js/new_order_widgets.js"></script>
+                <script type="text/javascript" src="/jim_telesale/static/src/js/order_history_widgets.js"></script>
                 <script type="text/javascript" src="/jim_telesale/static/src/js/models.js"></script>
             </xpath>
         </template>
