@@ -17,7 +17,7 @@ TsModels.TsModel = TsModels.TsModel.extend({
 });
 
 // Orderline exists inside a collection, no possible to inherit trivially, so..
-// Overwrite to add global_stock_available, lqdr, route, plus_discount
+// Overwrite to add global_stock_available, lqdr, route, chained_discount
 TsModels.Orderline.prototype.initialize = function(options){
     this.set({
         n_line: '',
@@ -35,25 +35,27 @@ TsModels.Orderline.prototype.initialize = function(options){
         global_available_stock: 0.0,
         lqdr: '',
         route: '',
-        plus_discount: 0.0
+        chained_discount: 0.0
     });
     this.ts_model = options.ts_model;
     this.order = options.order;
     this.selected = false;
 }
 
-// TsModels.Orderline.prototype.export_as_JSON = function(){
-//         var product_id = this.ts_model.db.product_name_id[this.get('product')];
-//         var uom_id = this.ts_model.db.unit_name_id[this.get('unit')];
-//         return {
-//             product_id:  product_id,
-//             qty: this.get('qty'),
-//             product_uom: uom_id,
-//             price_unit: this.get('pvp'),
-//             tax_ids: this.get('taxes_ids'),
-//             discount: this.get('discount') || 0.0,
-//         };
-// }
+// Overwraited to get chained_discount
+TsModels.Orderline.prototype.export_as_JSON = function(){
+        var product_id = this.ts_model.db.product_name_id[this.get('product')];
+        var uom_id = this.ts_model.db.unit_name_id[this.get('unit')];
+        return {
+            product_id:  product_id,
+            qty: this.get('qty'),
+            product_uom: uom_id,
+            price_unit: this.get('pvp'),
+            tax_ids: this.get('taxes_ids'),
+            discount: this.get('discount') || 0.0,
+            chained_discount: this.get('chained_discount') || '0.0'
+        };
+}
 
 
 // No funciona, están dentro de una coleección y eso no le gusta

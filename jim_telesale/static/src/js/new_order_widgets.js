@@ -47,22 +47,20 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
 
         //set handler for fiscount plus field.
         this._super();
-        this.$('.col-plus_discount').change(_.bind(this.set_value, this, 'plus_discount'));
-        this.$('.col-plus_discount').focus(_.bind(this.click_handler, this, 'plus_discount'));
+        this.$('.col-chained_discount').change(_.bind(this.set_value, this, 'chained_discount'));
+        this.$('.col-chained_discount').focus(_.bind(this.click_handler, this, 'chained_discount'));
     },
     set_value: function(key) {
         this._super(key)
-        if (key == 'plus_discount'){
-            // this.model.set('discount', 50.0);
-            // this.refresh();
-            var value = this.$('.col-plus_discount').val();
+        if (key == 'chained_discount'){
+            var value = this.$('.col-chained_discount').val();
             var split_disc = value.split('+')
             var discount = 0.0
             var fail = false
             var disc = 0 
             for (var i in split_disc){
                 disc = split_disc[i]
-                if (isNaN(disc)) {
+                if (isNaN(disc) || disc == "") {
                     fail = true;
                     break; 
                 }
@@ -74,15 +72,20 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
             if (fail){
                 alert('Discount format not valid. It must be somethiong like 23+5.2+1')
                 this.model.set('discount', 0.0);
-                this.model.set('plus_discount', 0.0);
+                this.model.set('chained_discount', 0.0);
             }
             else{
                 this.model.set('discount', discount);
             }
-            this.refresh();
-           
+            this.refresh('chained_discount');  
         }
     },
+    perform_onchange: function(key){
+        if (key == 'pvp'){
+            this.refresh('chained_discount');
+        }
+        this._super(key);
+    }
 });
 
 var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({

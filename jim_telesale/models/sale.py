@@ -26,10 +26,14 @@ class SaleOrder(models.Model):
 
         if product_obj.route_ids:
             vals.update({'route_id': product_obj.route_ids[0].id})
+        vals.update({'chained_discount': line.get('chained_discount', '0.00')})
         return vals
 
     @api.model
     def ts_onchange_partner_id(self, partner_id):
+        """
+        Get warning messagges
+        """
         res = super(SaleOrder, self).ts_onchange_partner_id(partner_id)
         order_t = self.env['sale.order']
         partner = self.env['res.partner'].browse(partner_id)

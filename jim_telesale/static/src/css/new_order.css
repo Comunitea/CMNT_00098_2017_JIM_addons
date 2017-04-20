@@ -19,12 +19,12 @@
     display: none;
 }
 /* Hide discount field */
-/*.telesale #leftpart .order-container .order-line-table th.header-disc{
+.telesale #leftpart .order-container .order-line-table th.header-disc{
     display: none;
 }
 .telesale  #leftpart .order-container .order-line-table td.cell-discount{
     display: none;
-}*/
+}
 
 
 /* Header and cell LQDR field*/
