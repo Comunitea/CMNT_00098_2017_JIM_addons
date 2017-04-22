@@ -48,15 +48,18 @@
                 <t t-if="widget.model.get('lqdr')">
                     <t t-set="lqdr_value" t-value="Yes"/>
                 </t>
-                <input type="search" class='col-lqdr' readonly="True" t-att-value="widget.model.get('lqdr')"/>
+<!--                 <input type="search" class='col-lqdr' readonly="True" t-att-value="widget.model.get('lqdr')"/>
+ -->                <span t-esc="widget.model.get('lqdr')"/>
             </td>
             <!-- Route column -->
             <td class="cell-route">
-                <input type="search" class='col-route' readonly="True" t-att-value="widget.model.get('route_name')"/>
+                <!-- <input type="search" class='col-route' readonly="True" t-att-value="widget.model.get('route_name')"/> -->
+                  <span t-esc="widget.model.get('route_name')"/>
             </td>
             <!-- Global Stock column -->
             <td class="cell-global-stock">
-                <input type="search" class='col-global-stock' readonly="True" t-att-value="widget.model.get('global_available_stock').toFixed(2)"/>
+                <!-- <input type="search" class='col-global-stock' readonly="True" t-att-value="widget.model.get('global_available_stock').toFixed(2)"/> -->
+                  <span t-esc="widget.model.get('global_available_stock').toFixed(2)"/>
             </td>
         </t>
 
