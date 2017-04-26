@@ -35,6 +35,7 @@
             <th class="header-route">Wareouse</th>
             <th class="header-global-stock">Available</th>
         </t>
+        <!-- The original discount column hidden by css-->
         <t t-jquery=".header-disc" t-operation="after">
             <th class="header-plus-discount">Disc</th>
         </t>

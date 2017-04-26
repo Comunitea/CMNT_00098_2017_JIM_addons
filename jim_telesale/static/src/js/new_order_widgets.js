@@ -34,6 +34,11 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         self.renderElement();
         self.$('.col-'+ focus_key).focus()
     },
+    set_input_handlers: function() {
+        this._super();
+        this.$('.col-chained_discount').change(_.bind(this.set_value, this, 'chained_discount'));
+        this.$('.col-chained_discount').focus(_.bind(this.click_handler, this, 'chained_discount'));
+    },
     renderElement: function() {
         // Set lqdr route_name and global_available_stock
         var prod_name = this.$('.col-product').val();
@@ -44,11 +49,8 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
             this.model.set('lqdr', lqdr);
             this.model.set('route_name', product_obj.route_name);
         }
-
         //set handler for fiscount plus field.
         this._super();
-        this.$('.col-chained_discount').change(_.bind(this.set_value, this, 'chained_discount'));
-        this.$('.col-chained_discount').focus(_.bind(this.click_handler, this, 'chained_discount'));
     },
     set_value: function(key) {
         this._super(key)
