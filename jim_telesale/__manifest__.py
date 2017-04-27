@@ -11,8 +11,8 @@
     'depends': [
         'jim_sale',
         'jim_stock',
-        'telesale',
-        'chained_discount_commercial_rules'
+        'chained_discount_commercial_rules',
+        'telesale_manage_variants',
     ],
     'contributors': [
         "Comunitea ",
