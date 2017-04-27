@@ -20,7 +20,7 @@ class SaleOrderLineTemplate(models.Model):
     price_subtotal = fields.Monetary(
         compute='_compute_amount', string='Subtotal', readonly=True, store=True)
 
-    @api.depends('product_uom_qty', 'discount', 'price_unit', 'tax_id')
+    @api.depends('order_lines.price_subtotal')
     def _compute_amount(self):
         for line in self:
             line.price_subtotal = sum([x.price_subtotal for x in line.order_lines])
@@ -80,3 +80,15 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     template_lines = fields.One2many('sale.order.line.template', 'order_id')
+    sale_order_line_count = fields.Integer(compute='_compute_sale_order_line_count')
+
+    @api.depends('order_line')
+    def _compute_sale_order_line_count(self):
+        for order in self:
+            order.sale_order_line_count = len(order.order_line)
+
+    @api.multi
+    def action_view_order_lines(self):
+        action = self.env.ref('custom_sale_order_variant_mgmt.sale_order_line_action').read()[0]
+        action['domain'] = [('id', 'in', self.order_line.ids)]
+        return action

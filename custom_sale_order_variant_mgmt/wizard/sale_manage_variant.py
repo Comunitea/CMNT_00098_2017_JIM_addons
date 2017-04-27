@@ -10,23 +10,33 @@ class SaleManageVariant(models.TransientModel):
 
     @api.multi
     def button_transfer_to_order(self):
-        template_vals = {
-            'product_template': self.product_tmpl_id.id,
-            'order_id': self._context.get('active_id', False),
-            'name': self.product_tmpl_id.name_get()[0][1]}
-        new_template_line = self.env['sale.order.line.template'].new(
-            template_vals)
-        new_template_line.onchange_template()
-        new_template_line.product_id_change()
-        vals = new_template_line._convert_to_write(
-                new_template_line._cache)
-        vals.update(template_vals)
-        template = self.env['sale.order.line.template'].create(vals)
+        context = self.env.context
+        record = self.env[context['active_model']].browse(
+            context['active_id'])
+        if context['active_model'] == 'sale.order.line.template':
+            template = record
+        else:
+            template_vals = {
+                'product_template': self.product_tmpl_id.id,
+                'order_id': self._context.get('active_id', False),
+                'name': self.product_tmpl_id.name_get()[0][1]}
+            new_template_line = self.env['sale.order.line.template'].new(
+                template_vals)
+            new_template_line.onchange_template()
+            new_template_line.product_id_change()
+            vals = new_template_line._convert_to_write(
+                    new_template_line._cache)
+            vals.update(template_vals)
+            vals.update(
+                {'product_uom_qty': 0, 'price_unit': 0, 'purchase_price': 0})
+            template = self.env['sale.order.line.template'].create(vals)
+
         super(SaleManageVariant,
-              self.with_context(template_line=template.id)).button_transfer_to_order()
+              self.with_context(
+                template_line=template.id, active_model='sale.order',
+                active_id=template.order_id.id)).button_transfer_to_order()
         if not template.order_lines:
             template.unlink()
-
 
     @api.multi
     @api.onchange('product_tmpl_id')

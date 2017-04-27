@@ -2,7 +2,7 @@
 # © 2017 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
-    "name": "",
+    "name": "Custom sale order variant management",
     "summary": "",
     "version": "8.0.1.0.0",
     "category": "Uncategorized",
@@ -16,7 +16,8 @@
         'sale',
         'sale_stock',
         'delivery',
-        'sale_order_variant_mgmt'
+        'sale_order_variant_mgmt',
+        'chained_discount_commercial_rules'
     ],
     "data": [
         'views/sale_order.xml',
