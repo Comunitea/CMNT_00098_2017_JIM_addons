@@ -1,0 +1,154 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#   * custom_sale_order_variant_mgmt
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-04-27 10:00+0000\n"
+"PO-Revision-Date: 2017-04-27 10:00+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_discount
+msgid "Discount (%)"
+msgstr "Descuento (%)"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_id
+msgid "ID"
+msgstr "ID"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_lines_qty
+msgid "Lines qty"
+msgstr "Variantes"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.ui.view,arch_db:custom_sale_order_variant_mgmt.sale_order_variants
+msgid "Modify Variants"
+msgstr "Modificar variantes"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.actions.act_window,name:custom_sale_order_variant_mgmt.sale_order_line_action
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_order_lines
+#: model:ir.ui.view,arch_db:custom_sale_order_variant_mgmt.sale_order_variants
+msgid "Order lines"
+msgstr "Líneas de venta"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.ui.view,arch_db:custom_sale_order_variant_mgmt.sale_order_line_custom_tree
+msgid "Ordered Qty"
+msgstr "Ctdad pedida"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_product_template
+msgid "Product"
+msgstr "Producto"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model,name:custom_sale_order_variant_mgmt.model_product_template
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_product_uom_qty
+msgid "Quantity"
+msgstr "Cantidad"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_route_id
+msgid "Route"
+msgstr "Ruta"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_sale_order_line_count
+msgid "Sale order line count"
+msgstr "Sale order line count"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model,name:custom_sale_order_variant_mgmt.model_sale_order
+msgid "Sales Order"
+msgstr "Pedido de venta"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model,name:custom_sale_order_variant_mgmt.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Línea de pedido de venta"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_price_subtotal
+msgid "Subtotal"
+msgstr "Subtotal"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_tax_id
+msgid "Taxes"
+msgstr "Impuestos"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_line
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_template_line
+msgid "Template line"
+msgstr "Template line"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_template_lines
+msgid "Template lines"
+msgstr "Template lines"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_price_unit
+msgid "Unit Price"
+msgstr "Precio unitario"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model.fields,field_description:custom_sale_order_variant_mgmt.field_sale_order_line_template_product_uom
+msgid "Unit of Measure"
+msgstr "Unidad de medida"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model,name:custom_sale_order_variant_mgmt.model_sale_manage_variant
+msgid "sale.manage.variant"
+msgstr "sale.manage.variant"
+
+#. module: custom_sale_order_variant_mgmt
+#: model:ir.model,name:custom_sale_order_variant_mgmt.model_sale_order_line_template
+msgid "sale.order.line.template"
+msgstr "sale.order.line.template"

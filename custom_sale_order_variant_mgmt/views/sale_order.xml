@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+    <data>
+
+        <record id="sale_order_line_custom_tree" model="ir.ui.view">
+            <field name="sequence">500</field>
+            <field name="name">sale.order.line.tree</field>
+            <field name="model">sale.order.line</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+                <tree editable="top" create="false">
+                    <field name="sequence" widget="handle"/>
+                    <field name="product_id" readonly="1" attrs="{'readonly': ['|', ('qty_invoiced', '&gt;', 0), ('procurement_ids', '!=', [])]}"/>
+                    <field name="layout_category_id" groups="sale.group_sale_layout"/>
+                    <field name="name"/>
+                    <field name="product_uom_qty" string="Ordered Qty" context="{'partner_id':parent.partner_id, 'quantity':product_uom_qty, 'pricelist':parent.pricelist_id, 'uom':product_uom, 'company_id': parent.company_id}"/>
+                    <field name="qty_delivered" invisible="context.get('hide_sale')" attrs="{'readonly': [('qty_delivered_updateable', '=', False)]}"/>
+                    <field name="qty_invoiced" invisible="context.get('hide_sale')"/>
+                    <field name="qty_to_invoice" invisible="1"/>
+                    <field name="product_uom" readonly="1"  attrs="{'readonly': [('state', 'in', ('sale','done', 'cancel'))]}" context="{'company_id': parent.company_id}" groups="product.group_uom" options="{&quot;no_open&quot;: True}"/>
+                    <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags"/>
+                    <field name="price_unit" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                    <field name="route_id" readonly="1"  groups="sale_stock.group_route_so_lines"/>
+                    <field name="purchase_price" groups="base.group_user"/>
+                    <field name="tax_id" readonly="1"  widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]" attrs="{'readonly': [('qty_invoiced', '&gt;', 0)]}"/>
+                    <field name="chained_discount" groups="sale.group_discount_per_so_line"/>
+                    <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
+                    <field name="price_total" widget="monetary" groups="sale.group_show_price_total"/>
+                    <field name="qty_delivered_updateable" invisible="1"/>
+                    <field name="procurement_ids" invisible="1"/>
+                    <field name="state" invisible="1"/>
+                    <field name="invoice_status" invisible="1"/>
+                    <field name="customer_lead" invisible="1"/>
+                    <field name="currency_id" invisible="1"/>
+                </tree>
+            </field>
+        </record>
+
+        <record id="sale_order_line_action" model="ir.actions.act_window">
+            <field name="name">Order lines</field>
+            <field name="res_model">sale.order.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="sale_order_line_custom_tree"/>
+            <field name="search_view_id" ref="sale.view_sales_order_line_filter"/>
+            <field name="domain"></field>
+        </record>
+
+        <record id="sale_order_variants" model="ir.ui.view">
+            <field name="name">sale.order.form</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <div name="button_box" position="inside">
+                    <button name="action_view_order_lines" type="object" class="oe_stat_button"
+                        icon="fa-list" attrs="{'invisible': [('sale_order_line_count', '=', 0)]}">
+                            <field name="sale_order_line_count" widget="statinfo" string="Order lines"/>
+                        </button>
+                </div>
+                <field name="order_line" position="attributes">
+                    <attribute name="readonly">1</attribute>
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="order_line" position="after">
+                    <field name="template_lines" mode="tree" attrs="{'readonly': [('state', 'in', ('done','cancel'))]}">
+                        <tree editable="bottom">
+                            <field name="product_template" attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
+                            <field name="product_id" invisible="1"/>
+                            <field name="name" attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
+                            <field name="lines_qty"/>
+                            <field name="product_uom_qty" attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
+                            <field name="product_uom" />
+                            <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags"  attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
+                            <field name="route_id" groups="sale_stock.group_route_so_lines"/>
+                            <field name="price_unit"  attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
+                            <field name="purchase_price" groups="base.group_user"  attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
+                            <field name="tax_id" widget="many2many_tags" domain="[('type_tax_use','=','sale'),('company_id','=',parent.company_id)]"/>
+                            <field name="chained_discount" groups="sale.group_discount_per_so_line" attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
+                            <field name="price_subtotal" widget="monetary" groups="sale.group_show_price_subtotal"/>
+                            <field name="product_attribute_value_ids" invisible="1"/>
+                            <field name="state" invisible="1"/>
+                            <button name="%(sale_order_variant_mgmt.action_sale_manage_variant)d"
+                                type="action"
+                                string="Modify Variants"
+                                icon="fa-th"
+                                class="oe_edit_only"
+                                context="{'default_product_tmpl_id': product_template}"
+                                attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('product_attribute_value_ids', '=', [])]}" />
+                        </tree>
+                    </field>
+                </field>
+            </field>
+        </record>
+
+    </data>
+</odoo>

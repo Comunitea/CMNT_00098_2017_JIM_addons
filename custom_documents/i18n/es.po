@@ -1,0 +1,156 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#   * custom_documents
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-04-28 08:30+0000\n"
+"PO-Revision-Date: 2017-04-28 08:30+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "Description"
+msgstr "Descripción"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "Quantity"
+msgstr "Cantidad"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "Price/unit"
+msgstr "Precio/unidad"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "Disc."
+msgstr "Desc."
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "Amount"
+msgstr "Importe"
+
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "<strong>Total Without Taxes</strong>"
+msgstr "<strong>Total base</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "<strong>Total</strong>"
+msgstr "<strong>Total</strong>"
+
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "Offer valid until:"
+msgstr "Oferta válida hasta:"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "Carrier:"
+msgstr "Transportista:"
+
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "Payment mode:"
+msgstr "Modo de pago:"
+
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "<strong>CIF/NIF:</strong>"
+msgstr "<strong>CIF/NIF:</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "<strong>FAX:</strong>"
+msgstr "<strong>FAX:</strong>"
+
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "<strong>Shipping address:</strong>"
+msgstr "<strong>Dirección de Envío</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "<strong>Telf.:</strong>"
+msgstr "<strong>Telf.:</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "Agent"
+msgstr "Agente"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "CIF/NIF"
+msgstr "CIF/NIF"
+
+#. module: custom_documents
+#: model:ir.model,name:custom_documents.model_res_company
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "Customer Nª"
+msgstr "Cliente Nª"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "Date"
+msgstr "Fecha"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.res_company_add_qweb_footer
+msgid "Footer"
+msgstr "Pie de página"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "Order Nº"
+msgstr "Nº pedido"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "Page nº"
+msgstr "Hoja nº"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "Page: <span class=\"page\"/> of <span class=\"topage\"/>"
+msgstr "Página: <span class=\"page\"/> de <span class=\"topage\"/>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+msgid "QUOTATION"
+msgstr "PRESUPUESTO"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.res_company_add_qweb_footer
+msgid "Qweb"
+msgstr "Qweb"
+
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_res_company_qweb_footer
+msgid "Qweb footer"
+msgstr "Pie de página"
