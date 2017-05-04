@@ -21,72 +21,31 @@ TsModels.TsModel = TsModels.TsModel.extend({
     }
 });
 
-// Orderline exists inside a collection, no possible to inherit trivially, so..
-// Overwrite to add global_stock_available, lqdr, route, chained_discount
+// Set template to store the template name en la linea
+var _initialize_ = TsModels.Orderline.prototype.initialize;
 TsModels.Orderline.prototype.initialize = function(options){
+    var self = this;
     this.set({
-        n_line: options.n_line || '',
-        code: options.code || '',
-        product: options.product || '',
-        qty: options.qty || 1,
-        unit: options.unit || '',
-        pvp: options.pvp || 0,
-        total: options.total || 0,
-        //to calc totals
-        margin: options.margin || 0,
-        taxes_ids:  options.taxes_ids || [],
-        discount:  options.discount ||0.0,
-        // ADD NEW FIELDS
         global_available_stock:  options.global_available_stock ||0.0,
         lqdr:  options.lqdr ||'',
         route:  options.route ||'',
         chained_discount:  options.chained_discount || 0.0
     });
-    this.ts_model = options.ts_model;
-    this.order = options.order;
-    this.selected = false;
+
+    //template_singe: A normal line, template with one variant
+    //template_variants: Grouping line with special grouping behavior
+    //variant: Line created with the grid, parent line is a template_variants
+    return _initialize_.call(this, options);
 }
+
 
 // Overwraited to get chained_discount
+var _exportJSON_ = TsModels.Orderline.prototype.export_as_JSON;
 TsModels.Orderline.prototype.export_as_JSON = function(){
-        var product_id = this.ts_model.db.product_name_id[this.get('product')];
-        var uom_id = this.ts_model.db.unit_name_id[this.get('unit')];
-        return {
-            product_id:  product_id,
-            qty: this.get('qty'),
-            product_uom: uom_id,
-            price_unit: this.get('pvp'),
-            tax_ids: this.get('taxes_ids'),
-            discount: this.get('discount') || 0.0,
-            chained_discount: this.get('chained_discount') || '0.0'
-        };
+    var res = _exportJSON_.call(this, {});
+    var to_add = {chained_discount: this.get('chained_discount') || '0.0'}
+    res = $.extend(res, to_add)
+    return res
 }
-
-
-// No funciona, están dentro de una coleección y eso no le gusta
-// Lo ideal era de esta manera pero con métodos super
-// TsModels.Orderline = TsModels.Orderline.extend({
-//     initialize: function(options) {
-//         debugger;
-//     },
-//     export_as_JSON: function() {
-//         debugger;
-//     },
-// });
-
-// Funciona a medias, solo para la primera instancia
-// TsModels.Order = TsModels.Order.extend({
-//     initialize: function(options) {
-//         debugger;
-//         var res = OrderSuper.prototype.initialize.call(this,options);
-//         this.a = new TsModels.Orderline({ts_model: this.ts_model, order:this})
-//         return res
-//     },
-//     exportAsJSON: function(){
-//         debugger;
-//         var res = OrderSuper.prototype.exportAsJSON.call(this,{});
-//         return res
-//     },
-// });
 
 });
