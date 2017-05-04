@@ -9,12 +9,13 @@ class ProcurementRule(models.Model):
     _inherit = 'procurement.rule'
 
     procure_method = fields.Selection(
-        selection_add=[('company', 'According to the Company')])
+        selection_add=[('company', 'According to Product Company')])
 
     @api.model
     def _get_action(self):
         res = super(ProcurementRule, self)._get_action()
         res.append(('intercompany_buy', _('Intercompany Buy')))
+        res.append(('product_company', _('Intercompany Buy or Move According to Product Company')))
         return res
 
 
@@ -39,12 +40,31 @@ class ProcurementOrder(models.Model):
 
     @api.multi
     def _run(self):
-        if self.rule_id and self.rule_id.action == 'intercompany_buy':
+        if self.rule_id and self.rule_id.action == 'product_company':
             if self.company_id.id == self.product_id.company_id.id:
-                return self.make_po()
+                # get teh product only with move
+                if not self.rule_id.location_src_id:
+                    self.message_post(body=_('No source location defined!'))
+                    return False
+                # create the move as SUPERUSER because the current user may not have the rights to do it (mto product launched by a sale for example)
+                move = self.env['stock.move'].sudo().create(self._get_stock_move_values())
+                move.action_confirm()
+                return True
             else:
+                # if product belongs to another compamy generate intercompany_buy
                 return self.make_intercompany_buy_po()
+
+        if self.rule_id and self.rule_id.action == 'intercompany_buy':
+            return self.po_or_ic_po()
+
         return super(ProcurementOrder, self)._run()
+
+    @api.multi
+    def po_or_ic_po(self):
+        if self.company_id.id == self.product_id.company_id.id:
+            return self.make_po()
+        else:
+            return self.make_intercompany_buy_po()
 
     @api.multi
     def make_intercompany_buy_po(self):
