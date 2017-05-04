@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+     <record id="sale_order_add_button_purchase" model="ir.ui.view">
+        <field name="name">sale_order_add_button_purchase</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_stock.view_order_form_inherit_sale_stock"/>
+        <field name="arch" type="xml">
+            <xpath expr="//button[@name='action_view_delivery']" position="before">
+                    <field name="picking_ids" invisible="1"/>
+                    <button type="object" name="action_view_purchase" class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('purchase_count', '=', 0)]}" groups="base.group_user">
+                        <field name="purchase_count" widget="statinfo" string="Purchase"/>
+                    </button>
+                </xpath>
+        </field>
+    </record>
+
+    </data>
+</odoo>

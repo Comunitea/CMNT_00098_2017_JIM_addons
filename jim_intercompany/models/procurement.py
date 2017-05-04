@@ -115,6 +115,10 @@ class ProcurementOrder(models.Model):
                     data-oe-id=%d>%s</a>") % (procurement.id, name)
                 po.message_post(body=message)
                 cache[domain] = po
+
+                # # CHANGED, AUTOMATIC CONFIRMATION
+                po.button_confirm()
+
             elif not po.origin or procurement.origin not in po.origin.split(', '):
                 # Keep track of all procurements
                 if po.origin:
