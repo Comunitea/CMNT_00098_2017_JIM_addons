@@ -11,7 +11,8 @@
     'depends': [
         'jim_sale',
         'jim_stock',
-        'telesale'
+        'chained_discount_commercial_rules',
+        'telesale_manage_variants',
     ],
     'contributors': [
         "Comunitea ",
@@ -22,7 +23,6 @@
     ],
     'qweb': [
         'static/src/xml/new_order_template.xml',
-        'static/src/xml/summary_order_template.xml',
         'static/src/xml/order_history_template.xml',
     ],
     "installable": True

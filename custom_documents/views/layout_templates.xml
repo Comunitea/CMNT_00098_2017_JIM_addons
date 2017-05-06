@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+    <template id="assets_common" name="custom css assets" inherit_id="report.assets_common">
+        <xpath expr="." position="inside">
+            <link rel="stylesheet" href="/custom_documents/static/src/css/custom.css"/>
+        </xpath>
+    </template>
+
+    <template id="custom_layout">
+        <!-- Multicompany -->
+        <t t-if="not o and doc">
+            <t t-set="o" t-value="doc"/>
+        </t>
+        <t t-if="o and 'company_id' in o">
+            <t t-set="company" t-value="o.company_id"></t>
+        </t>
+        <t t-if="not o or not 'company_id' in o">
+            <t t-set="company" t-value="res_company"></t>
+        </t>
+
+        <t t-call="custom_documents.custom_layout_header" />
+        <t t-raw="0" />
+        <t t-call="custom_documents.custom_layout_footer" />
+    </template>
+
+    <template id="custom_layout_header">
+        <div class="header">
+            <div class="row">
+                <div class="col-xs-6 sombreado" style="margin-bottom: 15px;">
+                    <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
+                    <!--p t-esc="company.name"/>
+                    <p t-esc="company.street"/>
+                    <p>
+                        <span t-field="company.zip"/>-<span t-field="company.city"/>
+                    </p-->
+                    <span t-field="company.partner_id"
+                        t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                    <p><strong>CIF/NIF:</strong> <span t-field="company.vat"/></p>
+                    <p><strong>Telf.:</strong> <span t-field="company.phone"/> <strong>FAX:</strong> <span t-field="company.fax"/></p>
+                </div>
+                <div class="col-xs-5 col-xs-offset-1">
+                    <h1>QUOTATION</h1>
+                </div>
+            </div>
+            <div class="row" t-if="o._name == 'sale.order'">
+                <div class="col-xs-6">
+                    <strong>Shipping address:</strong>
+                    <div t-field="o.partner_shipping_id"
+                        t-options='{"widget": "contact", "fields": ["address", "name", "phone", "fax"], "no_marker": True, "phone_icons": True}'/>
+                </div>
+                <div class="col-xs-6 radius_border">
+                    <!--p t-field="o.partner_id.name"/>
+                    <p t-field="o.partner_id.street"/>
+                    <p><span t-field="company.zip"/> <span t-field="company.city"/></p>
+                    <p t-field="o.partner_id.state_id.name"/-->
+                    <div t-field="o.partner_id"
+                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                </div>
+            </div>
+            <div class="row mt32" t-if="o._name == 'sale.order'">
+                <div class="col-xs-12">
+                    <table class="custom_table">
+                        <thead>
+                            <tr>
+                                <th>Customer Nª</th>
+                                <th>CIF/NIF</th>
+                                <th>Page nº</th>
+                                <th>Date</th>
+                                <th>Order Nº</th>
+                                <th>Agent</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span t-field="o.partner_id.ref"/></td>
+                                <td><span t-field="o.partner_id.vat"/></td>
+                                <td>
+                                    Page: <span class="page"/> of <span class="topage"/>
+                                </td>
+                                <td><span t-field="o.date_order"/></td>
+                                <td><span t-field="o.name"/></td>
+                                <td><span t-field="o.user_id.name"/> </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <template id="custom_layout_footer">
+        <div class="footer">
+            <div class="text-center">
+                <span t-esc="company.qweb_footer"/>
+            </div>
+        </div>
+    </template>
+
+</odoo>

@@ -2,8 +2,8 @@
 
 <templates id="template_new_order" inherit_id="telesale.template_new_order">
 
-    <!-- Add route and lqdr field to ProductInfoWidget -->
-    <t t-extend="ProductInfo-Order-Widget">
+     <!-- Add route and lqdr field to ProductInfoWidget -->
+    <!-- <t t-extend="ProductInfo-Order-Widget">
         <t t-jquery="tr:last" t-operation="append">
             <tr>
                 <th scope="row">Warehouse</th>
@@ -14,7 +14,7 @@
                 <td><t t-esc="widget.lqdr"/></td>
             </tr>
         </t>
-    </t>
+    </t> -->
 
     <!-- Add states Pending Approval and LQDR to order Widget -->
     <t t-extend="Order-Widget">
@@ -28,17 +28,46 @@
         </t>
     </t>
 
-    <!-- Add column global stock to order lines -->
+    <!-- Add column global stock, route and LQDRR to order lines -->
     <t t-extend="Order-Widget">
         <t t-jquery=".header-product" t-operation="after">
+            <th class="header-lqdr">LQDR</th>
+            <th class="header-route">Wareouse</th>
             <th class="header-global-stock">Available</th>
+        </t>
+        <!-- The original discount column hidden by css-->
+        <t t-jquery=".header-disc" t-operation="after">
+            <th class="header-plus-discount">Disc</th>
         </t>
     </t>
 
     <t t-extend="Order-line-Widget">
         <t t-jquery=".cell-product" t-operation="after">
-             <td class="cell-global-stock">
-                <input type="search" class='col-global-stock' readonly="True" t-att-value="widget.model.get('global_available_stock').toFixed(2)"/>
+            <!-- LQDR column -->
+            <td class="cell-lqdr">
+                <t t-set="lqdr_value" t-value="No"/>
+                <t t-if="widget.model.get('lqdr')">
+                    <t t-set="lqdr_value" t-value="Yes"/>
+                </t>
+<!--                 <input type="search" class='col-lqdr' readonly="True" t-att-value="widget.model.get('lqdr')"/>
+ -->                <span t-esc="widget.model.get('lqdr')"/>
+            </td>
+            <!-- Route column -->
+            <td class="cell-route">
+                <!-- <input type="search" class='col-route' readonly="True" t-att-value="widget.model.get('route_name')"/> -->
+                  <span t-esc="widget.model.get('route_name')"/>
+            </td>
+            <!-- Global Stock column -->
+            <td class="cell-global-stock">
+                <!-- <input type="search" class='col-global-stock' readonly="True" t-att-value="widget.model.get('global_available_stock').toFixed(2)"/> -->
+                  <span t-esc="widget.model.get('global_available_stock').toFixed(2)"/>
+            </td>
+        </t>
+
+        <!-- Add cell discount, with plus funcionality -->
+        <t t-jquery=".cell-discount" t-operation="after">
+            <td class="cell-plus-discount">
+                <input type="text" class='col-chained_discount mandatory' t-att-value="widget.model.get('chained_discount')"/>
             </td>
         </t>
     </t>

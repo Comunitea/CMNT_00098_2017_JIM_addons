@@ -21,6 +21,8 @@
     ],
     "data": [
         'views/product_view.xml',
+        'views/procurement_rule_view.xml',
+        'views/sale_order_view.xml',
     ],
     "installable": True
 }
