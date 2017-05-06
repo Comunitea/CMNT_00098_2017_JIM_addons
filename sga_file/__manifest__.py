@@ -23,6 +23,7 @@
     "data": [
         'data/sga_data.xml',
         'views/sga_file.xml',
+        'views/sga_product.xml',
         'views/sga_views.xml',
         'views/sga_carrier.xml',
         'views/sga_sale_order.xml',

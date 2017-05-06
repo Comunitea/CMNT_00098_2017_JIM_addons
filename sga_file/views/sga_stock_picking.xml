@@ -2,9 +2,25 @@
 <openerp>
     <data>
         # Stock Picking to Mecalux
+         <record id="stock_picking_action_move_to_NE" model="ir.actions.server">
+            <field name="name">Mover a No Exportado</field>
+            <field name="model_id" ref="model_stock_picking"/>
+            <field name="state">code</field>
+            <field name="condition">True</field>
+            <field name="code">records.move_to_NE()</field>
+        </record>
+
+        <record id="stock_picking_menu_move_to_NE" model="ir.values">
+            <field name="name">stock.picking.menu.move.to.NE</field>
+            <field name="model">stock.picking</field>
+            <field name="key" >action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,%d'%stock_picking_action_move_to_NE"/>
+        </record>
+
 
         <record id="stock_picking_action_export_to_mecalux2" model="ir.actions.server">
-            <field name="name">IMPORT OUTPUT</field>
+            <field name="name">Importar de Mecalux</field>
             <field name="model_id" ref="model_stock_picking"/>
             <field name="state">code</field>
             <field name="condition">True</field>
@@ -51,13 +67,59 @@
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
+                <field name ="state" position = "after">
+                    <div>
+                    <field name="sga_state" widget="statusbar" statusbar_visible="NE,PM,MT"
+                           attrs="{'invisible': [('sga_state', '=', 'NI')], 'readonly': 1}"
+                    statusbar_colors='{"EE":"red", "EI":"red", "PM":"red", "MT":"green"}'/>
+                    </div>
+                </field>
                 <field name="picking_type_id" position="after">
                     <field name="stock_picking_sgatype_id" invisible="1"/>
-                    <field name="sga_state" attrs="{'invisible': [('sga_state', '=', 'Unknown')], 'readonly': '1'}"/>
+                    <!--<field name="sga_state" attrs="{'invisible': [('sga_state', '=', 'NI')], 'readonly': '1'}"/>-->
                 </field>
 
             </field>
         </record>
+        <record model="ir.ui.view" id="vpicktree_non_create">
+            <field name="name">view.picking.tree.non.create</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.vpicktree"/>
+            <field name="arch" type="xml">
+
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="create">0</attribute>
+                </xpath>
+
+
+            </field>
+        </record>
+
+        <record id="view_pickingtype_filter_sga" model="ir.ui.view">
+            <field name="name">stock.picking.type.filter.sga</field>
+            <field name="model">stock.picking.type</field>
+             <field name="inherit_id" ref="stock.view_pickingtype_filter"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='warehouse_id']" position="after">
+                    <field name="sga_integrated"/>
+                </xpath>
+                <xpath expr="//filter[@name='inactive']" position="after">
+                    <filter string="Mecalux" name="mecalux" domain="[('sga_integrated','=', True)]"/>
+                </xpath>
+            </field>
+        </record>
+
+        <record id="view_picking_internal_search_sga" model="ir.ui.view">
+            <field name="name">stock.picking.internal.search.sga</field>
+            <field name="model">stock.picking</field>
+             <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+            <field name="arch" type="xml">
+                <xpath expr="//group/filter[1]" position="after">
+                    <filter string="Mecalux status" domain="[]" context="{'group_by':'sga_state'}"/>
+                </xpath>
+            </field>
+        </record>
+
 
 
 

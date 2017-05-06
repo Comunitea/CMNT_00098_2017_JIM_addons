@@ -21,11 +21,62 @@ class ResPartnerSGA(models.Model):
     sga_outbound_priority = fields.Integer('Outbound Priority', default=50)
     sga_addr_name = fields.Char('Address Name', size=255)
     sga_active_fusion = fields.Selection([('1', 'True'), ('0', 'False')], 'Active Fusion', default='0')
+    sga_state = fields.Selection([(1, 'Actualizado'), (0, 'Pendiente actualizar'), (2, 'Baja')],
+                                 default=False,
+                                 help="Estado integracion con mecalux")
 
     @api.multi
-    def new_mecalux_file(self):
-        ids = [x.id for x in self]
-        print ids
-        new_sga_file = self.env['sga.file'].check_sga_file('res.partner', ids, code='ACC')
+    def toggle_active(self):
+        res = super(ResPartnerSGA, self).toggle_active()
+        for record in self:
+            if record.active:
+                operation = "F"
+            else:
+                operation = "B"
+            record.new_mecalux_file(operation=operation)
+            record.sga_state = 1
 
-        return True
+
+
+    @api.multi
+    def write(self, values):
+        res = super(ResPartnerSGA, self).write(values)
+        fields_to_check = ('ref', 'sga_outbound_priority', 'name',
+                           'sga_material_abc_code', 'sga_change_material_abc',
+                           'uom_id', 'name', 'sga_prod_shortdesc', 'packaging_ids')
+        fields = sorted(list(set(values).intersection(set(fields_to_check))))
+        if fields:
+            self.sga_state = 0
+            icp = self.env['ir.config_parameter']
+            if icp.get_param('product_auto'):
+                self.new_mecalux_file(operation="F")
+                self.sga_state = 1
+        return res
+
+
+
+    @api.model
+    def create(self, values):
+        values['sga_state'] = 0
+        res = super(ResPartnerSGA, self).create(values)
+        icp = self.env['ir.config_parameter']
+        if icp.get_param('product_auto'):
+            res.new_mecalux_file(operation="A")
+            res.sga_state = 1
+        return res
+
+    @api.multi
+    def new_mecalux_file(self, operation=False):
+        try:
+            ids = [x.id for x in self]
+            ctx = dict(self.env.context)
+            if operation:
+                ctx['operation'] = operation
+            if 'operation' not in ctx:
+                ctx['operation'] = 'F'
+            new_sga_file = self.env['sga.file'].with_context(ctx).check_sga_file('res.partner', ids, code='ACC')
+            self.write({'sga_state': 1})
+            return True
+        except:
+            self.write({'sga_state': 0})
+            return False

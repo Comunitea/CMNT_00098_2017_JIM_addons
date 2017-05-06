@@ -12,20 +12,6 @@ from datetime import datetime, timedelta
 import os
 import re
 
-class Product(models.Model):
-    _inherit = "product.product"
-
-    def _get_domain_locations2(self):
-
-        domain_quant_loc, domain_move_in_loc, domain_move_out_loc = super(Product,self)._get_domain_locations()
-
-        if 'company_sga' in self._context:
-            domain_company = [('company_id', '=', self._context.get('company_sga'))]
-            domain_quant_loc += domain_company
-            domain_move_in_loc += domain_company
-            domain_move_out_loc += domain_company
-
-        return domain_quant_loc, domain_move_in_loc, domain_move_out_loc
 
 class StockInventoryLineSGA(models.Model):
 
@@ -61,16 +47,15 @@ class StockInventoryLineSGA(models.Model):
     def _get_move_values(self, qty, location_id, location_dest_id):
 
         res = super(StockInventoryLineSGA, self)._get_move_values(qty, location_id, location_dest_id)
-       # res['company_id'] = inventory_id.company_id.id >> move company ...
+        # res['company_id'] = inventory_id.company_id.id >> move company ...
         res['company_id'] = self.company_id.id
         return res
 
     @api.onchange('product_id')
     def onchange_product(self):
-
         if self.product_id:
             self.company_id = self.product_id.company_id
-        return self.onchange_product()
+        return super(StockInventoryLineSGA, self).onchange_product()
 
 class StockInventorySGA(models.Model):
 
@@ -133,7 +118,7 @@ class StockInventorySGA(models.Model):
             num_details = int(line[st:en])
             loop = 0
 
-            # busco todo el stock de ese product en ese almacen que no pertenezca a la compaññia del producto
+            # busco todo el stock de ese product en ese almacen que no pertenezca a la compañia del producto
 
             product_id = self.env['product.product'].search([('default_code', '=', product_code)])
             if not product_id:
