@@ -48,6 +48,13 @@ class SaleOrderSGA(models.Model):
     def new_mecalux_file(self):
         raise ValidationError("De momento, desde albaranes")
         ids = [x.id for x in self]
-        print ids
+
         new_sga_file = self.env['sga.file'].check_sga_file('sale.order', ids, code='SOR')
         return True
+
+    @api.multi
+    def action_confirm(self):
+        res = super(SaleOrderSGA, self).action_confirm()
+        pickings = self.mapped('picking_ids')
+        pickings.create_picks_from_orders('SOR')
+        return res

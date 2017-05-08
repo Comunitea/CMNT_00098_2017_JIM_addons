@@ -27,19 +27,33 @@ class ConfigPathFiles(models.TransientModel):
     _inherit = 'stock.config.settings'
 
     path_files = fields.Char('Files Path', help="Path to SGA Mecalux exchange files. Must content in, out, error, processed and history folders\nAlso a scheduled action is created: Archive SGA files")
+    product_auto = fields.Boolean('Auto update productos', help="Enviar cambios en productos automaticamente al servidor", default=False)
 
     @api.model
     def get_default_path_files(self, fields):
+
         res = {}
         icp = self.env['ir.config_parameter']
         res['path_files'] = icp.get_param(
-            'path_files', 'path_files'
-        )
+            'path_files')
+        return res
+
+    @api.model
+    def get_default_product_auto(self, fields):
+        res = {}
+        icp = self.env['ir.config_parameter']
+        res['product_auto'] = icp.get_param(
+            'product_auto')
         return res
 
     @api.multi
+    def set_product_auto(self):
+        icp = self.env['ir.config_parameter']
+        icp.set_param('product_auto',
+                      self.product_auto)
+
+    @api.multi
     def set_path_files(self):
-        # folder exists
         import os
         if os.path.isdir(self.path_files):
             try:
@@ -77,6 +91,8 @@ class MecaluxVars(models.Model):
     fillchar = fields.Char("Caracter de relleno", size=1)
     sga_file_id = fields.Many2one("sgavar.file")
     required = fields.Boolean("Obligatorio", default=False)
+    st = fields.Integer('Inicio cadena')
+    en = fields.Integer('Fin cadena')
 
 
     @api.onchange('length','length_dec')
@@ -136,6 +152,23 @@ class MecaluxFile(models.Model):
                 print ">>>>>>%s (%s) a sequence %s" % (var.name, var.id, var.sequence)
 
         return
+
+
+    def update_positions(self):
+
+        domain = [('id', '!=', 0)]
+        pool_files = self.env['sgavar.file'].search(domain)
+        print "Numero de registros: %s"%len(pool_files)
+        for sga in pool_files:
+            st=0
+            en=0
+            for var in sga.sga_file_var_ids:
+                st = en
+                en = st + var.length
+                var.st = st
+                var.en = en
+
+        return True
 
 class MecaluxFileHeader(models.Model):
 
@@ -212,7 +245,7 @@ class MecaluxFileHeader(models.Model):
     def default_stage_id(self):
         return self.stage_id.get_default()
 
-    def format_to_mecalux_float(self, value, length_in=(12, 7, 5), default=False, fillchar='0'):
+    def format_to_mecalux_float(self, value, length_in=(12, 7, 5), default=0, fillchar='0'):
 
         length, length_int, length_dec = length_in
         value = value or default
@@ -300,14 +333,22 @@ class MecaluxFileHeader(models.Model):
         return False
 
     @api.model
-    def create_new_sga_file(self, sga_filename, dest_path='in', create=True):
+    def create_new_sga_file(self, sga_filename, dest_path='in', create=True, version = 0):
+
+        if create:
+            sga_filename = '%s%02d' % (sga_filename[0:17], version)
+            domain = [('name', '=', sga_filename)]
+            if self.env['sga.file'].search(domain):
+                version += 1
+                sga_filename = '%s%02d'%(sga_filename[0:17], version)
+                return self.create_new_sga_file(sga_filename, dest_path, create, version)
 
         path = self.get_global_path()
         sga_path = u'%s/%s'%(path, dest_path)
         error = False
         error_str = ''
 
-        if len(sga_filename) != 19:
+        if len(sga_filename) != 19 and len(sga_filename) != 23:
             error_str = u"Error en nombre de archivo: %s caracteres"% len(sga_filename)
             return self.create_new_sga_file_error(error_str)
 
@@ -326,8 +367,8 @@ class MecaluxFileHeader(models.Model):
             'state': sga_state,
             'file_time': sga_file_time,
             'sga_path': sga_path,
-            'global_path': path,
-            'log_name': u"%04d%02d%02d.log" % (datetime.now().year, datetime.now().month, datetime.now().day)
+            'log_name': u"%04d%02d%02d.log" % (datetime.now().year, datetime.now().month, datetime.now().day),
+            'version': version
         }
 
         if create:
@@ -346,6 +387,7 @@ class MecaluxFileHeader(models.Model):
 
     @api.model
     def create(self, vals):
+
         sga_file = super(MecaluxFileHeader, self).create(vals)
         if sga_file:
             res = self.touch_file(sga_file.sga_file)
@@ -392,6 +434,9 @@ class MecaluxFileHeader(models.Model):
         if self.file_code == "CSO":
             self.write_log("Desde mecalux picking CSO ...")
             process = self.env['stock.picking'].import_mecalux_CSO(self.id)
+        elif self.file_code == "ZCS":
+            self.write_log("Desde mecalux picking ZCS ...")
+            process = self.env['stock.picking'].import_mecalux_ZCS(self.id)
 
         elif self.file_code == 'STO':
             self.write_log("Desde mecalux inventory STO ...")
@@ -467,36 +512,60 @@ class MecaluxFileHeader(models.Model):
         def get_line(sgavar, model_pool):
             # TODO Revisar si hace falta contador para los
             # todo numeros de lineas o vale el id de los _ids
+
             cont = 0
             res = ''
             line_ids = False
             for model in model_pool:
+
                 cont += 1
                 model_str = ''
                 var_str = ''
                 new_sga_file.write_log('--> Modelo %s'%model)
 
                 for val in sgavar.sga_file_var_ids:
+                    value = False
                     length = [val.length, val.length_int, val.length_dec]
 
-                    if val.mecalux_type != "L":
+                    # Si viene en el context forzada la variable
+                    if self._context.get(val.name, False):
+                        #Si vienen forzado en el contexto la variable var.name
+                        var_str = self.odoo_to_mecalux(self._context.get(val.name),
+                                                       length, val.mecalux_type, val.default, val.fillchar)
+
+                    # Si es un atributo >>> debe tener asignado un campo en odoo o es []
+                    elif val.mecalux_type == "V":
+                        if val.odoo_name:
+                            value = u'[%s]' % model[val.odoo_name.name]
+                        else:
+                            value = u'[]'
+                        var_str = value
+
+                    # No es Listado de lineas
+                    elif val.mecalux_type != "L":
                         if val.name == "line_number" and not val.odoo_name:
                             value = cont
                         elif val.odoo_name:
                             value = model[val.odoo_name.name]
-                        else:
-                            value = ''
+
+                        if not value:
+                            if val.required:
+                                value = val.default
+
+                        if value == '' and not val.default:
+                            raise UserError("Revisa la configuracion del campo %s del modelo %s"%(val.name, val.sga_file_id))
                         var_str = self.odoo_to_mecalux(value, length, val.mecalux_type, val.default, val.fillchar)
                     else:
-                        new_model = model_pool[val.odoo_name.name]
+                        # SListado de lineas
+                        new_model = model[val.odoo_name.name]
                         new_sgavar = self.env['sgavar.file'].search([('code', '=', val.default)], limit=1)
                         value = len(new_model) or 0
-                        var_str = self.odoo_to_mecalux(value, length, val.mecalux_type, '', val.fillchar)
+                        var_str = self.odoo_to_mecalux(value, length, val.mecalux_type, val.default, val.fillchar)
                         line_ids = True
+
                     model_str += var_str
 
                 res += model_str + '\n'
-                # f.write(model_str + "\n")
 
                 if line_ids:
                     res += get_line(new_sgavar, new_model)
@@ -509,6 +578,7 @@ class MecaluxFileHeader(models.Model):
             raise ValidationError("No se ha encontrado un modelo para ese tipo de fichero %s" % code)
 
         if not ids:
+            return
             raise ValidationError("No se ha encontrado ningun registro para procesar")
         model_pool = self.env[model].browse(ids)
 
@@ -521,9 +591,9 @@ class MecaluxFileHeader(models.Model):
             raise ValidationError("Error en el nombre del fichero")
 
         new_sga_file = self.create_new_sga_file(sga_file_name, 'out', create=create)
+
         if not new_sga_file:
             raise ValidationError("Error. Revisa el fichero del log para mas detalles")
-
         new_sga_file.write_log('Compruebo fichero ...')
 
         if new_sga_file:
@@ -537,7 +607,8 @@ class MecaluxFileHeader(models.Model):
 
         return new_sga_file
 
-    def odoo_to_mecalux(self, value, length_in, type, default="", fillchar=" "):
+    def odoo_to_mecalux(self, value, length_in, type, default=False, fillchar=False):
+
 
         def type_A(value):
             # Tipo string
@@ -550,8 +621,6 @@ class MecaluxFileHeader(models.Model):
 
         def type_B(value):
             # Tipo string
-            if value == '':
-                new_val = " "
             if value == "1" or value is True:
                 new_val = "1"
             elif value == "0" or value is False:
@@ -562,7 +631,7 @@ class MecaluxFileHeader(models.Model):
 
         def type_N(value):
 
-            val = self.format_to_mecalux_float(value, length_in, default=False, fillchar='0')
+            val = self.format_to_mecalux_float(value, length_in)
             return val
 
         length, length_int, length_dec = length_in
@@ -591,7 +660,7 @@ class MecaluxFileHeader(models.Model):
             if value:
                 value = self.format_to_mecalux_date(datetime.strptime(value, tools.DEFAULT_SERVER_DATETIME_FORMAT))
             else:
-                value= ''
+                value = ''
             # Mecalux date
             return type_A(value)
 

@@ -18,9 +18,9 @@ import time
 
 #ODOO CONFIGURACION
 ODOO_SERVER = "localhost"
-ODOO_DBNAME = 'odoo_e10'
+ODOO_DBNAME = 'DEVEL_JIM'
 ODOO_USER_NAME = 'admin' #''sga_user'
-ODOO_USER_PASSWORD = 'admin' #'sga_user_password'
+ODOO_USER_PASSWORD = 'admin_JIM' #'sga_user_password'
 ODOO_PORT = 8069
 
 #El sistema puede funcionar con ficheros, sin embargo,
@@ -196,8 +196,13 @@ class ConnectOdoo:
         res_file = self.execute('sga.file', 'sga_process_file_xmlrpc')
         return res_file
 
+    def update_positions(self):
+
+        res_file = self.execute('sgavar.file', 'update_positions', [])
+        return res_file
+
 if __name__ == "__main__":
 
     ENGINE = ConnectOdoo()
 
-    ENGINE.process_hot_folders()
+    ENGINE.update_positions()

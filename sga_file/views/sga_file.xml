@@ -12,6 +12,14 @@
                         <div>
                             <div>
                                 <field name="path_files"/>
+
+                            </div>
+                        </div>
+                        <label for="product_auto"/>
+                        <div>
+                            <div>
+                                <field name="product_auto"/>
+
                             </div>
                         </div>
                     </group>
@@ -138,6 +146,8 @@
                                 <field name="mecalux_type"/>
                                 <field name="odoo_name"/>
                                 <field name="odoo_model"/>
+                                <field name="st"/>
+                                <field name="en"/>
                                 <field name="length"/>
                                 <field name="length_int"/>
                                 <field name="length_dec"/>

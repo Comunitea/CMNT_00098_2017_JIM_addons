@@ -52,8 +52,8 @@ class ModelSgafile2(models.Model):
         code = "TPR"
         version= "01"
         model = 'product.category'
-        fields = [('operation', 1, 'A', 'F'), ('producttype_code', 12, 'A', 'sga_producttype_code'), ('description', 80, 'A', '', 'name'),
-                  ('parent_producttype_code', 12, 'A', 'parent_id','sga_producttype_code'), ('attribute', 20, 'V', '')]
+        fields = [('operation', 1, 'A', 'F'), ('producttype_code', 12, 'A', 'code'), ('description', 80, 'A', '', 'name'),
+                  ('parent_producttype_code', 12, 'A', 'parent_id','code'), ('attribute', 20, 'V', '')]
         self.import_ctes2(name, code, version, model, fields)
 
         name = "Transportistas"
