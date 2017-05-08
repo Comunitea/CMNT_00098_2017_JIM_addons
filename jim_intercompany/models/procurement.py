@@ -106,8 +106,10 @@ class ProcurementOrder(models.Model):
                 po = self.env['purchase.order'].search([dom for dom in domain])
                 po = po[0] if po else False
                 cache[domain] = po
+            auto_confirm = False
             if not po:
                 vals = procurement._prepare_purchase_order(partner)
+                vals['intercompany'] = True
                 po = self.env['purchase.order'].create(vals)
                 name = (procurement.group_id and (procurement.group_id.name + ":") or "") + (procurement.name != "/" and procurement.name or procurement.move_dest_id.raw_material_production_id and procurement.move_dest_id.raw_material_production_id.name or "")
                 message = _("This purchase order has been created from: \
@@ -116,8 +118,7 @@ class ProcurementOrder(models.Model):
                 po.message_post(body=message)
                 cache[domain] = po
 
-                # # CHANGED, AUTOMATIC CONFIRMATION
-                po.button_confirm()
+               # auto_confirm=True
 
             elif not po.origin or procurement.origin not in po.origin.split(', '):
                 # Keep track of all procurements
@@ -170,6 +171,10 @@ class ProcurementOrder(models.Model):
                     _fix_tax_included_price(prod.intercompany_price,
                                             prod.supplier_taxes_id, taxes_id)
                 self.env['purchase.order.line'].create(vals)
+
+            # # CHANGED, AUTOMATIC CONFIRMATION
+            # if auto_confirm:
+            #     po.button_confirm()
         return res
 
     @api.multi
