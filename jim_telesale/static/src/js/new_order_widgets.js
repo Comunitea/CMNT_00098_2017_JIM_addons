@@ -78,7 +78,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
 
             var discount = this.chained_discount2float(value);
             if (!discount){
-                alert(value + " is not a valid format for chained discount. It must be something like 23+5.2+1")
+                alert(value + _t("is not a valid format for chained discount. It must be something like 23+5.2+1"));
                 this.model.set('discount', 0.0);
                 this.model.set('chained_discount', 0.0);
             }

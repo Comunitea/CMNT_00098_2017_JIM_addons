@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-18 17:24+0000\n"
-"PO-Revision-Date: 2017-04-18 17:24+0000\n"
+"POT-Creation-Date: 2017-05-09 17:16+0000\n"
+"PO-Revision-Date: 2017-05-09 17:16+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -37,6 +37,29 @@ msgid "Available"
 msgstr "Disponible"
 
 #. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_available_in_pos
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_available_in_pos
+msgid "Available in the Point of Sale"
+msgstr "Disponible en el TPV"
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_change_material_abc
+msgid "Cambio rotabilidad"
+msgstr "Cambio rotabilidad"
+
+#. module: jim_telesale
+#: model:ir.model.fields,help:jim_telesale.field_delivery_carrier_to_weight
+#: model:ir.model.fields,help:jim_telesale.field_product_product_to_weight
+msgid "Check if the product should be weighted using the hardware scale integration"
+msgstr "Marque si el producto debe ser pesado usando la integración hardware de la balanza"
+
+#. module: jim_telesale
+#: model:ir.model.fields,help:jim_telesale.field_delivery_carrier_available_in_pos
+#: model:ir.model.fields,help:jim_telesale.field_product_product_available_in_pos
+msgid "Check if you want this product to appear in the Point of Sale"
+msgstr "Marque esta casilla si quiere que este producto aparezca en el TPV"
+
+#. module: jim_telesale
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_product_type_code
 msgid "Codigo de categoria"
 msgstr "Codigo de categoria"
@@ -47,15 +70,23 @@ msgid "Codigo de u.m.(SGA)"
 msgstr "Codigo de u.m.(SGA)"
 
 #. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_prod_shortdesc
-msgid "Descripcion corta (SGA)"
-msgstr "Descripcion corta (SGA)"
+#. openerp-web
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:111
+#, python-format
+msgid "Customer name '' does not exist"
+msgstr "Customer name '' does not exist"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:40
+#, python-format
+msgid "Disc"
+msgstr "Disc"
 
 #. module: jim_telesale
 #. openerp-web
 #: code:addons/jim_telesale/static/src/xml/new_order_template.xml:34
 #: code:addons/jim_telesale/static/src/xml/order_history_template.xml:7
-#: code:addons/jim_telesale/static/src/xml/summary_order_template.xml:7
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_lqdr
 #, python-format
 msgid "LQDR"
@@ -64,27 +95,32 @@ msgstr "LQDR"
 #. module: jim_telesale
 #: model:ir.model.fields,help:jim_telesale.field_product_product_sga_stock
 msgid "Last PST from Mecalux"
-msgstr "ültimo PST de Mecalux"
-
-#. module: jim_telesale
-#: selection:product.product,sga_change_material_abc:0
-msgid "NO"
-msgstr "NO"
+msgstr "Last PST from Mecalux"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:71
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:48
 #, python-format
 msgid "No"
 msgstr "No"
 
 #. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_prod_shortdesc
+msgid "Nombre Radiofrecuencia"
+msgstr "Nombre Radiofrecuencia"
+
+#. module: jim_telesale
 #. openerp-web
 #: code:addons/jim_telesale/static/src/xml/order_history_template.xml:10
-#: code:addons/jim_telesale/static/src/xml/summary_order_template.xml:10
 #, python-format
 msgid "Pending Approval"
 msgstr "Pendiente aprobación"
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_pos_categ_id
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_pos_categ_id
+msgid "Point of Sale Category"
+msgstr "Categoría del TPV"
 
 #. module: jim_telesale
 #: model:ir.model,name:jim_telesale.model_product_product
@@ -92,29 +128,15 @@ msgid "Product"
 msgstr "Producto"
 
 #. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_route_name
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_route_name
 msgid "Route name"
 msgstr "Nombre ruta"
 
 #. module: jim_telesale
-#: selection:product.product,sga_change_material_abc:0
-msgid "SI"
-msgstr "SI"
-
-#. module: jim_telesale
 #: model:ir.model,name:jim_telesale.model_sale_order
 msgid "Sales Order"
 msgstr "Pedido de venta"
-
-#. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_change_material_abc
-msgid "Sga change material abc"
-msgstr "Sga change material abc"
-
-#. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_material_abc_code
-msgid "Sga material abc code"
-msgstr "Sga material abc code"
 
 #. module: jim_telesale
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_warehouse_code
@@ -142,6 +164,23 @@ msgid "Tariff"
 msgstr "Arancel"
 
 #. module: jim_telesale
+#: model:ir.model.fields,help:jim_telesale.field_delivery_carrier_pos_categ_id
+#: model:ir.model.fields,help:jim_telesale.field_product_product_pos_categ_id
+msgid "Those categories are used to group similar products for point of sale."
+msgstr "Estas categorías se usan para agrupar productos similares para el TPV."
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_material_abc_code
+msgid "Tipo de rotabilidad"
+msgstr "Tipo de rotabilidad"
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_to_weight
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_to_weight
+msgid "To Weigh With Scale"
+msgstr "Para pesar con balanza"
+
+#. module: jim_telesale
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_desc_uom_base_code
 msgid "Unit of Measure"
 msgstr "Unidad de medida"
@@ -155,8 +194,16 @@ msgstr "Almacén"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:71
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:48
 #, python-format
 msgid "Yes"
 msgstr "Sí"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:81
+#: code:addons/jim_telesale/static/src/js/popups.js:65
+#, python-format
+msgid "is not a valid format for chained discount. It must be something like 23+5.2+1"
+msgstr "No es un formato válido para el descuento encadenado. Tiene que ser algo como por ejemplo 2+10.5+10"
 

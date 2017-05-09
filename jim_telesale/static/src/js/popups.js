@@ -5,6 +5,8 @@ var TsBaseWidget = require('telesale_manage_variants.base_widgets');
 var GridWidgetSuper = TsBaseWidget.GridWidget
 
 var NewOrderWidgets = require('telesale.new_order_widgets');
+var core = require('web.core');
+var _t = core._t;
 
 var GridWidget = GridWidgetSuper.include({
 
@@ -60,7 +62,7 @@ var GridWidget = GridWidgetSuper.include({
         var discount = this.line_widget.chained_discount2float(value)
 
         if (!discount){
-            alert(value + " is not a valid format for chained discount. It must be something like 23+5.2+1")
+            alert(value + _t("is not a valid format for chained discount. It must be something like 23+5.2+1"));
             $(input_field).val("0.00");
             $(input_field).focus();
         }
