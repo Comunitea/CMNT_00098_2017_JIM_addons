@@ -54,6 +54,27 @@ var GridWidget = GridWidgetSuper.include({
         line_model.update_line_values();
     },
 
+    // OVERWRITED TO CHECK CHAINED DISCOUNT VALUE
+    check_chained_discount(input_field){
+        var value = $(input_field).val();
+        var discount = this.line_widget.chained_discount2float(value)
+
+        if (!discount){
+            alert(value + " is not a valid format for chained discount. It must be something like 23+5.2+1")
+            $(input_field).val("0.00");
+            $(input_field).focus();
+        }
+    },
+
+
+    bind_onchange_events: function(){
+        this._super();
+        this.$('.add-discount').unbind();
+        this.$('.add-discount').bind('change', function(event){
+             self.check_chained_discount(this);
+        });
+    },
+
 
 });
 
