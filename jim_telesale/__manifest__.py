@@ -24,6 +24,7 @@
     'qweb': [
         'static/src/xml/new_order_template.xml',
         'static/src/xml/order_history_template.xml',
+        'static/src/xml/popups_template.xml',
     ],
     "installable": True
 }
