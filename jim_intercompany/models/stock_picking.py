@@ -57,7 +57,35 @@ class StockPicking(models.Model):
             origin_pack_operation = self.pack_operation_product_ids.filtered(
                 lambda x: x.product_id.id == pack_operation.product_id.id)
             if origin_pack_operation:
-                pack_operation.qty_done = origin_pack_operation.qty_done
+                if origin_pack_operation.qty_done <= pack_operation.product_qty:
+                    pack_operation.qty_done = origin_pack_operation.qty_done
+                else:
+                    # Debería comprobar si puede estar enviando producto que proviene de otro sitio
+                    # Comprobaremos si en este mismo abastecimiento hay alguna otra entrada en la ubicación
+                    # desde donde debe salir del mismo producto
+                    moves = self.env['stock.move'].search([('group_id','=', self.group_id.id),
+                                                   ('location_dest_id', '=', origin_pack_operation.location_id.id),
+                                                   ('product_id', '=', origin_pack_operation.product_id.id),
+                                                   ('picking_id', '!=', picking.id)])
+                    if not moves:
+                        pack_operation.qty_done = origin_pack_operation.qty_done
+                        message = _("The quantity of product %s has been increased"
+                                    " to %d by intercompany out operation %s")\
+                                  % (origin_pack_operation.product_id.name,
+                                     origin_pack_operation.qty_done, self.name)
+                        picking.message_post(body=message)
+                    else:
+                        to_process_qty = 0
+                        done_qty = sum(moves.filtered(lambda x: x.state == 'done').mapped('product_uom_qty'))
+                        pending_qty = sum(moves.filtered(lambda x: x.state != 'done').mapped('product_uom_qty'))
+                        if 0 <= origin_pack_operation.qty_done - done_qty <= pack_operation.product_qty:
+                            to_process_qty = origin_pack_operation.qty_done - done_qty
+                        else:
+                            if 0 <= origin_pack_operation.qty_done - done_qty - pending_qty <=\
+                                    pack_operation.product_qty:
+                                to_process_qty = origin_pack_operation.qty_done - done_qty - pending_qty
+                        pack_operation.qty_done = to_process_qty
+
         if picking.state == 'assigned':
             picking.do_transfer()
 
