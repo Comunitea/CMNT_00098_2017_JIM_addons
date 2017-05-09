@@ -52,27 +52,33 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         //set handler for fiscount plus field.
         this._super();
     },
+
+    // Convert a chained discout like (10.5+20) in a float (20.5)
+    // or returns false if something wrong.
+    chained_discount2float: function(value){
+        var split_disc = value.split('+')
+        var discount = 0.0
+        var disc = 0 
+        for (var i in split_disc){
+            disc = split_disc[i]
+            if (isNaN(disc) || disc == "") {
+               return false // Break
+            }
+            else{
+              discount = discount + parseFloat(disc);
+            }
+        }
+        return discount;
+
+    },
     set_value: function(key) {
         this._super(key)
         if (key == 'chained_discount'){
             var value = this.$('.col-chained_discount').val();
-            var split_disc = value.split('+')
-            var discount = 0.0
-            var fail = false
-            var disc = 0 
-            for (var i in split_disc){
-                disc = split_disc[i]
-                if (isNaN(disc) || disc == "") {
-                    fail = true;
-                    break; 
-                }
-                else{
-                  discount = discount + parseFloat(disc);
-                }
-            }
 
-            if (fail){
-                alert('Discount format not valid. It must be somethiong like 23+5.2+1')
+            var discount = this.chained_discount2float(value);
+            if (!discount){
+                alert(value + " is not a valid format for chained discount. It must be something like 23+5.2+1")
                 this.model.set('discount', 0.0);
                 this.model.set('chained_discount', 0.0);
             }
@@ -153,34 +159,6 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
     },
 });
 
-// Ejemplo de como añadir al widget de producto nuevos campos
-// var ProductInfoOrderWidget = NewOrderWidgets.ProductInfoOrderWidget.include({
-//     set_default_values: function(){
-//         this._super();
-//         this.route = ""; 
-//         this.lqdr = "";
-//     },
-//     change_product: function(){
-//         this._super();
-//         var self = this
-//         var line_product = this.selected_line.get("product")
-//         self.n_line = self.selected_line.get('n_line') + " / " + self.ts_model.get('selectedOrder').get('orderLines').length;
-//         if (line_product != ""){
-//             var product_id = this.ts_model.db.product_name_id[line_product]
-//             var partner_name = this.ts_model.get('selectedOrder').get('partner');
-//             var partner_id = this.ts_model.db.partner_name_id[partner_name];
-//             if (product_id && partner_id){
-//                 var model = new Model('product.product');
-//                 model.call("get_product_info",[product_id,partner_id])
-//                     .then(function(result){
-//                         self.route = result.route;
-//                         self.lqdr = result.lqdr;
-//                         self.renderElement();
-//                     });
-//             }   
-//         }
-//     },
-// });
 });
 
 
