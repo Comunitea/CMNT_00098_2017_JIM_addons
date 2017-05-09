@@ -205,5 +205,5 @@ msgstr "Sí"
 #: code:addons/jim_telesale/static/src/js/popups.js:65
 #, python-format
 msgid "is not a valid format for chained discount. It must be something like 23+5.2+1"
-msgstr "No es un formato válido para el descuento encadenado. Tiene que ser algo como por ejemplo 2+10.5+10"
+msgstr " No es un formato válido para el descuento encadenado. Tiene que ser algo como por ejemplo 2+10.5+10"
 
