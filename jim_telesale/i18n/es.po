@@ -64,7 +64,7 @@ msgstr "LQDR"
 #. module: jim_telesale
 #: model:ir.model.fields,help:jim_telesale.field_product_product_sga_stock
 msgid "Last PST from Mecalux"
-msgstr "Last PST from Mecalux"
+msgstr "ültimo PST de Mecalux"
 
 #. module: jim_telesale
 #: selection:product.product,sga_change_material_abc:0
