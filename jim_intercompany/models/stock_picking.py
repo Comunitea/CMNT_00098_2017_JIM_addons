@@ -12,35 +12,29 @@ class StockPicking(models.Model):
 
     @api.multi
     def do_transfer(self):
-
+        self.ensure_one()
         pack_operations_ids = self.pack_operation_product_ids.filtered(lambda x: x.qty_done > 0).mapped('id')
         move_lines_ids = self.env['stock.move.operation.link'].search([
             ('operation_id', 'in', pack_operations_ids)]).mapped('move_id').mapped('id')
 
         ic_purchase_moves = self.env['stock.move'].search([('move_dest_id', 'in', move_lines_ids)]). \
             filtered(lambda x: x.picking_id.purchase_id.intercompany)
-        ic_purchase_pickings = ic_purchase_moves.mapped('picking_id')
-        ic_purchases = ic_purchase_pickings.mapped('purchase_id')
+        if ic_purchase_moves:
+            ic_purchase_pickings = ic_purchase_moves.mapped('picking_id')
+            ic_purchases = ic_purchase_pickings.mapped('purchase_id')
 
+            ic_purchase_ids = ic_purchases.mapped('id')
+            ic_sales = self.env['sale.order'].sudo().search([('auto_purchase_order_id', 'in', ic_purchase_ids)])
+            ic_sale_pickings = ic_sales.mapped('picking_ids').filtered(
+                lambda x: x.sale_id.auto_generated)
 
-        #ic_pickings = self.search([('group_id', '=', self.group_id.id),('id', '!=', self.id )]).filtered(
-        #    lambda x: x.purchase_id.intercompany)
+            #Recorre y procesa los albaranes de la venta intercompañía
+            for ic_sale_picking in ic_sale_pickings:
+                self.intercompany_picking_process(ic_sale_picking)
 
-        #ic_purchases = ic_pickings.mapped('purchase_id')
-        #ic_purchase_pickings = ic_purchases.mapped('picking_ids')
-
-        ic_purchase_ids = ic_purchases.mapped('id')
-        ic_sales = self.env['sale.order'].sudo().search([('auto_purchase_order_id', 'in', ic_purchase_ids)])
-        ic_sale_pickings = ic_sales.mapped('picking_ids').filtered(
-            lambda x: x.sale_id.auto_generated)
-
-        #Recorre y procesa los albaranes de la venta intercompañía
-        for ic_sale_picking in ic_sale_pickings:
-            self.intercompany_picking_process(ic_sale_picking)
-
-        # Recorre y procesa los albaranes de la compra intercompañía
-        for ic_purchase_picking in ic_purchase_pickings:
-            self.intercompany_picking_process(ic_purchase_picking)
+            # Recorre y procesa los albaranes de la compra intercompañía
+            for ic_purchase_picking in ic_purchase_pickings:
+                self.intercompany_picking_process(ic_purchase_picking)
 
         res = super(StockPicking, self).do_transfer()
         return res
@@ -63,12 +57,12 @@ class StockPicking(models.Model):
                     # Debería comprobar si puede estar enviando producto que proviene de otro sitio
                     # Comprobaremos si en este mismo abastecimiento hay alguna otra entrada en la ubicación
                     # desde donde debe salir del mismo producto
-                    moves = self.env['stock.move'].search([('group_id','=', self.group_id.id),
+                    moves = self.env['stock.move'].search([('group_id','=', picking.group_id.id),
                                                    ('location_dest_id', '=', origin_pack_operation.location_id.id),
                                                    ('product_id', '=', origin_pack_operation.product_id.id),
                                                    ('picking_id', '!=', picking.id)])
                     if not moves:
-                        pack_operation.qty_done = origin_pack_operation.qty_done
+                        pack_operation.qty_done = pack_operation.product_qty = origin_pack_operation.qty_done
                         message = _("The quantity of product %s has been increased"
                                     " to %d by intercompany out operation %s")\
                                   % (origin_pack_operation.product_id.name,
@@ -84,7 +78,7 @@ class StockPicking(models.Model):
                             if 0 <= origin_pack_operation.qty_done - done_qty - pending_qty <=\
                                     pack_operation.product_qty:
                                 to_process_qty = origin_pack_operation.qty_done - done_qty - pending_qty
-                        pack_operation.qty_done = to_process_qty
+                        pack_operation.qty_done = pack_operation.product_qty = to_process_qty
 
         if picking.state == 'assigned':
             picking.do_transfer()
@@ -99,10 +93,11 @@ class StockMove(models.Model):
 
     @api.multi
     def action_done(self):
+        res = super(StockMove, self).action_done()
         for move in self:
             if move.move_dest_id.picking_id.sale_id.auto_generated:
                 move.process_intercompany_chain()
-        return super(StockMove, self).action_done()
+        return res
 
     @api.multi
     def process_intercompany_chain(self):
