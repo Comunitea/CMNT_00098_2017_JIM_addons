@@ -11,6 +11,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         Full overwrited to get the global available stock
         TODO IMPROVE, REVIEW REFRESH CALLS
         */
+        debugger;
         var self=this;
         var price = this.model.get("pvp")
         var qty = this.model.get("qty")
@@ -25,6 +26,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
             var model = new Model("product.product")
             model.call("ts_get_global_stocks",[product_id])
             .then(function(result){
+                debugger;
                 self.model.set('global_available_stock', self.ts_model.my_round(result.global_available_stock));
                 self.renderElement();
                 self.$('.col-'+ focus_key).focus()
@@ -41,7 +43,9 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
     },
     renderElement: function() {
         // Set lqdr route_name and global_available_stock
-        var prod_name = this.$('.col-product').val();
+        debugger;
+        var prod_name = this.model.get("product");
+        // var prod_name = this.$('.col-product').val();
         var product_id = this.ts_model.db.product_name_id[prod_name];
         if (product_id){
             var product_obj = this.ts_model.db.get_product_by_id(product_id);
