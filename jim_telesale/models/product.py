@@ -10,22 +10,36 @@ class ProductProduct(models.Model):
     route_name = fields.Char('Route name', related='route_ids.name',
                              store=True)
 
+    # @api.model
+    # def ts_get_global_stocks(self, product_id):
+    #     """ Return data of widget productInfo """
+    #     res = {'global_available_stock': 0.0}
+    #     if product_id:
+    #         product = self.browse(product_id)
+    #         res.update({'global_available_stock':
+    #                     product.global_available_stock})
+    #     return res
+
     @api.model
-    def ts_get_global_stocks(self, product_id):
-        """ Return data of widget productInfo """
-        res = {'global_available_stock': 0.0}
-        if product_id:
-            product_obj = self.browse(product_id)
-            res.update({'global_available_stock':
-                        product_obj.global_available_stock})
+    def get_product_info(self, product_id, partner_id):
+        """ Return stock data of widget productInfo """
+        res = super(ProductProduct, self).get_product_info(product_id,
+                                                           partner_id)
+        product = self.browse(product_id)
+        # route = product.route_ids[0].name if product.route_ids else ""
+        # lqdr = _("Yes") if product.lqdr else _("No")
+        # res.update({'route': route, 'lqdr': lqdr})
+        res.update({'stock': product.global_available_stock})
         return res
 
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    # When open grid return global_available_stock
     @api.model
     def _get_variant_stock(self, product):
+        """
+        Return global available stock when open grid
+        """
         super(ProductTemplate, self)._get_variant_stock(product)
         return product and product.global_available_stock or 0
