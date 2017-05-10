@@ -15,13 +15,18 @@ var GridWidget = GridWidgetSuper.include({
         var qty = this.ts_model.my_str2float( $(cell).find('input.add-qty').val() );
         var price = this.ts_model.my_str2float( $(cell).find('input.add-price').val() );
         // Is a chained discount now
-        var discount = $(cell).find('input.add-discount').val();
         var global_available_stock = this.ts_model.my_str2float($(cell).find('#stock_div').attr('stock-value'));
+        var discount = $(cell).find('input.add-discount').val();
+
+        var col_id = $(cell).attr('col-id');
+        var row_id = $(cell).attr('row-id');
+        var cell_obj = this.get_cell_obj(col_id, row_id)
         var vals = {
             'qty': qty,
             'price': price,
             'discount': discount,  // now represent a chained discount
             'stock': global_available_stock,  // to write in orderLine
+            'tax_ids': cell_obj.tax_ids
         }
         return vals
     },
@@ -54,6 +59,7 @@ var GridWidget = GridWidgetSuper.include({
         var discount = this.line_widget.chained_discount2float(chained_discount)
         line_model.set('discount', discount);
         line_model.set('global_available_stock', line_vals.stock);
+        line_model.set('taxes_ids', line_vals.tax_ids || []); 
         line_model.update_line_values();
     },
 

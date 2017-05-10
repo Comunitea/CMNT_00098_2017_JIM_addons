@@ -104,12 +104,25 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         var prod_name = this.model.get("product");
         // var prod_name = this.$('.col-product').val();
         var product_id = this.ts_model.db.product_name_id[prod_name];
+        var product_obj = false
         if (product_id){
-            var product_obj = this.ts_model.db.get_product_by_id(product_id);
+            product_obj = this.ts_model.db.get_product_by_id(product_id);
+        }
+        // Get first vatiant related
+        else{
+            var template_obj = this.get_template();
+            if (template_obj){
+                product_id = template_obj.product_variant_ids[0];
+                product_obj = this.ts_model.db.get_product_by_id(product_id)
+            }
+        }
+
+        if (product_obj){
             var lqdr = (product_obj.lqdr)  ? _t("Yes") : _t("No")
             this.model.set('lqdr', lqdr);
             this.model.set('route_name', product_obj.route_name);
         }
+
         //set handler for fiscount plus field.
         this._super();
     }
