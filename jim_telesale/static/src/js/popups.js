@@ -10,18 +10,18 @@ var _t = core._t;
 
 var GridWidget = GridWidgetSuper.include({
 
-    // OVERWRITED to get chained discount
+    // OVERWRITED to get chained discount and global_stock
     get_cell_vals: function(cell){
         var qty = this.ts_model.my_str2float( $(cell).find('input.add-qty').val() );
         var price = this.ts_model.my_str2float( $(cell).find('input.add-price').val() );
-
         // Is a chained discount now
         var discount = $(cell).find('input.add-discount').val();
-
+        var global_available_stock = this.ts_model.my_str2float($(cell).find('#stock_div').attr('stock-value'));
         var vals = {
             'qty': qty,
             'price': price,
             'discount': discount,  // now represent a chained discount
+            'stock': global_available_stock,  // to write in orderLine
         }
         return vals
     },
@@ -42,7 +42,7 @@ var GridWidget = GridWidgetSuper.include({
         return updated_cell
     },
 
-    // OVERWRITED to set chained discount instead discount
+    // OVERWRITED to set chained discount instead discount and global_stock
     set_cell_vals: function(line_model, line_vals){
         line_model.set('qty', line_vals.qty);
         line_model.set('pvp', line_vals.price);
@@ -53,6 +53,7 @@ var GridWidget = GridWidgetSuper.include({
         // Calculate new discount
         var discount = this.line_widget.chained_discount2float(chained_discount)
         line_model.set('discount', discount);
+        line_model.set('global_available_stock', line_vals.stock);
         line_model.update_line_values();
     },
 
