@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* jim_sale
+#	* jim_telesale
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-27 16:22+0000\n"
-"PO-Revision-Date: 2017-03-27 16:22+0000\n"
+"POT-Creation-Date: 2017-05-09 16:45+0000\n"
+"PO-Revision-Date: 2017-05-09 16:45+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -15,70 +15,187 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
-#. module: jim_sale
-#: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_company_id
-msgid "Company"
-msgstr "Compañía"
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:22
+#, python-format
+msgid "(LQDR)"
+msgstr "(LQDR)"
 
-#. module: jim_sale
-#: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_in_qty
-msgid "Incoming qty"
-msgstr "Cantidad entrante"
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:25
+#, python-format
+msgid "(Pending Approval)"
+msgstr "(Pendiente aprobación)"
 
-#. module: jim_sale
-#: model:ir.model.fields,field_description:jim_sale.field_product_template_lqdr
-#: model:ir.ui.view,arch_db:jim_sale.product_template_search_view
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:36
+#, python-format
+msgid "Available"
+msgstr "Disponible"
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_available_in_pos
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_available_in_pos
+msgid "Available in the Point of Sale"
+msgstr "Disponible en el TPV"
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_change_material_abc
+msgid "Cambio rotabilidad"
+msgstr "Cambio rotabilidad"
+
+#. module: jim_telesale
+#: model:ir.model.fields,help:jim_telesale.field_delivery_carrier_to_weight
+#: model:ir.model.fields,help:jim_telesale.field_product_product_to_weight
+msgid "Check if the product should be weighted using the hardware scale integration"
+msgstr "Marque si el producto debe ser pesado usando la integración hardware de la balanza"
+
+#. module: jim_telesale
+#: model:ir.model.fields,help:jim_telesale.field_delivery_carrier_available_in_pos
+#: model:ir.model.fields,help:jim_telesale.field_product_product_available_in_pos
+msgid "Check if you want this product to appear in the Point of Sale"
+msgstr "Marque esta casilla si quiere que este producto aparezca en el TPV"
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_product_type_code
+msgid "Codigo de categoria"
+msgstr "Codigo de categoria"
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_uom_base_code
+msgid "Codigo de u.m.(SGA)"
+msgstr "Codigo de u.m.(SGA)"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:111
+#, python-format
+msgid "Customer name '' does not exist"
+msgstr "Customer name '' does not exist"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:40
+#, python-format
+msgid "Disc"
+msgstr "Disc"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:34
+#: code:addons/jim_telesale/static/src/xml/order_history_template.xml:7
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_lqdr
+#, python-format
 msgid "LQDR"
 msgstr "LQDR"
 
-#. module: jim_sale
-#: model:ir.ui.view,arch_db:jim_sale.sale_order_view_search_inherit_quotation
-msgid "LQDR order"
-msgstr "Pedido LQDR"
+#. module: jim_telesale
+#: model:ir.model.fields,help:jim_telesale.field_product_product_sga_stock
+msgid "Last PST from Mecalux"
+msgstr "Last PST from Mecalux"
 
-#. module: jim_sale
-#: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_location_id
-msgid "Location"
-msgstr "Ubicación"
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:48
+#, python-format
+msgid "No"
+msgstr "No"
 
-#. module: jim_sale
-#: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_out_qty
-msgid "Outgoing qty"
-msgstr "Cantidad saliente"
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_prod_shortdesc
+msgid "Nombre Radiofrecuencia"
+msgstr "Nombre Radiofrecuencia"
 
-#. module: jim_sale
-#: model:ir.ui.view,arch_db:jim_sale.sale_order_view_search_inherit_quotation
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/order_history_template.xml:10
+#, python-format
 msgid "Pending Approval"
 msgstr "Pendiente aprobación"
 
-#. module: jim_sale
-#: model:ir.model,name:jim_sale.model_product_template
-msgid "Product Template"
-msgstr "Plantilla de producto"
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_pos_categ_id
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_pos_categ_id
+msgid "Point of Sale Category"
+msgstr "Categoría del TPV"
 
-#. module: jim_sale
-#: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_real_qty
-msgid "Real qty"
-msgstr "Cantidad real"
+#. module: jim_telesale
+#: model:ir.model,name:jim_telesale.model_product_product
+msgid "Product"
+msgstr "Product"
 
-#. module: jim_sale
-#: model:ir.model,name:jim_sale.model_sale_order
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_route_name
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_route_name
+msgid "Route name"
+msgstr "Nombre ruta"
+
+#. module: jim_telesale
+#: model:ir.model,name:jim_telesale.model_sale_order
 msgid "Sales Order"
 msgstr "Pedido de venta"
 
-#. module: jim_sale
-#: model:ir.model,name:jim_sale.model_sale_order_line
-msgid "Sales Order Line"
-msgstr "Línea de pedido de venta"
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_warehouse_code
+msgid "Short Name"
+msgstr "Nombre corto"
 
-#. module: jim_sale
-#: model:ir.ui.view,arch_db:jim_sale.view_order_form_add_states
-msgid "Wait approval"
-msgstr "Esperando aprobación"
+#. module: jim_telesale
+#: model:ir.model.fields,help:jim_telesale.field_product_product_sga_warehouse_code
+msgid "Short name used to identify your warehouse"
+msgstr "Nombre corto usado para identificar su almacén"
 
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_stock
+msgid "Stock (SGA)"
+msgstr "Stock (SGA)"
 
-#. module: jim_sale
-#: model:ir.model,name:jim_sale.model_report_stock_forecast
-msgid "report.stock.forecast"
-msgstr "report.stock.forecast"
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_tag_ids
+msgid "Tags"
+msgstr "Etiquetas"
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_tariff
+msgid "Tariff"
+msgstr "Arancel"
+
+#. module: jim_telesale
+#: model:ir.model.fields,help:jim_telesale.field_delivery_carrier_pos_categ_id
+#: model:ir.model.fields,help:jim_telesale.field_product_product_pos_categ_id
+msgid "Those categories are used to group similar products for point of sale."
+msgstr "Estas categorías se usan para agrupar productos similares para el TPV."
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_material_abc_code
+msgid "Tipo de rotabilidad"
+msgstr "Tipo de rotabilidad"
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_to_weight
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_to_weight
+msgid "To Weigh With Scale"
+msgstr "Para pesar con balanza"
+
+#. module: jim_telesale
+#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_desc_uom_base_code
+msgid "Unit of Measure"
+msgstr "Unidad de medida"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:35
+#, python-format
+msgid "Wareouse"
+msgstr "Almacén"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:48
+#, python-format
+msgid "Yes"
+msgstr "Sí"
 

@@ -47,9 +47,9 @@ class SaleOrderLineTemplate(models.Model):
     @api.model
     def create(self, vals):
         if not self._context.get('no_create_line', False):
-            new_line = self.env['sale.order.line'].create(vals)
+            new_line = self.env['sale.order.line'].with_context(no_create_template_line=True).create(vals)
             vals['order_lines'] = [(6, 0, [new_line.id])]
-        return super(SaleOrderLineTemplate, self).create(vals)
+        return super(SaleOrderLineTemplate, self.with_context(no_create_template_line=True)).create(vals)
 
     def _compute_order_lines_qty(self):
         for template in self:
@@ -72,6 +72,15 @@ class SaleOrderLine(models.Model):
     def create(self, vals):
         if self._context.get('template_line', False):
             vals['template_line'] = self._context.get('template_line', False)
+        if not vals.get('template_line', False) and not \
+                self._context.get('no_create_template_line', False):
+            product = self.env['product.product'].browse(
+                vals.get('product_id'))
+            vals['product_template'] = product.product_tmpl_id.id
+            new_template = self.env['sale.order.line.template'].with_context(
+                no_create_template_line=True, no_create_line=True).create(vals)
+            vals.pop('product_template')
+            vals['template_line'] = new_template.id
         return super(SaleOrderLine, self).create(vals)
 
 
