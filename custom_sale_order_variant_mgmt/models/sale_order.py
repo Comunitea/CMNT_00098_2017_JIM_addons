@@ -15,41 +15,53 @@ class SaleOrderLineTemplate(models.Model):
         domain=[('sale_ok', '=', True), ('product_variant_count', '=', 1)],
         change_default=True, ondelete='restrict', required=True)
 
-    order_lines = fields.One2many('sale.order.line', 'template_line')
+    order_lines = fields.One2many('sale.order.line', 'template_line',
+                                  copy=True)
     lines_qty = fields.Integer(compute='_compute_order_lines_qty')
     price_subtotal = fields.Monetary(
-        compute='_compute_amount', string='Subtotal', readonly=True, store=True)
+        compute='_compute_amount', string='Subtotal', readonly=True,
+        store=True)
 
     @api.depends('order_lines.price_subtotal')
     def _compute_amount(self):
         for line in self:
-            line.price_subtotal = sum([x.price_subtotal for x in line.order_lines])
+            line.price_subtotal = sum(
+                [x.price_subtotal for x in line.order_lines])
 
     @api.multi
     def unlink(self):
         for tempalte in self:
             tempalte.order_lines.unlink()
-        return super(SaleOrderLineTemplate,self).unlink()
+        return super(SaleOrderLineTemplate, self).unlink()
 
     @api.multi
     def write(self, vals):
         for template in self:
             line_vals = vals
-            if self.lines_qty > 1:
+            if template.lines_qty > 1:
                 line_vals.pop('product_id', False)
                 line_vals.pop('product_uom_qty', False)
                 line_vals.pop('price_unit', False)
                 line_vals.pop('purchase_price', False)
                 line_vals.pop('name', False)
-            self.order_lines.write(vals)
+            template.order_lines.write(vals)
         return super(SaleOrderLineTemplate, self).write(vals)
 
     @api.model
     def create(self, vals):
+        # Se controla el create con order_lines debido que al duplicar un
+        # pedido el vals de las lineas viene sin order_id
+        if vals.get('order_lines', False):
+            for line_vals in vals['order_lines']:
+                if line_vals[0] == 0:
+                    line_vals[2]['order_id'] = vals.get('order_id', False)
         if not self._context.get('no_create_line', False):
-            new_line = self.env['sale.order.line'].with_context(no_create_template_line=True).create(vals)
+            new_line = self.env['sale.order.line'].with_context(
+                no_create_template_line=True).create(vals)
             vals['order_lines'] = [(6, 0, [new_line.id])]
-        return super(SaleOrderLineTemplate, self.with_context(no_create_template_line=True)).create(vals)
+        return super(
+            SaleOrderLineTemplate,
+            self.with_context(no_create_template_line=True)).create(vals)
 
     def _compute_order_lines_qty(self):
         for template in self:
@@ -88,8 +100,11 @@ class SaleOrder(models.Model):
 
     _inherit = 'sale.order'
 
-    template_lines = fields.One2many('sale.order.line.template', 'order_id')
-    sale_order_line_count = fields.Integer(compute='_compute_sale_order_line_count')
+    template_lines = fields.One2many('sale.order.line.template', 'order_id',
+                                     copy=True)
+    order_line = fields.One2many(copy=False)
+    sale_order_line_count = fields.Integer(
+        compute='_compute_sale_order_line_count')
 
     @api.depends('order_line')
     def _compute_sale_order_line_count(self):
@@ -98,6 +113,14 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_view_order_lines(self):
-        action = self.env.ref('custom_sale_order_variant_mgmt.sale_order_line_action').read()[0]
+        action = self.env.ref(
+            'custom_sale_order_variant_mgmt.sale_order_line_action').read()[0]
         action['domain'] = [('id', 'in', self.order_line.ids)]
         return action
+
+    @api.multi
+    def copy(self, default={}):
+        return super(
+            SaleOrder,
+            self.with_context(no_create_line=True,
+                              no_create_template_line=True)).copy(default)

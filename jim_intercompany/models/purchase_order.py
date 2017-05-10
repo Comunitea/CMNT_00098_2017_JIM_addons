@@ -9,6 +9,7 @@ class purchase_order(models.Model):
 
     _inherit = "purchase.order"
 
+    intercompany = fields.Boolean(string='Intercompany Purchase Order', copy=False)
 
     # Se hereda para
     @api.one
