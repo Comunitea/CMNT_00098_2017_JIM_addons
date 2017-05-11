@@ -72,6 +72,7 @@ var GridWidget = GridWidgetSuper.include({
             alert(value + _t("is not a valid format for chained discount. It must be something like 23+5.2+1"));
             $(input_field).val("0.00");
             $(input_field).focus();
+            $(input_field).select();
         }
     },
 
