@@ -41,14 +41,23 @@ class ProductProduct(models.Model):
         res.update({'stock': product.global_available_stock})
         return res
 
-
-class ProductTemplate(models.Model):
-    _inherit = 'product.template'
-
     @api.model
-    def _get_variant_stock(self, product):
+    def _get_product_stock(self, product):
         """
         Return global available stock when open grid
         """
-        super(ProductTemplate, self)._get_variant_stock(product)
+        super(ProductProduct, self)._get_product_stock(product)
         return product and product.global_available_stock or 0
+
+
+
+# class ProductTemplate(models.Model):
+#     _inherit = 'product.template'
+
+#     @api.model
+#     def _get_product_stock(self, product):
+#         """
+#         Return global available stock when open grid
+#         """
+#         super(ProductTemplate, self)._get_variant_stock(product)
+#         return product and product.global_available_stock or 0

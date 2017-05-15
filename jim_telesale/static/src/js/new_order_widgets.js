@@ -5,6 +5,17 @@ var NewOrderWidgets = require('telesale.new_order_widgets');
 var core = require('web.core');
 var _t = core._t;
 
+var OrderWidget = NewOrderWidgets.OrderWidget.include({
+    create_line_from_vals: function(product_id, line_vals){
+        var added_line = this.create_line_empty(product_id);
+        added_line.set('qty', line_vals.qty || 1.0);
+        added_line.set('pvp', line_vals.price || 0.0);
+        added_line.set('discount', line_vals.discount || 0.0);
+        added_line.set('taxes_ids', line_vals.tax_ids || []); 
+        added_line.update_line_values();
+        return
+    },
+});
 
 var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
 
