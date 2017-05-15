@@ -32,6 +32,15 @@ class ProductProduct(models.Model):
         res.update({'stock': product.global_available_stock})
         return res
 
+    @api.model
+    def _get_product_values(self, product):
+        """
+        Get global available stock from catalog.
+        """
+        res = super(ProductProduct, self)._get_product_values(product)
+        res.update({'stock': product.global_available_stock})
+        return res
+
 
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
