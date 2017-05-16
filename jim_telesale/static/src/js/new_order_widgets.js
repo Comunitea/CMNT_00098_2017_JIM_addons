@@ -13,7 +13,7 @@ var OrderWidget = NewOrderWidgets.OrderWidget.include({
         added_line.set('discount', line_vals.discount || 0.0);
         added_line.set('taxes_ids', line_vals.tax_ids || []); 
         added_line.update_line_values();
-        return
+        return added_line;
     },
 });
 
