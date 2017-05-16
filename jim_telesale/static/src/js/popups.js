@@ -1,7 +1,7 @@
 odoo.define('jim_telesale.popups', function (require) {
 "use strict";
 
-var TsBaseWidget = require('telesale_manage_variants.base_widgets');
+var TsBaseWidget = require('telesale_manage_variants.popups');
 var GridWidgetSuper = TsBaseWidget.GridWidget
 
 var NewOrderWidgets = require('telesale.new_order_widgets');
