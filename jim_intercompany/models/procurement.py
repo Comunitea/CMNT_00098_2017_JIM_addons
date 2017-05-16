@@ -30,8 +30,6 @@ class ProcurementOrder(models.Model):
     def create(self, values):
         if self.env.context.get('user_company'):
             values.update({'company_id': self.env.context.get('user_company')})
-        print "Crea Abastecimiento "
-        print values
         return super(ProcurementOrder, self).create(values)
 
     def _get_stock_move_values(self):
@@ -84,7 +82,6 @@ class ProcurementOrder(models.Model):
         res = []
 
         for procurement in self:
-            print ('Compra intercompany %s') % (procurement.company_id.name)
             if not procurement.product_id.company_id:
                 procurement.message_post(body=_('No company to product %s. \
                     Please set one to fix this procurement.')
