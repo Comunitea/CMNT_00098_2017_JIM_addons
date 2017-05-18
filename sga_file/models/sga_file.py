@@ -315,7 +315,6 @@ class MecaluxFileHeader(models.Model):
         f = open(log_path, 'a')
         if f:
             str_log = u'%s >> %s\r' %(header, str_log)
-            print "------------------- %s" % log_path
             f.write(str_log.encode('utf-8'))
             f.close()
 
@@ -348,9 +347,9 @@ class MecaluxFileHeader(models.Model):
         error = False
         error_str = ''
 
-        if len(sga_filename) != 19 and len(sga_filename) != 23:
-            error_str = u"Error en nombre de archivo: %s caracteres"% len(sga_filename)
-            return self.create_new_sga_file_error(error_str)
+        #if len(sga_filename) != 19 and len(sga_filename) != 23:
+        #    error_str = u"Error en nombre de archivo: %s caracteres"% len(sga_filename)
+        #    return self.create_new_sga_file_error(error_str)
 
         sga_file = os.path.join(sga_path, sga_filename)
         sga_type = self.get_sga_type(sga_filename)
@@ -427,13 +426,14 @@ class MecaluxFileHeader(models.Model):
 
         return sga_file
 
-    def sga_process_file(self):
+    def import_file_from_mecalux(self):
 
-        process = False
+        process = []
 
         if self.file_code == "CSO":
             self.write_log("Desde mecalux picking CSO ...")
             process = self.env['stock.picking'].import_mecalux_CSO(self.id)
+
         elif self.file_code == "ZCS":
             self.write_log("Desde mecalux picking ZCS ...")
             process = self.env['stock.picking'].import_mecalux_ZCS(self.id)
@@ -441,6 +441,7 @@ class MecaluxFileHeader(models.Model):
         elif self.file_code == 'STO':
             self.write_log("Desde mecalux inventory STO ...")
             process = self.env['stock.inventory'].import_inventory_STO(self.id)
+
 
         elif self.file_code == 'CRP':
             self.write_log("Desde mecalux picking CRP ...")
@@ -460,7 +461,7 @@ class MecaluxFileHeader(models.Model):
             if self.errors == ERRORS:
                 self.write_log("-- ERROR >> %s" % self.sga_file)
                 self.move_file('error', self.name)
-        return True
+        return process
 
     #este es la accion que recorre la carpeta de ficheros provenientes del SGA
     def sga_process_file_xmlrpc(self):
@@ -471,7 +472,7 @@ class MecaluxFileHeader(models.Model):
         res_file = False
         global_path = u'%s/%s' %(self.get_global_path(), folder)
         self.write_log("Buscando ficheros en >> %s" % global_path)
-
+        pool_ids=[]
         for path, directories, files in os.walk(global_path, topdown=False):
             for name in files:
                 if file_type:
@@ -480,8 +481,13 @@ class MecaluxFileHeader(models.Model):
                 sga_file = self.check_sga_name(name, path)
                 if sga_file:
                     # lo proceso
-                    res_file = sga_file.sga_process_file()
-        return res_file
+                    pool_ids+= sga_file.import_file_from_mecalux()
+
+        #Si solo hay un tipo de fichero , devuelvo los ids, si no True
+        if pool_ids:
+            pool_ids = pool_ids if file_type else True
+
+        return pool_ids
 
     def move_file(self, folder, file_name=False):
         new_path = False
@@ -548,8 +554,7 @@ class MecaluxFileHeader(models.Model):
                         elif val.odoo_name:
                             value = model[val.odoo_name.name]
 
-                        if not value:
-                            if val.required:
+                        if not value and val.required:
                                 value = val.default
 
                         if value == '' and not val.default:
