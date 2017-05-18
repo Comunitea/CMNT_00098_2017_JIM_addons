@@ -6,3 +6,4 @@ import purchase_order
 import stock_inventory
 import product
 import sale_order
+import stock_picking

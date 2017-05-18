@@ -10,6 +10,10 @@ class ProcurementRule(models.Model):
 
     procure_method = fields.Selection(
         selection_add=[('company', 'According to Product Company')])
+    ic_picking_type_id = fields.Many2one(
+        'stock.picking.type', 'IC Picking Type ',
+        required=True,
+        help="Picking Type for Intercompany purchase, ...")
 
     @api.model
     def _get_action(self):
@@ -76,6 +80,7 @@ class ProcurementOrder(models.Model):
         """
         cache = {}
         res = []
+
         for procurement in self:
             if not procurement.product_id.company_id:
                 procurement.message_post(body=_('No company to product %s. \
@@ -106,8 +111,13 @@ class ProcurementOrder(models.Model):
                 po = self.env['purchase.order'].search([dom for dom in domain])
                 po = po[0] if po else False
                 cache[domain] = po
+            auto_confirm = False
             if not po:
                 vals = procurement._prepare_purchase_order(partner)
+                vals['intercompany'] = True
+                vals['picking_type_id'] = procurement.rule_id.ic_picking_type_id \
+                                            and  procurement.rule_id.ic_picking_type_id.id \
+                                            or procurement.rule_id.picking_type_id.id
                 po = self.env['purchase.order'].create(vals)
                 name = (procurement.group_id and (procurement.group_id.name + ":") or "") + (procurement.name != "/" and procurement.name or procurement.move_dest_id.raw_material_production_id and procurement.move_dest_id.raw_material_production_id.name or "")
                 message = _("This purchase order has been created from: \
@@ -116,8 +126,7 @@ class ProcurementOrder(models.Model):
                 po.message_post(body=message)
                 cache[domain] = po
 
-                # # CHANGED, AUTOMATIC CONFIRMATION
-                po.button_confirm()
+               # auto_confirm=True
 
             elif not po.origin or procurement.origin not in po.origin.split(', '):
                 # Keep track of all procurements
@@ -170,6 +179,10 @@ class ProcurementOrder(models.Model):
                     _fix_tax_included_price(prod.intercompany_price,
                                             prod.supplier_taxes_id, taxes_id)
                 self.env['purchase.order.line'].create(vals)
+
+            # # CHANGED, AUTOMATIC CONFIRMATION
+            # if auto_confirm:
+            #     po.button_confirm()
         return res
 
     @api.multi

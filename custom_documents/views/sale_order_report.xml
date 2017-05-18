@@ -6,7 +6,7 @@
     <data>
 
         <template id="custom_sale_order_report" inherit_id="sale.report_saleorder_document">
-            <xpath expr="//t[@t-call='custom_documents.custom_layout']" position="replace">
+            <xpath expr="//t[@t-call='report.external_layout']" position="replace">
                 <t t-call="custom_documents.custom_layout">
                     <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})" />
                     <div class="page">

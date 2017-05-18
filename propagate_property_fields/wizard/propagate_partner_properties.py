@@ -26,7 +26,9 @@ class PropagatePartnerProperties(models.TransientModel):
             'property_account_payable_id',
             'property_account_receivable_id',
             'property_account_position_id',
-            'property_product_pricelist'
+            'property_product_pricelist',
+            'customer_payment_mode_id',
+            'supplier_payment_mode_id'
         ]
         for partner in partner_objs:
             for company in company_objs:

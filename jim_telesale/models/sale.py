@@ -57,3 +57,21 @@ class SaleOrder(models.Model):
 
         })
         return res
+
+
+class SaleOrderLine(models.Model):
+    _inherit = 'sale.order.line'
+
+    @api.model
+    def ts_product_id_change(self, product_id, partner_id):
+        """
+        Get available stock in each call to product_id_change from
+        telesale interface.
+        """
+        res = super(SaleOrderLine, self).ts_product_id_change(product_id,
+                                                              partner_id)
+        if product_id:
+            product = self.env['product.product'].browse(product_id)
+            res.update({'global_available_stock':
+                        product.global_available_stock})
+        return res

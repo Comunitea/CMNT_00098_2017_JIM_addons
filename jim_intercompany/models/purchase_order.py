@@ -9,6 +9,7 @@ class purchase_order(models.Model):
 
     _inherit = "purchase.order"
 
+    intercompany = fields.Boolean(string='Intercompany Purchase Order', copy=False)
 
     # Se hereda para
     @api.one
@@ -44,5 +45,6 @@ class purchase_order(models.Model):
     @api.model
     def _prepare_sale_order_line_data(self, line, company, sale_id):
         vals = super(purchase_order, self)._prepare_sale_order_line_data(line, company, sale_id)
-        vals['route_id'] = line.procurement_ids[0].route_ids[0].id
+        if line.procurement_ids and line.procurement_ids[0].route_ids:
+            vals['route_id'] = line.procurement_ids[0].route_ids[0].id
         return vals

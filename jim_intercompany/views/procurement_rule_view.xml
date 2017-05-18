@@ -12,6 +12,9 @@
                 <xpath expr="//field[@name='procure_method']" position="attributes">
                     <attribute name="attrs">{'invisible':[('action', 'not in', ['move','product_company'])]}</attribute>
                 </xpath>
+                <xpath expr="//field[@name='picking_type_id']" position="after">
+                    <field name="ic_picking_type_id" attrs="{'invisible':[('action', 'not in', ['product_company'])]}"/>
+                </xpath>
             </field>
     </record>
 </odoo>

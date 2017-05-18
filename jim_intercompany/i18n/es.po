@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-05 15:30+0000\n"
-"PO-Revision-Date: 2017-04-05 15:30+0000\n"
+"POT-Creation-Date: 2017-05-10 16:51+0000\n"
+"PO-Revision-Date: 2017-05-10 16:51+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,65 +16,27 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: jim_intercompany
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view
-msgid "Account Payable"
-msgstr "Cuenta a pagar"
-
-#. module: jim_intercompany
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view
-msgid "Account Receivable"
-msgstr "Cuenta a cobrar"
-
-#. module: jim_intercompany
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_product_properties_form_view
-msgid "Cancel"
-msgstr "Cancelar"
-
-#. module: jim_intercompany
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_partner_properties_create_uid
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_product_properties_create_uid
-msgid "Created by"
-msgstr "Creado por"
-
-#. module: jim_intercompany
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_partner_properties_create_date
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_product_properties_create_date
-msgid "Created on"
-msgstr "Creado el"
-
-#. module: jim_intercompany
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_product_properties_form_view
-msgid "Customer Taxes"
-msgstr "Impuestos de cliente"
-
-#. module: jim_intercompany
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_partner_properties_display_name
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_product_properties_display_name
-msgid "Display Name"
-msgstr "Nombre a mostrar"
-
-#. module: jim_intercompany
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view
-msgid "Fiscal Position"
-msgstr "Posición fiscal"
-
-#. module: jim_intercompany
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_partner_properties_id
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_product_properties_id
-msgid "ID"
-msgstr "ID"
-
-#. module: jim_intercompany
 #: code:addons/jim_intercompany/models/procurement.py:17
 #, python-format
 msgid "Intercompany Buy"
 msgstr "Compra intercompañía"
 
 #. module: jim_intercompany
+#: code:addons/jim_intercompany/models/procurement.py:18
+#, python-format
+msgid "Intercompany Buy or Move According to Product Company"
+msgstr "Compra intercompañía o movimient, según la compañía del producto"
+
+#. module: jim_intercompany
+#: model:ir.model.fields,field_description:jim_intercompany.field_delivery_carrier_intercompany_price
 #: model:ir.model.fields,field_description:jim_intercompany.field_product_template_intercompany_price
 msgid "Intercompany Price"
 msgstr "Precio intercompañía"
+
+#. module: jim_intercompany
+#: model:ir.model.fields,field_description:jim_intercompany.field_purchase_order_intercompany
+msgid "Intercompany Purchase Order"
+msgstr "Pedido de compra intercompañía"
 
 #. module: jim_intercompany
 #: model:ir.model,name:jim_intercompany.model_stock_inventory
@@ -82,33 +44,21 @@ msgid "Inventory"
 msgstr "Inventario"
 
 #. module: jim_intercompany
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_partner_properties___last_update
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_product_properties___last_update
-msgid "Last Modified on"
-msgstr "Última modificación en"
+#: model:ir.model,name:jim_intercompany.model_make_procurement
+msgid "Make Procurements"
+msgstr "Realizar abastecimientos"
 
 #. module: jim_intercompany
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_partner_properties_write_uid
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_product_properties_write_uid
-msgid "Last Updated by"
-msgstr "Última actualización por"
-
-#. module: jim_intercompany
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_partner_properties_write_date
-#: model:ir.model.fields,field_description:jim_intercompany.field_propagate_product_properties_write_date
-msgid "Last Updated on"
-msgstr "Última actualización el"
-
-#. module: jim_intercompany
-#: code:addons/jim_intercompany/models/procurement.py:51
+#: code:addons/jim_intercompany/models/procurement.py:81
 #, python-format
 msgid "No company to product %s.                     Please set one to fix this procurement."
 msgstr "No hay compañía en el producto %s. Por fvor, establezca una para corregir el abastecimiento."
 
 #. module: jim_intercompany
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view
-msgid "Payment Term"
-msgstr "Plazo de pago"
+#: code:addons/jim_intercompany/models/procurement.py:47
+#, python-format
+msgid "No source location defined!"
+msgstr "¡No está definida la ubicaión de origen!"
 
 #. module: jim_intercompany
 #: model:ir.model,name:jim_intercompany.model_procurement_order
@@ -126,16 +76,9 @@ msgid "Product Template"
 msgstr "Plantilla de producto"
 
 #. module: jim_intercompany
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_product_properties_form_view
-msgid "Propagate"
-msgstr "Propagar"
-
-#. module: jim_intercompany
-#: model:ir.actions.act_window,name:jim_intercompany.propagate_partner_fields_action
-#: model:ir.actions.act_window,name:jim_intercompany.propagate_product_fields_action
-msgid "Propagate property fields"
-msgstr "Propagar campos multicompañía"
+#: model:ir.ui.view,arch_db:jim_intercompany.sale_order_add_button_purchase
+msgid "Purchase"
+msgstr "Compra"
 
 #. module: jim_intercompany
 #: model:ir.model,name:jim_intercompany.model_purchase_order
@@ -143,31 +86,42 @@ msgid "Purchase Order"
 msgstr "Pedido de compra"
 
 #. module: jim_intercompany
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view
-msgid "Sale Priecelist"
-msgstr "Tarifa de venta"
+#: model:ir.model.fields,field_description:jim_intercompany.field_sale_order_purchase_count
+msgid "Purchases"
+msgstr "Compras"
 
 #. module: jim_intercompany
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view
-msgid "Supplier Payment Term"
-msgstr "Plazo de pago proveedor"
+#: model:ir.model.fields,field_description:jim_intercompany.field_sale_order_purchase_ids
+msgid "Purchases associated to this sale"
+msgstr "Compras asociadas a esta venta"
 
 #. module: jim_intercompany
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_product_properties_form_view
-msgid "Supplier Taxes"
-msgstr "Impuestos de proveedor"
+#: model:ir.model,name:jim_intercompany.model_sale_order
+msgid "Sales Order"
+msgstr "Pedido de venta"
 
 #. module: jim_intercompany
-#: code:addons/jim_intercompany/models/procurement.py:82
+#: code:addons/jim_intercompany/models/stock_picking.py:133
+#, python-format
+msgid "The move for product %s  has been forced by intercompany operation %s from company %s"
+msgstr "El movimiento para el producto %s ha sido forzado por la operación intercompañia %s desde la compañía %s"
+
+#. module: jim_intercompany
+#: code:addons/jim_intercompany/models/stock_picking.py:24
+#, python-format
+msgid "This picking has been forced by intercompany operation %s"
+msgstr "Este albarán ha sido forzado por la operación intercompañía %s"
+
+#. module: jim_intercompany
+#: code:addons/jim_intercompany/models/procurement.py:115
 #, python-format
 msgid "This purchase order has been created from:                     <a href=# data-oe-model=procurement.order                     data-oe-id=%d>%s</a>"
 msgstr "Estas órdenes de compara fueron creadas:                     <a href=# data-oe-model=procurement.order                     data-oe-id=%d>%s</a>"
 
 #. module: jim_intercompany
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_partner_properties_form_view
-#: model:ir.ui.view,arch_db:jim_intercompany.propagate_product_properties_form_view
-msgid "This wizard will propagate the nextone fields to the equivalent in other companies."
-msgstr "Este asistente propagará los siguientes campos a sus equivalentes en las otras compañías:"
+#: model:ir.model,name:jim_intercompany.model_stock_picking
+msgid "Transfer"
+msgstr "Transferencia"
 
 #. module: jim_intercompany
 #: code:addons/jim_intercompany/models/stock_inventory.py:20

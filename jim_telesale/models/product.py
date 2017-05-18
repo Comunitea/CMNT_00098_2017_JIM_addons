@@ -10,25 +10,47 @@ class ProductProduct(models.Model):
     route_name = fields.Char('Route name', related='route_ids.name',
                              store=True)
 
-    # Ejemplo de como añadir mas campos al widget
     # @api.model
-    # def get_product_info(self, product_id, partner_id):
+    # def ts_get_global_stocks(self, product_id):
     #     """ Return data of widget productInfo """
-    #     res = super(ProductProduct, self).get_product_info(product_id,
-    #                                                        partner_id)
-    #     product_obj = self.browse(product_id)
-    #     route = product_obj.route_ids[0].name if product_obj.route_ids else ""
-    #     lqdr = _("Yes") if product_obj.lqdr else _("No")
-    #     res.update({'route': route, 'lqdr': lqdr})
+    #     res = {'global_available_stock': 0.0}
+    #     if product_id:
+    #         product = self.browse(product_id)
+    #         res.update({'global_available_stock':
+    #                     product.global_available_stock})
     #     return res
 
+    @api.model
+    def get_product_info(self, product_id, partner_id):
+        """ Return stock data of widget productInfo """
+        res = super(ProductProduct, self).get_product_info(product_id,
+                                                           partner_id)
+        product = self.browse(product_id)
+        # route = product.route_ids[0].name if product.route_ids else ""
+        # lqdr = _("Yes") if product.lqdr else _("No")
+        # res.update({'route': route, 'lqdr': lqdr})
+        res.update({'stock': product.global_available_stock})
+        return res
 
     @api.model
-    def ts_get_global_stocks(self, product_id):
-        """ Return data of widget productInfo """
-        res = {'global_available_stock': 0.0}
-        if product_id:
-            product_obj = self.browse(product_id)
-            res.update({'global_available_stock':
-                        product_obj.global_available_stock})
+    def _get_product_values(self, product):
+        """
+        Get global available stock from catalog.
+        """
+        res = super(ProductProduct, self)._get_product_values(product)
+        res.update({'stock': product.global_available_stock})
+        return res
+
+    @api.model
+    def _get_product_stock(self, product):
+        """
+        Return global available stock when open grid
+        """
+        super(ProductProduct, self)._get_product_stock(product)
+        return product and product.global_available_stock or 0
+
+    @api.model
+    def _get_line_discount(self, line):
+        res = super(ProductProduct, self)._get_line_discount(line)
+        res = line.chained_discount
         return res

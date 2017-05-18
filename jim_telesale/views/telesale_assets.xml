@@ -7,6 +7,8 @@
                 <script type="text/javascript" src="/jim_telesale/static/src/js/new_order_widgets.js"></script>
                 <script type="text/javascript" src="/jim_telesale/static/src/js/order_history_widgets.js"></script>
                 <script type="text/javascript" src="/jim_telesale/static/src/js/models.js"></script>
+                <script type="text/javascript" src="/jim_telesale/static/src/js/popups.js"></script>
+                <script type="text/javascript" src="/jim_telesale/static/src/js/product_catalog_widgets.js"></script>
             </xpath>
         </template>
     </data>

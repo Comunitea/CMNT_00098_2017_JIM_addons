@@ -17,6 +17,16 @@ class SaleOrder(models.Model):
     purchase_count = fields.Integer(string='Purchases', compute='_compute_purchase_ids')
 
     @api.multi
+    def action_confirm(self):
+        res = super(SaleOrder, self).action_confirm()
+        if self.mapped('purchase_ids'):
+            ic_purchases = self.purchase_ids.filtered(lambda x: x.intercompany)
+            ic_purchases.button_confirm()
+
+        return res
+
+
+    @api.multi
     @api.depends('procurement_group_id')
     def _compute_purchase_ids(self):
         for order in self:
@@ -31,7 +41,7 @@ class SaleOrder(models.Model):
         of given sales order ids. It can either be a in a list or in a form
         view, if there is only one purchase order to show.
         '''
-        action = self.env.ref('purchase.purchase_order_action_generic').read()[0]
+        action = self.env.ref('purchase.purchase_form_action').read()[0]
 
         purchases = self.mapped('purchase_ids')
         if len(purchases) > 1:
