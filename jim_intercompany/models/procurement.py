@@ -10,6 +10,10 @@ class ProcurementRule(models.Model):
 
     procure_method = fields.Selection(
         selection_add=[('company', 'According to Product Company')])
+    ic_picking_type_id = fields.Many2one(
+        'stock.picking.type', 'IC Picking Type ',
+        required=True,
+        help="Picking Type for Intercompany purchase, ...")
 
     @api.model
     def _get_action(self):
@@ -76,6 +80,7 @@ class ProcurementOrder(models.Model):
         """
         cache = {}
         res = []
+
         for procurement in self:
             if not procurement.product_id.company_id:
                 procurement.message_post(body=_('No company to product %s. \
@@ -110,6 +115,9 @@ class ProcurementOrder(models.Model):
             if not po:
                 vals = procurement._prepare_purchase_order(partner)
                 vals['intercompany'] = True
+                vals['picking_type_id'] = procurement.rule_id.ic_picking_type_id \
+                                            and  procurement.rule_id.ic_picking_type_id.id \
+                                            or procurement.rule_id.picking_type_id.id
                 po = self.env['purchase.order'].create(vals)
                 name = (procurement.group_id and (procurement.group_id.name + ":") or "") + (procurement.name != "/" and procurement.name or procurement.move_dest_id.raw_material_production_id and procurement.move_dest_id.raw_material_production_id.name or "")
                 message = _("This purchase order has been created from: \
