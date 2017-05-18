@@ -168,9 +168,9 @@ class StockPickingSGA(models.Model):
         return super(StockPickingSGA, self).write(vals)
 
     def get_outputs_from_mecalux(self):
-        file_id = self.env['sga.file'].process_sga_files(file_type='CSO')
+        file_id = self.env['sga.file'].process_sga_files(file_type='ZCS')
         file_id = self.env['sga.file'].process_sga_files(file_type='CRP')
-
+        file_id = self.env['sga.file'].process_sga_files(file_type='CSO')
 
     @api.multi
     def move_to_NE(self):
@@ -268,6 +268,7 @@ class StockPickingSGA(models.Model):
         n_line = 0
         sgavar = self.env['sgavar.file'].search([('code', '=', 'CSO')])
         pick = False
+        pool_ids = []
         if not sgavar:
             raise ValidationError("Modelo no encontrado")
 
@@ -305,7 +306,7 @@ class StockPickingSGA(models.Model):
             pick = pick_obj.search([('name', '=', val['sorder_code'])])
             if not pick:
                 raise ValidationError("Albaran no encontrado: %s" % val['sorder_code'])
-
+            pool_ids.append(pick.id)
             domain = [('picking_id', '=', pick.id)]
             ops = self.env['stock.pack.operation'].search(domain, order="line_number asc")
             if not ops:
@@ -317,8 +318,7 @@ class StockPickingSGA(models.Model):
             error = ''
             bool_error = False
 
-
-        return True
+        return list(set(pool_ids))
 
     def import_mecalux_CRP(self, file_id):
 
@@ -331,6 +331,7 @@ class StockPickingSGA(models.Model):
         LEN_HEADER = 460
         LEN_LINE = 362
         LEN_DETAIL_LINE = 88
+        pool_ids = []
         n_line=0
         for line in sga_file_lines:
             line = line.strip()
@@ -346,6 +347,7 @@ class StockPickingSGA(models.Model):
                     pick = pick_obj.search([('backorder_id.name', '=', rec_order_code)])
 
                 if pick:
+                    pool_ids.append(pick.id)
                     op_ok = False
                     #sga_state
                     st=70
@@ -433,7 +435,7 @@ class StockPickingSGA(models.Model):
         if not bool_error:
             fd = 'HAGO ACTION DONE '  # pick.action_done()
 
-        return True
+        return list(set(pool_ids))
 
     def import_mecalux_ZCS(self, file_id):
 
@@ -446,16 +448,13 @@ class StockPickingSGA(models.Model):
         sga_file.close()
         str_error = ''
         bool_error = False
-        loop = 0
-        line_detail = False
-        num_details = 0
+        pool_ids = []
         n_line = 0
         sgavar = self.env['sgavar.file'].search([('code', '=', 'CSO')])
         pick = False
         if not sgavar:
             raise ValidationError("Modelo no encontrado")
-        sorder_code = False
-        sorder_state = ""
+
         LEN_HEADER = 468 + 2
         LEN_LINE = 342 + 2
         LEN_DETAIL_LINE = 434 + 2
@@ -475,7 +474,8 @@ class StockPickingSGA(models.Model):
                     str_error += "Codigo de albaran %s no encontrado en linea ...%s " % (sorder_code, n_line)
                     sga_file_obj.write_log(str_error)
                     bool_error = True
-
+                else:
+                    pool_ids.append(pick.id)
                 # Peso del pick
                 st = 376
                 en = st + 12
@@ -562,10 +562,7 @@ class StockPickingSGA(models.Model):
             else:
                 fd = 'HAGO ACTION DONE ' #pick.action_done()
 
-
-
-
-        return True
+        return list(set(pool_ids))
 
     def create_picks_from_orders(self, mecalux_type=False):
         if not type:

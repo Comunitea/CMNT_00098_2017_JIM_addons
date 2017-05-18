@@ -35,7 +35,7 @@ class SGAfileerror(models.Model):
 
         line_number = 0
         val = {}
-
+        pool_ids = []
         bom = True
         for line_d in sga_file:
             try:
@@ -81,13 +81,13 @@ class SGAfileerror(models.Model):
                 en = st + 14
                 val['date_error'] = line[st:en].strip()
                 new_error = error_obj.create(val)
+                pool_ids.append(new_error)
 
             except:
 
                 sga_file_obj.write_log("-- ERROR >> Error Al procesar el fichero:\n%s"
                                 "\nComprueba los valores de la linea nº %s"% (sga_file_obj.sga_file, line_number))
-                no_error = False
 
         sga_file.close()
-        return no_error
+        return pool_ids
 

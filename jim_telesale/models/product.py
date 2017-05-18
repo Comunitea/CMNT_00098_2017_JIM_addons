@@ -49,15 +49,8 @@ class ProductProduct(models.Model):
         super(ProductProduct, self)._get_product_stock(product)
         return product and product.global_available_stock or 0
 
-
-
-# class ProductTemplate(models.Model):
-#     _inherit = 'product.template'
-
-#     @api.model
-#     def _get_product_stock(self, product):
-#         """
-#         Return global available stock when open grid
-#         """
-#         super(ProductTemplate, self)._get_variant_stock(product)
-#         return product and product.global_available_stock or 0
+    @api.model
+    def _get_line_discount(self, line):
+        res = super(ProductProduct, self)._get_line_discount(line)
+        res = line.chained_discount
+        return res

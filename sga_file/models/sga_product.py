@@ -240,7 +240,7 @@ class SGAProductTemplate(models.Model):
         if dst:
             return dst
 
-    sga_prod_shortdesc = fields.Char("Nombre Radiofrecuencia", size=50, required=1)
+    sga_prod_shortdesc = fields.Char("Nombre Radiofrecuencia", size=50,)
     sga_change_material_abc = fields.Selection ([('0', "NO"),('1',"SI")], default='1', string ="Cambio rotabilidad")
     sga_material_abc_code = fields.Selection ([('A', 'A'), ('B', 'B'), ('C', 'C')], default="C", string="Tipo de rotabilidad")
     sga_product_type_code = fields.Char(related='categ_id.code')
