@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+     <record id="view_picking_form_ready" model="ir.ui.view">
+        <field name="name">view.picking.form.ready</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+
+        <field name="has_scrap_move" position="before">
+            <field name="ready" />
+        </field>
+
+        </field>
+    </record>
+
+    <record id="action_view_related_pickings" model="ir.actions.server">
+            <field name="name">Related Pickings</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="state">code</field>
+            <field name="code">
+if records:
+    records[0].view_related_pickings()
+            </field>
+        </record>
+
+
+        <record model="ir.values" id="view_related_pickings">
+            <field name="model_id" ref="stock.model_stock_picking" />
+            <field name="name">Related Pickings</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,' + str(ref('action_view_related_pickings'))" />
+            <field name="key">action</field>
+            <field name="model">stock.picking</field>
+        </record>
+
+
+    </data>
+</odoo>

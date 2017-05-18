@@ -13,7 +13,7 @@ class SaleOrder(models.Model):
         """
         OWERWRITED in order to pass the state to pending or lqdr
         """
-        self.browse(order_id).action_lqdr_pending()
+        self.browse(order_id).action_lqdr_option()
 
     @api.model
     def _get_ts_line_vals(self, order_obj, line):

@@ -10,7 +10,8 @@ class SaleOrder(models.Model):
     state = fields.Selection([
         ('draft', 'Quotation'),
         ('sent', 'Quotation Sent'),
-        ('lqdr', 'LQDR'),
+        ('lqdr', 'Pending LQDR'),
+        ('progress_lqdr', 'Progress LQDR'),
         ('pending', 'Pending Approval'),
         ('sale', 'Sales Order'),
         ('done', 'Locked'),
@@ -18,18 +19,34 @@ class SaleOrder(models.Model):
     ])
 
     @api.multi
-    def action_lqdr_pending(self):
+    def action_lqdr_option(self):
         for order in self:
             if order.order_line.filtered('product_id.lqdr'):
                 order.state = 'lqdr'
             else:
-                order.state = 'pending'
+                order.action_confirm()
+                order.action_sale()
         return True
 
     @api.multi
-    def action_pending(self):
+    def action_progress_lqdr(self):
         for order in self:
-            order.state = 'pending'
+            order.action_confirm()
+            order.state = 'progress_lqdr'
+        return True
+
+    @api.multi
+    def action_lqdr_done(self):
+        for order in self:
+            order.action_sale()
+        return True
+
+    @api.multi
+    def action_sale(self):
+        for order in self:
+            order.state = 'sale'
+            picking_out = order.picking_ids.filtered(lambda x: x.picking_type_id.code == 'outgoing')
+            picking_out.ready = True
         return True
 
     @api.onchange('warehouse_id')

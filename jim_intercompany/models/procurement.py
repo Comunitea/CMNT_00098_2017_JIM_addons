@@ -12,7 +12,7 @@ class ProcurementRule(models.Model):
         selection_add=[('company', 'According to Product Company')])
     ic_picking_type_id = fields.Many2one(
         'stock.picking.type', 'IC Picking Type ',
-        required=True,
+        required=False,
         help="Picking Type for Intercompany purchase, ...")
 
     @api.model

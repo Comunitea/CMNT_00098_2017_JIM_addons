@@ -10,6 +10,14 @@ from odoo.tools import float_utils
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
+    @api.multi
+    def toggle_ready(self):
+        """ Inverse the value of the field ``ready`` on the records in ``self``. """
+        for record in self:
+            record.ready = not record.ready
+
+    ready = fields.Boolean('Revision Ready', default=False, readonly=True)
+
     @api.model
     def _prepare_values_extra_move(self, op, product, remaining_qty):
         vals = super(StockPicking, self)._prepare_values_extra_move(op, product, remaining_qty)
@@ -35,6 +43,24 @@ class StockPicking(models.Model):
         if picking.state == 'assigned':
             picking.do_transfer()
 
+    @api.multi
+    def view_related_pickings(self):
+        pickings = self.browse(self._context.get('active_ids', []))
+
+        #action = self.env.ref('stock.do_view_pickings').read()[0]
+        domain = [('group_id', 'in', pickings.mapped('group_id').ids),
+                            ('id', 'not in', pickings.mapped('id'))]
+
+        return {
+            'name': _("Related Pickingd"),
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'stock.picking',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'nodestroy': True,
+            'domain': domain,
+        }
 
     @api.multi
     def do_transfer(self):

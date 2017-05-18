@@ -11,6 +11,18 @@ class purchase_order(models.Model):
 
     intercompany = fields.Boolean(string='Intercompany Purchase Order', copy=False)
 
+    @api.multi
+    def _get_destination_location(self):
+        self.ensure_one()
+        id = super(purchase_order, self)._get_destination_location()
+        procurements = self.order_line.mapped('procurement_ids')
+        loc_ids = procurements.mapped('location_id').mapped('id')
+        if id in loc_ids:
+            return id
+        else:
+            return loc_ids[0]
+
+
     # Se hereda para
     @api.one
     def _prepare_sale_order_data(self, name, partner, company, direct_delivery_address):
