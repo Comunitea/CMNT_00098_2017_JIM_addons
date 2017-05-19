@@ -154,7 +154,7 @@ class StockPickingSGA(models.Model):
         for pick in self:
             # si los cambios vienen de mecalux no es necesario not from mecalux)
             if pick.picking_type_id.sga_integrated and not from_to_mecalux and \
-                    (self.state in pick_states or vals.get('state', False) in pick_states) and fields and pick.pack_operation_product_ids:
+                    (pick.state in pick_states or vals.get('state', False) in pick_states) and fields and pick.pack_operation_product_ids:
 
                 operation = "M"
                 #TODO Definir en que estado se envia a Mecalux
