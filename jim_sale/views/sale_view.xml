@@ -8,15 +8,17 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <field name="state" position="attributes">
-                    <attribute name="statusbar_visible">draft,sent,lqdr,progress_lqdr,sale</attribute>
+                    <attribute name="statusbar_visible">draft,sent,lqdr,pending,sale</attribute>
                 </field>
 
                 <!-- Add button to pass to lqdr or pending state -->
                 <button name="print_quotation" position="after">
-                    <button name="action_lqdr_option" states="draft" string="Confirm Sale" class="o_sale_confirm" type="object" />
-                    <button name="action_lqdr_option" states="sent" string="Confirm Sale" class="btn-primary o_sale_confirm" type="object" />
-                    <button name="action_progress_lqdr" states="lqdr" string="LQDR in Progress" class="o_sale_confirm" type="object" />
-                    <button name="action_lqdr_done" states="progress_lqdr" string="LQDR Done" class="o_sale_confirm" type="object" />
+                    <button name="action_proforma" states="draft,sent" string="Proforma" class="o_sale_confirm" type="object" />
+
+                    <button name="action_lqdr_option" states="draft,sent,proforma" string="Confirm Sale" class="o_sale_confirm" type="object" />
+                    <button name="action_lqdr_ok" states="lqdr" string="LQDR Review Done" class="o_sale_confirm" type="object" />
+                     <button name="action_pending_ok" states="pending" string="Pending Done" class="o_sale_confirm" type="object" />
+                    <!--button name="action_lqdr_done" states="progress_lqdr" string="LQDR Done" class="o_sale_confirm" type="object" /-->
                 </button>
 
                 <!-- Change action_confirm button, only visible in pending state -->
@@ -30,7 +32,7 @@
 
                 <!-- Cancel button to pass to lqdr or pending state -->
                 <button name="action_cancel"  position="attributes">
-                    <attribute name="states">draft,sent,sale,lqdr,pending,progress_lqdr</attribute>
+                    <attribute name="states">draft,sent,proforma,sale,lqdr,pending,progress_lqdr</attribute>
                 </button>
             </field>
         </record>

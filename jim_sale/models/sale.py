@@ -10,13 +10,20 @@ class SaleOrder(models.Model):
     state = fields.Selection([
         ('draft', 'Quotation'),
         ('sent', 'Quotation Sent'),
+        ('proforma', 'Proforma'),
         ('lqdr', 'Pending LQDR'),
         ('progress_lqdr', 'Progress LQDR'),
-        ('pending', 'Pending Approval'),
+        ('pending', 'Revision Pending '),
         ('sale', 'Sales Order'),
         ('done', 'Locked'),
         ('cancel', 'Cancelled'),
     ])
+
+    @api.multi
+    def action_proforma(self):
+        for order in self:
+            order.state = 'proforma'
+        return True
 
     @api.multi
     def action_lqdr_option(self):
@@ -24,19 +31,17 @@ class SaleOrder(models.Model):
             if order.order_line.filtered('product_id.lqdr'):
                 order.state = 'lqdr'
             else:
-                order.action_confirm()
-                order.action_sale()
+               order.state = 'pending'
         return True
 
     @api.multi
-    def action_progress_lqdr(self):
+    def action_lqdr_ok(self):
         for order in self:
-            order.action_confirm()
-            order.state = 'progress_lqdr'
+            order.state = 'pending'
         return True
 
     @api.multi
-    def action_lqdr_done(self):
+    def action_pending_ok(self):
         for order in self:
             order.action_sale()
         return True
@@ -44,9 +49,9 @@ class SaleOrder(models.Model):
     @api.multi
     def action_sale(self):
         for order in self:
-            order.state = 'sale'
+            order.action_confirm()
             picking_out = order.picking_ids.filtered(lambda x: x.picking_type_id.code == 'outgoing')
-            picking_out.ready = True
+            picking_out.write({'ready': True})
         return True
 
     @api.onchange('warehouse_id')
