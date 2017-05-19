@@ -2,6 +2,71 @@
 <odoo>
     <data>
 
+     <record id="view_picking_kanban_ready" model="ir.ui.view">
+        <field name="name">view.picking.kanban.ready</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.stock_picking_type_kanban"/>
+        <field name="arch" type="xml">
+            <field name="count_picking_ready" position="after">
+                <field name="count_picking_review"/>
+            </field>
+        <button  name="get_action_picking_tree_ready" position="before">
+            <span t-if="record.code.raw_value =='outgoing'">
+            <button class="btn btn-primary" name="get_action_picking_tree_review" type="object">
+                <span><t t-esc="record.count_picking_review.value"/> To Process</span>
+            </button>
+            </span>
+
+        </button>
+        </field>
+    </record>
+
+        <record id="action_picking_tree_review" model="ir.actions.act_window">
+            <field name="name">To Process</field>
+            <field name="res_model">stock.picking</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,kanban,form,calendar</field>
+            <field name="domain"></field>
+            <field name="context">{
+                    'search_default_picking_type_id': [active_id],
+                    'default_picking_type_id': active_id,
+                    'contact_display': 'partner_address',
+                    'search_default_ready': 1,
+            }
+            </field>
+            <field name="search_view_id" ref="stock.view_picking_internal_search"/>
+
+       </record>
+
+
+     <record id="view_picking_search_ready" model="ir.ui.view">
+        <field name="name">view.picking.search.ready</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+        <field name="arch" type="xml">
+
+        <filter name="available" position="after">
+            <filter name="ready" string="Reviewed" domain="[('state','in',('assigned', 'waiting', 'partially_available')), ('ready', '=', True)]" help="Assigned Moves"/>
+        </filter>
+
+        </field>
+    </record>
+
+
+     <record id="view_picking_tree_type" model="ir.ui.view">
+        <field name="name">view.picking.tree.type</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.vpicktree"/>
+        <field name="arch" type="xml">
+
+        <field name="picking_type_id" position="replace">
+            <field name="picking_type_id" />
+        </field>
+
+        </field>
+    </record>
+
      <record id="view_picking_form_ready" model="ir.ui.view">
         <field name="name">view.picking.form.ready</field>
         <field name="model">stock.picking</field>
@@ -21,7 +86,18 @@
             <field name="state">code</field>
             <field name="code">
 if records:
-    records[0].view_related_pickings()
+    domain = records[0].view_related_pickings()
+    action =  {
+            'name': 'Related Pickings',
+            'view_type': 'form',
+            'view_mode': 'tree,form',
+            'res_model': 'stock.picking',
+            'view_id': False,
+            'type': 'ir.actions.act_window',
+            'nodestroy': True,
+            'domain': domain,
+        }
+
             </field>
         </record>
 

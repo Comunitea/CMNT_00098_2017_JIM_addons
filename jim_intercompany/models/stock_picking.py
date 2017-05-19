@@ -7,6 +7,30 @@ from odoo.exceptions import UserError
 from odoo.tools import float_utils
 
 
+class PickingType(models.Model):
+    _inherit = "stock.picking.type"
+
+    count_picking_review = fields.Integer(compute='_compute_picking_review_count')
+
+    @api.multi
+    def _compute_picking_review_count(self):
+        # TDE TODO count picking can be done using previous two
+        domain = [('state', 'in', ('assigned', 'waiting', 'partially_available')),
+                                      ('ready', '=', True)]
+
+        data = self.env['stock.picking'].read_group(domain +
+                                                        [('state', 'not in', ('done', 'cancel')),
+                                                         ('picking_type_id', 'in', self.ids)],
+                                                        ['picking_type_id'], ['picking_type_id'])
+        count = dict(
+            map(lambda x: (x['picking_type_id'] and x['picking_type_id'][0], x['picking_type_id_count']), data))
+        for record in self:
+            record['count_picking_review'] = count.get(record.id, 0)
+
+    @api.multi
+    def get_action_picking_tree_review(self):
+        return self._get_action('jim_intercompany.action_picking_tree_review')
+
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
@@ -51,16 +75,7 @@ class StockPicking(models.Model):
         domain = [('group_id', 'in', pickings.mapped('group_id').ids),
                             ('id', 'not in', pickings.mapped('id'))]
 
-        return {
-            'name': _("Related Pickingd"),
-            'view_type': 'form',
-            'view_mode': 'tree,form',
-            'res_model': 'stock.picking',
-            'view_id': False,
-            'type': 'ir.actions.act_window',
-            'nodestroy': True,
-            'domain': domain,
-        }
+        return domain
 
     @api.multi
     def do_transfer(self):
