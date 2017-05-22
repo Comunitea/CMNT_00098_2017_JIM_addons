@@ -11,7 +11,7 @@ var Backbone = window.Backbone;
 TsModels.TsModel = TsModels.TsModel.extend({
     _get_product_fields: function(){
         var res = TsModelSuper.prototype._get_product_fields.call(this,{});
-        res.push('lqdr', 'route_name')
+        res.push('lqdr', 'route_name', 'description_sale', 'name')
         return res
     },
     get_line_vals: function(line, order_model){
@@ -28,6 +28,7 @@ TsModels.Orderline.prototype.initialize = function(options){
     this.set({
         global_available_stock:  options.global_available_stock ||0.0,
         lqdr:  options.lqdr ||'',
+        description:  options.description ||'',
         route:  options.route ||'',
         chained_discount:  options.chained_discount || 0.0
     });

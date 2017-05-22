@@ -31,6 +31,7 @@
     <!-- Add column global stock, route and LQDRR to order lines -->
     <t t-extend="Order-Widget">
         <t t-jquery=".header-product" t-operation="after">
+            <th class="header-description">Description</th>
             <th class="header-lqdr">LQDR</th>
             <th class="header-route">Wareouse</th>
             <th class="header-global-stock">Available</th>
@@ -43,6 +44,10 @@
 
     <t t-extend="Order-line-Widget">
         <t t-jquery=".cell-product" t-operation="after">
+            <!-- Description column -->
+            <td class="cell-description">
+                  <span t-esc="widget.model.get('description')"/>
+            </td>
             <!-- LQDR column -->
             <td class="cell-lqdr">
                 <t t-set="lqdr_value" t-value="No"/>

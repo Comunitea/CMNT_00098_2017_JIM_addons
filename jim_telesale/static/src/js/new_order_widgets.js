@@ -128,10 +128,17 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
             }
         }
 
+        // Always set lqdr route name and description.
         if (product_obj){
             var lqdr = (product_obj.lqdr)  ? _t("Yes") : _t("No")
+            var description = product_obj.name;
+            if (product_obj.description_sale){
+                description = description + '\n' + product.description_sale
+            }
+
             this.model.set('lqdr', lqdr);
             this.model.set('route_name', product_obj.route_name);
+            this.model.set('description', description);
         }
 
         //set handler for fiscount plus field.

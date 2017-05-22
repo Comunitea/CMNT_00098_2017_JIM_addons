@@ -27,13 +27,6 @@
 }
 
 
-/* Header and cell LQDR field*/
-.telesale  #leftpart .order-container .order-line-table th.header-lqdr{
-    width: 5%;
-}
-.telesale  #leftpart .order-container .order-line-table .col-lqdr{
-    text-align: center;
-}
 
 /* Header and cell warehouse route*/
 .telesale  #leftpart .order-container .order-line-table th.header-route{
@@ -47,3 +40,55 @@
     width: 8%;
 }
 
+
+/* OVERWRITED TO CONTROL THE SIZE OF ALL FIELDS FROM LINES TABLES*/
+.telesale  #leftpart .order-container .order-line-table th.header-nline{
+    width: 2% !important;;
+}
+
+.telesale  #leftpart .order-container .order-line-table th.header-grid{
+    width: 2% !important;; 
+}
+
+/* Only show header templater or product, not both*/
+.telesale  #leftpart .order-container .order-line-table th.header-template{
+    width: 15% !important;
+}
+.telesale  #leftpart .order-container .order-line-table th.header-product{
+    width: 15% !important;;
+}
+
+.telesale  #leftpart .order-container .order-line-table th.header-description{
+    width: 30% !important;;
+}
+
+.telesale  #leftpart .order-container .order-line-table th.header-lqdr{
+    width: 4% !important;;
+}
+
+.telesale  #leftpart .order-container .order-line-table th.header-route{
+    width: 2% !important;;
+}
+
+
+.telesale  #leftpart .order-container .order-line-table th.header-qty{
+    width: 7% !important;;
+}
+.telesale  #leftpart .order-container .order-line-table th.header-unit{
+    width: 7% !important;;
+}
+.telesale  #leftpart .order-container .order-line-table th.header-pvp{
+    width: 7% !important;;
+}
+.telesale  #leftpart .order-container .order-line-table th.header-plus-discount{
+    width: 10% !important;;
+}
+
+/* Header and cell LQDR field*/
+.telesale  #leftpart .order-container .order-line-table .col-lqdr{
+    text-align: center;
+}
+/* Header and cell warehouse route*/
+.telesale  #leftpart .order-container .order-line-table .col-route{
+    text-align: center;
+}
