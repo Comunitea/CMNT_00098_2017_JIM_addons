@@ -77,4 +77,17 @@
         </t>
     </t>
 
+    <!-- ADD PROFORMA BUTTON -->
+     <t t-extend="Totals-Order-Widget">
+        <t t-jquery="#buttons_order_div" t-operation="append">
+            <div class="order-button">
+                  <div class="fullheight centerinside fullwidth">
+                       <div class="centerthis">
+                        <button class="proforma-button fullwidth" tabIndex="22">PROFORMA</button>
+                       </div>
+                  </div>
+              </div>
+        </t>
+    </t>
+
 </templates>

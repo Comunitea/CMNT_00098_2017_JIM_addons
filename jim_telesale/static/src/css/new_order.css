@@ -92,3 +92,12 @@
 .telesale  #leftpart .order-container .order-line-table .col-route{
     text-align: center;
 }
+
+.telesale #bottompart .order-button {
+    width: 100%;
+    height: 25.0%;
+}
+
+.telesale #bottompart .proforma-button {
+    background: #ffb31e;
+}
