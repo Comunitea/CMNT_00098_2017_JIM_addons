@@ -17,10 +17,13 @@ class purchase_order(models.Model):
         id = super(purchase_order, self)._get_destination_location()
         procurements = self.order_line.mapped('procurement_ids')
         loc_ids = procurements.mapped('location_id').mapped('id')
-        if id in loc_ids:
-            return id
+        if loc_ids:
+            if id in loc_ids:
+                return id
+            else:
+                return loc_ids[0]
         else:
-            return loc_ids[0]
+            return id
 
 
     # Se hereda para
