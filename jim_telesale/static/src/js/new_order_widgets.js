@@ -157,11 +157,12 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
             var partner_id = self.ts_model.db.partner_name_id[value];
 
             // Not partner found in backbone model
-            if (!partner_id){
+            if (value && !partner_id){
                 var alert_msg = _t("Customer name '" + value + "' does not exist");
                 alert(alert_msg);
                 self.order_model.set('partner', "");
                 self.refresh();
+                self.$('#partner').focus();
             }
             else {
                 var partner_obj = self.ts_model.db.get_partner_by_id(partner_id);
@@ -181,7 +182,10 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
                     var partner_shipp_obj = self.ts_model.db.get_partner_by_id(result.partner_shipping_id);
                     var shipp_addr =self.ts_model.getComplexName(partner_shipp_obj);
                     self.order_model.set('shipp_addr', shipp_addr);
-
+                    var pricelist_obj = self.ts_model.db.pricelist_by_id[result.pricelist_id];
+                    if (pricelist_obj){
+                        self.order_model.set('pricelist', pricelist_obj.name);
+                    }
                     // Get alert if warning is not false
                     if (result.warning){
                         alert(result.warning);
@@ -193,9 +197,9 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
                     self.refresh();
                     // New line and VUA button when chang
                     // Only do it when partner is setted
-                    if (self.order_model.get('partner')){
-                        $('#vua-button').click();
-                    }
+                    // if (self.order_model.get('partner')){
+                    //     $('#vua-button').click();
+                    // }
                     if(self.order_model.get('orderLines').length == 0 && self.order_model.get('partner')){
                         $('.add-line-button').click()
                     }
@@ -204,6 +208,18 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
                     }
 
                 });
+            }
+        }
+        else if (key == "pricelist"){
+            var pricelist_id = self.ts_model.db.pricelist_name_id[value];
+
+            // Not partner found in backbone model
+            if (!pricelist_id){
+                var alert_msg = _t("Pricelist name '" + value + "' does not exist");
+                alert(alert_msg);
+                self.order_model.set('pricelist', "");
+                self.refresh();
+                self.$('#pricelist').focus();
             }
         }
     },
