@@ -58,6 +58,10 @@ class SaleOrder(models.Model):
         })
         return res
 
+    @api.model
+    def ts_action_proforma(self, order_id):
+        self.browse(order_id).action_proforma()
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'

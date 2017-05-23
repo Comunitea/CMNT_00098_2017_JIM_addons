@@ -209,6 +209,44 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
     },
 });
 
+var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
+    renderElement: function(){
+        var self=this;
+        this._super();
+        this.$('.proforma-button').click(function (){ self.promoCurrentOrder() });
+    },
+    promoCurrentOrder: function() {
+          var self = this;
+            var currentOrder = this.order_model;
+            self.saveCurrentOrder()
+            $.when( self.ts_model.ready2 )
+            .done(function(){
+                var loaded = self.ts_model.fetch('sale.order',
+                                                ['id', 'name'],
+                                                [
+                                                    ['chanel', '=', 'telesale']
+                                                ])
+                    .then(function(orders){
+                       console.log('Entro')
+                        if (orders[0]) {
+                          // var my_id = orders[0].id
+                          (new Model('sale.order')).call('ts_action_proforma',[orders[0].id])
+                              .fail(function(unused, event){
+                                  //don't show error popup if it fails
+                                  console.error('Failed confirm order: ',orders[0].name);
+                              })
+                              .done(function(){
+                                    console.log('Confirmado en segundo plano Yeeeeeah');
+                              });
+
+                        }
+                    });
+             });
+        },
+
+});
+
+
 });
 
 
