@@ -25,6 +25,9 @@
             <t t-if="widget.ts_model.get('selectedOrder').get('state') == 'pending'">
                 (Pending Approval)
             </t>
+            <t t-if="widget.ts_model.get('selectedOrder').get('state') == 'proforma'">
+                (Proforma)
+            </t>
         </t>
     </t>
 

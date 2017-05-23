@@ -10,6 +10,9 @@
             <t t-if="widget.order.state == 'pending'">
                 Pending Approval
             </t>
+            <t t-if="widget.order.state == 'proforma'">
+                Proforma
+            </t>
         </t>
     </t>
 
