@@ -84,8 +84,9 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         }
 
         var customer_id = self.ts_model.db.partner_name_id[self.order.get('partner')];
+        var pricelist_id = self.ts_model.db.pricelist_name_id[self.order.get('pricelist')];
         var model = new Model("sale.order.line");
-        return model.call("ts_product_id_change", [product_id, customer_id])
+        return model.call("ts_product_id_change", [product_id, customer_id, pricelist_id])
         .then(function(result){
             console.log("RESULTADO PRODUCT ID CHGANGE")
             console.log(result);
