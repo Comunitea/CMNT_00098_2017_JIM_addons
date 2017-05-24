@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-18 17:24+0000\n"
-"PO-Revision-Date: 2017-05-18 17:24+0000\n"
+"POT-Creation-Date: 2017-05-24 11:06+0000\n"
+"PO-Revision-Date: 2017-05-24 11:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -31,33 +31,22 @@ msgstr "(Pendiente aprobación)"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:36
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:28
+#, python-format
+msgid "(Proforma)"
+msgstr "(Proforma)"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:40
 #, python-format
 msgid "Available"
 msgstr "Disponible"
 
 #. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_available_in_pos
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_available_in_pos
-msgid "Available in the Point of Sale"
-msgstr "Disponible en el TPV"
-
-#. module: jim_telesale
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_change_material_abc
 msgid "Cambio rotabilidad"
 msgstr "Cambio rotabilidad"
-
-#. module: jim_telesale
-#: model:ir.model.fields,help:jim_telesale.field_delivery_carrier_to_weight
-#: model:ir.model.fields,help:jim_telesale.field_product_product_to_weight
-msgid "Check if the product should be weighted using the hardware scale integration"
-msgstr "Marque si el producto debe ser pesado usando la integración hardware de la balanza"
-
-#. module: jim_telesale
-#: model:ir.model.fields,help:jim_telesale.field_delivery_carrier_available_in_pos
-#: model:ir.model.fields,help:jim_telesale.field_product_product_available_in_pos
-msgid "Check if you want this product to appear in the Point of Sale"
-msgstr "Marque esta casilla si quiere que este producto aparezca en el TPV"
 
 #. module: jim_telesale
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_product_type_code
@@ -71,21 +60,28 @@ msgstr "Codigo de u.m.(SGA)"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:154
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:178
 #, python-format
 msgid "Customer name '' does not exist"
-msgstr "El nombre del cliente no existe"
+msgstr "El nombre del cliente'' no existe"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:40
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:37
+#, python-format
+msgid "Description"
+msgstr "Description"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:44
 #, python-format
 msgid "Disc"
 msgstr "Disc"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:34
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:38
 #: code:addons/jim_telesale/static/src/xml/order_history_template.xml:7
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_lqdr
 #, python-format
@@ -99,7 +95,7 @@ msgstr "Last PST from Mecalux"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:132
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:134
 #, python-format
 msgid "No"
 msgstr "No"
@@ -111,16 +107,24 @@ msgstr "Nombre Radiofrecuencia"
 
 #. module: jim_telesale
 #. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:89
+#, python-format
+msgid "PROFORMA"
+msgstr "PROFORMA"
+
+#. module: jim_telesale
+#. openerp-web
 #: code:addons/jim_telesale/static/src/xml/order_history_template.xml:10
 #, python-format
 msgid "Pending Approval"
 msgstr "Pendiente aprobación"
 
 #. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_pos_categ_id
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_pos_categ_id
-msgid "Point of Sale Category"
-msgstr "Categoría del TPV"
+#. openerp-web
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:235
+#, python-format
+msgid "Pricelist name '' does not exist"
+msgstr "LA tarifa con nombre '' no existe"
 
 #. module: jim_telesale
 #: model:ir.model,name:jim_telesale.model_product_product
@@ -131,6 +135,13 @@ msgstr "Producto"
 #: model:ir.model,name:jim_telesale.model_product_template
 msgid "Product Template"
 msgstr "Plantilla de producto"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/order_history_template.xml:13
+#, python-format
+msgid "Proforma"
+msgstr "Proforma"
 
 #. module: jim_telesale
 #: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_route_name
@@ -174,21 +185,9 @@ msgid "Tariff"
 msgstr "Arancel"
 
 #. module: jim_telesale
-#: model:ir.model.fields,help:jim_telesale.field_delivery_carrier_pos_categ_id
-#: model:ir.model.fields,help:jim_telesale.field_product_product_pos_categ_id
-msgid "Those categories are used to group similar products for point of sale."
-msgstr "Estas categorías se usan para agrupar productos similares para el TPV."
-
-#. module: jim_telesale
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_material_abc_code
 msgid "Tipo de rotabilidad"
 msgstr "Tipo de rotabilidad"
-
-#. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_to_weight
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_to_weight
-msgid "To Weigh With Scale"
-msgstr "Para pesar con balanza"
 
 #. module: jim_telesale
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_desc_uom_base_code
@@ -197,14 +196,14 @@ msgstr "Unidad de medida"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:35
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:39
 #, python-format
 msgid "Wareouse"
 msgstr "Almacén"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:132
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:134
 #, python-format
 msgid "Yes"
 msgstr "Sí"
