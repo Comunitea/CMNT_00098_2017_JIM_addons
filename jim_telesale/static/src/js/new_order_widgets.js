@@ -144,7 +144,23 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
 
         //set handler for fiscount plus field.
         this._super();
-    }
+    },
+    control_arrow_keys: function(){
+        var self=this;
+        this._super()
+        this.$('.col-chained_discount').keydown(function(event){
+          var keyCode = event.keyCode || event.which;
+          if (keyCode == 40) {  // KEY DOWWN (40) 
+                event.preventDefault();
+                $(this).parent().parent().next().find('.col-chained_discount').select();
+
+            }
+            else if (keyCode == 38){  //KEY UP
+                event.preventDefault();
+                $(this).parent().parent().prev().find('.col-chained_discount').select();
+            }
+        });
+    },
 });
 
 var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
