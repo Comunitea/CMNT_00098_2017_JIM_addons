@@ -15,6 +15,19 @@ var OrderWidget = NewOrderWidgets.OrderWidget.include({
         added_line.update_line_values();
         return added_line;
     },
+
+    // Creates a line with product and unit seted
+    create_line_empty: function(product_id){
+        var added_line = this._super(product_id);
+        var product_obj = this.ts_model.db.get_product_by_id(product_id);
+        var description = product_obj.name;
+        if (product_obj.description_sale){
+            description = description + '\n' + product.description_sale
+        }
+        added_line.set('description', description);
+        return added_line;
+    },
+
 });
 
 var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
@@ -24,6 +37,9 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         this._super();
         this.$('.col-chained_discount').change(_.bind(this.set_value, this, 'chained_discount'));
         this.$('.col-chained_discount').focus(_.bind(this.click_handler, this, 'chained_discount'));
+
+        this.$('.col-description').blur(_.bind(this.set_value, this, 'description'));
+        this.$('.col-description').focus(_.bind(this.click_handler, this, 'description'));
     },
 
     
@@ -75,7 +91,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         this._super(key);
     },
 
-    // Get global stock available in product_id change
+    // OVERWRITED Get global stock available in product_id change
     call_product_id_change: function(product_id, add_qty){
         var self = this;
 
@@ -88,10 +104,13 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         var model = new Model("sale.order.line");
         return model.call("ts_product_id_change", [product_id, customer_id, pricelist_id])
         .then(function(result){
-            console.log("RESULTADO PRODUCT ID CHGANGE")
-            console.log(result);
             var product_obj = self.ts_model.db.get_product_by_id(product_id);
             var uom_obj = self.ts_model.db.get_unit_by_id(product_obj.uom_id[0])
+            var description = product_obj.name;
+            if (product_obj.description_sale){
+                description = description + '\n' + product.description_sale
+            }
+            self.model.set('description', description);
             self.model.set('code', product_obj.default_code || "");
             self.model.set('product', product_obj.display_name || "");
             self.model.set('taxes_ids', result.tax_id || []); //TODO poner impuestos de producto o vacio
@@ -132,14 +151,14 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         // Always set lqdr route name and description.
         if (product_obj){
             var lqdr = (product_obj.lqdr)  ? _t("Yes") : _t("No")
-            var description = product_obj.name;
-            if (product_obj.description_sale){
-                description = description + '\n' + product.description_sale
-            }
+            // var description = product_obj.name;
+            // if (product_obj.description_sale){
+            //     description = description + '\n' + product.description_sale
+            // }
 
             this.model.set('lqdr', lqdr);
             this.model.set('route_name', product_obj.route_name);
-            this.model.set('description', description);
+            // this.model.set('description', description);
         }
 
         //set handler for fiscount plus field.

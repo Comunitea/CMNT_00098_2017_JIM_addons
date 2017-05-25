@@ -14,9 +14,12 @@ TsModels.TsModel = TsModels.TsModel.extend({
         res.push('lqdr', 'route_name', 'description_sale', 'name')
         return res
     },
+
+    // To set it to line in function build_order_create_lines
     get_line_vals: function(line, order_model){
         var res = TsModelSuper.prototype.get_line_vals.call(this, line, order_model);
         res.chained_discount = line.chained_discount || '0.00';
+        res.description = line.name || '0.00';
         return res
     }
 });
@@ -44,7 +47,8 @@ TsModels.Orderline.prototype.initialize = function(options){
 var _exportJSON_ = TsModels.Orderline.prototype.export_as_JSON;
 TsModels.Orderline.prototype.export_as_JSON = function(){
     var res = _exportJSON_.call(this, {});
-    var to_add = {chained_discount: this.get('chained_discount') || '0.0'}
+    var to_add = {chained_discount: this.get('chained_discount') || '0.0',
+                  description: this.get('description')}
     res = $.extend(res, to_add)
     return res
 }
