@@ -6,14 +6,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-29 16:23+0000\n"
-"PO-Revision-Date: 2017-03-29 16:23+0000\n"
+"POT-Creation-Date: 2017-05-25 18:08+0000\n"
+"PO-Revision-Date: 2017-05-25 18:08+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: jim_stock
+#: model:ir.ui.view,arch_db:jim_stock.product_template_form_view_procurement_button_add_global
+msgid "<span class=\"o_stat_text\">Forecasted</span>"
+msgstr "<span class=\"o_stat_text\">Previsto</span>"
 
 #. module: jim_stock
 #: model:ir.model.fields,field_description:jim_stock.field_product_product_global_available_stock
@@ -26,6 +31,11 @@ msgstr "Stock global disponible"
 #: model:ir.model.fields,field_description:jim_stock.field_product_template_global_real_stock
 msgid "Global Real Stock"
 msgstr "Stock global real"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_product_product_intercompany_price
+msgid "Intercompany Price"
+msgstr "Precio intercompañía"
 
 #. module: jim_stock
 #: model:ir.model,name:jim_stock.model_product_product
