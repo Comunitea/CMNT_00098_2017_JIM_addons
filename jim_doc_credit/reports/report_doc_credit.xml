@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <template id="doc_credit">
+
+           <div class="page">
+                <div>
+                    <h3>Documentary Credit</h3>
+                    <br/>
+                    <span>Número de páginas incluida esta: <t t-esc="len(docs)"/></span>
+                    <br/>
+                    Melide, <span t-esc="context_timestamp(datetime.datetime.now()).strftime('%A, %d de %B del %Y %H:%M')"/>
+                    <br/>
+                    Ruego procedan a la codificación y envío del presente Crédito Documentario.
+                    <br/>
+                    Así mismo, tan pronto en cuando lo envíen, remitan por fax al 981506410 la copia del mismo a la atención de José Luis Castro.
+                    <br/><br/>
+                </div>
+                <div class="col-xs-12 text-left">
+
+                    <strong><div t-field="docs.purchase_id.company_id.name"/></strong>
+                    <div>
+                        <span t-field="docs.purchase_id.company_id.street"/>
+                    </div>
+                    <div>
+                        <span t-field="docs.purchase_id.company_id.street2"/>
+                    </div>
+                    <div>
+                        <span t-field="docs.purchase_id.company_id.city"/>
+                        <span t-field="docs.purchase_id.company_id.state_id.name"/>
+                    </div>
+                    <div>
+                        <span t-field="docs.purchase_id.company_id.zip"/>
+                        <span t-field="docs.purchase_id.company_id.country_id"/>
+                    </div>
+                    <div>
+                        <span>EORI NO</span><span t-field="docs.purchase_id.company_id.vat"/>
+                    </div>
+                    <br/>
+                </div>
+
+                <div class="col-xs-12 text-left">
+
+                    <div>BANCO AVISADOR: </div>
+                    <strong><span t-field="docs.purchase_id.doc_credit_bank_id.lname"/></strong>
+                    <div>
+                        <span t-field="docs.purchase_id.doc_credit_bank_id.street"/> <span t-field="docs.purchase_id.doc_credit_bank_id.street2"/>
+                    </div>
+                    <div>
+                        <span t-field="docs.purchase_id.doc_credit_bank_id.city"/>
+                        <span t-field="docs.purchase_id.doc_credit_bank_id.state"/>
+                    </div>
+                    <div>
+                        <span t-field="docs.purchase_id.doc_credit_bank_id.code"/>,
+                        <span t-field="docs.purchase_id.doc_credit_bank_id.bic"/>
+                    </div>
+                    <br/>
+
+                </div>
+
+                <div class="col-xs-12 text-left">
+
+                    <div>BENEFICIARIO:</div>
+
+                    <strong><div t-field="docs.purchase_id.partner_id.name"/></strong>
+                    <div>
+                        <span t-field="docs.purchase_id.partner_id.street"/>
+                        <span t-field="docs.purchase_id.partner_id.street2"/>
+                    </div>
+                    <div>
+                        <span t-field="docs.purchase_id.partner_id.city"/>
+                        <span t-field="docs.purchase_id.partner_id.state_id.name"/>
+                        <span t-field="docs.purchase_id.partner_id.zip"/>
+                        <span t-field="docs.purchase_id.partner_id.country_id"/>
+                    </div>
+                    <div>
+                        <span>TEL:</span><span t-field="docs.purchase_id.partner_id.phone"/>
+                    </div>
+                    <div>
+                        <span>FAX:</span><span t-field="docs.purchase_id.partner_id.fax"/>
+                    </div>
+                    <div>
+                        <span>Atn</span>
+                        <span t-field="docs.purchase_id.partner_bank_contact_id.name"/>
+                    </div>
+                    <br/>
+                </div>
+
+
+                <div>
+                    <span>IMPORTE: #</span>
+                    <strong><span t-field="docs.purchase_id.currency_id"/>
+                    <span t-esc="total_amount"/>#</strong>
+                    <span t-esc="total_amount_text"/>#<span t-field="docs.purchase_id.currency_id.lname"/>
+                </div>
+                <br/>
+                <div>L/C IRREVOCABLE</div>
+                <div>INCOTERM:<span t-field="docs.purchase_id.incoterm_id"/></div>
+                <div>PAGO A LA VISTA</div>
+                <div>EMBARQUE POR BUQUE EMITIDOS A LA ORDEN INDICANDO FELETE DEBIDO</div>
+                <div>FECHA LÍMITE PARA LA EXPEDICIÓN:<span t-field="docs.purchase_id.limit_expedition_date"/></div>
+                <div>NOTIFICADO Y CONSIGNADO TO THE ORDER.</div>
+                <div>VALIDEZ L/C<span t-field="docs.purchase_id.expire_credit_letter_date"/></div>
+                <br/>
+
+                <div>
+                    <div>SEGURO A CUBRIR POR EL ORDENANTE</div>
+                    <div>CONDICIONES ESPECIALES:</div>
+                    <div class="col-xs-12 text-left">+LOS GASTOS FUERA DE ESPAÑA SON POR CUENTA DEL BENEFICIARIO</div>
+                    <div class="col-xs-12 text-left">+MERCANCÍA PROCEDENTE DE
+                        <span t-field="docs.purchase_id.partner_id.country_id"/>
+                        (<span t-field="docs.purchase_id.partner_id.city"/>) CON DESTINO A
+                        <span t-field="docs.purchase_id.in_port_id.country_id"/>
+                        (<span t-field="docs.purchase_id.in_port_id.city"/>)</div>
+                    <div class="col-xs-12 text-left">+PROHIBIDAS LAS EXPEDICIONES PARCIALES DE LA MERCANCÍA Y TRANSBORDOS</div>
+                    <div class="col-xs-12 text-left">+CRÉDITO SIN CONFIRMAR</div>
+                    <div class="col-xs-12 text-left">+EL PRESENTE L/C DEBERÁ SER AVISADO POR TEL:
+                        <span t-field="docs.purchase_id.partner_bank_contact_id.phone"/>,
+                        <span t-field="docs.purchase_id.partner_bank_contact_id.name"/>
+                    </div>
+                    <div>ÚTIL A LA PRESENTE DE LOS SIGUIENTES DOCUMENTOS:</div>
+                    <div class="col-xs-12 text-left">+2 FACTURAS ORIGINALES</div>
+                    <div class="col-xs-12 text-left">+3 COPIAS DE FACTURA</div>
+                    <div class="col-xs-12 text-left">+3 PACKING LIST</div>
+                    <div class="col-xs-12 text-left">+3 B/L ORIGINALES LIMPIO A BORDO</div>
+                    <div class="col-xs-12 text-left">+1 COPIA B/L NO NEGOCIABLE LIMPIO A BORDO</div>
+                    <div class="col-xs-12 text-left">+1 CERTIFICADO DE ORIGEN FORM “A”</div>
+                    <div class="col-xs-12 text-left">+1 COPIA DEL FAX DIRIGIDO AL ORDENANTE EN LA QUE SE HAGA CONSTAR: FECHA DE EMBARQUE, NÚMERO DE BULTOS, NOMBRE DEL BARCO Y KILOS AL +34 981506410 FECHADO 1 DÍA ANTES DE LA FECHA DE EMBARQUE<br/></div>
+                    <div>
+                    LA COPIA DE LA FACTURA Y DEL PACKING LIST DEBEN SER ENVIADAS POR EMAIL UN DÍA ANTES DEL EMBARQUE DE LA MERCANCÍA A: <span t-field="docs.purchase_id.mail_confirm_packing_list"/>
+                    </div>
+                </div>
+
+                <div style="page-break-inside: avoid;">
+                    <div>
+                        DESCRIPCIÓN DE LA MERCANCÍA:
+                        <div>MATERIAL DEPORTIVO SEGÚN PROFORMA <span t-field="docs.purchase_id.proforma_invoice_ref"/> ADJUNTA FECHADA <span t-field="docs.purchase_id.proforma_invoice_date"/>, CON LA SIGUIENTE MERCANCÍA:<br/></div>
+                    </div>
+                    <div style="width:100%; border-bottom: 2px solid black;">
+                    <p style="height:20px"/>
+                    <table class="table table-condensed">
+                        <thead>
+                            <tr>
+                                <th class="text-right">QTY</th>
+                                <th>SPORTING GOODS</th>
+                                <th>UNIT PRICE</th>
+                                <th>AMOUNT</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="lines" t-as="line">
+                                <td>
+                                    <span t-esc="line['qty']"/> <span t-esc="line['uom']"/>
+                                </td>
+                                <td>
+                                    <span t-esc="line['description']"/>
+                                </td>
+                                <td>
+                                    <span t-esc="symbol"/><span t-esc="line['price_unit']"/>
+                                </td>
+                                <td>
+                                    <span t-esc="symbol"/><span t-esc="line['subtotal']"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <span t-esc="total_qty"/>
+                                </td>
+                                <td>
+                                    TOTAL
+                                </td>
+                                <td/>
+                                <td>
+                                    <span t-esc="symbol"/><span t-esc="total_amount"/>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                </div>
+                <div class="oe_structure"/>
+                <div style="page-break-inside: avoid;">
+                    <br/><br/>
+                    No siendo otro particular, reciba un cordial saludo,
+
+                    <br/><br/><br/>
+                    <br/><br/><br/>
+                    Jesús Manuel Graña Gómez
+                    <br/>
+                    ADMINISTRADOR JIM SPORTS TECHNOLOGY, S.L
+                </div>
+            </div>
+        </template>
+    </data>
+
+
+</odoo>
