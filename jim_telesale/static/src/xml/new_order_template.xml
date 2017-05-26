@@ -25,6 +25,9 @@
             <t t-if="widget.ts_model.get('selectedOrder').get('state') == 'pending'">
                 (Pending Approval)
             </t>
+            <t t-if="widget.ts_model.get('selectedOrder').get('state') == 'proforma'">
+                (Proforma)
+            </t>
         </t>
     </t>
 
@@ -46,7 +49,8 @@
         <t t-jquery=".cell-product" t-operation="after">
             <!-- Description column -->
             <td class="cell-description">
-                  <span t-esc="widget.model.get('description')"/>
+                  <!-- <span t-esc="widget.model.get('description')"/> -->
+                   <textarea onclick="this.select()" class="col-description notes mandatory"  name="description" ><t t-esc="widget.model.get('description')"/></textarea>
             </td>
             <!-- LQDR column -->
             <td class="cell-lqdr">

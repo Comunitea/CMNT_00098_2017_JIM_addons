@@ -5,7 +5,7 @@
     <!-- Replace discount field with a input text expecting a string to the chained discount (Remove toFixed(2) -->
     <t t-extend="Grid-Widget">
         <t t-jquery="#grid-discount" t-operation="replace">
-            <input id="grid-discount" class="add-discount mandatory" t-att-value="cell.discount" type="text" tabindex="-1"/>
+            <input onclick="this.select()" id="grid-discount" class="add-discount mandatory" t-att-value="cell.discount" type="text" tabindex="-1"/>
         </t>
     </t>
 

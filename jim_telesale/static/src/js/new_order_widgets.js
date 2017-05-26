@@ -15,6 +15,19 @@ var OrderWidget = NewOrderWidgets.OrderWidget.include({
         added_line.update_line_values();
         return added_line;
     },
+
+    // Creates a line with product and unit seted
+    create_line_empty: function(product_id){
+        var added_line = this._super(product_id);
+        var product_obj = this.ts_model.db.get_product_by_id(product_id);
+        var description = product_obj.name;
+        if (product_obj.description_sale){
+            description = description + '\n' + product.description_sale
+        }
+        added_line.set('description', description);
+        return added_line;
+    },
+
 });
 
 var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
@@ -24,6 +37,9 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         this._super();
         this.$('.col-chained_discount').change(_.bind(this.set_value, this, 'chained_discount'));
         this.$('.col-chained_discount').focus(_.bind(this.click_handler, this, 'chained_discount'));
+
+        this.$('.col-description').blur(_.bind(this.set_value, this, 'description'));
+        this.$('.col-description').focus(_.bind(this.click_handler, this, 'description'));
     },
 
     
@@ -75,7 +91,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         this._super(key);
     },
 
-    // Get global stock available in product_id change
+    // OVERWRITED Get global stock available in product_id change
     call_product_id_change: function(product_id, add_qty){
         var self = this;
 
@@ -84,13 +100,17 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         }
 
         var customer_id = self.ts_model.db.partner_name_id[self.order.get('partner')];
+        var pricelist_id = self.ts_model.db.pricelist_name_id[self.order.get('pricelist')];
         var model = new Model("sale.order.line");
-        return model.call("ts_product_id_change", [product_id, customer_id])
+        return model.call("ts_product_id_change", [product_id, customer_id, pricelist_id])
         .then(function(result){
-            console.log("RESULTADO PRODUCT ID CHGANGE")
-            console.log(result);
             var product_obj = self.ts_model.db.get_product_by_id(product_id);
             var uom_obj = self.ts_model.db.get_unit_by_id(product_obj.uom_id[0])
+            var description = product_obj.name;
+            if (product_obj.description_sale){
+                description = description + '\n' + product.description_sale
+            }
+            self.model.set('description', description);
             self.model.set('code', product_obj.default_code || "");
             self.model.set('product', product_obj.display_name || "");
             self.model.set('taxes_ids', result.tax_id || []); //TODO poner impuestos de producto o vacio
@@ -131,19 +151,35 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         // Always set lqdr route name and description.
         if (product_obj){
             var lqdr = (product_obj.lqdr)  ? _t("Yes") : _t("No")
-            var description = product_obj.name;
-            if (product_obj.description_sale){
-                description = description + '\n' + product.description_sale
-            }
+            // var description = product_obj.name;
+            // if (product_obj.description_sale){
+            //     description = description + '\n' + product.description_sale
+            // }
 
             this.model.set('lqdr', lqdr);
             this.model.set('route_name', product_obj.route_name);
-            this.model.set('description', description);
+            // this.model.set('description', description);
         }
 
         //set handler for fiscount plus field.
         this._super();
-    }
+    },
+    control_arrow_keys: function(){
+        var self=this;
+        this._super()
+        this.$('.col-chained_discount').keydown(function(event){
+          var keyCode = event.keyCode || event.which;
+          if (keyCode == 40) {  // KEY DOWWN (40) 
+                event.preventDefault();
+                $(this).parent().parent().next().find('.col-chained_discount').select();
+
+            }
+            else if (keyCode == 38){  //KEY UP
+                event.preventDefault();
+                $(this).parent().parent().prev().find('.col-chained_discount').select();
+            }
+        });
+    },
 });
 
 var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
@@ -157,11 +193,12 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
             var partner_id = self.ts_model.db.partner_name_id[value];
 
             // Not partner found in backbone model
-            if (!partner_id){
+            if (value && !partner_id){
                 var alert_msg = _t("Customer name '" + value + "' does not exist");
                 alert(alert_msg);
                 self.order_model.set('partner', "");
                 self.refresh();
+                self.$('#partner').focus();
             }
             else {
                 var partner_obj = self.ts_model.db.get_partner_by_id(partner_id);
@@ -181,7 +218,10 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
                     var partner_shipp_obj = self.ts_model.db.get_partner_by_id(result.partner_shipping_id);
                     var shipp_addr =self.ts_model.getComplexName(partner_shipp_obj);
                     self.order_model.set('shipp_addr', shipp_addr);
-
+                    var pricelist_obj = self.ts_model.db.pricelist_by_id[result.pricelist_id];
+                    if (pricelist_obj){
+                        self.order_model.set('pricelist', pricelist_obj.name);
+                    }
                     // Get alert if warning is not false
                     if (result.warning){
                         alert(result.warning);
@@ -193,9 +233,9 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
                     self.refresh();
                     // New line and VUA button when chang
                     // Only do it when partner is setted
-                    if (self.order_model.get('partner')){
-                        $('#vua-button').click();
-                    }
+                    // if (self.order_model.get('partner')){
+                    //     $('#vua-button').click();
+                    // }
                     if(self.order_model.get('orderLines').length == 0 && self.order_model.get('partner')){
                         $('.add-line-button').click()
                     }
@@ -204,6 +244,18 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
                     }
 
                 });
+            }
+        }
+        else if (key == "pricelist"){
+            var pricelist_id = self.ts_model.db.pricelist_name_id[value];
+
+            // Not partner found in backbone model
+            if (!pricelist_id){
+                var alert_msg = _t("Pricelist name '" + value + "' does not exist");
+                alert(alert_msg);
+                self.order_model.set('pricelist', "");
+                self.refresh();
+                self.$('#pricelist').focus();
             }
         }
     },
