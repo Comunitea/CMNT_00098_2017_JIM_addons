@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="hs_code_view_form_country_tax" model="ir.ui.view">
+        <field name="name">hs.code.form.country.tax</field>
+        <field name="model">hs.code</field>
+        <field name="inherit_id" ref="product_harmonized_system.hs_code_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='product-tmpl']" position="after">
+                 <group name="country-taxes" string="Country Taxes">
+                    <field name="country_tax_ids" nolabel="1">
+                        <tree>
+                            <field name="country_id"/>
+                            <field name="tax"/>
+                        </tree>
+                    </field>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
