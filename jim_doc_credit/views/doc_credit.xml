@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <report
+        id = "action_report_doc_credit"
+        model = "account.payment"
+        string = "Documentary Credit"
+        report_type = "qweb-pdf"
+        name = "jim_doc_credit.doc_credit"
+        file = "jim_doc_credit.doc_credit"
+        attachment_use = "True"
+        attachment = "'Documentary credit :' + str(object.id) + '.pdf'"
+        />
+</odoo>
