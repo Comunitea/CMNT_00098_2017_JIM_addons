@@ -59,15 +59,45 @@ class StockPicking(models.Model):
         #for pack_operation in picking.pack_operation_product_ids:
 
         origin_pack_operations = self.pack_operation_product_ids.filtered(lambda x: x.qty_done > 0)
-        for origin_pack_operation in origin_pack_operations:
-            line = picking.move_lines.filtered(lambda x : x.product_id.id == origin_pack_operation.product_id.id)
-            #  Si ese producto está en el albárna de compra
-            if line:
-                if line.state != 'assigned':
-                    line.force_assign()
-                ops = line.linked_move_operation_ids
-                ops[0].qty_done = origin_pack_operation.qty_done
+        origin_products = origin_pack_operations.mapped('product_id')
+        for origin_product in origin_products:
+            orig_product_qty = sum(x.product_qty
+                                   for x in origin_pack_operations.filtered(lambda x:
+                                                                            x.product_id.id == origin_product.id))
+            lines = picking.move_lines.filtered(lambda x : x.product_id.id == origin_product.id)
+            assigned_lines = lines.filtered(lambda x: x.state == 'assigned')
+            assigned_qty = sum(x.product_qty for x in assigned_lines)
+            if assigned_qty < orig_product_qty:
+                # Buscamos si hay más...
+                not_assigned_lines = lines.filtered(lambda x: x.state in ['confirmed', 'waiting'])
+                not_assigned_lines.force_assign()
+                assigned_lines = lines.filtered(lambda x: x.state == 'assigned')
 
+            ops = assigned_lines.linked_move_operation_ids.mapped('operation_id')
+            ops_qty = sum(x.product_qty for x in ops)
+            remain_qty = orig_product_qty
+            if len(ops) == 1:
+                ops[0].qty_done = ops[0].product_qty = orig_product_qty
+                remain_qty = 0
+            else:
+
+                for op in ops:
+                    if remain_qty == 0:
+                        op.unlink()
+                    else:
+                        if op.product_qty < remain_qty:
+                            op.done_qty = op.product_qty
+                            remain_qty -= op.product_qty
+                        else:
+                            op.done_qty = op.product_qty = remain_qty
+                            remain_qty = 0
+            if remain_qty > 0:
+                op.done_qty = op.product_qty = op.product_qty + remain_qty
+
+
+        for pack in picking.pack_operation_ids:
+            if pack.qty_done <= 0:
+                pack.unlink()
         picking.do_transfer()
 
     @api.multi
@@ -79,6 +109,27 @@ class StockPicking(models.Model):
                             ('id', 'not in', pickings.mapped('id'))]
 
         return domain
+
+    @api.multi
+    def action_cancel(self):
+        for picking in  self:
+            if picking.picking_type_id.code == 'outgoing':
+                ic_purchases = self.env['purchase.order'].search([('group_id', '=', picking.group_id.id),
+                                                                  ('intercompany', '=', True)])
+                if ic_purchases:
+                    picking_in_ids = ic_purchases.picking_ids.filtered(lambda x: x.picking_type_id.code == 'internal'
+                                                                                 and x.location_id.usage == 'supplier'
+                                                                       and x.state != 'done')
+                    #CANCELA ALBARANES DE COMPRA RELACIONADOS
+                    picking_in_ids.action_cancel()
+
+            if picking.purchase_id.intercompany:
+                ic_sale = self.env['sale.order'].sudo().search([('auto_purchase_order_id', '=', picking.purchase_id.id)])
+                sale_pickings = ic_sale.picking_ids.filtered(lambda x: x.state != 'done')
+                sale_pickings.action_cancel()
+
+        res = super(StockPicking, self).action_cancel()
+
 
     @api.multi
     def do_transfer(self):
@@ -128,10 +179,11 @@ class StockMove(models.Model):
 
     @api.multi
     def action_done(self):
-        res = super(StockMove, self).action_done()
+
         for move in self:
             if move.move_dest_id.picking_id.sale_id.auto_generated:
                 move.process_intercompany_chain()
+        res = super(StockMove, self).action_done()
         return res
 
     @api.multi
@@ -145,5 +197,20 @@ class StockMove(models.Model):
             message = _("The move for product %s  has been forced by intercompany operation %s from company %s") % (
                 self.product_id.name, self.picking_id.name, self.picking_id.company_id.name)
             ic_purchase_move.move_dest_id.picking_id.message_post(body=message)
+            forced_qty = 0
+            for x in self.linked_move_operation_ids.mapped('operation_id'):
+                forced_qty += x.product_qty
+            # forced_qty = sum(x.operation_id.product_qty
+            #                  for x in self.linked_move_operation_ids)
+            if forced_qty != ic_purchase_move.move_dest_id.product_qty and \
+                    ic_purchase_move.move_dest_id.linked_move_operation_ids:
+                ic_purchase_move.move_dest_id.linked_move_operation_ids[0].\
+                    operation_id.product_qty = forced_qty
+                message = _("The quantity for product %s  has been set to %d by intercompany operation %s from company %s") % (
+                    self.product_id.name, forced_qty, self.picking_id.name, self.picking_id.company_id.name)
+                ic_purchase_move.move_dest_id.picking_id.message_post(body=message)
+
+
+
 
 
