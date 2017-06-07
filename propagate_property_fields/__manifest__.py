@@ -17,7 +17,8 @@
     ],
     "data": [
         'wizard/propagate_partner_properties_view.xml',
-        'wizard/propagate_product_properties_view.xml'
+        'wizard/propagate_product_properties_view.xml',
+        'views/res_company_view.xml'
     ],
     "installable": True
 }

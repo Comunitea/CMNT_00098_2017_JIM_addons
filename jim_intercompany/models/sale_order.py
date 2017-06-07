@@ -25,6 +25,20 @@ class SaleOrder(models.Model):
 
         return res
 
+    @api.multi
+    def action_cancel(self):
+        ic_sales = self.env['sale.order'].sudo().search(
+            [('auto_purchase_order_id', 'in', self.purchase_ids.mapped('id')),('id', '!=', self.id)])
+        if ic_sales:
+            ic_sales.action_cancel()
+        if self.purchase_ids:
+            self.purchase_ids.button_cancel()
+        res = super(SaleOrder, self).action_cancel()
+        rest_pickings = self.picking_ids.filtered(lambda x: x.state != 'done')
+        if rest_pickings:
+            rest_pickings.action_cancel()
+
+        return res
 
     @api.multi
     @api.depends('procurement_group_id')

@@ -42,6 +42,9 @@ class PropagatePartnerProperties(models.TransientModel):
                     field_eval = 'partner.' + field
                     model_value = eval(field_eval, eval_dic)
                     if model_value:
+                        # Skip if no propagate active:
+                        if company.no_propagate_term:
+                            continue
                         # WRITE in new company
                         partner2.sudo().write({field: model_value.id})
 
@@ -59,5 +62,10 @@ class PropagatePartnerProperties(models.TransientModel):
                         model_obj = self.env[model_name].sudo().search(domain,
                                                                        limit=1)
                         if model_obj:
+                            # Skip if no propagate active:
+                            if company.no_propagate_term and field \
+                                    in ['customer_payment_mode_id',
+                                        'supplier_payment_mode_id']:
+                                continue
                             # WRITE in new company
                             partner2.sudo().write({field: model_obj.id})

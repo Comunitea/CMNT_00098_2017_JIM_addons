@@ -7,8 +7,7 @@ from odoo import models, api, fields
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    route_name = fields.Char('Route name', related='route_ids.name',
-                             store=True)
+    route_name = fields.Char('Route name', related='route_ids.name')
 
     # @api.model
     # def ts_get_global_stocks(self, product_id):
