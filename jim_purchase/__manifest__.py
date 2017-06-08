@@ -10,6 +10,8 @@
     'license': 'AGPL-3',
     'depends': [
         'purchase',
+        'purchase_advance_payment',
+
     ],
     'contributors': [
         "Comunitea ",
@@ -18,6 +20,8 @@
     ],
     "data": [
         'views/purchase_order.xml',
+        'views/account_payment.xml',
+
     ],
     "installable": True
 }

@@ -31,7 +31,6 @@ class ConfigPathFiles(models.TransientModel):
 
     @api.model
     def get_default_path_files(self, fields):
-
         res = {}
         icp = self.env['ir.config_parameter']
         res['path_files'] = icp.get_param(
@@ -138,19 +137,16 @@ class MecaluxFile(models.Model):
         return super(MecaluxFile, self).write(vals)
 
     def reset_sequence(self):
-
+        return
         domain = [('id', '!=', 0)]
         pool_files = self.env['sgavar.file'].search(domain)
-
         for pool in pool_files:
             min_id = 10000
-            print "Actualizando %s" % pool.code
+
             for var in pool.sga_file_var_ids:
                 min_id = min(min_id, var.id)
             for var in pool.sga_file_var_ids:
                 var.sequence = var.id - min_id
-                print ">>>>>>%s (%s) a sequence %s" % (var.name, var.id, var.sequence)
-
         return
 
 
@@ -264,7 +260,6 @@ class MecaluxFileHeader(models.Model):
             dec_ = int((value - int_) * 10 ** length_dec)
             val = str(int_).rjust(length_int, fillchar)
             val += str(dec_).ljust(length_dec, fillchar)
-
         return val
 
     def format_from_mecalux_number(self, value, length_in=(12, 7, 5), default=False, fillchar='0'):

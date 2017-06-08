@@ -42,25 +42,11 @@ class AccountVoucherWizard(models.TransientModel):
         return res
 
 
-    @api.multi
-    def make_advance_payment(self):
-        return super(AccountVoucherWizard, self).make_advance_payment()
-
-
-
-
 class AccountPayment(models.Model):
 
     _inherit = "account.payment"
 
     doc_credit = fields.Char("Documentary credit ref")
-
-    @api.multi
-    def post(self):
-
-        if self._context.get('not_payment_post', False):
-            return
-        return super(AccountPayment, self).post()
 
     @api.multi
     def create_doc_credit(self):

@@ -6,7 +6,9 @@
     'name': 'Documentary credit',
     'version': '10.0.1.0.0',
     'depends': [
-        'purchase', 'purchase_advance_payment'
+        'purchase',
+        'purchase_advance_payment',
+        'res_currency_fixed_rate'
     ],
     'author': "Comunitea",
     'license': "AGPL-3",
