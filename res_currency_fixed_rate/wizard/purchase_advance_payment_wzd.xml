@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+        <record id="view_account_purchase_voucher_wizard_fixed_rate" model="ir.ui.view">
+            <field name="name">advance.purchase.payment.wzd.rate.fixed</field>
+            <field name="model">account.purchase.voucher.wizard</field>
+            <field name="inherit_id" ref="purchase_advance_payment.view_account_purchase_voucher_wizard"/>
+            <field name="arch" type="xml">
+                <field name="currency_id" position="after">
+                        <field name="purchase_exchange_rate"/>
+                </field>
+            </field>
+        </record>
+
+</odoo>
