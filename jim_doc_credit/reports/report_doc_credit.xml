@@ -108,10 +108,10 @@
                     <div>CONDICIONES ESPECIALES:</div>
                     <div class="col-xs-12 text-left">+LOS GASTOS FUERA DE ESPAÑA SON POR CUENTA DEL BENEFICIARIO</div>
                     <div class="col-xs-12 text-left">+MERCANCÍA PROCEDENTE DE
-                        <span t-field="docs.purchase_id.partner_id.country_id"/>
-                        (<span t-field="docs.purchase_id.partner_id.city"/>) CON DESTINO A
-                        <span t-field="docs.purchase_id.in_port_id.country_id"/>
-                        (<span t-field="docs.purchase_id.in_port_id.city"/>)</div>
+                        <span t-field="docs.purchase_id.harbor_id.country_id"/>
+                        (<span t-field="docs.purchase_id.harbor_id.name"/>) CON DESTINO A
+                        <span t-field="docs.purchase_id.loc_harbor_id.country_id"/>
+                        (<span t-field="docs.purchase_id.loc_harbor_id.name"/>)</div>
                     <div class="col-xs-12 text-left">+PROHIBIDAS LAS EXPEDICIONES PARCIALES DE LA MERCANCÍA Y TRANSBORDOS</div>
                     <div class="col-xs-12 text-left">+CRÉDITO SIN CONFIRMAR</div>
                     <div class="col-xs-12 text-left">+EL PRESENTE L/C DEBERÁ SER AVISADO POR TEL:

@@ -11,12 +11,12 @@ class PurchaseOrder(models.Model):
     @api.depends('proforma_invoice_ref', 'proforma_invoice_date',
                            'limit_expedition_date', 'mail_confirm_packing_list',
                            'partner_bank_contact_id', 'expire_credit_letter_date',
-                           'incoterm_id', 'doc_credit_bank_id', 'in_port_id')
+                           'incoterm_id', 'doc_credit_bank_id', 'harbor_id')
     def check_doc_credit_ok(self):
         fields_to_check = ('proforma_invoice_ref', 'proforma_invoice_date',
                            'limit_expedition_date', 'mail_confirm_packing_list',
                            'partner_bank_contact_id', 'expire_credit_letter_date',
-                           'incoterm_id', 'doc_credit_bank_id', 'in_port_id')
+                           'incoterm_id', 'doc_credit_bank_id', 'harbor_id')
         for field in fields_to_check:
             if not self[field]:
                 return False
@@ -31,4 +31,11 @@ class PurchaseOrder(models.Model):
     proforma_invoice_ref = fields.Char("Proforma invoice")
     proforma_invoice_date = fields.Datetime("Proforma invoice date")
     doc_credit_bank_id = fields.Many2one("res.bank", "Doc credit bank")
-    in_port_id = fields.Many2one("res.partner", "In port")
+    harbor_id = fields.Many2one("res.harbor", string="Harbor")
+    loc_harbor_id = fields.Many2one("res.harbor", string="Loc Harbor")
+
+    @api.onchange('partner_id', 'company_id')
+    def onchange_partner_id(self):
+
+        super(PurchaseOrder, self).onchange_partner_id()
+        self.harbor_id = self.partner_id.harbor_ids and self.partner_id.harbor_ids[0]

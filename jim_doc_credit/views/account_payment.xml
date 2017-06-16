@@ -17,4 +17,20 @@
             </field>
         </record>
 
+
+        <record id="view_account_payment_search_account_position" model="ir.ui.view">
+            <field name="name">account.payment.search.account.position</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_search"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="after">
+                        <field name="property_account_position_id"/>
+                </field>
+                <xpath expr="//separator[last()]" position="after">
+                    <filter string="property_account_position_id" domain="[]" context="{'group_by': 'property_account_position_id'}"/>
+                </xpath>
+            </field>
+        </record>
+
+
 </odoo>

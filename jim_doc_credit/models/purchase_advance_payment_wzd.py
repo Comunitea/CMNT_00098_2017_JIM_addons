@@ -24,8 +24,8 @@ class AccountVoucherWizard(models.TransientModel):
 
         fields_to_check = ('proforma_invoice_ref', 'proforma_invoice_date',
                            'limit_expedition_date', 'mail_confirm_packing_list',
-                           'partner_bank_contact_id', 'expire_credit_letter_date',
-                           'incoterm_id', 'doc_credit_bank_id', 'in_port_id')
+                           'partner_bank_contact_id',
+                           'incoterm_id', 'doc_credit_bank_id', 'harbor_id')
         for field in fields_to_check:
             if purchase[field] == False:
                 raise ValidationError ("You must fill this fields\n%s"%str(fields_to_check))
@@ -37,9 +37,11 @@ class AccountVoucherWizard(models.TransientModel):
 
         payment_obj = self.env['account.payment']
         payment = payment_obj.search([('purchase_id', '=', purchase_id)], limit=1, order="id desc")
+        purchase.expire_credit_letter_date = self.date
         report = payment.create_doc_credit()
         payment.write({'doc_credit': 'Documentary credit :' + str(payment.id) + '.pdf'})
         return res
+
 
 
 class AccountPayment(models.Model):
@@ -47,6 +49,7 @@ class AccountPayment(models.Model):
     _inherit = "account.payment"
 
     doc_credit = fields.Char("Documentary credit ref")
+    property_account_position_id = fields.Many2one("account.fiscal.position", "Fiscal Position")
 
     @api.multi
     def create_doc_credit(self):
@@ -55,3 +58,16 @@ class AccountPayment(models.Model):
         #payment.write({'doc_credit': 'Documentary credit :' + payment.id + '.pdf'})
         return report
 
+    @api.onchange('partner_id')
+    def onchange_partner_id(self):
+        #super(AccountPayment, self).onchange_partner_id
+        self.property_account_position_id = self.partner_id.property_account_position_id
+
+
+    @api.model
+    def create(self, vals):
+        if vals.get('partner_id', False):
+            partner = self.env['res.partner'].browse(vals.get('partner_id'))
+            if partner:
+                vals['property_account_position_id']= partner.property_account_position_id.id
+        return super(AccountPayment, self).create(vals)

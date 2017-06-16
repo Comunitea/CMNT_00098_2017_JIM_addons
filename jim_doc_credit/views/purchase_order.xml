@@ -8,18 +8,16 @@
             <field name="inherit_id" ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
                 <field name="incoterm_id" position="after">
-
                     <field name="allow_doc_credit" attrs="{'invisible':[('incoterm_id','=',False)]}"/>
-
                     <field name="proforma_invoice_ref" attrs="{'invisible':[('allow_doc_credit','=',False)]}"/>
                     <field name="proforma_invoice_date" attrs="{'invisible':[('allow_doc_credit','=',False)]}"/>
                     <field name="limit_expedition_date" attrs="{'invisible':[('allow_doc_credit','=',False)]}"/>
                     <field name="mail_confirm_packing_list" attrs="{'invisible':[('allow_doc_credit','=',False)]}"/>
                     <field name="partner_bank_contact_id" attrs="{'invisible':[('allow_doc_credit','=',False)]}"/>
-                    <field name="expire_credit_letter_date" attrs="{'invisible':[('allow_doc_credit','=',False)]}"/>
+                    <field name="expire_credit_letter_date" readonly="1" attrs="{'invisible':[('allow_doc_credit','=',False)]}"/>
                     <field name="doc_credit_bank_id" attrs="{'invisible':[('allow_doc_credit','=',False)]}"/>
-                    <field name="in_port_id" attrs="{'invisible':[('allow_doc_credit','=',False)]}"/>
-
+                    <field name="harbor_id" attrs="{'invisible':[('allow_doc_credit','=',False)]}"/>
+                    <field name="loc_harbor_id" attrs="{'invisible':[('allow_doc_credit','=',False)]}"/>
                 </field>
             </field>
         </record>
