@@ -8,7 +8,6 @@ class PurchaseOrder(models.Model):
 
     _inherit = 'purchase.order'
 
-
     @api.one
     def get_rate(self):
         self.rate = 0
@@ -17,3 +16,11 @@ class PurchaseOrder(models.Model):
                 _get_conversion_rate(self.env.user.company_id.currency_id, self.currency_id)
 
     order_exchange_rate = fields.Float("Exchange rate", digits=(16, 6), default=get_rate)
+
+    @api.onchange('partner_id', 'company_id')
+    def onchange_partner_id(self):
+
+        super(PurchaseOrder, self).onchange_partner_id()
+        if self.company_id and self.currency_id:
+            self.order_exchange_rate = self.env["res.currency"].with_context(date=self.date_order). \
+                _get_conversion_rate(self.company_id.currency_id, self.currency_id)

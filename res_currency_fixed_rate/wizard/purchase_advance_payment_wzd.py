@@ -22,6 +22,11 @@ class AccountVoucherWizard(models.TransientModel):
 
     def get_payment_res(self, purchase_ids):
         payment_res = super(AccountVoucherWizard, self).get_payment_res(purchase_ids)
+        purchase_obj = self.env['purchase.order']
+        purchase_id = purchase_ids[0]
+        purchase = purchase_obj.browse(purchase_id)
+        payment_res['fixed_rate'] = self.purchase_exchange_rate
+        payment_res['rate']= self.exchange_rate
         return payment_res
 
     purchase_exchange_rate = fields.Float("Purchase exchange rate",
