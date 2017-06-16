@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="harbor_partner_product_tree" model="ir.ui.view">
+        <field name="name">harbor.partner.product.tree</field>
+        <field name="model">harbor.partner.product</field>
+        <field name="arch" type="xml">
+            <tree string="Product by harbor">
+                <field name="harbor_id"/>
+                <field name="partner_id"/>
+		        <field name="product_name"/>
+                <field name="default_code"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="harbor_partner_product_filter" model="ir.ui.view">
+        <field name="name">harbor.partner.product.filter</field>
+        <field name="model">harbor.partner.product</field>
+        <field name="arch" type="xml">
+            <search string="Harbors">
+                <field name="partner_id"/>
+                <field name="product_tmpl_id"/>
+                <field name="harbor_id"/>
+                <group expand="0" name="group_by" string="Group By">
+                    <filter string="Harbor" context="{'group_by': 'harbor_id'}"/>
+                    <filter string="Partner" context="{'group_by': 'partner_id'}"/>
+                </group>
+           </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_harbor_partner_product">
+        <field name="name">Harbors and Products</field>
+        <field name="res_model">harbor.partner.product</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="harbor_partner_product_tree"/>
+        <field name="search_view_id" ref="harbor_partner_product_filter"/>
+    </record>
+
+    <menuitem name="Harbors and Product" parent="purchase.menu_procurement_management"
+              action="action_harbor_partner_product" id="menu_harbor_partner_product"/>
+
+</odoo>

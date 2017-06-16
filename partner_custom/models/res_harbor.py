@@ -15,4 +15,5 @@ class ResHarbor(models.Model):
     name = fields.Char("Name", required=True)
     code = fields.Char("Code")
     country_id = fields.Many2one("res.country", "Country")
+
     

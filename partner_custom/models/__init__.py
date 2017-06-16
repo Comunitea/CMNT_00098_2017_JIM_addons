@@ -5,3 +5,4 @@
 from . import res_harbor
 from . import company
 from . import partner
+from . import harbor_partner_product
