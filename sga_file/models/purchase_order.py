@@ -12,3 +12,21 @@ from datetime import datetime, timedelta
 import os
 import re
 
+
+
+class PurchaseOrder(models.Model):
+    _inherit = "purchase.order"
+
+    @api.multi
+    def _create_picking(self):
+        res = super(PurchaseOrder, self)._create_picking()
+
+        StockPicking = self.env['stock.picking']
+        for order in self:
+            pickings = order.picking_ids.filtered(lambda x:
+                                                  x.state not in ('done', 'cancel') and
+                                                  x.picking_type_id.sga_integrated)
+
+            for pick in pickings:
+                if pick.new_mecalux_file():
+                    pick.sga_state = 'PM'

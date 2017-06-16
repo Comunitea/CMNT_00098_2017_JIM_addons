@@ -27,7 +27,7 @@ class SaleOrderLineSGA (models.Model):
 
     product_code = fields.Char(related="product_id.product_tmpl_id.default_code")
     uom_code = fields.Char(related="product_uom.sga_uom_base_code")
-    sga_comment = fields.Char("Comment", size=255)
+    #sga_comment = fields.Char("Comment", size=255)
 
 class SaleOrderSGA(models.Model):
 
@@ -57,4 +57,14 @@ class SaleOrderSGA(models.Model):
         res = super(SaleOrderSGA, self).action_confirm()
         pickings = self.mapped('picking_ids')
         pickings.create_picks_from_orders('SOR')
+        return res
+
+    @api.multi
+    def action_sale(self):
+        res = super(SaleOrderSGA, self).action_sale()
+        for order in self:
+            picking_out = order.picking_ids.filtered(lambda x: x.picking_type_id.sga_integrated)
+            for pick in picking_out:
+                if pick.new_mecalux_file():
+                    pick.sga_state = 'PM'
         return res

@@ -47,5 +47,16 @@
             </field>
         </record>
 
+        <record id="action_stock_inventory_issue_tree" model="ir.actions.act_window">
+            <field name="name">Inventory Issues</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">stock.inventory.issue</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree</field>
+        </record>
+        <menuitem action="action_stock_inventory_issue_tree" id="menu_stock_inventory_issue_action"
+                  parent="stock.menu_warehouse_report" sequence="8"/>
+
+
     </data>
 </openerp>

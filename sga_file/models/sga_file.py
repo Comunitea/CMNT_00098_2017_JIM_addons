@@ -424,6 +424,7 @@ class MecaluxFileHeader(models.Model):
     def import_file_from_mecalux(self):
 
         process = []
+        proc_error = False
 
         if self.file_code == "CSO":
             self.write_log("Desde mecalux picking CSO ...")
@@ -450,12 +451,16 @@ class MecaluxFileHeader(models.Model):
             if process:
                 self.write_log("-- OK >> %s" % self.sga_file)
                 self.move_file('archive', self.name)
+            else:
+                proc_error = True
 
         except:
-            self.errors += self.errors
-            if self.errors == ERRORS:
-                self.write_log("-- ERROR >> %s" % self.sga_file)
-                self.move_file('error', self.name)
+            proc_error = True
+        if proc_error:
+            self.errors += 1
+
+            self.write_log("-- ERROR >> %s" % self.sga_file)
+            self.move_file('error', self.name)
         return process
 
     #este es la accion que recorre la carpeta de ficheros provenientes del SGA
@@ -476,7 +481,9 @@ class MecaluxFileHeader(models.Model):
                 sga_file = self.check_sga_name(name, path)
                 if sga_file:
                     # lo proceso
-                    pool_ids+= sga_file.import_file_from_mecalux()
+                    pool_id = sga_file.import_file_from_mecalux()
+                    if pool_id:
+                        pool_ids += pool_id
 
         #Si solo hay un tipo de fichero , devuelvo los ids, si no True
         if pool_ids:
@@ -486,7 +493,6 @@ class MecaluxFileHeader(models.Model):
 
     def move_file(self, folder, file_name=False):
         new_path = False
-
         try:
             new_path = u'%s/%s' % (self.get_global_path(), folder)
             new_name = os.path.join(new_path, self.name)
@@ -525,7 +531,9 @@ class MecaluxFileHeader(models.Model):
                 new_sga_file.write_log('--> Modelo %s'%model)
 
                 for val in sgavar.sga_file_var_ids:
+                    ## miro si es producto de tipo product
                     value = False
+                    print val.name
                     length = [val.length, val.length_int, val.length_dec]
 
                     # Si viene en el context forzada la variable

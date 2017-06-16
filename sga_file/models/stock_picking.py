@@ -117,7 +117,8 @@ class StockPickingSGA(models.Model):
         for pick in self:
             if pick.picking_type_id.sga_integrated:
                 if pick.sga_state != 'MT':
-                    raise ValidationError("No puedes borrar un albaran ya realizado en Mecalux")
+                    continue
+                    #raise ValidationError("No puedes borrar un albaran ya realizado en Mecalux")
 
                 operation = "B"
                 try:
@@ -129,6 +130,7 @@ class StockPickingSGA(models.Model):
 
     @api.model
     def create(self, vals):
+
         to_mecalux = False
         if vals['picking_type_id']:
             picking_type = self.env['stock.picking.type'].browse(vals['picking_type_id'])
@@ -439,8 +441,6 @@ class StockPickingSGA(models.Model):
 
     def import_mecalux_ZCS(self, file_id):
 
-
-
         pick_obj = self.env['stock.picking']
         sga_file_obj = self.env['sga.file'].browse(file_id)
         sga_file = open(sga_file_obj.sga_file, 'r')
@@ -474,6 +474,7 @@ class StockPickingSGA(models.Model):
                     str_error += "Codigo de albaran %s no encontrado en linea ...%s " % (sorder_code, n_line)
                     sga_file_obj.write_log(str_error)
                     bool_error = True
+                    return False
                 else:
                     pool_ids.append(pick.id)
                 # Peso del pick
@@ -549,13 +550,12 @@ class StockPickingSGA(models.Model):
                             'product_uom_id': uom.id,
                             'location_id': pick.location_id.id or pick.picking_type_id.default_location_src_id.id,
                             'location_dest_id': pick.location_dest_id.id or pick.picking_type_id.default_location_dest_id.id}
-                    self.env['stock.pack.operation'].create(values)
+                    # NO CREO OPERACIONES NUEVAS PARA SALIDAS SIN OPS
+                    # self.env['stock.pack.operation'].create(values)
 
             else:
                 len(line) == LEN_DETAIL_LINE
-
                 continue
-
 
             if bool_error:
                 pick.sga_state = 'EI'
