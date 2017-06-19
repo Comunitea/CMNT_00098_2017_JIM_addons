@@ -47,7 +47,27 @@ class ProductProduct(models.Model):
                                           " in all companies.")
 
     def _compute_global_stock(self):
+        global_real_stock = 0
+        global_available_stock = 0
+        deposit_real_stock = 0
+        deposit_available_stock = 0
+        ctx = self._context.copy()
+        deposit_ids = \
+            self.env['stock.location'].search([('deposit', '=', True)]).ids
         for product in self:
-            product.global_real_stock = product.sudo().qty_available
-            product.global_available_stock = product.sudo().qty_available -  \
+            global_real_stock = product.sudo().qty_available
+            global_available_stock = product.sudo().qty_available - \
                 product.sudo().outgoing_qty
+
+            # Get stock global in deposit location to discount it
+            if deposit_ids:
+                ctx.update({'location': deposit_ids})
+                deposit_real_stock = \
+                    product.with_context(ctx).sudo().qty_available
+                deposit_available_stock = \
+                    product.with_context(ctx).sudo().qty_available - \
+                    product.with_context(ctx).sudo().outgoing_qty
+
+            product.global_real_stock = global_real_stock - deposit_real_stock
+            product.global_available_stock = \
+                global_available_stock - deposit_available_stock
