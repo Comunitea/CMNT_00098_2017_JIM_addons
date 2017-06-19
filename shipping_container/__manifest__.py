@@ -22,7 +22,7 @@
         #'views/purchase_order.xml',
         'views/stock_picking.xml',
         'views/shipping_container.xml',
-        #'security/shipping_container.csv'
+        'security/ir.model.access.csv'
 
     ],
     "installable": True
