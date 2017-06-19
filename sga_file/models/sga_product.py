@@ -140,7 +140,7 @@ class SGAProductProduct(models.Model):
 
     _inherit = "product.product"
 
-    sga_prod_shortdesc = fields.Char("Nombre Radiofrecuencia", size=50, required=1)
+    sga_prod_shortdesc = fields.Char("Nombre Radiofrecuencia", size=50)
     sga_stock = fields.Float('Stock (SGA)', help="Last PST from Mecalux")
     sga_state = fields.Selection([(1, 'Actualizado'), (0, 'Pendiente actualizar'), (2, 'Baja')],
                                  default=False,
