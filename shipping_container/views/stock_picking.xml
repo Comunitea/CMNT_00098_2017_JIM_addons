@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_picking_form_shipping_container" model="ir.ui.view">
+        <field name="name">view.picking.form.shipping.container</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='group_id']" position="after">
+                <field name="shipping_container_id"
+                       attrs="{'invisible': [('picking_type_code','!=','incoming')]}"
+                       options="{'no_quick_create':True,'no_create_edit':True}"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

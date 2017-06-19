@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+     <record id="container_picking_tree_action" model="ir.actions.act_window">
+        <field name="name">Stock moves</field>
+        <field name="res_model">stock.move</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="stock.view_move_tree"/>
+        <field name="search_view_id" ref="stock.view_move_search"/>
+        <field name="domain"></field>
+    </record>
+
+    <record id="shipping_container_tree" model="ir.ui.view">
+        <field name="name">shipping.container.tree</field>
+        <field name="model">shipping.container</field>
+        <field name="arch" type="xml">
+            <tree string="Product by harbor">
+                <field name="name"/>
+                <field name="harbor_id"/>
+                <field name="state"/>
+		        <field name="date_expected"/>
+
+            </tree>
+        </field>
+    </record>
+    <record id="shipping_container_form" model="ir.ui.view">
+        <field name="name">shipping.container.form</field>
+        <field name="model">shipping.container</field>
+        <field name="arch" type="xml">
+            <form string="Container">
+                <header>
+                    <button name="set_loading" type="object" string="Loading"
+                                class="oe_stat_button" icon="fa-anchor"
+                            attrs="{'invisible': [('state', 'in', ('loading', 'destination'))]}"/>
+
+                    <button name="set_transit" type="object" string="Transit"
+                                class="oe_stat_button" icon="fa-ship"
+                            attrs="{'invisible': [('state', '!=', 'loading')]}"/>
+
+                    <button name="set_destination" type="object" string="Destination"
+                                class="oe_stat_button" icon="fa-truck"
+                            attrs="{'invisible': [('state', '!=', 'transit')]}"/>
+                    <field name="state" widget="statusbar" />
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_move_ids" type="object"
+                                class="oe_stat_button" icon="fa-list">
+                        <field name="move_ids_count" widget="statinfo" string="Move ids"/>
+
+                    </button>
+                    </div>
+
+
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="harbor_id" attrs="{'readonly': [('state', '!=', 'loading')]}"/>
+                            <field name="harbor_dest_id"/>
+
+                        </group>
+                        <group>
+                            <field name="date_expected" attrs="{'readonly': [('state', '=', 'destination')]}"/>
+                            <field name="date_shipment" attrs="{'readonly': [('state', '!=', 'loading')]}"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Pickings">
+                            <field name="picking_ids"
+                                   attrs="{'readonly': [('state', '!=', 'loading')]}"/>
+                        </page>
+                    </notebook>
+                </sheet>
+
+            </form>
+        </field>
+    </record>
+
+
+    <record id="shipping_container_filter" model="ir.ui.view">
+        <field name="name">shipping.container.filter</field>
+        <field name="model">shipping.container</field>
+        <field name="arch" type="xml">
+            <search string="Containers">
+                <field name="name"/>
+                <field name="date_expected"/>
+                <field name="harbor_id"/>
+                <field name="state"/>
+                <group expand="0" name="group_by" string="Group By">
+                    <filter string="Harbor" context="{'group_by': 'harbor_id'}"/>
+                    <filter string="State" context="{'group_by': 'state'}"/>
+                </group>
+           </search>
+        </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="action_shipping_container">
+        <field name="name">Containers list</field>
+        <field name="res_model">shipping.container</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="shipping_container_tree"/>
+        <field name="search_view_id" ref="shipping_container_filter"/>
+    </record>
+
+    <menuitem name="Containers" parent="purchase.menu_procurement_management"
+              action="action_shipping_container" id="menu_shipping_container"/>
+
+</odoo>
