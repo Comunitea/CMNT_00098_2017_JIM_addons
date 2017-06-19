@@ -24,3 +24,5 @@ access_sale_order_type_user, sale.order.type user,model_sale_order_type,sales_te
 
 access_sga_file_error_manager, sga.file.error manager,model_sga_file_error,stock.group_stock_manager,1,1,1,1
 access_sga_file_error_user, sga.file.error user,model_sga_file_error,stock.group_stock_user,1,1,1,1
+
+access_stock_inventory_issue_user, stock.inventory.issue user,model_stock_inventory_issue,stock.group_stock_user,1,1,1,1
