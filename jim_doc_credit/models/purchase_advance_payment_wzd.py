@@ -63,6 +63,11 @@ class AccountPayment(models.Model):
         #super(AccountPayment, self).onchange_partner_id
         self.property_account_position_id = self.partner_id.property_account_position_id
 
+    @api.onchange('payment_date')
+    def onchange_payment_date(self):
+        if self.purchase_id and self.payment_date:
+            self.purchase_id.write({'expire_credit_letter_date': self.payment_date})
+        return
 
     @api.model
     def create(self, vals):

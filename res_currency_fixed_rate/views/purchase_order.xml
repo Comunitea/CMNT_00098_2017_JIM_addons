@@ -6,8 +6,14 @@
         <field name="model">purchase.order</field>
         <field name="inherit_id" ref="purchase.purchase_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='currency_id']" position="after">
-                <field name="order_exchange_rate"/>
+            <xpath expr="//field[@name='currency_id']" position="replace">
+
+                <label for="currency_id"/>
+                <div>
+                <field name="currency_id" class="oe_inline"/>
+                <label for="order_exchange_rate" string="E. rate"/>
+                <field name="order_exchange_rate" class="oe_inline"/>
+                </div>
 
             </xpath>
         </field>
