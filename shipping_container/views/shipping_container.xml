@@ -47,17 +47,13 @@
                         <button name="action_view_move_ids" type="object"
                                 class="oe_stat_button" icon="fa-list">
                         <field name="move_ids_count" widget="statinfo" string="Move ids"/>
-
                     </button>
                     </div>
-
-
                     <group>
                         <group>
                             <field name="name"/>
                             <field name="harbor_id" attrs="{'readonly': [('state', '!=', 'loading')]}"/>
                             <field name="harbor_dest_id"/>
-
                         </group>
                         <group>
                             <field name="date_expected" attrs="{'readonly': [('state', '=', 'destination')]}"/>

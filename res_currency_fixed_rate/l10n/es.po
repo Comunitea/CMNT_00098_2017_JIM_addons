@@ -1,0 +1,80 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* res_currency_fixed_rate
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-19 17:32+0000\n"
+"PO-Revision-Date: 2017-06-19 17:32+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: res_currency_fixed_rate
+#: model:ir.model.fields,field_description:res_currency_fixed_rate.field_account_payment_company_currency_id
+msgid "Company Currency"
+msgstr "Moneda de la compañía"
+
+#. module: res_currency_fixed_rate
+#: model:ir.model,name:res_currency_fixed_rate.model_res_currency
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: res_currency_fixed_rate
+#: model:ir.model.fields,field_description:res_currency_fixed_rate.field_account_payment_fixed_rate
+#: model:ir.model.fields,field_description:res_currency_fixed_rate.field_account_payment_rate
+#: model:ir.model.fields,field_description:res_currency_fixed_rate.field_purchase_order_order_exchange_rate
+msgid "Exchange rate"
+msgstr "Tasa de cambio"
+
+#. module: res_currency_fixed_rate
+#: model:ir.model.fields,field_description:res_currency_fixed_rate.field_account_payment_fixed_rate_bool
+msgid "Manual rate"
+msgstr "Tasa manual"
+
+#. module: res_currency_fixed_rate
+#: model:ir.model.fields,field_description:res_currency_fixed_rate.field_account_payment_amount_company_currency
+msgid "Payment Amount (Company currency)"
+msgstr "Importe (Moneda de la compañia)"
+
+#. module: res_currency_fixed_rate
+#: model:ir.model,name:res_currency_fixed_rate.model_account_payment
+msgid "Payments"
+msgstr "Pagos"
+
+#. module: res_currency_fixed_rate
+#: model:ir.model,name:res_currency_fixed_rate.model_purchase_order
+msgid "Purchase Order"
+msgstr "Pedido de compra"
+
+#. module: res_currency_fixed_rate
+#: model:ir.model.fields,field_description:res_currency_fixed_rate.field_account_purchase_voucher_wizard_purchase_exchange_rate
+msgid "Purchase exchange rate"
+msgstr "Tasa de cambio en compra"
+
+#. module: res_currency_fixed_rate
+#: model:ir.model.fields,field_description:res_currency_fixed_rate.field_account_purchase_voucher_wizard_purchase_id
+msgid "Purchase id"
+msgstr "Compra"
+
+#. module: res_currency_fixed_rate
+#: model:ir.model.fields,field_description:res_currency_fixed_rate.field_account_payment_same_currency
+msgid "Same currency"
+msgstr "Misma moneda"
+
+#. module: res_currency_fixed_rate
+#: code:addons/res_currency_fixed_rate/models/account_payment.py:74
+#, python-format
+msgid "You need set exchange rate"
+msgstr "Necesitas una tasa de cambio"
+
+#. module: res_currency_fixed_rate
+#: model:ir.model,name:res_currency_fixed_rate.model_account_purchase_voucher_wizard
+msgid "account.purchase.voucher.wizard"
+msgstr "account.purchase.voucher.wizard"
+

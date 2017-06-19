@@ -10,10 +10,7 @@ class ShippingContainer(models.Model):
 
     @api.one
     def _get_moves(self):
-        #self.move_ids = self.env['stock.move'].search([('picking_id.shipping_container_id', '=', self.id)]).ids
         self.move_ids_count = len(self.move_ids)
-
-
 
     @api.one
     def _get_partners(self):
@@ -22,15 +19,11 @@ class ShippingContainer(models.Model):
     name = fields.Char("Container Ref.", required=True)
     date_expected = fields.Date("Date expected", required=True)
     date_shipment = fields.Date("Shipment date")
-
-    picking_ids = fields.One2many("stock.picking", "shipping_container_id", "Pickings",
-                               copy=False)
+    picking_ids = fields.One2many("stock.picking", "shipping_container_id", "Pickings")
     company_id = fields. \
         Many2one("res.company", "Company", required=True,
                  default=lambda self:
-                 self.env['res.company'].
-                 _company_default_get('shipping.container'))
-    #partner_ids = fields.Many2many('res.partner', string='Partner', compute="_get_partners", readonly=True)
+                 self.env['res.company']._company_default_get('shipping.container'))
     harbor_id = fields.Many2one('res.harbor', string="Harbor", required=True)
     move_ids = fields.One2many('stock.move', 'shipping_container_id', string="Moves")
     move_ids_count = fields.Integer('Move ids count', compute="_get_moves")
@@ -57,8 +50,6 @@ class ShippingContainer(models.Model):
 
     def set_loading(self):
         self.state = 'loading'
-
-
 
     @api.multi
     def write(self, vals):

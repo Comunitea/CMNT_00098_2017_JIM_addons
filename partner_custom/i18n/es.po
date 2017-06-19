@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#       * partner_custom
+#	* partner_custom
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-02-22 19:04+0000\n"
-"PO-Revision-Date: 2017-02-22 19:04+0000\n"
+"POT-Creation-Date: 2017-06-19 17:42+0000\n"
+"PO-Revision-Date: 2017-06-19 17:42+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -42,17 +42,21 @@ msgid "Created on"
 msgstr "Creado en"
 
 #. module: partner_custom
+#: model:ir.model.fields,field_description:partner_custom.field_harbor_partner_product_display_name
 #: model:ir.model.fields,field_description:partner_custom.field_res_harbor_display_name
 msgid "Display Name"
 msgstr "Nombre mostrado"
 
 #. module: partner_custom
+#: model:ir.ui.view,arch_db:partner_custom.harbor_partner_product_filter
 #: model:ir.ui.view,arch_db:partner_custom.res_harbor_filter
 msgid "Group By"
 msgstr "Agrupar por"
 
 #. module: partner_custom
 #: model:ir.model,name:partner_custom.model_res_harbor
+#: model:ir.model.fields,field_description:partner_custom.field_harbor_partner_product_harbor_id
+#: model:ir.ui.view,arch_db:partner_custom.harbor_partner_product_filter
 #: model:ir.ui.view,arch_db:partner_custom.res_harbor_form
 msgid "Harbor"
 msgstr "Puerto"
@@ -61,15 +65,32 @@ msgstr "Puerto"
 #: model:ir.actions.act_window,name:partner_custom.action_res_harbor
 #: model:ir.model.fields,field_description:partner_custom.field_res_partner_harbor_ids
 #: model:ir.ui.menu,name:partner_custom.res_harbor_menu
+#: model:ir.ui.view,arch_db:partner_custom.harbor_partner_product_filter
 #: model:ir.ui.view,arch_db:partner_custom.res_harbor_filter
 #: model:ir.ui.view,arch_db:partner_custom.res_harbor_tree
 msgid "Harbors"
 msgstr "Puertos"
 
 #. module: partner_custom
+#: model:ir.ui.menu,name:partner_custom.menu_harbor_partner_product
+msgid "Harbors and Product"
+msgstr "Puertos y productos"
+
+#. module: partner_custom
+#: model:ir.actions.act_window,name:partner_custom.action_harbor_partner_product
+msgid "Harbors and Products"
+msgstr "Puertos y productos"
+
+#. module: partner_custom
+#: model:ir.model.fields,field_description:partner_custom.field_harbor_partner_product_id
 #: model:ir.model.fields,field_description:partner_custom.field_res_harbor_id
 msgid "ID"
 msgstr "ID"
+
+#. module: partner_custom
+#: model:ir.model.fields,field_description:partner_custom.field_harbor_partner_product_default_code
+msgid "Internal Ref"
+msgstr "Codigo"
 
 #. module: partner_custom
 #: model:ir.model.fields,field_description:partner_custom.field_res_company_ref
@@ -77,6 +98,7 @@ msgid "Internal Reference"
 msgstr "Referencia interna"
 
 #. module: partner_custom
+#: model:ir.model.fields,field_description:partner_custom.field_harbor_partner_product___last_update
 #: model:ir.model.fields,field_description:partner_custom.field_res_harbor___last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
@@ -92,12 +114,19 @@ msgid "Last Updated on"
 msgstr "Última actualización en"
 
 #. module: partner_custom
+#: model:ir.model,name:partner_custom.model_harbor_partner_product
+msgid "List products, by partner and harbor"
+msgstr "Lista de referencias, por proveedor y puerto"
+
+#. module: partner_custom
 #: model:ir.model.fields,field_description:partner_custom.field_res_harbor_name
 msgid "Name"
 msgstr "Nombre"
 
 #. module: partner_custom
 #: model:ir.model,name:partner_custom.model_res_partner
+#: model:ir.model.fields,field_description:partner_custom.field_harbor_partner_product_partner_id
+#: model:ir.ui.view,arch_db:partner_custom.harbor_partner_product_filter
 msgid "Partner"
 msgstr "Empresa"
 
@@ -107,6 +136,22 @@ msgid "Partner discount"
 msgstr "Descuento global"
 
 #. module: partner_custom
+#: model:ir.model.fields,field_description:partner_custom.field_harbor_partner_product_product_tmpl_id
+msgid "Product"
+msgstr "Producto"
+
+#. module: partner_custom
+#: model:ir.ui.view,arch_db:partner_custom.harbor_partner_product_tree
+msgid "Product by harbor"
+msgstr "Referencias por puerto"
+
+#. module: partner_custom
+#: model:ir.model.fields,field_description:partner_custom.field_harbor_partner_product_product_name
+msgid "Product name"
+msgstr "Nombre del producto"
+
+#. module: partner_custom
 #: model:ir.model.fields,field_description:partner_custom.field_res_partner_propietary
 msgid "Propietary"
 msgstr "Propietario"
+

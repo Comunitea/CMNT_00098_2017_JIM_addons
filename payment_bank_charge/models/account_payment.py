@@ -16,12 +16,17 @@ class AccountPayment (models.Model):
                                              readonly=True)
     @api.onchange('bank_charge_bool')
     def onchange_bank_charge(self):
-        if not self.onchange_bank_charge:
-            self.bank_charge = 0.00
+        self.bank_charge = 0.00
+        if self.bank_charge_bool:
+            if not self.journal_id.update_posted:
+                raise ValidationError(
+                    _('You cannot add bank charges in this journal.'
+                      'First you should set the journal to allow'
+                      ' cancelling entries.'))
 
     def _create_payment_entry(self, amount):
 
-        if not self.journal_id.update_posted:
+        if not self.journal_id.update_posted and self.bank_charge_bool:
             raise ValidationError(
                 _('You cannot add bank charges in this journal.'
                   'First you should set the journal to allow'

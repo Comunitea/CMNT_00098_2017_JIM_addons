@@ -1,0 +1,393 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* jim_doc_credit
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-19 17:35+0000\n"
+"PO-Revision-Date: 2017-06-19 17:35+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid ") CON DESTINO A"
+msgstr ") CON DESTINO A"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+1 CERTIFICADO DE ORIGEN FORM “A”"
+msgstr "+1 CERTIFICADO DE ORIGEN FORM “A”"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+1 COPIA B/L NO NEGOCIABLE LIMPIO A BORDO"
+msgstr "+1 COPIA B/L NO NEGOCIABLE LIMPIO A BORDO"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+1 COPIA DEL FAX DIRIGIDO AL ORDENANTE EN LA QUE SE HAGA CONSTAR: FECHA DE EMBARQUE, NÚMERO DE BULTOS, NOMBRE DEL BARCO Y KILOS AL +34 981506410 FECHADO 1 DÍA ANTES DE LA FECHA DE EMBARQUE<br/>"
+msgstr "+1 COPIA DEL FAX DIRIGIDO AL ORDENANTE EN LA QUE SE HAGA CONSTAR: FECHA DE EMBARQUE, NÚMERO DE BULTOS, NOMBRE DEL BARCO Y KILOS AL +34 981506410 FECHADO 1 DÍA ANTES DE LA FECHA DE EMBARQUE<br/>"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+2 FACTURAS ORIGINALES"
+msgstr "+2 FACTURAS ORIGINALES"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+3 B/L ORIGINALES LIMPIO A BORDO"
+msgstr "+3 B/L ORIGINALES LIMPIO A BORDO"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+3 COPIAS DE FACTURA"
+msgstr "+3 COPIAS DE FACTURA"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+3 PACKING LIST"
+msgstr "+3 PACKING LIST"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+CRÉDITO SIN CONFIRMAR"
+msgstr "+CRÉDITO SIN CONFIRMAR"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+EL PRESENTE L/C DEBERÁ SER AVISADO POR TEL:"
+msgstr "+EL PRESENTE L/C DEBERÁ SER AVISADO POR TEL:"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+LOS GASTOS FUERA DE ESPAÑA SON POR CUENTA DEL BENEFICIARIO"
+msgstr "+LOS GASTOS FUERA DE ESPAÑA SON POR CUENTA DEL BENEFICIARIO"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+MERCANCÍA PROCEDENTE DE"
+msgstr "+MERCANCÍA PROCEDENTE DE"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "+PROHIBIDAS LAS EXPEDICIONES PARCIALES DE LA MERCANCÍA Y TRANSBORDOS"
+msgstr "+PROHIBIDAS LAS EXPEDICIONES PARCIALES DE LA MERCANCÍA Y TRANSBORDOS"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid ", CON LA SIGUIENTE MERCANCÍA:<br/>"
+msgstr ", CON LA SIGUIENTE MERCANCÍA:<br/>"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "<br/>\n"
+"                    Melide,"
+msgstr "<br/>\n"
+"                    Melide,"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "<br/>\n"
+"                    Ruego procedan a la codificación y envío del presente Crédito Documentario.\n"
+"                    <br/>\n"
+"                    Así mismo, tan pronto en cuando lo envíen, remitan por fax al 981506410 la copia del mismo a la atención de José Luis Castro.\n"
+"                    <br/><br/>"
+msgstr "<br/>\n"
+"                    Ruego procedan a la codificación y envío del presente Crédito Documentario.\n"
+"                    <br/>\n"
+"                    Así mismo, tan pronto en cuando lo envíen, remitan por fax al 981506410 la copia del mismo a la atención de José Luis Castro.\n"
+"                    <br/><br/>"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "<br/><br/>\n"
+"                    No siendo otro particular, reciba un cordial saludo,\n"
+"\n"
+"                    <br/><br/><br/>\n"
+"                    <br/><br/><br/>\n"
+"                    Jesús Manuel Graña Gómez\n"
+"                    <br/>\n"
+"                    ADMINISTRADOR JIM SPORTS TECHNOLOGY, S.L"
+msgstr "<br/><br/>\n"
+"                    No siendo otro particular, reciba un cordial saludo,\n"
+"\n"
+"                    <br/><br/><br/>\n"
+"                    <br/><br/><br/>\n"
+"                    Jesús Manuel Graña Gómez\n"
+"                    <br/>\n"
+"                    ADMINISTRADOR JIM SPORTS TECHNOLOGY, S.L"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "<span>Atn</span>"
+msgstr "<span>Atn</span>"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "<span>EORI NO</span>"
+msgstr "<span>EORI NO</span>"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "<span>FAX:</span>"
+msgstr "<span>FAX:</span>"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "<span>IMPORTE: #</span>"
+msgstr "<span>IMPORTE: #</span>"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "<span>TEL:</span>"
+msgstr "<span>TEL:</span>"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "ADJUNTA FECHADA"
+msgstr "ADJUNTA FECHADA"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "AMOUNT"
+msgstr "IMPORTE"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "BANCO AVISADOR:"
+msgstr "BANCO AVISADOR:"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "BENEFICIARIO:"
+msgstr "BENEFICIARIO:"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_purchase_order_partner_bank_contact_id
+msgid "Bank contact"
+msgstr "Contacto en el banco"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "CONDICIONES ESPECIALES:"
+msgstr "CONDICIONES ESPECIALES:"
+
+#. module: jim_doc_credit
+#: model:ir.model,name:jim_doc_credit.model_res_currency
+msgid "Currency"
+msgstr "Moneda"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_res_currency_lname
+msgid "Currency name"
+msgstr "Nombre de la moneda"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "DESCRIPCIÓN DE LA MERCANCÍA:"
+msgstr "DESCRIPCIÓN DE LA MERCANCÍA:"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_report_jim_doc_credit_doc_credit_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_purchase_order_doc_credit_bank_id
+msgid "Doc credit bank"
+msgstr "Banco aociado"
+
+#. module: jim_doc_credit
+#: model:ir.actions.report.xml,name:jim_doc_credit.action_report_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "Documentary Credit"
+msgstr "Credito documentario"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_purchase_order_allow_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.view_account_payment_form_doc_credit
+msgid "Documentary credit"
+msgstr "Credito documentario"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_account_payment_doc_credit
+msgid "Documentary credit ref"
+msgstr "Documentary credit ref"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "EMBARQUE POR BUQUE EMITIDOS A LA ORDEN INDICANDO FELETE DEBIDO"
+msgstr "EMBARQUE POR BUQUE EMITIDOS A LA ORDEN INDICANDO FELETE DEBIDO"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_purchase_order_expire_credit_letter_date
+msgid "Expire letter credit date"
+msgstr "Expire letter credit date"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "FECHA LÍMITE PARA LA EXPEDICIÓN:"
+msgstr "FECHA LÍMITE PARA LA EXPEDICIÓN:"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_account_payment_property_account_position_id
+msgid "Fiscal Position"
+msgstr "Posición fiscal"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.view_account_payment_search_account_position
+msgid "Fiscal position"
+msgstr "Fiscal position"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_purchase_order_harbor_id
+msgid "Harbor"
+msgstr "Puerto origen"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_report_jim_doc_credit_doc_credit_id
+msgid "ID"
+msgstr "ID"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "INCOTERM:"
+msgstr "INCOTERM:"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "L/C IRREVOCABLE"
+msgstr "L/C IRREVOCABLE"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "LA COPIA DE LA FACTURA Y DEL PACKING LIST DEBEN SER ENVIADAS POR EMAIL UN DÍA ANTES DEL EMBARQUE DE LA MERCANCÍA A:"
+msgstr "LA COPIA DE LA FACTURA Y DEL PACKING LIST DEBEN SER ENVIADAS POR EMAIL UN DÍA ANTES DEL EMBARQUE DE LA MERCANCÍA A:"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_report_jim_doc_credit_doc_credit___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_purchase_order_limit_expedition_date
+msgid "Limit expedition date"
+msgstr "Fecha límite de expedición"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_purchase_order_loc_harbor_id
+msgid "Loc Harbor"
+msgstr "Puerto destino"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "MATERIAL DEPORTIVO SEGÚN PROFORMA"
+msgstr "MATERIAL DEPORTIVO SEGÚN PROFORMA"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,help:jim_doc_credit.field_purchase_order_mail_confirm_packing_list
+msgid "Mail a la que se envia la copia de la factura y el packing list"
+msgstr "Mail a la que se envia la copia de la factura y el packing list"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_purchase_order_mail_confirm_packing_list
+msgid "Mail to send p/l"
+msgstr "Correo (p/l)"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.view_account_purchase_voucher_wizard_doc_credit
+msgid "Make doc credit report"
+msgstr "Informe de crédito"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "NOTIFICADO Y CONSIGNADO TO THE ORDER."
+msgstr "NOTIFICADO Y CONSIGNADO TO THE ORDER."
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "Número de páginas incluida esta:"
+msgstr "Número de páginas incluida esta:"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "PAGO A LA VISTA"
+msgstr "PAGO A LA VISTA"
+
+#. module: jim_doc_credit
+#: model:ir.model,name:jim_doc_credit.model_account_payment
+msgid "Payments"
+msgstr "Pagos"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_purchase_order_proforma_invoice_ref
+msgid "Proforma invoice"
+msgstr "Proforma asociada"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_purchase_order_proforma_invoice_date
+msgid "Proforma invoice date"
+msgstr "Fecha de la proforma"
+
+#. module: jim_doc_credit
+#: model:ir.model,name:jim_doc_credit.model_purchase_order
+msgid "Purchase Order"
+msgstr "Pedido de compra"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "QTY"
+msgstr "QTY"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "SEGURO A CUBRIR POR EL ORDENANTE"
+msgstr "SEGURO A CUBRIR POR EL ORDENANTE"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "SPORTING GOODS"
+msgstr "SPORTING GOODS"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "TOTAL"
+msgstr "TOTAL"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "UNIT PRICE"
+msgstr "UNIT PRICE"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "VALIDEZ L/C"
+msgstr "VALIDEZ L/C"
+
+#. module: jim_doc_credit
+#: model:ir.model,name:jim_doc_credit.model_account_purchase_voucher_wizard
+msgid "account.purchase.voucher.wizard"
+msgstr "account.purchase.voucher.wizard"
+
+#. module: jim_doc_credit
+#: model:ir.model.fields,field_description:jim_doc_credit.field_purchase_order_doc_credit_ok
+msgid "doc credit ok"
+msgstr "Hay documento de crédito"
+
+#. module: jim_doc_credit
+#: model:ir.model,name:jim_doc_credit.model_report_jim_doc_credit_doc_credit
+msgid "report.jim_doc_credit.doc_credit"
+msgstr "report.jim_doc_credit.doc_credit"
+
+#. module: jim_doc_credit
+#: model:ir.ui.view,arch_db:jim_doc_credit.doc_credit
+msgid "ÚTIL A LA PRESENTE DE LOS SIGUIENTES DOCUMENTOS:"
+msgstr "ÚTIL A LA PRESENTE DE LOS SIGUIENTES DOCUMENTOS:"
+
