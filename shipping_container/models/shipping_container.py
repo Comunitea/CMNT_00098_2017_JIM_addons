@@ -4,6 +4,22 @@
 from odoo import api, fields, models, _
 import odoo.addons.decimal_precision as dp
 
+class ShippingContainerType(models.Model):
+
+    _name = "shipping.container.type"
+
+    name = fields.Char("Container type", required=True)
+    volume = fields.Float("Volumen", help="Container volume (m3)", required=True)
+    length = fields.Float("Length", help="Length(m)")
+    height = fields.Float("Height", help="Height(m)")
+    width = fields.Float("Width", help="Width(m)")
+
+    @api.onchange('length', 'height', 'width')
+    def onchange_dimensions(self):
+        if self.length and self.height and self.width:
+            self.volume = self.length * self.height * self.width
+
+
 class ShippingContainer(models.Model):
 
     _name = "shipping.container"
@@ -15,6 +31,19 @@ class ShippingContainer(models.Model):
     @api.one
     def _get_partners(self):
         self.partner_ids = self.picking_ids.partner_id
+
+    @api.multi
+    def _available_volume(self):
+        for container in self:
+            volume = self.shipping_container_type_id.volume
+            weight = 0.00
+            for move in self.move_ids:
+                volume -= move.product_id.volume * move.product_uom_qty
+                weight += move.product_id.weight * move.product_uom_qty
+            self.available_volume = volume
+            self.weight = weight
+
+
 
     name = fields.Char("Container Ref.", required=True)
     date_expected = fields.Date("Date expected", required=True)
@@ -35,6 +64,12 @@ class ShippingContainer(models.Model):
                               ('transit', 'Transit'),
                               ('destination', 'Destination')],
                                  default='loading')
+    shipping_container_type_id = fields.Many2one('shipping.container.type', 'Type')
+    available_volume = fields.Float("Available volume (m3)", compute="_available_volume")
+    weight = fields.Float("Weight (kgr.)", compute="_available_volume")
+    incoterm_id = fields.Many2one('stock.incoterms', string='Incoterm')
+
+
     @api.multi
     def action_view_move_ids(self):
         action = self.env.ref(
