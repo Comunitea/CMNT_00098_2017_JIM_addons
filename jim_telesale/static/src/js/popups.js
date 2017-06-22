@@ -26,7 +26,8 @@ var GridWidget = GridWidgetSuper.include({
             'price': price,
             'discount': discount,  // now represent a chained discount
             'stock': global_available_stock,  // to write in orderLine
-            'tax_ids': cell_obj.tax_ids
+            'tax_ids': cell_obj.tax_ids,
+            'enable': cell_obj.enable
         }
         return vals
     },
