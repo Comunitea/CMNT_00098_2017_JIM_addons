@@ -567,10 +567,10 @@ class StockPickingSGA(models.Model):
     def create_picks_from_orders(self, mecalux_type=False):
         if not type:
             return False
-
         for pick in self:
-            if pick.picking_type_id.sgavar_file_id and \
-                            pick.picking_type_id.sgavar_file_id.code == mecalux_type:
+            if pick.picking_type_id.sga_integrated and \
+                    pick.picking_type_id.sgavar_file_id and \
+                    pick.picking_type_id.sgavar_file_id.code == mecalux_type:
                 operation = "F"
                 try:
                     pick.new_mecalux_file(operation=operation)
