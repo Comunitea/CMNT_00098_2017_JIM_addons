@@ -16,6 +16,7 @@ class HarborPartnerProduct(models.Model):
     harbor_id = fields.Many2one('res.harbor', string="Harbor")
     product_name = fields.Char("Product name")
     default_code = fields.Char("Internal Ref")
+    price = fields.Float("Price")
 
     def _select(self):
         select_str = "SELECT " \
@@ -24,7 +25,8 @@ class HarborPartnerProduct(models.Model):
                      "rh.id as harbor_id,  " \
                      "pt.id as product_tmpl_id, " \
                      "pt.default_code as default_code, " \
-                     "pt.name as product_name "
+                     "pt.name as product_name, " \
+                     "spi.price as price"
         return select_str
 
     def _from (self):

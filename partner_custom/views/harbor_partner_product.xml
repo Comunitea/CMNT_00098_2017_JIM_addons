@@ -10,6 +10,7 @@
                 <field name="partner_id"/>
 		        <field name="product_name"/>
                 <field name="default_code"/>
+                <field name="price"/>
             </tree>
         </field>
     </record>

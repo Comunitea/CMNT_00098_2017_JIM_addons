@@ -20,7 +20,9 @@
     "data": [
         'views/product_view.xml',
         'views/sale_view.xml',
-        'report/report_stock_forecast.xml'
+        'views/stock_picking.xml',
+        'report/report_stock_forecast.xml',
+
     ],
     "installable": True
 }

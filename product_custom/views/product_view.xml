@@ -15,6 +15,19 @@
                 </group>
             </field>
         </record>
+        <record model="ir.ui.view" id="product_packaging_form_view_compute_dimensions">
+            <field name="name">product.packaging.form.compute.dimension</field>
+            <field name="model">product.packaging</field>
+            <field name="inherit_id" ref="product.product_packaging_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="qty"]' position="after">
+                    <div name="apply_dimensions_div" attrs="{'invisible':[('product_tmpl_id','=',False)]}">
+                        <button name="compute_product_dimensions" string="Apply dimensions" type="object"/>
+                        <field name="product_tmpl_id" readonly="1"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
 
     </data>
 </odoo>
