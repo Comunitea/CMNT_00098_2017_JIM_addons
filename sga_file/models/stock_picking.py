@@ -443,3 +443,4 @@ class StockPickingSGA(models.Model):
                 fd = 'HAGO ACTION DONE ' #pick.action_done()
 
         return list(set(pool_ids))
+

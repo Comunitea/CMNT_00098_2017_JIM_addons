@@ -9,7 +9,7 @@ class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     @api.model
-    def confirm_order_background(self, order_id):
+    def confirm_order_from_ui(self, order_id):
         """
         OWERWRITED in order to pass the state to pending or lqdr
         """
