@@ -10,9 +10,14 @@
 
                 <label for="currency_id"/>
                 <div>
+                    <field name="hide_exc" invisible="1"/>
+
                 <field name="currency_id" class="oe_inline"/>
-                <label for="order_exchange_rate" string="E. rate"/>
-                <field name="order_exchange_rate" class="oe_inline"/>
+
+                <label for="order_exchange_rate" string="E. rate"
+                    attrs="{'invisible': [('hide_exc','=',False)]}"/>
+                <field name="order_exchange_rate" class="oe_inline"
+                    attrs="{'invisible': [('hide_exc','=',False)]}"/>
                 </div>
 
             </xpath>
