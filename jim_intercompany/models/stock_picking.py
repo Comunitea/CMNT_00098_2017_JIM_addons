@@ -91,8 +91,9 @@ class StockPicking(models.Model):
                         else:
                             op.done_qty = op.product_qty = remain_qty
                             remain_qty = 0
+                    last_op = op
             if remain_qty > 0:
-                op.done_qty = op.product_qty = op.product_qty + remain_qty
+                last_op.done_qty = last_op.product_qty = last_op.product_qty + remain_qty
 
 
         for pack in picking.pack_operation_ids:
