@@ -101,6 +101,8 @@ class SGAProductPackaging(models.Model):
 
     _inherit = "product.packaging"
 
+    ul_type = fields.Selection(selection_add=[('sga', 'Mecalux')])
+
     sga_uom_base_code = fields.Char(related='product_tmpl_id.uom_id.sga_uom_base_code')
     sga_desc_uom_base_code = fields.Char(related='product_tmpl_id.uom_id.name')
     sga_complete_percent = fields.Integer('SGA complete percent', default=100,
@@ -109,7 +111,7 @@ class SGAProductPackaging(models.Model):
     sga_operation = fields.Char('SGA Operation', default="A")
     sga_containertype_code_id = fields.Many2one('sga.containertype',
                                                 "Tipo de contenedor",
-                                                help="Tipo de contenedor")
+                                                help="Tipo de contenedor de Mecalux")
     sga_containertype_code = fields.Char(related="sga_containertype_code_id.name")
     sga_desc_containertype_code = fields.Char(related="sga_containertype_code_id.sga_desc_containertype_code")
 
@@ -135,6 +137,9 @@ class SGAProductPackaging(models.Model):
             pack.product_tmpl_id.sga_state_id = 0
         res_write = super(SGAProductPackaging, self).write(vals)
         return res_write
+
+
+
 
 class SGAProductProduct(models.Model):
 

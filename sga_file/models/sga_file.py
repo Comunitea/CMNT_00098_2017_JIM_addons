@@ -116,7 +116,7 @@ class MecaluxFile(models.Model):
     sga_file_var_ids = fields.One2many('sgavar.file.var','sga_file_id')
     version_active = fields.Boolean('Active')
     bytes = fields.Integer('Bytes')
-
+    filter = fields.Char("Filter")
     _sql_constraints = [
         ('code_uniq', 'unique (code, version)', 'Este codigo/version de archivo ya existe!'),
     ]
@@ -523,6 +523,8 @@ class MecaluxFileHeader(models.Model):
             cont = 0
             res = ''
             line_ids = False
+            if sgavar.filter:
+                model_pool = model_pool.filtered(eval(sgavar.filter))
             for model in model_pool:
 
                 cont += 1

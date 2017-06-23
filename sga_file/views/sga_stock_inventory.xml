@@ -58,5 +58,19 @@
                   parent="stock.menu_warehouse_report" sequence="8"/>
 
 
+        <record id="stock_inventory_issue_tree" model="ir.ui.view">
+            <field name="name">stock.inventory.issue.tree</field>
+            <field name="model">stock.inventory.issue</field>
+            <field name="arch" type="xml">
+                <tree string="Inventory issue">
+                    <field name="product_id"/>
+                    <field name="pending_qty"/>
+                    <field name="active"/>
+
+                </tree>
+            </field>
+        </record>
+
+
     </data>
 </openerp>

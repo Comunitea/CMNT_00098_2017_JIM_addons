@@ -16,13 +16,15 @@ import re
 class StockWarehouseSGA(models.Model):
 
     _inherit = "stock.warehouse"
-    sga_integrated = fields.Boolean('Integrado con Mecalux', help="If checked, odoo export this pick type to Mecalux")
+    sga_integrated = fields.Boolean('Integrado con Mecalux',
+                                    help="If checked, odoo export this pick type to Mecalux")
 
 class StockPickingTypeSGA(models.Model):
 
     _inherit = "stock.picking.type"
 
-    sga_integrated = fields.Boolean('Integrado con Mecalux', help="If checked, odoo export this pick type to Mecalux")
+    sga_integrated = fields.Boolean('Integrado con Mecalux',
+                                    help="If checked, odoo export this pick type to Mecalux")
     sgavar_file_id = fields.Many2one('sgavar.file', 'SGA Type')
 
 class StockPickingSGAType(models.Model):
@@ -98,129 +100,70 @@ class StockPickingSGA(models.Model):
 
     shipping_city = fields.Char(related="partner_id.state_id.name")
     shipping_partner_name = fields.Char(related="partner_id.name")
-    #account_code = fields.Char("Partner code", compute=_get_account_code)
-    account_code = fields.Char(related ="partner_id.ref")
+    account_code = fields.Char(related="partner_id.ref")
 
 
     @api.onchange('picking_type_id', 'partner_id')
     def onchange_picking_type(self):
-
         if self.picking_type_id.sga_integrated:
             self.sga_state = 'NE'
         else:
             self.sga_state = 'NI'
         return super(StockPickingSGA, self).onchange_picking_type()
 
-    @api.multi
-    def unlink(self):
-
-        for pick in self:
-            if pick.picking_type_id.sga_integrated:
-                if pick.sga_state != 'MT':
-                    continue
-                    #raise ValidationError("No puedes borrar un albaran ya realizado en Mecalux")
-
-                operation = "B"
-                try:
-                    pick.new_mecalux_file(operation=operation)
-                except:
-                    raise UserError("Error al generar un fichero para Mecalux")
-
-        return super(StockPickingSGA, self).unlink()
-
     @api.model
     def create(self, vals):
-
-        to_mecalux = False
         if vals['picking_type_id']:
             picking_type = self.env['stock.picking.type'].browse(vals['picking_type_id'])
             if picking_type:
                 if picking_type.sga_integrated:
                     vals['sga_state'] = "NE"
-                    to_mecalux = True
         pick = super(StockPickingSGA, self).create(vals)
-
-        if pick.state == 'assigned' and to_mecalux:
-            if pick.new_mecalux_file():
-                pick.sga_state = 'PM'
-
         return pick
 
     @api.multi
     def write(self, vals):
-
-        from_to_mecalux = self._context.get('from_to_mecalux', False)
-        pick_states = ('assigned', 'partially_available')
-        fields_to_check = ('pack_operation_product_ids', 'partner_id', 'location_id')
-        fields = sorted(list(set(vals).intersection(set(fields_to_check))))
-        for pick in self:
-            # si los cambios vienen de mecalux no es necesario not from mecalux)
-            if pick.picking_type_id.sga_integrated and not from_to_mecalux and \
-                    (pick.state in pick_states or vals.get('state', False) in pick_states) and fields and pick.pack_operation_product_ids:
-
-                operation = "M"
-                #TODO Definir en que estado se envia a Mecalux
-                #TODO Mirar si es mejor todos juntos o de uno en uno
-                try:
-                    pick.new_mecalux_file(operation=operation)
-                    vals['sga_state'] = 'MT'
-                except:
-                    raise UserError("Error al generar un fichero para Mecalux")
-
         return super(StockPickingSGA, self).write(vals)
 
     def get_outputs_from_mecalux(self):
-        file_id = self.env['sga.file'].process_sga_files(file_type='ZCS')
-        file_id = self.env['sga.file'].process_sga_files(file_type='CRP')
-        file_id = self.env['sga.file'].process_sga_files(file_type='CSO')
+        self.env['sga.file'].process_sga_files(file_type='ZCS')
+        self.env['sga.file'].process_sga_files(file_type='CRP')
+
+    @api.multi
+    def move_to_done(self):
+        picks = self.filtered(lambda x: x.sga_state != 'NI')
+        picks.write({'sga_state': 'MT'})
 
     @api.multi
     def move_to_NE(self):
-
-        # Solo se pueden enviar a Mecalux si sga_state = NE, esto pone a NE
         sga_states_to_NE = ('PM', 'EI', 'EE', 'MT')
         picks = self.filtered(lambda x: x.sga_state in sga_states_to_NE)
         picks.write({'sga_state': 'NE'})
 
     @api.multi
     def new_mecalux_file(self, operation=False):
-
         ctx = dict(self.env.context)
         if operation:
             ctx['operation'] = operation
         if 'operation' not in ctx:
             ctx['operation'] = 'F'
-        ids = []
+
         picks=[]
-        sga_states_ok = ('NE')
-        sga_states_no_ok = ('MC', 'NI')
-        sga_states_to_NE = ('PM', 'EI', 'EE', 'MT')
         for pick in self:
 
-            if pick.sga_state in sga_states_to_NE:
-                raise UserError ("Solo puedes enviar en estado NE")
-
-            if pick.sga_state in sga_states_no_ok:
-                raise UserError ("No puedes enviar este pick a Mecalux")
+            if pick.sga_state != 'NE':
+                raise UserError("Solo puedes enviar en estado 'No enviado'")
 
             new_sga_file = self.env['sga.file'].with_context(ctx).\
                 check_sga_file('stock.picking', pick.id, pick.picking_type_id.sgavar_file_id.code)
             if new_sga_file:
                 picks.append(pick.id)
+
         if picks:
             self.env['stock.picking'].browse(picks).write({'sga_state': 'PM'})
         else:
             raise ValidationError("No hay albaranes para enviar a Mecalux")
         return True
-
-    @api.multi
-    def do_transfer(self):
-        return super(StockPickingSGA, self).do_transfer()
-
-    @api.multi
-    def action_confirm(self):
-        res = super(StockPickingSGA, self).action_confirm()
-        return res
 
     @api.multi
     def renum_operation_line_number(self):
@@ -256,71 +199,7 @@ class StockPickingSGA(models.Model):
         return val
 
     def import_mecalux_CSO(self, file_id):
-
-        pick_obj = self.env['stock.picking']
-        sga_file_obj = self.env['sga.file'].browse(file_id)
-        sga_file = open(sga_file_obj.sga_file, 'r')
-        sga_file_lines = sga_file.readlines()
-        sga_file.close()
-        str_error = ''
-        bool_error = False
-        loop = 0
-        line_detail = False
-        num_details = 0
-        n_line = 0
-        sgavar = self.env['sgavar.file'].search([('code', '=', 'CSO')])
-        pick = False
-        pool_ids = []
-        if not sgavar:
-            raise ValidationError("Modelo no encontrado")
-
-        for line in sga_file_lines:
-            n_line += 1
-            if line_detail:
-                line_detail = False
-                continue
-            if loop < num_details:
-                try:
-                    st = 0
-                    en = st + 10
-                    line_number = int(line[st:en].strip() or 0)
-                    st = en + 50 + 50
-                    en = st + 12
-                    served_qty = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (12, 7, 5))
-                    domain = [('picking_id', '=', pick.id), ('line_number', '=', line_number)]
-                    ops = self.env['stock.pack.operation'].search(domain).qty_done = served_qty
-
-                except:
-                    str_error += "Error en linea ...%s "% n_line
-                    sga_file_obj.write_log(str_error)
-                    bool_error = True
-
-                line_detail = True
-                loop += 1
-                continue
-            if pick:
-                if bool_error:
-                    pick.sga_state = 'EI'
-                else:
-                    fd = 'HAGO ACTION DONE ' #pick.action_done()
-
-            val = self.return_val_line(line, 'CSO')
-            pick = pick_obj.search([('name', '=', val['sorder_code'])])
-            if not pick:
-                raise ValidationError("Albaran no encontrado: %s" % val['sorder_code'])
-            pool_ids.append(pick.id)
-            domain = [('picking_id', '=', pick.id)]
-            ops = self.env['stock.pack.operation'].search(domain, order="line_number asc")
-            if not ops:
-                raise ValidationError("Albaran sin operaciones: %s"%pick.id)
-
-            num_details = int(val['line_number_ids'] or 1)
-            pick.sga_state = val['sga_state'].strip()
-            pick.date_done = sga_file_obj.format_from_mecalux_date(val['date_done'])
-            error = ''
-            bool_error = False
-
-        return list(set(pool_ids))
+        return False
 
     def import_mecalux_CRP(self, file_id):
 
@@ -344,9 +223,9 @@ class StockPickingSGA(models.Model):
                 st = 40
                 en = st+30
                 rec_order_code = line[st:en].strip()
-                pick = pick_obj.search([('name', '=', rec_order_code)])
+                pick = pick_obj.search([('name', '=', rec_order_code), ('sga_state', 'in', ('PM', 'EI'))])
                 if not pick:
-                    pick = pick_obj.search([('backorder_id.name', '=', rec_order_code)])
+                    pick = pick_obj.search([('backorder_id.name', '=', rec_order_code), ('sga_state', 'in', ('PM', 'EI'))])
 
                 if pick:
                     pool_ids.append(pick.id)
@@ -367,7 +246,7 @@ class StockPickingSGA(models.Model):
                     ops = self.env['stock.pack.operation'].search(domain, order="line_number asc")
 
                 else:
-                    str_error = "Codigo de albaran %s no encontrado en linea ...%s " % (rec_order_code, n_line)
+                    str_error = "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (rec_order_code, n_line)
                     sga_file_obj.write_log(str_error)
 
             elif len(line) == LEN_LINE and pick:
@@ -469,9 +348,10 @@ class StockPickingSGA(models.Model):
                 st = 10
                 en = st + 50
                 sorder_code = line[st:en].strip()
-                pick = pick_obj.search([('name', '=', sorder_code)])
+
+                pick = pick_obj.search([('name', '=', sorder_code), ('sga_state', 'in', ('PM','EI'))])
                 if not pick:
-                    str_error += "Codigo de albaran %s no encontrado en linea ...%s " % (sorder_code, n_line)
+                    str_error += "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (sorder_code, n_line)
                     sga_file_obj.write_log(str_error)
                     bool_error = True
                     return False
@@ -563,18 +443,3 @@ class StockPickingSGA(models.Model):
                 fd = 'HAGO ACTION DONE ' #pick.action_done()
 
         return list(set(pool_ids))
-
-    def create_picks_from_orders(self, mecalux_type=False):
-        if not type:
-            return False
-
-        for pick in self:
-            if pick.picking_type_id.sgavar_file_id and \
-                            pick.picking_type_id.sgavar_file_id.code == mecalux_type:
-                operation = "F"
-                try:
-                    pick.new_mecalux_file(operation=operation)
-                    pick.sga_state = 'PM'
-                except:
-                    raise UserError("Error al generar un fichero para Mecalux")
-        return True

@@ -83,14 +83,35 @@
             <field name="model">product.packaging</field>
             <field name="inherit_id" ref="product.product_packaging_form_view"/>
             <field name="arch" type="xml">
-                <field name="qty" position="before">
-                    <field name="sga_containertype_code_id"/>
-                </field>
                 <field name="qty" position="after">
-                        <field name="sga_complete_percent"/>
-                        <field name="sga_min_quantity"/>
+                    <field name="sga_containertype_code_id" attrs="{'invisible': [('ul_type', '!=', 'sga')]}"/>
+                    <field name="sga_complete_percent" attrs="{'invisible': [('ul_type', '!=', 'sga')]}"/>
+                    <field name="sga_min_quantity" attrs="{'invisible': [('ul_type', '!=', 'sga')]}"/>
                 </field>
+                <xpath expr="//field[@name='package_carrier_type']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('ul_type', '=', 'sga')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='height']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('ul_type', '=', 'sga')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='width']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('ul_type', '=', 'sga')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='length']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('ul_type', '=', 'sga')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='shipper_package_code']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('ul_type', '=', 'sga')]}</attribute>
+                </xpath>
+                <xpath expr="//field[@name='max_weight']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('ul_type', '=', 'sga')]}</attribute>
+                </xpath>
+                <xpath expr="//div[@name='apply_dimensions_div']" position="attributes">
+                    <attribute name="attrs">{'invisible': ['|', ('product_tmpl_id','=',False), ('ul_type', '=', 'sga')]}</attribute>
+                </xpath>
             </field>
+
+
         </record>
         <record model="ir.ui.view" id="sga_product_packaging_tree">
             <field name="name">sga.product.packaging.tree</field>
@@ -99,7 +120,6 @@
             <field name="arch" type="xml">
                 <field name="qty" position="before">
                     <field name="sga_containertype_code_id"/>
-
                 </field>
             </field>
         </record>

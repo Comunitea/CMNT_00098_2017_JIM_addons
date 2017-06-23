@@ -14,7 +14,10 @@
         'stock',
         'sale',
         'sale_stock',
-        'jim_stock'
+        'jim_stock',
+        'delivery',
+        'product_custom'
+
     ],
     'contributors': [
         "Comunitea",
@@ -26,7 +29,7 @@
         'views/sga_product.xml',
         'views/sga_views.xml',
         'views/sga_carrier.xml',
-        'views/sga_sale_order.xml',
+        #'views/sga_sale_order.xml',
         'views/sga_purchase_order.xml',
         'views/sga_stock_picking.xml',
         'views/sga_stock_inventory.xml',

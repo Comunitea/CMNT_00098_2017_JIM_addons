@@ -21,15 +21,14 @@ class SaleOrderType (models.Model):
     description = fields.Char("Sale order type description", size=100)
 
 
-class SaleOrderLineSGA (models.Model):
+class SaleOrderLine (models.Model):
 
     _inherit ="sale.order.line"
 
     product_code = fields.Char(related="product_id.product_tmpl_id.default_code")
     uom_code = fields.Char(related="product_uom.sga_uom_base_code")
-    #sga_comment = fields.Char("Comment", size=255)
 
-class SaleOrderSGA(models.Model):
+class SaleOrder(models.Model):
 
     _inherit = "sale.order"
 
@@ -43,28 +42,3 @@ class SaleOrderSGA(models.Model):
     account_code = fields.Char(related="partner_id.ref")
     delivery_inst = fields.Char("Notas en la entrega", size=255)
     verify_stock = fields.Boolean("Se verifica stock", default=0)
-
-    @api.multi
-    def new_mecalux_file(self):
-        raise ValidationError("De momento, desde albaranes")
-        ids = [x.id for x in self]
-
-        new_sga_file = self.env['sga.file'].check_sga_file('sale.order', ids, code='SOR')
-        return True
-
-    @api.multi
-    def action_confirm(self):
-        res = super(SaleOrderSGA, self).action_confirm()
-        pickings = self.mapped('picking_ids')
-        pickings.create_picks_from_orders('SOR')
-        return res
-
-    @api.multi
-    def action_sale(self):
-        res = super(SaleOrderSGA, self).action_sale()
-        for order in self:
-            picking_out = order.picking_ids.filtered(lambda x: x.picking_type_id.sga_integrated)
-            for pick in picking_out:
-                if pick.new_mecalux_file():
-                    pick.sga_state = 'PM'
-        return res

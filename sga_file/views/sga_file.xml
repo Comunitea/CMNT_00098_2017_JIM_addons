@@ -133,6 +133,7 @@
                         </group>
                         <group>
                             <field name="odoo_model"/>
+                            <field name="filter"/>
                             <field name="model"/>
                             <field name="cte_name"/>
                         </group>
