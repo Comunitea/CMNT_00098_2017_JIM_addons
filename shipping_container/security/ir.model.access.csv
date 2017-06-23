@@ -1,3 +1,5 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_shipping_container_user,shipping.container.user,model_shipping_container,purchase.group_purchase_user,1,1,0,0
 access_shipping_container_manager,shipping.container.manager,model_shipping_container,purchase.group_purchase_manager,1,1,1,1
+access_shipping_container_type_user,shipping.container.type.user,model_shipping_container_type,purchase.group_purchase_user,1,1,0,0
+access_shipping_container_type_manager,shipping.container.type.manager,model_shipping_container_type,purchase.group_purchase_manager,1,1,1,1
