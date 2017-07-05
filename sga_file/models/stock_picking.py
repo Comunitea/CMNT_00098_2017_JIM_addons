@@ -146,7 +146,7 @@ class StockPickingSGA(models.Model):
         if operation:
             ctx['operation'] = operation
         if 'operation' not in ctx:
-            ctx['operation'] = 'F'
+            ctx['operation'] = 'A'
 
         picks=[]
         for pick in self:
@@ -216,7 +216,7 @@ class StockPickingSGA(models.Model):
         n_line=0
         for line in sga_file_lines:
             line = line.strip()
-            n_line +=1
+            n_line += 1
             if len(line) == LEN_HEADER:
                 #Busco pick
 

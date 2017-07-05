@@ -105,7 +105,7 @@ class StockInventorySGA(models.Model):
 
 
     def import_inventory_STO(self, file_id):
-
+        import  ipdb; ipdb.set_trace()
         sga_file = self.env['sga.file'].browse(file_id)
         sga_file_name = sga_file.name
         sga_file = open(sga_file.sga_file, 'r')
@@ -203,9 +203,10 @@ class StockInventorySGA(models.Model):
             'product_id': product_id.id,
             'product_qty': qty,
             'inventory_id': inventory_id.id,
+            'company_id': inventory_id.company_id.id,
             'location_id': inventory_id.location_id.id
         }
-        new_inventory_line = self.env['stock.inventory.line'].create(new_line_vals)
+        new_inventory_line = self.env['stock.inventory.line'].sudo().create(new_line_vals)
         return new_inventory_line
 
 
@@ -225,7 +226,8 @@ class StockInventorySGA(models.Model):
                 'filter': 'partial',
                 'company_id': company_id.id
             }
-            inventory = self.env['stock.inventory'].create(stock_inv_vals)
+            #lo tengo que poner como sudo
+            inventory = self.env['stock.inventory'].sudo().create(stock_inv_vals)
         inventory = inventory[0]
         inventory.action_start()
         return inventory
@@ -234,6 +236,7 @@ class StockInventorySGA(models.Model):
 
 
     def reg_stock(self, product_id, location_id, company_id, qty_to_reg, forced_company_id = False):
+
         if not product_id or not location_id or not company_id:
             return 0.00, False
 

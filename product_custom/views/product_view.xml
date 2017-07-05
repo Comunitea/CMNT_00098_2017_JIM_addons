@@ -28,6 +28,17 @@
                 </xpath>
             </field>
         </record>
+         <record model="ir.ui.view" id="product_packagin_tree_apply_dimens">
+            <field name="name">product.packaging.apply_dimensions</field>
+            <field name="model">product.packaging</field>
+             <field name="inherit_id" ref="product.product_packaging_tree_view"/>
+            <field name="arch" type="xml">
+                    <field name="qty" position = "after">
+                        <button name="compute_product_dimensions" string="Apply dimensions"
+                                type="object" icon="fa-link" />
+                    </field>
+            </field>
+        </record>
 
     </data>
 </odoo>

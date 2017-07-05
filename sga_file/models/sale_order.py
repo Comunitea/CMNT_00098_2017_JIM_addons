@@ -32,8 +32,6 @@ class SaleOrder(models.Model):
 
     _inherit = "sale.order"
 
-    sga_operation = fields.Selection([('A', 'Alta'), ('M', 'Modificacion'),
-                                      ('B', 'Baja'), ('F', 'Modificacion + Alta')], default='A')
     warehouse_code = fields.Char(related="warehouse_id.code")
     sale_order_type_id = fields.Many2one('sale.order.type')
     sale_order_type_code = fields.Char(related="sale_order_type_id.code")

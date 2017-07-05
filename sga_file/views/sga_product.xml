@@ -2,39 +2,42 @@
 <openerp>
     <data>
 
-        <record id="product_template_sga_form" model="ir.ui.view">
-            <field name="name">product.template.sga.form</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_form_view"/>
-            <field name="arch" type="xml">
-                <field name="categ_id" position="after">
-
-                    <field name="sga_dst"/>
-                    <field name="sga_prod_shortdesc"/>
-                </field>
-            </field>
-        </record>
-
         <record model="ir.ui.view" id="product_normal_form_view_sga">
             <field name="name">product.product.sga</field>
             <field name="model">product.product</field>
             <field name="inherit_id" ref="product.product_normal_form_view"/>
             <field name="arch" type="xml">
-                    <div name="button_box" position="inside">
-                        <field name="sga_state" invisible="1"/>
-                        <button class="oe_stat_button"
-                               name="export_product_to_mecalux"
-                               icon="fa-refresh" type="object"
-                                attrs="{'invisible': [('sga_state', '=', 1)]}">
-                             <div class="o_form_field o_stat_info">
-                            <span class="o_stat_text">Mecalux</span>
+
+                    <xpath expr="//header" position = "inside">
+                        <div>
+                        <field name="sga_state" widget="statusbar"
+                        />
                         </div>
-                        </button>
-                    </div>
+                    </xpath>
+                <field name="categ_id" position="after">
+
+                        <field name="sga_prod_shortdesc"/>
+                    </field>
+
             </field>
         </record>
 
+        <record model="ir.ui.view" id="product_template_form_view_sga">
+            <field name="name">product.template.sga</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
 
+                    <xpath expr="//header" position = "inside">
+                        <div>
+                        <field name="sga_state" widget="statusbar"/>
+                        </div>
+                    </xpath>
+                    <field name="categ_id" position="after">
+                        <field name="sga_dst"/>
+                    </field>
+            </field>
+        </record>
 
 
         <record id="product_category_list_view_sga" model="ir.ui.view">
@@ -43,7 +46,7 @@
             <field name="inherit_id" ref="product.product_category_list_view"/>
             <field name="arch" type="xml">
                 <tree position="attributes">
-                    <attribute name="decoration-danger">sga_state!=1</attribute>
+                    <attribute name="decoration-danger">sga_state!='AC'</attribute>
 
                 </tree>
                 <xpath expr="//field[@name='display_name']" position="after">
@@ -58,10 +61,17 @@
             <field name="model">product.category</field>
             <field name="inherit_id" ref="product.product_category_form_view"/>
             <field name="arch" type="xml">
+                 <xpath expr="//sheet" position = "before">
+                        <header>
+                            <div>
+                                <field name="sga_state" widget="statusbar"/>
+                            </div>
+                        </header>
+                    </xpath>
                 <xpath expr="//button[@name='110']" position="before">
                     <field name="sga_state" invisible="1"/>
                     <button class="oe_stat_button" name="export_category_to_mecalux" icon="fa-refresh" type="object"
-                    attrs="{'invisible': [('sga_state', '=', 1)]}">
+                    attrs="{'invisible': [('sga_state', '=', 'AC')]}">
                         <div class="o_form_field o_stat_info">
                             <span class="o_stat_text">Mecalux</span>
                         </div>
@@ -134,13 +144,13 @@
                 </field>
             </field>
         </record>
-        # export product.product
+
         <record id="product_product_action_export_to_mecalux" model="ir.actions.server">
             <field name="name">Export changes to Mecalux</field>
             <field name="model_id" ref="product.model_product_product"/>
             <field name="state">code</field>
             <field name="condition">True</field>
-            <field name="code">records.new_mecalux_file()</field>
+            <field name="code">records.export_product_to_mecalux()</field>
         </record>
         <record id="product_product_export_to_mecalux" model="ir.values">
             <field name="name">product.product.action.export.to.mecalux</field>
@@ -150,13 +160,13 @@
             <field name="value" eval="'ir.actions.server,%d'%product_product_action_export_to_mecalux"/>
         </record>
 
-        # export product.template
+
         <record id="product_template_action_export_to_mecalux" model="ir.actions.server">
             <field name="name">Export changes to Mecalux</field>
             <field name="model_id" ref="product.model_product_template"/>
             <field name="state">code</field>
             <field name="condition">True</field>
-            <field name="code">records.new_mecalux_file()</field>
+            <field name="code">records.export_template_to_mecalux()</field>
         </record>
         <record id="product_template_export_to_mecalux" model="ir.values">
             <field name="name">product.template.action.export.to.mecalux</field>
@@ -166,7 +176,7 @@
             <field name="value" eval="'ir.actions.server,%d'%product_template_action_export_to_mecalux"/>
         </record>
 
-        # Check Mecalux Stock
+
         <record id="product_product_action_check_stock" model="ir.actions.server">
             <field name="name">Check Mecalux Stock</field>
             <field name="model_id" ref="product.model_product_product"/>
@@ -182,7 +192,7 @@
             <field name="value" eval="'ir.actions.server,%d'%product_product_action_check_stock"/>
         </record>
 
-        # Send category to mecalux
+
         <record id="product_category_action_export_to_mecalux" model="ir.actions.server">
             <field name="name">Export changes to Mecalux</field>
             <field name="model_id" ref="product.model_product_category"/>
@@ -198,7 +208,29 @@
             <field name="value" eval="'ir.actions.server,%d'%product_category_action_export_to_mecalux"/>
         </record>
 
+        <record id="sga_destination_tree_view" model="ir.ui.view">
+            <field name="name">sga.destination.tree.view</field>
+            <field name="model">sga.destination</field>
+            <field name="arch" type="xml">
+                <tree editable="top" create="1">
+                    <field name="code" />
+                    <field name="name"/>
+                </tree>
+            </field>
+        </record>
 
+        <record id="sga_destination_tree_view_action" model="ir.actions.act_window">
+            <field name="name">Tabla de destinos</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">sga.destination</field>
+            <field name="view_mode">tree</field>
+            <field name="view_type">form</field>
+
+        </record>
+        <menuitem name ="Destinos"
+                  action="sga_destination_tree_view_action"
+                  id="sga_destination_tree_view_action_menu"
+                  parent="sga_file.menu_sga_mecalux"/>
 
     </data>
 </openerp>

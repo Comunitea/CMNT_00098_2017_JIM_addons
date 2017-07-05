@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-       # Partner to Mecalux
+
         <record id="res_partner_action_export_to_mecalux" model="ir.actions.server">
             <field name="name">Export changes to Mecalux</field>
             <field name="model_id" ref="product.model_res_partner"/>
@@ -20,20 +20,14 @@
         <record id="view_partner_stock_form_sga" model="ir.ui.view">
             <field name="name">view.partner.stock.form.sga</field>
             <field name="model">res.partner</field>
-            <field name="inherit_id" ref="stock.view_partner_stock_form"/>
+            <field name="inherit_id" ref="base.view_partner_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='toggle_active']" position="after">
-                    <field name="sga_state" invisible="1"/>
-                    <button class="oe_stat_button" name="export_partner_to_mecalux" icon="fa-refresh" type="object"
-                    attrs="{'invisible': ['|', ('customer','=',False), ('sga_state', '=', 1)]}">
-                        <div class="o_form_field o_stat_info">
-                            <span class="o_stat_text">Mecalux</span>
+                <xpath expr="//sheet" position = "before">
+                    <header>
+                        <div>
+                            <field name="sga_state" widget="statusbar"/>
                         </div>
-                    </button>
-                </xpath>
-                <xpath expr="//field[@name='property_stock_supplier']" position="after">
-                    <field name="sga_outbound_priority"/>
-                    <field name="sga_active_fusion" />
+                    </header>
                 </xpath>
             </field>
         </record>

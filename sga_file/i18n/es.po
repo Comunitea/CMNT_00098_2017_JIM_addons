@@ -1,0 +1,1271 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* sga_file
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-06-27 17:38+0000\n"
+"PO-Revision-Date: 2017-06-27 17:38+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_stock_pack_operation_sga_catch_weight
+msgid "1 Indica si se captura el peso del producto\n"
+"0 (por defecto) se coge el peso de la ficha de producto"
+msgstr "1 Indica si se captura el peso del producto\n"
+"0 (por defecto) se coge el peso de la ficha de producto"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_stock_pack_operation_sga_disable_alt_product
+msgid "1 Se deshabilita el producto alternativo\n"
+"0 (por defecto) No se deshabilita"
+msgstr "1 Se deshabilita el producto alternativo\n"
+"0 (por defecto) No se deshabilita"
+
+#. module: sga_file
+#: model:ir.ui.view,arch_db:sga_file.product_category_form_view_sga
+msgid "<span class=\"o_stat_text\">Mecalux</span>"
+msgstr "<span class=\"o_stat_text\">Mecalux</span>"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_version_active
+msgid "Active"
+msgstr "Activo"
+
+#. module: sga_file
+#: selection:delivery.carrier,sga_state:0
+#: selection:product.category,sga_state:0
+#: selection:product.product,sga_state:0
+#: selection:product.template,sga_state:0
+#: selection:res.partner,sga_state:0
+msgid "Actualizado"
+msgstr "Actualizado"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_stock_picking_shipping_city
+msgid "Administrative divisions of a country. E.g. Fed. State, Departement, Canton"
+msgstr "División administrativa de un país. Por ejemplo Comunidad Autónoma, Provincia, Ayuntamiento"
+
+#. module: sga_file
+#: selection:sgavar.file.var,mecalux_type:0
+msgid "Alfanumerico"
+msgstr "Alfanumerico"
+
+#. module: sga_file
+#: selection:res.partner,sga_operation:0
+#: selection:sga.file.error,sga_operation:0
+#: selection:stock.picking,sga_operation:0
+msgid "Alta"
+msgstr "Alta"
+
+#. module: sga_file
+#: selection:sgavar.file.var,mecalux_type:0
+msgid "Atributo/Variable"
+msgstr "Atributo/Variable"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_config_settings_product_auto
+msgid "Auto update productos"
+msgstr "Actualización automática"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_delivery_inst
+msgid "Avisos para la entrega (SGA)"
+msgstr "Avisos para la entrega (SGA)"
+
+#. module: sga_file
+#: selection:product.category,sga_state:0
+#: selection:product.product,sga_state:0
+#: selection:product.template,sga_state:0
+#: selection:res.partner,sga_operation:0
+#: selection:res.partner,sga_state:0
+#: selection:sga.file.error,sga_operation:0
+#: selection:stock.picking,sga_operation:0
+msgid "Baja"
+msgstr "Baja"
+
+#. module: sga_file
+#: selection:sgavar.file.var,mecalux_type:0
+msgid "Booleano"
+msgstr "Booleano"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_bytes
+msgid "Bytes"
+msgstr "Bytes"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_sga_change_material_abc
+msgid "Cambio rotabilidad"
+msgstr "Cambio rotabilidad"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_name
+msgid "Campo Mecalux"
+msgstr "Campo Mecalux"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_odoo_name
+msgid "Campo Odoo (si existe)"
+msgstr "Campo Odoo (si existe)"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_sgavar_file_var_length
+msgid "Campo numerico."
+msgstr "Campo numerico."
+
+#. module: sga_file
+#: selection:stock.picking,sga_state:0
+msgid "Cancelado"
+msgstr "Cancelado"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_product_packaging_sga_min_quantity
+msgid "Cantidad minima a servir"
+msgstr "Cantidad minima a servir"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_fillchar
+msgid "Caracter de relleno"
+msgstr "Caracter de relleno"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_sga_path
+msgid "Carpeta"
+msgstr "Carpeta"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_sga_file_sga_path
+msgid "Carpeta del archivo"
+msgstr "Carpeta del archivo"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_delivery_carrier
+msgid "Carrier"
+msgstr "Transportista"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_carrier_code
+msgid "Carrier Code"
+msgstr "Codigo"
+
+#. module: sga_file
+#: sql_constraint:delivery.carrier:0
+msgid "Carrier code already exists !"
+msgstr "Ese codigo ya existe !"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_pack_operation_sga_catch_weight
+msgid "Catch weight"
+msgstr "Comprobar peso"
+
+#. module: sga_file
+#: model:ir.actions.server,name:sga_file.product_product_action_check_stock
+msgid "Check Mecalux Stock"
+msgstr "Comprobar stock en mecalux"
+
+#. module: sga_file
+#: model:ir.actions.act_window,help:sga_file.sga_destination_tree_view_action
+msgid "Click to create a stock reservation."
+msgstr "Pulsa para crear una reserva de stock."
+
+#. module: sga_file
+#: model:ir.actions.act_window,help:sga_file.model_sgafile_action_view
+#: model:ir.actions.act_window,help:sga_file.model_sgafile_var_action_view
+#: model:ir.actions.act_window,help:sga_file.sga_file_action_view
+#: model:ir.actions.act_window,help:sga_file.sga_file_line_action_view
+msgid "Click to define a new Sga Line."
+msgstr "Click para definir un nueva linea (sga line)."
+
+#. module: sga_file
+#: model:ir.actions.act_window,help:sga_file.action_stock_inventory_issue_tree
+msgid "Click to start an inventory."
+msgstr "Pulse para iniciar un inventario."
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_sga_dst_code
+#: model:ir.model.fields,field_description:sga_file.field_product_product_sga_dst_code
+#: model:ir.model.fields,field_description:sga_file.field_product_template_sga_dst_code
+#: model:ir.model.fields,field_description:sga_file.field_sga_destination_code
+msgid "Code"
+msgstr "Código"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_sga_product_type_code
+#: model:ir.model.fields,field_description:sga_file.field_product_category_code
+#: model:ir.model.fields,field_description:sga_file.field_product_category_parent_code
+msgid "Codigo de categoria"
+msgstr "Codigo de categoria"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_product_packaging_sga_containertype_code
+#: model:ir.model.fields,field_description:sga_file.field_sga_containertype_name
+msgid "Codigo de contenedor (SGA)"
+msgstr "Codigo de contenedor (SGA)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_error_code
+msgid "Codigo de error"
+msgstr "Codigo de error"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_sga_uom_base_code
+#: model:ir.model.fields,field_description:sga_file.field_product_packaging_sga_uom_base_code
+#: model:ir.model.fields,field_description:sga_file.field_product_uom_sga_uom_base_code
+#: model:ir.model.fields,field_description:sga_file.field_stock_pack_operation_uom_code
+msgid "Codigo de u.m.(SGA)"
+msgstr "Codigo de u.m.(SGA)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_file_code
+msgid "Codigo del fichero"
+msgstr "Codigo del fichero"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_contact
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_container_container_number
+msgid "Container Number"
+msgstr "Numero de contenedor"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_pack_operation_container_id
+msgid "Container id"
+msgstr "Id de contenedor"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_pack_operation_container_src_id
+msgid "Container src id"
+msgstr "Id de contenedor fuente"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_container_create_uid
+#: model:ir.model.fields,field_description:sga_file.field_sga_containertype_create_uid
+#: model:ir.model.fields,field_description:sga_file.field_sga_destination_create_uid
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_create_uid
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_create_uid
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_line_create_uid
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_create_uid
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_create_uid
+#: model:ir.model.fields,field_description:sga_file.field_stock_inventory_issue_create_uid
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sgatype_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_container_create_date
+#: model:ir.model.fields,field_description:sga_file.field_sga_containertype_create_date
+#: model:ir.model.fields,field_description:sga_file.field_sga_destination_create_date
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_create_date
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_create_date
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_line_create_date
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_create_date
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_create_date
+#: model:ir.model.fields,field_description:sga_file.field_stock_inventory_issue_create_date
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sgatype_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_cte_name
+msgid "Cte name"
+msgstr "Nombre cte"
+
+#. module: sga_file
+#: selection:sga.file,type:0
+msgid "De Mecalux a Odoo"
+msgstr "De Mecalux a Odoo"
+
+#. module: sga_file
+#: selection:sga.file,type:0
+msgid "De Odoo a Mecalux"
+msgstr "De Odoo a Mecalux"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sgatype_description
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_stock_picking_sgatype_description
+msgid "Descripcion (SGA)"
+msgstr "Descripcion (SGA)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_product_packaging_sga_desc_containertype_code
+#: model:ir.model.fields,field_description:sga_file.field_sga_containertype_sga_desc_containertype_code
+msgid "Descripcion de contenedor (SGA)"
+msgstr "Descripcion de contenedor (SGA)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_destination_name
+msgid "Description"
+msgstr "Descripción"
+
+#. module: sga_file
+#: model:ir.ui.menu,name:sga_file.sga_destination_tree_view_action_menu
+msgid "Destinos"
+msgstr "Destinos"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_pack_operation_sga_disable_alt_product
+msgid "Disable alt product"
+msgstr "Desabilitar productos alternativos"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_container_display_name
+#: model:ir.model.fields,field_description:sga_file.field_sga_containertype_display_name
+#: model:ir.model.fields,field_description:sga_file.field_sga_destination_display_name
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_display_name
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_display_name
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_line_display_name
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_display_name
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_display_name
+#: model:ir.model.fields,field_description:sga_file.field_stock_inventory_issue_display_name
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sgatype_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: sga_file
+#: selection:sga.file,state:0
+msgid "En espera"
+msgstr "En espera"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_stock_config_settings_product_auto
+msgid "Enviar cambios en productos automaticamente al servidor"
+msgstr "Enviar cambios en productos automaticamente al servidor"
+
+#. module: sga_file
+#: selection:product.category,sga_state:0
+#: selection:product.product,sga_state:0
+#: selection:product.template,sga_state:0
+#: selection:res.partner,sga_state:0
+#: selection:sga.file,state:0
+msgid "Error"
+msgstr "Error"
+
+#. module: sga_file
+#: code:addons/sga_file/models/sga_file.py:391
+#, python-format
+msgid "Error al acceder/crear el archivo:\n"
+"%s."
+msgstr "Error al acceder/crear el archivo:\n"
+"%s."
+
+#. module: sga_file
+#: selection:stock.picking,sga_state:0
+msgid "Error en exportacion"
+msgstr "Error en exportacion"
+
+#. module: sga_file
+#: selection:stock.picking,sga_state:0
+msgid "Error en importacion"
+msgstr "Error en importacion"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_errors
+msgid "Errores"
+msgstr "Errores"
+
+#. module: sga_file
+#: model:ir.actions.act_window,name:sga_file.model_sgafile_error_action_view
+#: model:ir.ui.menu,name:sga_file.Error SGAfiles
+msgid "Errores de importacion"
+msgstr "Errores de importacion"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_product_category_sga_state
+#: model:ir.model.fields,field_description:sga_file.field_product_product_sga_state
+#: model:ir.model.fields,field_description:sga_file.field_product_template_sga_state
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sga_state
+msgid "Estado Mecalux"
+msgstr "Estado integración con mecalux"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_delivery_carrier_sga_state
+#: model:ir.model.fields,help:sga_file.field_product_category_sga_state
+#: model:ir.model.fields,help:sga_file.field_product_product_sga_state
+#: model:ir.model.fields,help:sga_file.field_product_template_sga_state
+#: model:ir.model.fields,help:sga_file.field_res_partner_sga_state
+#: model:ir.model.fields,help:sga_file.field_res_users_sga_state
+msgid "Estado integracion con mecalux"
+msgstr "Estado integracion con mecalux"
+
+#. module: sga_file
+#: sql_constraint:sgavar.file:0
+msgid "Este codigo/version de archivo ya existe!"
+msgstr "Este codigo/version de archivo ya existe!"
+
+#. module: sga_file
+#: model:ir.actions.server,name:sga_file.stock_inventory_query_to_mecalux_act
+msgid "Export Query to Mecalux"
+msgstr "Consulta de stock a mecalux"
+
+#. module: sga_file
+#: model:ir.actions.server,name:sga_file.product_category_action_export_to_mecalux
+#: model:ir.actions.server,name:sga_file.product_product_action_export_to_mecalux
+#: model:ir.actions.server,name:sga_file.product_template_action_export_to_mecalux
+#: model:ir.actions.server,name:sga_file.res_partner_action_export_to_mecalux
+msgid "Export changes to Mecalux"
+msgstr "Enviar a mecalux"
+
+#. module: sga_file
+#: model:ir.actions.server,name:sga_file.delivery_carrier_action_export_carrier
+msgid "Export to Mecalux"
+msgstr "Enviar a mecalux"
+
+#. module: sga_file
+#: selection:stock.pack.operation,sga_catch_weight:0
+#: selection:stock.pack.operation,sga_disable_alt_product:0
+#: selection:stock.picking,verify_stock:0
+msgid "False"
+msgstr "False"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_date_error
+#: selection:sgavar.file.var,mecalux_type:0
+msgid "Fecha"
+msgstr "Fecha"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_file_time
+msgid "Fecha/hora del archivo"
+msgstr "Fecha/hora del archivo"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_file_name
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_sga_file
+msgid "Fichero"
+msgstr "Fichero"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_log_name
+msgid "Fichero log asociado"
+msgstr "Fichero log asociado"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_line_line
+msgid "File line"
+msgstr "Línea de fichero"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_config_settings_path_files
+msgid "Files Path"
+msgstr "Ruta de archivos"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_filter
+msgid "Filter"
+msgstr "Filtro"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_en
+msgid "Fin cadena"
+msgstr "Fin cadena"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_global_available_stock
+msgid "Global Available Stock"
+msgstr "Stock global disponible"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_inventory_line_global_qty
+msgid "Global Quantity"
+msgstr "Stock global"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_global_real_stock
+msgid "Global Real Stock"
+msgstr "Stock global real"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_container_id
+#: model:ir.model.fields,field_description:sga_file.field_sga_containertype_id
+#: model:ir.model.fields,field_description:sga_file.field_sga_destination_id
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_id
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_id
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_line_id
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_id
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_id
+#: model:ir.model.fields,field_description:sga_file.field_stock_inventory_issue_id
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sgatype_id
+msgid "ID"
+msgstr "ID"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_object_id
+msgid "Id del objeto"
+msgstr "Id del objeto"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_stock_picking_type_sga_integrated
+#: model:ir.model.fields,help:sga_file.field_stock_warehouse_sga_integrated
+msgid "If checked, odoo export this pick type to Mecalux"
+msgstr "Integrado con mecalux"
+
+#. module: sga_file
+#: model:ir.actions.server,name:sga_file.stock_inventory_query_from_mecalux_act
+msgid "Import Query to Mecalux"
+msgstr "Leer stock de mecalux"
+
+#. module: sga_file
+#: model:ir.actions.server,name:sga_file.stock_picking_action_export_to_mecalux2
+msgid "Import from Mecalux"
+msgstr "Leer de mecalux"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_product_supplierinfo
+msgid "Information about a product vendor"
+msgstr "Información acerca del proveedor de un producto"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_st
+msgid "Inicio cadena"
+msgstr "Inicio cadena"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_type_sga_integrated
+#: model:ir.model.fields,field_description:sga_file.field_stock_warehouse_sga_integrated
+msgid "Integrado con Mecalux"
+msgstr "Integrado con Mecalux"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_intercompany_price
+msgid "Intercompany Price"
+msgstr "Precio intercompañía"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_pack_operation_product_code
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_account_code
+msgid "Internal Reference"
+msgstr "Referencia interna"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_stock_inventory
+msgid "Inventory"
+msgstr "Inventario"
+
+#. module: sga_file
+#: model:ir.actions.act_window,name:sga_file.action_stock_inventory_issue_tree
+#: model:ir.ui.menu,name:sga_file.menu_stock_inventory_issue_action
+msgid "Inventory Issues"
+msgstr "Incdencias en inventario"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_stock_inventory_line
+msgid "Inventory Line"
+msgstr "Línea inventario"
+
+#. module: sga_file
+#: model:ir.ui.view,arch_db:sga_file.stock_inventory_issue_tree
+msgid "Inventory issue"
+msgstr "Incidencia en inventario"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_length_dec
+msgid "L. Decimal"
+msgstr "L. Decimal"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_length_int
+msgid "L. Entera"
+msgstr "L. Entera"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_container___last_update
+#: model:ir.model.fields,field_description:sga_file.field_sga_containertype___last_update
+#: model:ir.model.fields,field_description:sga_file.field_sga_destination___last_update
+#: model:ir.model.fields,field_description:sga_file.field_sga_file___last_update
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error___last_update
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_line___last_update
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file___last_update
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var___last_update
+#: model:ir.model.fields,field_description:sga_file.field_stock_inventory_issue___last_update
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sgatype___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_delivery_carrier_sga_stock
+msgid "Last PST from Mecalux"
+msgstr "Ultimo PST de mecalux"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_container_write_uid
+#: model:ir.model.fields,field_description:sga_file.field_sga_containertype_write_uid
+#: model:ir.model.fields,field_description:sga_file.field_sga_destination_write_uid
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_write_uid
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_line_write_uid
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_write_uid
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_write_uid
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_write_uid
+#: model:ir.model.fields,field_description:sga_file.field_stock_inventory_issue_write_uid
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sgatype_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_container_write_date
+#: model:ir.model.fields,field_description:sga_file.field_sga_containertype_write_date
+#: model:ir.model.fields,field_description:sga_file.field_sga_destination_write_date
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_write_date
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_line_write_date
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_write_date
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_write_date
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_write_date
+#: model:ir.model.fields,field_description:sga_file.field_stock_inventory_issue_write_date
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sgatype_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_line_name
+msgid "Line name"
+msgstr "Nombre de linea"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_line_number
+msgid "Linea"
+msgstr "Linea"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_length
+msgid "Longitud"
+msgstr "Longitud"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_sgavar_file_var_length_dec
+msgid "Longitud decimal(nº de digitos de la parte decimal en un tipo 'float')"
+msgstr "Longitud decimal(nº de digitos de la parte decimal en un tipo 'float')"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_sgavar_file_var_length_int
+msgid "Longitud entera(nº de digitos de la parte entera en un tipo 'float')"
+msgstr "Longitud entera(nº de digitos de la parte entera en un tipo 'float')"
+
+#. module: sga_file
+#: model:ir.module.category,description:sga_file.module_category_sga_file_management
+msgid "Manage SGA MEcalux"
+msgstr "Configurar integración con mecalux"
+
+#. module: sga_file
+#: model:res.groups,name:sga_file.group_sga_file_manager
+msgid "Manager"
+msgstr "Responsable"
+
+#. module: sga_file
+#: model:ir.ui.view,arch_db:sga_file.view_pickingtype_filter_sga
+msgid "Mecalux"
+msgstr "Mecalux"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sga_container
+msgid "Mecalux Containers"
+msgstr "Contenedores de mecalux"
+
+#. module: sga_file
+#: model:ir.ui.view,arch_db:sga_file.view_sga_config_settings
+msgid "Mecalux files exchange"
+msgstr "Intercambio de ficheros con mecalux"
+
+#. module: sga_file
+#: model:ir.ui.view,arch_db:sga_file.view_picking_internal_search_sga
+msgid "Mecalux status"
+msgstr "Estado mecalux"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_mecalux_type
+msgid "Mecalux type"
+msgstr "Tipo de campo"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_error_message
+msgid "Mensaje de error"
+msgstr "Mensaje de error"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_model
+msgid "Model Description"
+msgstr "Descripción del modelo"
+
+#. module: sga_file
+#: model:ir.actions.act_window,name:sga_file.model_sgafile_action_view
+#: model:ir.ui.menu,name:sga_file.Models SGAfiles
+msgid "Model Sgafile"
+msgstr "Modelo fichero"
+
+#. module: sga_file
+#: model:ir.actions.act_window,name:sga_file.model_sgafile_var_action_view
+#: model:ir.ui.menu,name:sga_file.Vars SGAfiles
+msgid "Model Sgafile Var"
+msgstr "Modelo fichero de variables"
+
+#. module: sga_file
+#: selection:res.partner,sga_operation:0
+#: selection:sga.file.error,sga_operation:0
+#: selection:stock.picking,sga_operation:0
+msgid "Modificacion"
+msgstr "Modificacion"
+
+#. module: sga_file
+#: selection:res.partner,sga_operation:0
+#: selection:sga.file.error,sga_operation:0
+#: selection:stock.picking,sga_operation:0
+msgid "Modificacion + Alta"
+msgstr "Modificacion + Alta"
+
+#. module: sga_file
+#: model:ir.actions.server,name:sga_file.stock_picking_action_move_to_done
+msgid "Move to Mecalux done"
+msgstr "Marcar como realizado (sga)"
+
+#. module: sga_file
+#: model:ir.actions.server,name:sga_file.stock_picking_action_move_to_NE
+msgid "Move to Mecalux not sended"
+msgstr "Marcar como no enviado (sga)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_name
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sga_company
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_shipping_partner_name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: sga_file
+#: selection:stock.picking,sga_state:0
+msgid "No exportado"
+msgstr "No enviado"
+
+#. module: sga_file
+#: model:ir.actions.act_window,help:sga_file.model_sgafile_error_action_view
+msgid "No hay ficheros"
+msgstr "No hay ficheros"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_sga_prod_shortdesc
+msgid "Nombre Radiofrecuencia"
+msgstr "Nombre Radiofrecuencia"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_sgavar_file_var_odoo_many_name
+msgid "Nombre del campo related"
+msgstr "Nombre del campo relacionado"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_pack_operation_line_number
+msgid "Number de linea"
+msgstr "Numero de linea"
+
+#. module: sga_file
+#: selection:sgavar.file.var,mecalux_type:0
+msgid "Numerico"
+msgstr "Numerico"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_sga_file_errors
+msgid "Numero de veces que debe aparecer el error antes de mover a error"
+msgstr "Numero de veces que debe aparecer el error antes de mover a error"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_required
+msgid "Obligatorio"
+msgstr "Obligatorio"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_odoo_many_name
+msgid "Odoo 'related'"
+msgstr "Odoo 'related'"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_odoo_model
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_odoo_model
+msgid "Odoo Model"
+msgstr "Modelo de odoo"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_product_packaging
+msgid "Packaging"
+msgstr "Empaquetado"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_stock_pack_operation
+msgid "Packing Operation"
+msgstr "Operación de picking"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_res_partner
+msgid "Partner"
+msgstr "Partner"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_stock_config_settings_path_files
+msgid "Path to SGA Mecalux exchange files. Must content in, out, error, processed and history folders\n"
+"Also a scheduled action is created: Archive SGA files"
+msgstr "Ruta a la carpeta de intercambio de ficheros con mecalux. Contiene las carpetas: in, out, error, processed and history\n"
+"Se crea una acción programada: Archive SGA files"
+
+#. module: sga_file
+#: selection:stock.picking,sga_state:0
+msgid "Pendiente Mecalux"
+msgstr "Pendiente de mecalux"
+
+#. module: sga_file
+#: selection:delivery.carrier,sga_state:0
+#: selection:product.category,sga_state:0
+#: selection:product.product,sga_state:0
+#: selection:product.template,sga_state:0
+#: selection:res.partner,sga_state:0
+msgid "Pendiente actualizar"
+msgstr "Pendiente actualizar"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_inventory_issue_active
+msgid "Pending"
+msgstr "Pendiente"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_inventory_issue_pending_qty
+msgid "Pending Qty"
+msgstr "Cantidad pendiente"
+
+#. module: sga_file
+#: model:ir.actions.act_window,help:sga_file.action_stock_inventory_issue_tree
+msgid "Periodical Inventories are used to count the number of products\n"
+"                    available per location. You can use it once a year when you do\n"
+"                    the general inventory or whenever you need it, to adapt the\n"
+"                    current inventory level of a product."
+msgstr "Periodical Inventories are used to count the number of products\n"
+"                    available per location. You can use it once a year when you do\n"
+"                    the general inventory or whenever you need it, to adapt the\n"
+"                    current inventory level of a product."
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_product_packaging_sga_complete_percent
+msgid "Porcentaje para servir el palet completo"
+msgstr "Porcentaje para servir el palet completo"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sga_priority
+msgid "Priority"
+msgstr "Prioridad"
+
+#. module: sga_file
+#: selection:sga.file,state:0
+msgid "Procesado"
+msgstr "Procesado"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_product_product
+msgid "Product"
+msgstr "Referencia"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_product_category
+msgid "Product Category"
+msgstr "Categoria"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_product_template
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_product_uom
+msgid "Product Unit of Measure"
+msgstr "Unidad de medida del producto"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_inventory_issue_product_id
+msgid "Product id"
+msgstr "Product id"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_purchase_order
+msgid "Purchase Order"
+msgstr "Pedido de compra"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Línea pedido de compra"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_delivery_carrier_global_real_stock
+msgid "Real stock in all companies."
+msgstr "Stock real en todas las compañías."
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_delivery_carrier_global_available_stock
+msgid "Real stock minus outgoing  in all companies."
+msgstr "Stock real menos el saliente en todas las compañías."
+
+#. module: sga_file
+#: selection:stock.picking,sga_state:0
+msgid "Realizado"
+msgstr "Realizado"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_product_packaging_sga_operation
+msgid "SGA Operation"
+msgstr "Operacion en mecalux"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_type_sgavar_file_id
+msgid "SGA Type"
+msgstr "Tipo de fichero"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_delivery_carrier_carrier_code
+msgid "SGA code to mecalux"
+msgstr "Codigo de transportista"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_product_packaging_sga_complete_percent
+msgid "SGA complete percent"
+msgstr "Porcentaje completo (sga)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_product_packaging_sga_min_quantity
+msgid "SGA min quantity"
+msgstr "Cantidad mínima (sga)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_pack_operation_sga_changed
+msgid "SGA modified/created"
+msgstr "Modificado/creado (sga)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_code
+msgid "Sale order type code"
+msgstr "Codigo del tipo de venta"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_description
+msgid "Sale order type description"
+msgstr "Descripción del tipo de venta"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sale_order
+msgid "Sales Order"
+msgstr "Pedido de venta"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sale_order_line
+msgid "Sales Order Line"
+msgstr "Línea de pedido de venta"
+
+#. module: sga_file
+#: model:ir.actions.server,name:sga_file.stock_picking_action_export_to_mecalux
+msgid "Send to Mecalux"
+msgstr "Enviar a mecalux"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: sga_file
+#: model:ir.actions.act_window,name:sga_file.sga_file_action_view
+#: model:ir.ui.menu,name:sga_file.Processed Files
+msgid "Sga File"
+msgstr "Fichero (sga)"
+
+#. module: sga_file
+#: model:ir.actions.act_window,name:sga_file.sga_file_line_action_view
+#: model:ir.ui.menu,name:sga_file.Processed Lines
+msgid "Sga File Line"
+msgstr "Línea de fichero"
+
+#. module: sga_file
+#: model:ir.module.category,name:sga_file.module_category_sga_file_management
+#: model:ir.ui.menu,name:sga_file.menu_sga_mecalux
+msgid "Sga Mecalux"
+msgstr "Integración con mecalux"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_description
+msgid "Sga file description"
+msgstr "Descripción del fichero de variables"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_sga_file_id
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_line_sga_file_id
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_sga_file_id
+msgid "Sga file id"
+msgstr "Id del fichero (sga)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_code
+msgid "Sga file type"
+msgstr "Tipo de fichero"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_sga_file_var_ids
+msgid "Sga file var ids"
+msgstr "Lista de variables"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_name
+msgid "Sga name"
+msgstr "Nombre del fichero"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_res_partner_sga_operation
+#: model:ir.model.fields,field_description:sga_file.field_res_users_sga_operation
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_sga_operation
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sga_operation
+msgid "Sga operation"
+msgstr "Operacion (sga)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_sga_state
+#: model:ir.model.fields,field_description:sga_file.field_res_partner_sga_state
+#: model:ir.model.fields,field_description:sga_file.field_res_users_sga_state
+msgid "Sga state"
+msgstr "Estado (sga)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_sga_warehouse_code
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_warehouse_code
+msgid "Short Name"
+msgstr "Nombre corto"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_delivery_carrier_sga_warehouse_code
+#: model:ir.model.fields,help:sga_file.field_stock_picking_warehouse_code
+msgid "Short name used to identify your warehouse"
+msgstr "Nombre corto usado para identificar su almacén"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_stock_pack_operation_sga_sustitute_qty
+msgid "Si se informa sustitute_prod_code, es la cantidad\n"
+"de producto a sustituir"
+msgstr "Si se informa sustitute_prod_code, es la cantidad\n"
+"de producto a sustituir"
+
+#. module: sga_file
+#: selection:stock.picking,sga_state:0
+msgid "Sin integracion"
+msgstr "Sin integracion"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_state
+msgid "State"
+msgstr "Estado"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_shipping_city
+msgid "State Name"
+msgstr "Nombre provincia"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_sga_stock
+msgid "Stock (SGA)"
+msgstr "Stock (SGA)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_line_stock_move_id
+msgid "Stock move id"
+msgstr "Id del movimiento de stock"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_pack_operation_sga_sustitute_qty
+msgid "Sustitute qty"
+msgstr "Sustitute qty"
+
+#. module: sga_file
+#: model:ir.actions.act_window,name:sga_file.sga_destination_tree_view_action
+msgid "Tabla de destinos"
+msgstr "Tabla de destinos"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_stock_picking_type
+msgid "The picking type determines the picking view"
+msgstr "El tipo de albarán determina la vista de albarán"
+
+#. module: sga_file
+#: model:ir.actions.act_window,help:sga_file.sga_destination_tree_view_action
+msgid "This menu allow you to prepare and reserve some quantities\n"
+"                    of products."
+msgstr "This menu allow you to prepare and reserve some quantities\n"
+"                    of products."
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_stock_picking_sgatype_id
+msgid "Tipo de albaran/venta (SGA)"
+msgstr "Tipo de albaran/venta (SGA)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_product_packaging_sga_containertype_code_id
+msgid "Tipo de contenedor"
+msgstr "Tipo de contenedor"
+
+#. module: sga_file
+#: model:ir.model.fields,help:sga_file.field_product_packaging_sga_containertype_code_id
+msgid "Tipo de contenedor de Mecalux"
+msgstr "Tipo de contenedor de Mecalux"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_type
+msgid "Tipo de fichero (I/O)"
+msgstr "Tipo de fichero (I/O)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_object_type
+msgid "Tipo de objeto"
+msgstr "Tipo de objeto"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_sga_material_abc_code
+msgid "Tipo de rotabilidad"
+msgstr "Tipo de rotabilidad"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_sgatype_code
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_stock_picking_sgatype_code
+msgid "Tipo de venta (SGA)"
+msgstr "Tipo de venta (SGA)"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_stock_picking
+msgid "Transfer"
+msgstr "Transferencia"
+
+#. module: sga_file
+#: selection:stock.pack.operation,sga_catch_weight:0
+#: selection:stock.pack.operation,sga_disable_alt_product:0
+#: selection:stock.picking,verify_stock:0
+msgid "True"
+msgstr "True"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_sga_dst
+#: model:ir.model.fields,field_description:sga_file.field_product_product_sga_dst
+#: model:ir.model.fields,field_description:sga_file.field_product_template_sga_dst
+msgid "Ubicación-Destino"
+msgstr "Ubicación-Destino"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_delivery_carrier_sga_desc_uom_base_code
+#: model:ir.model.fields,field_description:sga_file.field_product_packaging_sga_desc_uom_base_code
+msgid "Unit of Measure"
+msgstr "Unidad de medida"
+
+#. module: sga_file
+#: model:res.groups,name:sga_file.group_sga_file_user
+msgid "User"
+msgstr "Usuario"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_default
+msgid "V. por defecto"
+msgstr "V. por defecto"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_verify_stock
+msgid "Verifica stock"
+msgstr "Verifica stock"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_version
+msgid "Version"
+msgstr "Version"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_version
+msgid "Version (Solo modo dev.)"
+msgstr "Version (Solo modo dev.)"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_stock_warehouse
+#: model:ir.model.fields,field_description:sga_file.field_stock_picking_warehouse_id
+msgid "Warehouse"
+msgstr "Almacén"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_interface_funtions
+msgid "interface.funtions"
+msgstr "interface.funtions"
+
+#. module: sga_file
+#: selection:sgavar.file.var,mecalux_type:0
+msgid "one2many"
+msgstr "one2many"
+
+#. module: sga_file
+#: sql_constraint:product.category:0
+msgid "producttype code must be unique."
+msgstr "El código del tipo de producto debe ser único."
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sale_order_type
+msgid "sale.order.type"
+msgstr "Tipo de orden de venta"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sga_carrier
+msgid "sga.carrier"
+msgstr "Transportista (sga)"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sga_containertype
+msgid "sga.containertype"
+msgstr "Tipo de contenedor (sga)"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sga_destination
+msgid "sga.destination"
+msgstr "Destino (sga)"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sga_file
+msgid "sga.file"
+msgstr "Fichero (sga)"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sga_file_error
+msgid "sga.file.error"
+msgstr "Error (sga)"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sga_file_line
+msgid "sga.file.line"
+msgstr "Linea (sga)"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sgavar_file
+msgid "sgavar.file"
+msgstr "Fichero de variables (sga)"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_sgavar_file_var
+msgid "sgavar.file.var"
+msgstr "Variable (sga)"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_stock_config_settings
+msgid "stock.config.settings"
+msgstr "Parámetros de configuración de existencias"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_stock_inventory_issue
+msgid "stock.inventory.issue"
+msgstr "Incidencia en inventario"
+
+#. module: sga_file
+#: model:ir.model,name:sga_file.model_stock_picking_sgatype
+msgid "stock.picking.sgatype"
+msgstr "Tipo de pick (sga)"
+
+#. module: sga_file
+#: model:ir.model.fields,field_description:sga_file.field_sga_file_error_version
+msgid "version"
+msgstr "version"
+

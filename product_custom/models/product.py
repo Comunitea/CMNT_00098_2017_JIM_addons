@@ -2,7 +2,7 @@
 # Copyright 2017 Omar Castiñeira, Comunitea Servicios Tecnológicos S.L.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields, _
+from odoo import models, fields, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 
 
@@ -22,6 +22,8 @@ class ProductProduct(models.Model):
 
     volume = fields.Float('Volume', help="The volume in m3.", digits=(10, 6))
 
+    #def apply_package_dimensions(self):
+
 
 class ProductPackaging(models.Model):
 
@@ -30,5 +32,12 @@ class ProductPackaging(models.Model):
     def compute_product_dimensions(self):
         if self.qty == 0:
             raise ValidationError(_("Check quantity !!!!"))
-        self.product_tmpl_id.weight = self.max_weight / self.qty
-        self.product_tmpl_id.volume = self.height * self.width * self.length / (self.qty * 1000000)
+        if not len(self.product_tmpl_id.product_variant_ids) > 1:
+            self.product_tmpl_id.weight = self.max_weight / self.qty
+            self.product_tmpl_id.volume = self.height * self.width * self.length / (self.qty * 1000000)
+        else:
+            for product in self.product_tmpl_id.product_variant_ids:
+                product.weight = self.max_weight / self.qty
+                product.volume = self.height * self.width * self.length / (self.qty * 1000000)
+
+        return True

@@ -20,7 +20,8 @@ import re
 
 DELETE_FILE = False
 ERRORS = 3
-
+ODOO_READ_FOLDER = 'Send'
+ODOO_WRITE_FOLDER = 'Receive'
 
 class ConfigPathFiles(models.TransientModel):
 
@@ -56,7 +57,7 @@ class ConfigPathFiles(models.TransientModel):
         import os
         if os.path.isdir(self.path_files):
             try:
-                for folder in ('in', 'out', 'error', 'archive', 'zip', 'delete', 'log'):
+                for folder in (ODOO_READ_FOLDER, ODOO_WRITE_FOLDER, 'error', 'archive', 'zip', 'delete', 'log'):
                     new_path = "%s/%s" % (self.path_files, folder)
                     if not os.path.exists(new_path):
                         os.makedirs(new_path)
@@ -111,7 +112,7 @@ class MecaluxFile(models.Model):
     code = fields.Char('Sga file type', size=3)
     version = fields.Char("Version", size=2)
     odoo_model = fields.Many2one('ir.model', "Odoo Model")
-    model = fields.Char(related = 'odoo_model.name')
+    model = fields.Char(related='odoo_model.name')
     cte_name = fields.Char("Cte name")
     sga_file_var_ids = fields.One2many('sgavar.file.var','sga_file_id')
     version_active = fields.Boolean('Active')
@@ -163,7 +164,6 @@ class MecaluxFile(models.Model):
                 en = st + var.length
                 var.st = st
                 var.en = en
-
         return True
 
 class MecaluxFileHeader(models.Model):
@@ -178,7 +178,7 @@ class MecaluxFileHeader(models.Model):
 
     state = fields.Selection([('W', 'En espera'), ('P', 'Procesado'), ('E', 'Error')])
     errors = fields.Integer('Errores', help="Numero de veces que debe aparecer el error antes de mover a error", default=1)
-    type = fields.Selection ([('in', 'De Mecalux a Odoo'), ('out', 'De Odoo a Mecalux')], string ="Tipo de fichero (I/O)", translate=True)
+    type = fields.Selection ([(ODOO_READ_FOLDER, 'De Mecalux a Odoo'), (ODOO_WRITE_FOLDER, 'De Odoo a Mecalux')], string ="Tipo de fichero (I/O)", translate=True)
 
     file_time = fields.Datetime(string='Fecha/hora del archivo')
     version = fields.Integer('Version (Solo modo dev.)')
@@ -187,13 +187,13 @@ class MecaluxFileHeader(models.Model):
 
 
     @api.model
-    def set_file_name(self, type=False, version=False, file_date=False):
+    def set_file_name(self, file_type=False, version=False, file_date=False):
 
-        if type and version and datetime == False:
+        if file_type and version and datetime == False:
             return False
         else:
             version = int(version)
-            filename = u'%s%02d%04d%02d%02d%02d%02d%02d' %(type, version,
+            filename = u'%s%02d%04d%02d%02d%02d%02d%02d' %(file_type, version,
                                                            file_date.year,
                                                            file_date.month,
                                                            file_date.day,
@@ -220,7 +220,7 @@ class MecaluxFileHeader(models.Model):
     @api.model
     def get_sga_version(self, sga_filename):
         if sga_filename:
-            return sga_filename[3,5]
+            return sga_filename[3, 5]
         else:
             return False
 
@@ -263,10 +263,9 @@ class MecaluxFileHeader(models.Model):
         return val
 
     def format_from_mecalux_number(self, value, length_in=(12, 7, 5), default=False, fillchar='0'):
-
         length, length_int, length_dec = length_in
         value = str(value)
-        if length_dec>0:
+        if length_dec > 0:
             res = value[0:length_int] + '.' + value[length_int: length_int + length_dec]
             return float(res)
         else:
@@ -327,7 +326,7 @@ class MecaluxFileHeader(models.Model):
         return False
 
     @api.model
-    def create_new_sga_file(self, sga_filename, dest_path='in', create=True, version = 0):
+    def create_new_sga_file(self, sga_filename, dest_path=ODOO_READ_FOLDER, create=True, version = 0):
 
         if create:
             sga_filename = '%s%02d' % (sga_filename[0:17], version)
@@ -407,13 +406,12 @@ class MecaluxFileHeader(models.Model):
     def check_sga_name(self, filename, path):
         # compruebo que el fichero no este en la bd.
         # si esta lo borro y creo uno nuevo
-
         self.write_log("Proceso ... (%s)" % filename)
         domain = [('name', '=', filename)]
         sga_file = self.env['sga.file'].search(domain)
         if sga_file:
             sga_file.unlink()
-        sga_file = self.create_new_sga_file(filename, 'in', create=False)
+        sga_file = self.create_new_sga_file(filename, ODOO_READ_FOLDER, create=False)
         if not sga_file:
             error_str = 'Error al crear %s en la BD' % filename
             sga_file.write_log(error_str)
@@ -438,7 +436,6 @@ class MecaluxFileHeader(models.Model):
             self.write_log("Desde mecalux inventory STO ...")
             process = self.env['stock.inventory'].import_inventory_STO(self.id)
 
-
         elif self.file_code == 'CRP':
             self.write_log("Desde mecalux picking CRP ...")
             process = self.env['stock.picking'].import_mecalux_CRP(self.id)
@@ -458,7 +455,6 @@ class MecaluxFileHeader(models.Model):
             proc_error = True
         if proc_error:
             self.errors += 1
-
             self.write_log("-- ERROR >> %s" % self.sga_file)
             self.move_file('error', self.name)
         return process
@@ -467,7 +463,7 @@ class MecaluxFileHeader(models.Model):
     def sga_process_file_xmlrpc(self):
         return self.process_sga_files()
 
-    def process_sga_files(self, file_type=False, folder='in'):
+    def process_sga_files(self, file_type=False, folder=ODOO_READ_FOLDER):
 
         res_file = False
         global_path = u'%s/%s' %(self.get_global_path(), folder)
@@ -533,14 +529,12 @@ class MecaluxFileHeader(models.Model):
                 new_sga_file.write_log('--> Modelo %s'%model)
 
                 for val in sgavar.sga_file_var_ids:
-                    ## miro si es producto de tipo product
+
                     value = False
-                    print val.name
                     length = [val.length, val.length_int, val.length_dec]
 
                     # Si viene en el context forzada la variable
                     if self._context.get(val.name, False):
-                        #Si vienen forzado en el contexto la variable var.name
                         var_str = self.odoo_to_mecalux(self._context.get(val.name),
                                                        length, val.mecalux_type, val.default, val.fillchar)
 
@@ -564,17 +558,19 @@ class MecaluxFileHeader(models.Model):
 
                         if value == '' and not val.default:
                             raise UserError("Revisa la configuracion del campo %s del modelo %s"%(val.name, val.sga_file_id))
+
                         var_str = self.odoo_to_mecalux(value, length, val.mecalux_type, val.default, val.fillchar)
                     else:
-                        # SListado de lineas
+                        # Listado de lineas
                         new_model = model[val.odoo_name.name]
                         new_sgavar = self.env['sgavar.file'].search([('code', '=', val.default)], limit=1)
+                        if new_sgavar.filter:
+                            new_model = new_model.filtered(eval(new_sgavar.filter))
                         value = len(new_model) or 0
                         var_str = self.odoo_to_mecalux(value, length, val.mecalux_type, val.default, val.fillchar)
                         line_ids = True
 
                     model_str += var_str
-
                 res += model_str + '\n'
 
                 if line_ids:
@@ -600,7 +596,7 @@ class MecaluxFileHeader(models.Model):
         if not sga_file_name:
             raise ValidationError("Error en el nombre del fichero")
 
-        new_sga_file = self.create_new_sga_file(sga_file_name, 'out', create=create)
+        new_sga_file = self.create_new_sga_file(sga_file_name, ODOO_WRITE_FOLDER, create=create)
 
         if not new_sga_file:
             raise ValidationError("Error. Revisa el fichero del log para mas detalles")
@@ -649,7 +645,7 @@ class MecaluxFileHeader(models.Model):
 
         if type == 'A':
             # Mecalux alphanumeric
-            return type_A(value)
+            return type_A(value)[0:length_int]
 
         elif type == 'B':
             # Mecalux Boolean

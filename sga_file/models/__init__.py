@@ -7,7 +7,7 @@ import sga_partner
 import sga_product
 import sga_carrier
 #import sale_order
-import purchase_order
+
 import stock_picking
 import stock_inventory
 import sga_error

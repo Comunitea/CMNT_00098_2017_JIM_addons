@@ -18,10 +18,10 @@ class SGAfileerror(models.Model):
     sga_operation = fields.Selection([('A', 'Alta'), ('M', 'Modificacion'),
                                       ('B', 'Baja'), ('F', 'Modificacion + Alta')], default='A')
     object_type = fields.Char('Tipo de objeto', size=3)
-    version = fields.Integer ('version')
+    version = fields.Integer('version')
     object_id = fields.Char("Id del objeto", size=50)
     error_code = fields.Integer('Codigo de error')
-    error_message = fields.Char("Mensaje de error", size=255)
+    error_message = fields.Char("Mensaje de error")
     date_error = fields.Char('Fecha')
 
 
