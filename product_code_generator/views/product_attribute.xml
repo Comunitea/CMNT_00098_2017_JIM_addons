@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <record id="attribute_value_tree_view_code" model="ir.ui.view">
+        <field name="name">attribute.value.tree.code</field>
+        <field name="model">product.attribute.value</field>
+        <field name="inherit_id" ref="product.variants_tree_view"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="code"/>
+            </field>
+        </field>
+    </record>
+    </data>
+</odoo>
