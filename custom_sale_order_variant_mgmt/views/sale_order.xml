@@ -104,6 +104,7 @@
                                     <field name="product_uom" />
                                     <field name="analytic_tag_ids" groups="analytic.group_analytic_accounting" widget="many2many_tags"  attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
                                 </group>
+                                <group>
                                      <field name="route_id" groups="sale_stock.group_route_so_lines"/>
                                     <field name="price_unit"  attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
                                     <field name="purchase_price" groups="base.group_user"  attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
@@ -120,7 +121,6 @@
                                         context="{'default_product_tmpl_id': product_template}"
                                         attrs="{'invisible': ['|', ('state', 'not in', ('draft', 'sent')), ('product_attribute_value_ids', '=', [])]}" />
 
-                                        <group>
                                 </group>
                             </group>
                         </form>
