@@ -16,6 +16,7 @@
     'data': ['views/a3_import_log_view.xml',
              'views/res_partner_view.xml',
              'views/res_company_view.xml',
+             'wizard/acc_import_files_view.xml',
              'data/a3_import_data.xml',
              'security/ir.model.access.csv'],
     'installable': True,
