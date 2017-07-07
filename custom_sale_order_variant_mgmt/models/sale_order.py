@@ -39,13 +39,14 @@ class SaleOrderLineTemplate(models.Model):
     @api.multi
     def write(self, vals):
         for template in self:
-            line_vals = vals
+            line_vals = vals.copy()
             if template.lines_qty > 1:
                 line_vals.pop('product_id', False)
                 line_vals.pop('price_unit', False)
+                line_vals.pop('product_uom_qty', False)
                 line_vals.pop('purchase_price', False)
                 line_vals.pop('name', False)
-            template.order_lines.write(vals)
+            template.order_lines.write(line_vals)
         return super(SaleOrderLineTemplate, self).write(vals)
 
     @api.model
