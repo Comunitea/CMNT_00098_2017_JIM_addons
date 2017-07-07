@@ -37,6 +37,9 @@ class SaleManageVariant(models.TransientModel):
                 active_id=template.order_id.id)).button_transfer_to_order()
         if not template.order_lines:
             template.unlink()
+        else:
+            template.product_uom_qty = \
+                sum([x.product_uom_qty for x in template.order_lines])
 
     @api.multi
     @api.onchange('product_tmpl_id')
