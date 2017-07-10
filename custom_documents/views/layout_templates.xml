@@ -94,7 +94,7 @@
     <template id="custom_layout_footer">
         <div class="footer">
             <div class="text-center">
-                <span t-esc="company.qweb_footer"/>
+                <span t-raw="company.qweb_footer"/>
             </div>
         </div>
     </template>
