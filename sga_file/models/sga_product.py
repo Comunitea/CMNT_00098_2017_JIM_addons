@@ -272,9 +272,8 @@ class SGAProductProduct(models.Model):
                                     self.get_variants_name(res.attribute_value_ids))
             res.sga_prod_shortdesc = short[0:80]
 
-
-
-        if res and res.check_mecalux_ok():
+        if res and res.check_mecalux_ok() and \
+                        values.get('sga_state', False) != 'AC':
             icp = self.env['ir.config_parameter']
             if icp.get_param('product_auto'):
                 res.new_mecalux_file(operation="F")
