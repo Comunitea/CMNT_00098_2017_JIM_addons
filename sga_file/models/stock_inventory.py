@@ -105,7 +105,6 @@ class StockInventorySGA(models.Model):
 
 
     def import_inventory_STO(self, file_id):
-        import  ipdb; ipdb.set_trace()
         sga_file = self.env['sga.file'].browse(file_id)
         sga_file_name = sga_file.name
         sga_file = open(sga_file.sga_file, 'r')

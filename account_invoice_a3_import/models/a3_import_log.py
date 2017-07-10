@@ -50,6 +50,7 @@ class A3ImportLog(models.Model):
                 tag_ids.append(tags[0].id)
         invoice_vals = {
             'type': refund and 'out_refund' or 'out_invoice',
+            'sii_refund_type': refund and 'I' or False,
             'journal_id': self.env["account.journal"].
             search([('type', '=', 'sale'),
                     ('company_id', '=', company.id)])[0].id,
