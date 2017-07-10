@@ -94,9 +94,15 @@
                     <field name="stock_picking_sgatype_id" invisible="1"/>
                     <!--<field name="sga_state" attrs="{'invisible': [('sga_state', '=', 'NI')], 'readonly': '1'}"/>-->
                 </field>
+                <field name="number_of_packages" position="after">
+                    <field name="sga_weight"></field>
+                </field>
 
             </field>
         </record>
+        <!--view_picking_withcarrier_out_form-->
+
+
         <record model="ir.ui.view" id="vpicktree_non_create">
             <field name="name">view.picking.tree.non.create</field>
             <field name="model">stock.picking</field>

@@ -33,7 +33,7 @@ class ProductTemplate(models.Model):
             code[template.id] = default_code
         for template in (self - unique_variants):
             default_code = template.product_variant_ids and \
-                           template.product_variants_ids[0].default_code.split('.')[0] \
+                           template.product_variant_ids[0].default_code.split('.')[0] \
                            or template.default_code
             code[template.id] = default_code
 

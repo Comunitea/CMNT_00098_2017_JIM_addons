@@ -178,7 +178,7 @@ class MecaluxFileHeader(models.Model):
 
     state = fields.Selection([('W', 'En espera'), ('P', 'Procesado'), ('E', 'Error')])
     errors = fields.Integer('Errores', help="Numero de veces que debe aparecer el error antes de mover a error", default=1)
-    type = fields.Selection ([(ODOO_READ_FOLDER, 'De Mecalux a Odoo'), (ODOO_WRITE_FOLDER, 'De Odoo a Mecalux')], string ="Tipo de fichero (I/O)", translate=True)
+    file_type = fields.Selection ([(ODOO_READ_FOLDER, 'De Mecalux a Odoo'), (ODOO_WRITE_FOLDER, 'De Odoo a Mecalux')], string ="Tipo de fichero (I/O)", translate=True)
 
     file_time = fields.Datetime(string='Fecha/hora del archivo')
     version = fields.Integer('Version (Solo modo dev.)')
@@ -327,7 +327,6 @@ class MecaluxFileHeader(models.Model):
 
     @api.model
     def create_new_sga_file(self, sga_filename, dest_path=ODOO_READ_FOLDER, create=True, version = 0):
-
         if create:
             sga_filename = '%s%02d' % (sga_filename[0:17], version)
             domain = [('name', '=', sga_filename)]
@@ -424,7 +423,7 @@ class MecaluxFileHeader(models.Model):
         process = []
         proc_error = False
 
-        if self.file_code == "CSO":
+        if self.file_code=="CSO":
             self.write_log("Desde mecalux picking CSO ...")
             process = self.env['stock.picking'].import_mecalux_CSO(self.id)
 
@@ -515,7 +514,6 @@ class MecaluxFileHeader(models.Model):
         def get_line(sgavar, model_pool):
             # TODO Revisar si hace falta contador para los
             # todo numeros de lineas o vale el id de los _ids
-
             cont = 0
             res = ''
             line_ids = False

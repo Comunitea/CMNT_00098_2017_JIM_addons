@@ -12,6 +12,8 @@ from datetime import datetime, timedelta
 import os
 import re
 
+SGA_STATE = [('AC', 'Actualizado'), ('PA', 'Pendiente actualizar'), ('BA', 'Baja'), ('ER', 'Error')]
+
 
 class DeliveryCarrierSGA(models.Model):
 
@@ -22,8 +24,8 @@ class DeliveryCarrierSGA(models.Model):
     carrier_code = fields.Char("Carrier Code", required=True, size=20, help ="SGA code to mecalux")
     description = fields.Char("Description")
     contact = fields.Char("Contact")
-    sga_state = fields.Selection([(1, 'Actualizado'), (0, 'Pendiente actualizar')],
-                                 default=0,
+    sga_state = fields.Selection(SGA_STATE,
+                                 default='PA',
                                  help="Estado integracion con mecalux")
 
     _sql_constraints = [
@@ -34,14 +36,14 @@ class DeliveryCarrierSGA(models.Model):
     @api.onchange('description', 'contact', 'name')
     def onchange_carrier(self):
         for categ in self:
-            categ.sga_state = 0
+            categ.sga_state = 'PA'
 
     @api.multi
     def write(self, values):
         #return super(DeliveryCarrierSGA, self).write(values)
 
         #lanza un write en product. Revisar
-        values['sga_state'] = 1
+        values['sga_state'] = 'AC'
         res = super(DeliveryCarrierSGA, self).write(values)
 
         fields_to_check = ('description', 'contact', 'name', 'carrier_code')
@@ -52,14 +54,14 @@ class DeliveryCarrierSGA(models.Model):
             if icp.get_param('product_auto'):
                 res_sga = self.export_delivery_carrier_to_mecalux(operation="F")
                 if not res_sga:
-                    self.sga_state = 0
+                    self.sga_state = 'ER'
         return res
 
     @api.model
     def create(self, values):
         #return super(DeliveryCarrierSGA, self).create(values)
         # lanza un write en product. Revisar
-        values['sga_state'] = 1
+        values['sga_state'] = 'AC'
         res = super(DeliveryCarrierSGA, self).create(values)
         icp = self.env['ir.config_parameter']
         if icp.get_param('product_auto'):
@@ -83,5 +85,5 @@ class DeliveryCarrierSGA(models.Model):
             res = 0
 
         if not res:
-            self.write({'sga_state': res})
+            self.write({'sga_state': 'ER'})
         return res

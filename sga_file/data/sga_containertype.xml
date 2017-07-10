@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <!-- TAGS FOR CASH FLOW STATEMENT -->
+
+        <record id="eu_sga_containertype" model="sga.containertype">
+            <field name="code">EU</field>
+            <field name="description">Europeo</field>
+            <field name="default">1</field>
+        </record>
+        <record id="ame_sga_containertype" model="sga.containertype">
+            <field name="code">AME</field>
+            <field name="description">Americano</field>
+        </record>
+        <record id="maq_sga_containertype" model="sga.containertype">
+            <field name="code">MAQ</field>
+            <field name="description">Maquinas</field>
+        </record>
+        <record id="ping_sga_containertype" model="sga.containertype">
+            <field name="code">PINGPONG</field>
+            <field name="description">Ping Pong</field>
+        </record>
+    </data>
+</odoo>

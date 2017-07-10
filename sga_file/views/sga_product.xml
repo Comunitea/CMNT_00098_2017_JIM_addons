@@ -7,18 +7,14 @@
             <field name="model">product.product</field>
             <field name="inherit_id" ref="product.product_normal_form_view"/>
             <field name="arch" type="xml">
-
-                    <xpath expr="//header" position = "inside">
-                        <div>
-                        <field name="sga_state" widget="statusbar"
-                        />
-                        </div>
-                    </xpath>
+                <xpath expr="//header" position = "inside">
+                    <div>
+                        <field name="sga_state" widget="statusbar"/>
+                    </div>
+                </xpath>
                 <field name="categ_id" position="after">
-
-                        <field name="sga_prod_shortdesc"/>
-                    </field>
-
+                    <field name="sga_prod_shortdesc"/>
+                </field>
             </field>
         </record>
 

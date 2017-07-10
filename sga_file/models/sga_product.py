@@ -107,9 +107,10 @@ class SGAProductCategory(models.Model):
 class SGAContainerTypeCode(models.Model):
 
     _name ="sga.containertype"
+    _rec_name = 'code'
 
-    name = fields.Char("Codigo de contenedor (SGA)", size=10)
-    sga_desc_containertype_code = fields.Char("Descripcion de contenedor (SGA)")
+    code = fields.Char("Codigo de contenedor (SGA)", size=10)
+    description = fields.Char("Descripcion de contenedor (SGA)")
 
 class SGAProductPackaging(models.Model):
 
@@ -126,8 +127,8 @@ class SGAProductPackaging(models.Model):
     sga_containertype_code_id = fields.Many2one('sga.containertype',
                                                 "Tipo de contenedor",
                                                 help="Tipo de contenedor de Mecalux")
-    sga_containertype_code = fields.Char(related="sga_containertype_code_id.name")
-    sga_desc_containertype_code = fields.Char(related="sga_containertype_code_id.sga_desc_containertype_code")
+    sga_containertype_code = fields.Char(related="sga_containertype_code_id.code")
+    sga_desc_containertype_code = fields.Char(related="sga_containertype_code_id.description")
 
     @api.model
     def default_get(self, fields):
@@ -252,13 +253,27 @@ class SGAProductProduct(models.Model):
                 res = product.new_mecalux_file(operation)
         return res
 
+    def get_variants_name(self, line_ids):
+        name = ''
+        for val in line_ids:
+            name += u' %s: %s'%(val.attribute_id.name, val.name)
+        return name
 
     @api.model
     def create(self, values):
-
         res = super(SGAProductProduct, self).create(values)
+        # Necesito descripcion corta para la pda
         if self.type != 'product':
             return res
+        if not res.sga_prod_shortdesc:
+            short = res.product_tmpl_id.name
+            if res.attribute_line_ids:
+                short = u' %s [%s]'%(res.product_tmpl_id.name,
+                                    self.get_variants_name(res.attribute_value_ids))
+            res.sga_prod_shortdesc = short[0:80]
+
+
+
         if res and res.check_mecalux_ok():
             icp = self.env['ir.config_parameter']
             if icp.get_param('product_auto'):
@@ -297,7 +312,6 @@ class SGAProductTemplate(models.Model):
 
     _inherit = "product.template"
 
-
     @api.model
     def _get_default_dst(self):
         domain = [('code', '=', 'TRASLO')]
@@ -309,7 +323,7 @@ class SGAProductTemplate(models.Model):
     sga_state = fields.Selection(SGA_STATE, 'Estado Mecalux',
                                  default='PA',
                                  help="Estado integracion con mecalux",
-                                 compute='_compute_sga_state', inverse='_set_sga_state', store=True)
+                                 compute='_compute_sga_state', readonly=True, store=True)
     sga_dst = fields.Many2one('sga.destination', 'Ubicación-Destino', default=_get_default_dst)
     sga_dst_code = fields.Char(related="sga_dst.code")
 
@@ -320,10 +334,14 @@ class SGAProductTemplate(models.Model):
         for product in self.product_variant_ids:
             if product.sga_state != 'AC':
                 sga_state = 'PA'
+            if product.sga_state == 'ER':
+                sga_state = 'ER'
+                break
         self.sga_state = sga_state
 
     @api.one
     def _set_sga_state(self):
+
         for product in self.product_variant_ids:
             product.sga_state = self.sga_state
 
@@ -339,18 +357,26 @@ class SGAProductTemplate(models.Model):
                     product.export_product_to_mecalux(operation)
         return True
 
-
     @api.model
     def create(self, vals):
-        res = super(SGAProductTemplate, self).create(vals)
-        #compruebo si hay sga para mecalux y si no lo creo
-        sga_packaging = res.packaging_ids.filtered(lambda r: r.type == "sga")
-
+        #Necesito un packaging para para cada template, si no se crea al vuelo.
+        create_sga_packaging = True if self.type == "product" else False
+        if create_sga_packaging:
+            for sga_packaging in vals.get('packaging_ids', False):
+                if sga_packaging[2]['ul_type'] == 'sga':
+                    create_sga_packaging = False
+                    break
+            if create_sga_packaging:
+                sga_pack_vals = {
+                    'ul_type': 'sga',
+                    'qty': 500,
+                    'name': 'Mecalux',
+                    'sga_containertype_code_id':
+                        self.env['sga.containertype'].search([('code', '=', 'EU')]).id
+                    }
+                vals['packaging_ids'].append([0, 0, sga_pack_vals])
+        return super(SGAProductTemplate, self).create(vals)
 
 class SGAProductUOM(models.Model):
     _inherit = "product.uom"
     sga_uom_base_code = fields.Char("Codigo de u.m.(SGA)", size=12, required=True)
-
-class ProductSupplier(models.Model):
-
-    _inherit = "product.supplierinfo"

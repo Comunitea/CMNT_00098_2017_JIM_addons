@@ -102,6 +102,7 @@ class StockPickingSGA(models.Model):
     shipping_partner_name = fields.Char(related="partner_id.name")
     account_code = fields.Char(related="partner_id.ref")
 
+    sga_weight = fields.Float(string='Shipping Weight', help="Imported weight from mecalux")
 
     @api.onchange('picking_type_id', 'partner_id')
     def onchange_picking_type(self):
@@ -136,7 +137,7 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def move_to_NE(self):
-        sga_states_to_NE = ('PM', 'EI', 'EE', 'MT')
+        sga_states_to_NE = ('PM', 'EI', 'EE', 'MT', False)
         picks = self.filtered(lambda x: x.sga_state in sga_states_to_NE)
         picks.write({'sga_state': 'NE'})
 
@@ -231,19 +232,38 @@ class StockPickingSGA(models.Model):
                     pool_ids.append(pick.id)
                     op_ok = False
                     #sga_state
-                    st=70
-                    en=st+30
+                    st = 70
+                    en = st+30
                     sga_state = line[st:en].strip()
                     pick.sga_state = "MT" if sga_state == "CLOSE" else "MC"
 
                     #date_done
-                    st= 100
-                    en= st + 14
+                    st = 100
+                    en = st + 14
                     date_done = line[st:en].strip()
                     pick.date_done = sga_file_obj.format_from_mecalux_date(date_done)
 
+                    st = 378
+                    en = st + 10
+                    weight = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
+                    pick.sga_weight = weight
+
+                    st = 388
+                    en = st + 10
+                    bultos = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
+                    pick.number_of_packages = bultos
+
+                    st = 398
+                    en = st + 50
+                    carrier_code = line[st:en].strip()
+                    domain = [('carrier_code', '=', carrier_code)]
+                    carrier = self.env['delivery.carrier'].search(domain)
+                    self.carrier_id = carrier
+
                     domain = [('picking_id', '=', pick.id)]
                     ops = self.env['stock.pack.operation'].search(domain, order="line_number asc")
+
+
 
                 else:
                     str_error = "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (rec_order_code, n_line)
@@ -357,27 +377,23 @@ class StockPickingSGA(models.Model):
                     return False
                 else:
                     pool_ids.append(pick.id)
-                # Peso del pick
-                st = 376
-                en = st + 12
-                weight = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (12, 12, 0))
-                pick.weight = weight
 
-                #Numero de paquetes
+                st = 378
+                en = st + 10
+                weight = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
+                pick.sga_weight = weight
+
                 st = 388
                 en = st + 10
-                number_of_packages = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
-                pick.number_of_packages = number_of_packages
+                bultos = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
+                pick.number_of_packages = bultos
 
-                #codigo del transportista
                 st = 398
                 en = st + 50
                 carrier_code = line[st:en].strip()
-                carrier = self.env['delivery.carrier'].search([('carrier_code', '=', carrier_code)])
-                if not carrier:
-                    carrier = self.env['delivery.carrier'].create({'name': carrier_code,
-                                                                   'carrier_code': carrier_code})
-                pick.carrier_id = carrier.id
+                domain = [('carrier_code', '=', carrier_code)]
+                carrier = self.env['delivery.carrier'].search(domain)
+                pick.carrier_id = carrier
 
                 # Date_done de la fecha
                 st = 90
@@ -427,11 +443,12 @@ class StockPickingSGA(models.Model):
                             'product_id': product.id,
                             'sga_changed': True,
                             'qty_done': qty_done,
+                            'product_qty': qty_done,
                             'product_uom_id': uom.id,
                             'location_id': pick.location_id.id or pick.picking_type_id.default_location_src_id.id,
                             'location_dest_id': pick.location_dest_id.id or pick.picking_type_id.default_location_dest_id.id}
                     # NO CREO OPERACIONES NUEVAS PARA SALIDAS SIN OPS
-                    # self.env['stock.pack.operation'].create(values)
+                    self.env['stock.pack.operation'].create(values)
 
             else:
                 len(line) == LEN_DETAIL_LINE
