@@ -11,11 +11,12 @@
             </group>
             <field name="user_id" position="after">
                 <field name="partner_discount"/>
+                <field name="web_password"/>
             </field>
             <field name="company_id" position="after">
                 <field name="propietary"/>
             </field>
         </field>
     </record>
-    
+
 </odoo>
