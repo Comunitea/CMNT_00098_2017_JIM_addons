@@ -13,6 +13,7 @@
         'jim_stock',
         'chained_discount_commercial_rules',
         'telesale_manage_variants',
+        'custom_documents'
     ],
     'contributors': [
         "Comunitea ",
