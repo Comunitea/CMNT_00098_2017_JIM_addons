@@ -34,8 +34,8 @@ class StockInventoryLineSGA(models.Model):
         ctx = dict(self._context)
         ctx.update({'force_company': self.company_id.id, 'location_id': [self.location_id.id]})
         total_qties = self.product_id.sudo()._product_available()
-        self.global_qty = total_qties[self.product_id.id]['qty_available']
-        return
+        if total_qties:
+            self.global_qty = total_qties[self.product_id.id]['qty_available']
 
         # if not self.product_id:
         #     self.global_qty = 0
