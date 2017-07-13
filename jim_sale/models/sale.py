@@ -88,7 +88,6 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def _get_display_price(self, product):
-        import ipdb; ipdb.set_trace()
         res = super(SaleOrderLine, self)._get_display_price(product)
         # Search for specific prices in variants
         qty = product._context.get('quantity', 1.0)
