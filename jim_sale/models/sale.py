@@ -2,6 +2,7 @@
 # © 2016 Comunitea - Javier Colmenero <javier@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import api, fields, models
+import time
 
 
 class SaleOrder(models.Model):
@@ -83,4 +84,42 @@ class SaleOrderLine(models.Model):
         res = super(SaleOrderLine, self).product_id_change()
         if self.product_id.route_ids:
             self.route_id = self.product_id.route_ids[0]
+        return res
+
+    @api.multi
+    def _get_display_price(self, product):
+        res = super(SaleOrderLine, self)._get_display_price(product)
+        # Search for specific prices in variants
+        qty = product._context.get('quantity', 1.0)
+        vals = {}
+        today = time.strftime('%Y-%m-%d')
+        domain = [('partner_id', '=', self.order_id.partner_id.id),
+                  ('product_id', '=', self.product_id.id),
+                  ('min_qty', '<=', qty),
+                  '|',
+                  ('date_start', '=', False),
+                  ('date_start', '<=', today),
+                  '|',
+                  ('date_end', '=', False),
+                  ('date_end', '>=', today),
+        ]
+        customer_prices = self.env['customer.price'].\
+            search(domain, limit=1, order='min_qty desc')
+         # Search for specific prices in templates
+        if not customer_prices:
+            domain = [
+                ('partner_id', '=', self.order_id.partner_id.id),
+                ('product_tmpl_id', '=', self.product_id.product_tmpl_id.id),
+                ('min_qty', '<=', qty),
+                '|',
+                ('date_start', '=', False),
+                ('date_start', '<=', today),
+                '|',
+                ('date_end', '=', False),
+                ('date_end', '>=', today),
+            ]
+            customer_prices = self.env['customer.price'].\
+                search(domain, limit=1, order='min_qty desc')
+        if customer_prices:
+            return customer_prices.price
         return res
