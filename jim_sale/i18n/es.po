@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-05-18 22:06+0000\n"
-"PO-Revision-Date: 2017-05-18 22:06+0000\n"
+"POT-Creation-Date: 2017-07-13 15:12+0000\n"
+"PO-Revision-Date: 2017-07-13 15:12+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -26,6 +26,56 @@ msgid "Confirm Sale"
 msgstr "Confirmar venta"
 
 #. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_partner_id
+msgid "Customer"
+msgstr "Cliente"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_delivery_carrier_customer_product_prices
+#: model:ir.model.fields,field_description:jim_sale.field_delivery_carrier_customer_tmpl_prices
+#: model:ir.model.fields,field_description:jim_sale.field_product_product_customer_product_prices
+#: model:ir.model.fields,field_description:jim_sale.field_product_product_customer_tmpl_prices
+#: model:ir.model.fields,field_description:jim_sale.field_product_template_customer_tmpl_prices
+msgid "Customer Prices"
+msgstr "Precios de cliente"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.product_normal_form_view_prices
+#: model:ir.ui.view,arch_db:jim_sale.product_template_only_form_view_prices
+msgid "Customer prices"
+msgstr "Precios de cliente"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_date_end
+msgid "End Date"
+msgstr "Fecha finalización"
+
+#. module: jim_sale
+#: model:ir.model.fields,help:jim_sale.field_customer_price_date_end
+msgid "End date for this customer price"
+msgstr "Fecha final para este precio de cliente"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_id
+msgid "ID"
+msgstr "ID"
+
+#. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_in_qty
 msgid "Incoming qty"
 msgstr "Cantidad entrante"
@@ -40,13 +90,8 @@ msgstr "LQDR"
 
 #. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.view_order_form_add_states
-msgid "LQDR Done"
-msgstr "LQDR Hecho"
-
-#. module: jim_sale
-#: model:ir.ui.view,arch_db:jim_sale.view_order_form_add_states
-msgid "LQDR in Progress"
-msgstr "LQDR en progreso"
+msgid "LQDR Review Done"
+msgstr "LQDR revisión hecha"
 
 #. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.sale_order_view_search_inherit_quotation
@@ -54,9 +99,29 @@ msgid "LQDR order"
 msgstr "Pedido LQDR"
 
 #. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_location_id
 msgid "Location"
 msgstr "Ubicación"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_min_qty
+msgid "Min Quantity"
+msgstr "Cantidad mínima"
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_sale_order_line_template_state
@@ -69,14 +134,46 @@ msgid "Outgoing qty"
 msgstr "Cantidad saliente"
 
 #. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.stock_pack_picks_tree
+msgid "Package in tree"
+msgstr "Package in tree"
+
+#. module: jim_sale
+#: code:addons/jim_sale/models/stock_picking.py:19
+#, python-format
+msgid "Packing List"
+msgstr "Packing List"
+
+#. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.sale_order_view_search_inherit_quotation
 msgid "Pending Approval"
 msgstr "Pendiente aprobación"
 
 #. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.view_order_form_add_states
+msgid "Pending Done"
+msgstr "Pending Done"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_price
+msgid "Price"
+msgstr "Precio"
+
+#. module: jim_sale
+#: model:ir.model,name:jim_sale.model_product_product
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_product_id
+msgid "Product"
+msgstr "Producto"
+
+#. module: jim_sale
 #: model:ir.model,name:jim_sale.model_product_template
 msgid "Product Template"
 msgstr "Plantilla de producto"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.view_order_form_add_states
+msgid "Proforma"
+msgstr "Proforma"
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_real_qty
@@ -94,7 +191,42 @@ msgid "Sales Order Line"
 msgstr "Línea de pedido de venta"
 
 #. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_date_start
+msgid "Start Date"
+msgstr "Fecha de inicio"
+
+#. module: jim_sale
+#: model:ir.model.fields,help:jim_sale.field_customer_price_date_start
+msgid "Start date for this customer price"
+msgstr "Start date for this customer price"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_product_tmpl_id
+msgid "Template"
+msgstr "Plantilla"
+
+#. module: jim_sale
+#: model:ir.model.fields,help:jim_sale.field_customer_price_price
+msgid "The price to purchase a product"
+msgstr "El precio al que se compra un producto"
+
+#. module: jim_sale
+#: model:ir.model,name:jim_sale.model_stock_picking
+msgid "Transfer"
+msgstr "Transferir"
+
+#. module: jim_sale
+#: model:ir.model,name:jim_sale.model_customer_price
+msgid "customer.price"
+msgstr "customer.price"
+
+#. module: jim_sale
 #: model:ir.model,name:jim_sale.model_report_stock_forecast
 msgid "report.stock.forecast"
 msgstr "report.stock.forecast"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.view_picking_form_jim_packs
+msgid "📋Tree packs"
+msgstr "📋Tree packs"
 
