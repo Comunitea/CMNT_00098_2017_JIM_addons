@@ -81,16 +81,58 @@
         </t>
     </t>
 
-    <!-- ADD PROFORMA BUTTON -->
+    <!-- ADD PROFORMA AND PRINT ACL BUTTONS, REORDER AL BUTTONS -->
      <t t-extend="Totals-Order-Widget">
-        <t t-jquery="#buttons_order_div" t-operation="append">
-            <div class="order-button">
+        <t t-jquery="#buttons_order_div" t-operation="replace">
+            <div id="buttons_order_div" class="fullheight centerinside fullwidth">
+                <div class="order-button">
+                      <div class="fullheight centerinside fullwidth">
+                           <div class="centerthis">
+                      <button class="cancel-button fullwidth" tabIndex="20">CANCEL</button>
+                           </div>
+                      </div>
+                  </div>
+                  <div class="order-button">
+                    <div class="fullheight centerinside fullwidth">
+                      <div class="centerthis">
+                        <button type="button" class="save-button fullwidth" tabIndex="19">SAVE</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="order-button">
+                      <div class="fullheight centerinside fullwidth">
+                           <div class="centerthis">
+                      <button class="confirm-button fullwidth" tabIndex="21">CONFIRM</button>
+                           </div>
+                      </div>
+                  </div>
+                  <div class="order-button">
+                      <div class="fullheight centerinside fullwidth">
+                           <div class="centerthis">
+                            <button class="proforma-button fullwidth" tabIndex="22">PROFORMA</button>
+                           </div>
+                      </div>
+                  </div>
+                  <div class="order-button">
+                      <div class="fullheight centerinside fullwidth">
+                           <div class="centerthis">
+                                <t t-if="widget.ts_model.get('selectedOrder').get('state') == 'proforma'">
+                                    <button class="print-button fullwidth" tabIndex="21">PRINT PROFORMA</button>
+                                </t>
+                                <t t-if="widget.ts_model.get('selectedOrder').get('state') != 'proforma'">
+                                    <button class="print-button fullwidth" tabIndex="21">PRINT QUOTATION</button>
+                                </t>
+                           </div>
+                      </div>
+                  </div>
+                  <div class="order-button">
                   <div class="fullheight centerinside fullwidth">
                        <div class="centerthis">
-                        <button class="proforma-button fullwidth" tabIndex="22">PROFORMA</button>
+                            <button class="print-alm-button fullwidth" tabIndex="22">PRINT ORDER ALM</button>
                        </div>
                   </div>
-              </div>
+                </div>
+          </div>
         </t>
     </t>
 

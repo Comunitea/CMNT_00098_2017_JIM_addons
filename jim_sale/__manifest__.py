@@ -18,6 +18,7 @@
         "Javier Colmenero <javier@comunitea.com>"
     ],
     "data": [
+        'security/ir.model.access.csv',
         'views/product_view.xml',
         'views/sale_view.xml',
         'views/stock_picking.xml',

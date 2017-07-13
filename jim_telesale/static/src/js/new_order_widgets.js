@@ -266,6 +266,24 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
         var self=this;
         this._super();
         this.$('.proforma-button').click(function (){ self.promoCurrentOrder() });
+        this.$('.print-alm-button').click(function (){ self.printAlmOrder() });
+    },
+    printAlmOrder: function() {
+            var currentOrder = this.order_model;
+            if (!currentOrder.get('erp_id')){
+                alert(_t("You must save the order in the server in order to print it"));
+                return;
+            }
+            this.do_action({
+                 context: {'active_ids': [currentOrder.get('erp_id')]},
+                 data: null,
+                 name: 'Quotation / Order',
+                 report_file: 'sale.report_saleorder',
+                 report_name: 'sale.report_saleorder',
+                 report_type: 'qweb-pdf',
+                 type: 'ir.actions.report.xml'
+            });
+            // new Model('sale.order').call('print_order_from_ui',[currentOrder.get('erp_id')])
     },
     promoCurrentOrder: function() {
           var self = this;
