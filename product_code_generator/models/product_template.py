@@ -27,11 +27,22 @@ class ProductAttributeValue(models.Model):
     ]
 
 
+
+class ProductProduct(models.Model):
+
+    _inherit = 'product.product'
+
+    template_code = fields.Char(related="product_tmpl_id.template_code")
+
 class ProductTemplate(models.Model):
 
     _inherit = 'product.template'
 
     template_code = fields.Char("Template code", size=45)
+    
+    @api.onchange('default_code')
+    def onchange_default_code(self):
+        self.template_code = self.default_code
 
     @api.multi
     def create_variant_ids(self):
