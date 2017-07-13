@@ -89,7 +89,6 @@
                             <field name="name"/>
                             <field name="odoo_model"/>
                             <field name="odoo_name"/>
-                            <field name="odoo_many_name"/>
                             <field name="mecalux_type"/>
                         </group>
                         <group>

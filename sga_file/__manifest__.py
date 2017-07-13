@@ -16,12 +16,12 @@
         'sale_stock',
         'jim_stock',
         'delivery',
-        'product_custom'
-
+        'product_custom',
+        'product_code_generator'
     ],
     'contributors': [
         "Comunitea",
-        "Kiko Sanchez<kiko@comunitea.com>",    ],
+        "Kiko Sanchez<kiko@comunitea.com>",],
 
     "data": [
         'data/sga_data.xml',
@@ -35,7 +35,6 @@
         'views/sga_error.xml',
         'data/sga_containertype.xml',
         'security/ir.model.access.csv',
-
     ],
     "demo": [
 

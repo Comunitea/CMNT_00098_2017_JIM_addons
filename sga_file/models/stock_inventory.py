@@ -211,7 +211,6 @@ class StockInventorySGA(models.Model):
 
     def get_inventory_for(self, product_id, location_id, company_id):
 
-
         #miro si hay un inventario abierto para esta compañia y si no lo creo
         domain = [('location_id','=', location_id.id),
                   ('company_id','=',company_id.id),
