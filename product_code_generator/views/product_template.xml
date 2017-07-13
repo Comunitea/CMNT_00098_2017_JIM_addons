@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_template_property_form_add_custom" model="ir.ui.view">
+            <field name="name">product.template.stock.property.form.add_custom</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.view_template_property_form"/>
+            <field name="arch" type="xml">
+                <group name="group_lots_and_weight" position="inside">
+                    <label for="tariff" attrs="{'invisible':['|', ('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}"/>
+                    <div class="o_row" name="tariff" attrs="{'invisible':['|', ('type', 'not in', ['product', 'consu']), ('product_variant_count', '&gt;', 1)]}">
+                        <field name="tariff"/>
+                    </div>
+                </group>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_packaging_form_view_compute_dimensions">
+            <field name="name">product.packaging.form.compute.dimension</field>
+            <field name="model">product.packaging</field>
+            <field name="inherit_id" ref="product.product_packaging_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr='//field[@name="qty"]' position="after">
+                    <div name="apply_dimensions_div" attrs="{'invisible':[('product_tmpl_id','=',False)]}">
+                        <button name="compute_product_dimensions" string="Apply dimensions" type="object"/>
+                        <field name="product_tmpl_id" readonly="1"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+         <record model="ir.ui.view" id="product_packagin_tree_apply_dimens">
+            <field name="name">product.packaging.apply_dimensions</field>
+            <field name="model">product.packaging</field>
+             <field name="inherit_id" ref="product.product_packaging_tree_view"/>
+            <field name="arch" type="xml">
+                    <field name="qty" position = "after">
+                        <button name="compute_product_dimensions" string="Apply dimensions"
+                                type="object" icon="fa-link" />
+                    </field>
+            </field>
+        </record>
+
+
+        <record model="ir.ui.view" id="delivery.product_template_hide_hs_code">
+            <field name="name">product.template.form.hs_code</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="delivery.product_template_hs_code"/>
+            <field name="arch" type="xml">
+                <field name="hs_code" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
