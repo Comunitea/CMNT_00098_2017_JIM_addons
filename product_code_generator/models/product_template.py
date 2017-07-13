@@ -31,6 +31,8 @@ class ProductTemplate(models.Model):
 
     _inherit = 'product.template'
 
+    template_code = fields.Char("Template code", size=45)
+
     @api.multi
     def create_variant_ids(self):
         code = {}
