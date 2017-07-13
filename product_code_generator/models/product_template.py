@@ -6,23 +6,32 @@ from odoo import models, fields, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 
 
+class ProductAttribute(models.Model):
+
+    _inherit = 'product.attribute'
+
+    is_color = fields.Boolean("Represents a color")
+
+
 class ProductAttributeValue(models.Model):
 
     _inherit = 'product.attribute.value'
 
     code = fields.Char("Code", help="Code number for this variant")
+    is_color = fields.Boolean("Represents a color",
+                              related="attribute_id.is_color")
 
     _sql_constraints = [
-        ('attribute_code_unique', 'unique(code, attribute_id)', 'Code must be unique per attribute!'),
+        ('attribute_code_unique', 'unique(code, attribute_id)',
+         'Code must be unique per attribute!'),
     ]
 
-class ProductAttribute(models.Model):
-
-    _inherit = 'product.attribute'
 
 class ProductTemplate(models.Model):
 
     _inherit = 'product.template'
+
+    template_code = fields.Char("Template code", size=45)
 
     @api.multi
     def create_variant_ids(self):
