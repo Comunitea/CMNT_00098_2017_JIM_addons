@@ -26,7 +26,7 @@ class CustomerPrice(models.Model):
     product_tmpl_id = fields.Many2one('product.template', 'Template')
     product_id = fields.Many2one('product.product', 'Product')
     partner_id = fields.Many2one('res.partner', 'Customer', required=True)
-    min_qty = fields.Float('To Quantity', default=0.0, required=True)
+    min_qty = fields.Float('Min Quantity', default=0.0, required=True)
     price = fields.Float(
         'Price', default=0.0, digits=dp.get_precision('Product Price'),
         required=True, help="The price to purchase a product")

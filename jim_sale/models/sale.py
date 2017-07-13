@@ -88,11 +88,13 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def _get_display_price(self, product):
+        import ipdb; ipdb.set_trace()
         res = super(SaleOrderLine, self)._get_display_price(product)
         # Search for specific prices in variants
         qty = product._context.get('quantity', 1.0)
         vals = {}
-        today = time.strftime('%Y-%m-%d')
+
+        today = self.order_id.date_order or time.strftime('%Y-%m-%d')
         domain = [('partner_id', '=', self.order_id.partner_id.id),
                   ('product_id', '=', self.product_id.id),
                   ('min_qty', '<=', qty),
