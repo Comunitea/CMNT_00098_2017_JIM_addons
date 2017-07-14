@@ -25,5 +25,7 @@
             <field name="code">TRASLO</field>
             <field name="name">ALMACÉN AUTOMÁTICO</field>
         </record>
+
+
     </data>
 </odoo>

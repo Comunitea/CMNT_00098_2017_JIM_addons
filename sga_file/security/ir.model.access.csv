@@ -6,6 +6,10 @@ access_sga_file_user,sga.file user,model_sga_file,stock.group_stock_user,1,1,1,1
 access_sga_containertype_manager,sga.file manager,model_sga_containertype,stock.group_stock_manager,1,1,1,1
 access_sga_containertype_user,sga.file user,model_sga_containertype,stock.group_stock_user,1,0,0,0
 
+access_sga_container_manager,sga.file manager,model_sga_container,stock.group_stock_manager,1,1,1,1
+access_sga_container_user,sga.file user,model_sga_container,stock.group_stock_user,1,1,1,1
+
+
 access_stock_picking_sgatype_manager,stock.picking.sgatype manager,model_stock_picking_sgatype,stock.group_stock_manager,1,1,1,1
 access_stock_picking_sgatype_user,stock.picking.sgatype user,model_stock_picking_sgatype,stock.group_stock_user,1,0,0,0
 

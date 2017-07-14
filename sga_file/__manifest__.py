@@ -34,6 +34,7 @@
         'views/sga_res_partner.xml',
         'views/sga_error.xml',
         'data/sga_containertype.xml',
+        #'data/sga_product_uom.xml',
         'security/ir.model.access.csv',
     ],
     "demo": [

@@ -20,7 +20,8 @@ class StockPicking(models.Model):
             shipping_container = self.env['shipping.container'].browse(shipping_container_id)
             if shipping_container.state != 'loading':
                 raise ValidationError(_('Container not in "loading" state'))
-            self.min_date = shipping_container.date_expected
+            for pick in self:
+                pick.min_date = shipping_container.date_expected
         return res
 
 class StockMove(models.Model):

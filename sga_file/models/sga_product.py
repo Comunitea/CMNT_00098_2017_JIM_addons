@@ -387,4 +387,4 @@ class SGAProductTemplate(models.Model):
 
 class SGAProductUOM(models.Model):
     _inherit = "product.uom"
-    sga_uom_base_code = fields.Char("Codigo de u.m.(SGA)", size=12, required=True)
+    sga_uom_base_code = fields.Char("Codigo de u.m.(SGA)", size=12)
