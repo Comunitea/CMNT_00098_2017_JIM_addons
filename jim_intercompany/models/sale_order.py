@@ -82,6 +82,9 @@ class SaleOrder(models.Model):
                     fpos = fpos_p.search(domain, limit=1)
                     if fpos:
                         vals['fiscal_position_id'] = fpos.id
+                    else:
+                        vals['fiscal_position_id'] = \
+                            vals.get('fiscal_position_id', False)
 
                 # Search Payment mode in new company
                 if order.payment_mode_id:
@@ -91,6 +94,9 @@ class SaleOrder(models.Model):
                     paymode = paymode_p.search(domain, limit=1)
                     if paymode:
                         vals['payment_mode_id'] = paymode.id
+                    else:
+                        vals['payment_mode_id'] = \
+                            vals.get('payment_mode_id', False)
 
                 # Search Pricelist in new company
                 if order.pricelist_id:
