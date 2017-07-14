@@ -9,11 +9,13 @@
             <field name="arch" type="xml">
                 <xpath expr="//header" position = "inside">
                     <div>
-                        <field name="sga_state" widget="statusbar"/>
+                        <field name="sga_state" widget="statusbar"
+                        attrs="{'invisible': [('type','!=','product')]}"/>/>
                     </div>
                 </xpath>
                 <field name="categ_id" position="after">
-                    <field name="sga_prod_shortdesc"/>
+                    <field name="sga_prod_shortdesc"
+                        attrs="{'invisible': [('type','!=','product')]}"/>/>
                 </field>
             </field>
         </record>
@@ -26,11 +28,13 @@
 
                     <xpath expr="//header" position = "inside">
                         <div>
-                        <field name="sga_state" widget="statusbar"/>
+                            <field name="sga_state" widget="statusbar"
+                                   attrs="{'invisible': [('type','!=','product')]}"/>
                         </div>
                     </xpath>
                     <field name="categ_id" position="after">
-                        <field name="sga_dst"/>
+                        <field name="sga_dst"
+                               attrs="{'invisible': [('type','!=','product')]}"/>
                     </field>
             </field>
         </record>

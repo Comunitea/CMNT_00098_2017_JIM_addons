@@ -20,8 +20,8 @@ import re
 
 DELETE_FILE = False
 ERRORS = 3
-ODOO_READ_FOLDER = 'Send'
-ODOO_WRITE_FOLDER = 'Receive'
+ODOO_READ_FOLDER = 'SendOdoo'
+ODOO_WRITE_FOLDER = 'ReceiveOdoo'
 
 class ConfigPathFiles(models.TransientModel):
 
@@ -76,20 +76,24 @@ class MecaluxVars(models.Model):
     _name ='sgavar.file.var'
     _order = "sequence, id asc"
 
+    sga_file_id = fields.Many2one("sgavar.file")
     sequence = fields.Integer("Sequence", defaul = 50)
     name = fields.Char("Campo Mecalux")
-    odoo_name = fields.Many2one("ir.model.fields", domain="[('model_id','=',odoo_model)]", string="Campo Odoo (si existe)" )
-    odoo_many_name = fields.Char(string="Odoo 'related'",
-                                help="Nombre del campo related")
+    odoo_name = fields.Many2one("ir.model.fields",
+                                domain="[('model_id','=',odoo_model)]",
+                                string="Campo Odoo (si existe)" )
     odoo_model = fields.Many2one(related="sga_file_id.odoo_model")
     length = fields.Integer("Longitud", help="Campo numerico.")
     length_int = fields.Integer("L. Entera", help="Longitud entera(nº de digitos de la parte entera en un tipo 'float')")
     length_dec = fields.Integer("L. Decimal", help="Longitud decimal(nº de digitos de la parte decimal en un tipo 'float')")
-    mecalux_type = fields.Selection([('A', 'Alfanumerico'), ('N', 'Numerico'),
-                                    ('B', 'Booleano'), ('D', 'Fecha'), ('V', 'Atributo/Variable'), ('L', 'one2many')])
+    mecalux_type = fields.Selection([('A', 'Alfanumerico'),
+                                     ('N', 'Numerico'),
+                                     ('B', 'Booleano'),
+                                     ('D', 'Fecha'),
+                                     ('V', 'Atributo/Variable'),
+                                     ('L', 'one2many')])
     default = fields.Char("V. por defecto")
     fillchar = fields.Char("Caracter de relleno", size=1)
-    sga_file_id = fields.Many2one("sgavar.file")
     required = fields.Boolean("Obligatorio", default=False)
     st = fields.Integer('Inicio cadena')
     en = fields.Integer('Fin cadena')
@@ -114,7 +118,7 @@ class MecaluxFile(models.Model):
     odoo_model = fields.Many2one('ir.model', "Odoo Model")
     model = fields.Char(related='odoo_model.name')
     cte_name = fields.Char("Cte name")
-    sga_file_var_ids = fields.One2many('sgavar.file.var','sga_file_id')
+    sga_file_var_ids = fields.One2many('sgavar.file.var', 'sga_file_id')
     version_active = fields.Boolean('Active')
     bytes = fields.Integer('Bytes')
     filter = fields.Char("Filter")

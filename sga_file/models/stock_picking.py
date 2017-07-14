@@ -62,15 +62,16 @@ class StockPickingSGA(models.Model):
 
     _inherit = "stock.picking"
 
-    @api.model
+    @api.multi
     def _get_account_code(self):
-
-        res = self.partner_id.ref
-        partner = self.partner_id
-        while partner.parent_id:
-            partner = partner.parent_id
-            if partner:
-                res = partner.ref
+        for pick in self:
+            res = pick.partner_id.ref
+            partner = pick.partner_id
+            while partner.parent_id:
+                partner = partner.parent_id
+                if partner:
+                    res = partner.ref
+            pick.account_code = res
         return res
 
     sga_operation = fields.Selection([('A', 'Alta'), ('M', 'Modificacion'),
@@ -100,7 +101,7 @@ class StockPickingSGA(models.Model):
 
     shipping_city = fields.Char(related="partner_id.state_id.name")
     shipping_partner_name = fields.Char(related="partner_id.name")
-    account_code = fields.Char(related="partner_id.ref")
+    account_code = fields.Char("Account code", compute="_get_account_code")
 
     sga_weight = fields.Float(string='Shipping Weight', help="Imported weight from mecalux")
 
@@ -258,7 +259,7 @@ class StockPickingSGA(models.Model):
                     carrier_code = line[st:en].strip()
                     domain = [('carrier_code', '=', carrier_code)]
                     carrier = self.env['delivery.carrier'].search(domain)
-                    self.carrier_id = carrier
+                    pick.carrier_id = carrier
 
                     domain = [('picking_id', '=', pick.id)]
                     ops = self.env['stock.pack.operation'].search(domain, order="line_number asc")

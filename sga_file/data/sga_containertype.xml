@@ -6,20 +6,24 @@
 
         <record id="eu_sga_containertype" model="sga.containertype">
             <field name="code">EU</field>
-            <field name="description">Europeo</field>
+            <field name="description">Europalet</field>
             <field name="default">1</field>
         </record>
         <record id="ame_sga_containertype" model="sga.containertype">
             <field name="code">AME</field>
-            <field name="description">Americano</field>
+            <field name="description">AME</field>
         </record>
         <record id="maq_sga_containertype" model="sga.containertype">
-            <field name="code">MAQ</field>
+            <field name="code">MAQUINAS</field>
             <field name="description">Maquinas</field>
         </record>
         <record id="ping_sga_containertype" model="sga.containertype">
             <field name="code">PINGPONG</field>
-            <field name="description">Ping Pong</field>
+            <field name="description">Pingpong</field>
+        </record>
+        <record id="traslo_REGISTER" model="sga.destination">
+            <field name="code">TRASLO</field>
+            <field name="name">ALMACÉN AUTOMÁTICO</field>
         </record>
     </data>
 </odoo>
