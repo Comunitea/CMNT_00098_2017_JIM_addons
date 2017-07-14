@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+     <record id="stock_picking_add_copy_printing" model="ir.ui.view">
+        <field name="name">stock_picking_add_copy_printing</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <field name="priority" position="after">
+				<field name="copy_printing"/>
+				<field name="documento_neutro"/>
+            </field>
+        </field>
+    </record>
+
+    </data>
+</odoo>
