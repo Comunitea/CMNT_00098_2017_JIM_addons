@@ -10,6 +10,7 @@
     'license': 'AGPL-3',
     'depends': [
         'sale_stock',
+        'sales_team',
         'sale_order_dates',
         'product'
     ],
@@ -19,6 +20,7 @@
     ],
     "data": [
         'security/ir.model.access.csv',
+        'views/customer_price.xml',
         'views/product_view.xml',
         'views/sale_view.xml',
         'views/stock_picking.xml',

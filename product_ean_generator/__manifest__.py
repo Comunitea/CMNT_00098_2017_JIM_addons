@@ -12,8 +12,8 @@
     'license': "AGPL-3",
     'summary': '''Set ean code from last''',
     'website': 'http://www.comunitea.com',
-    'data': ['views/product_template.xml'
-             ],
+    'data': ['views/product_template.xml',
+             'data/ean_sequence.xml'],
     'installable': True,
     'auto_install': False,
 }

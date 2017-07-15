@@ -32,15 +32,17 @@ class ProductPackaging(models.Model):
     def compute_product_dimensions(self):
         if self.qty == 0:
             raise ValidationError(_("Check quantity !!!!"))
-        if not len(self.product_tmpl_id.product_variant_ids) > 1:
-            self.product_tmpl_id.weight = self.max_weight / self.qty
-            self.product_tmpl_id.volume = self.height * self.width * \
+        weight = 0.0000
+        volume = 0.000000
+        for product in self.product_tmpl_id.product_variant_ids:
+            product.weight = self.max_weight / self.qty
+            weight += product.weight
+            product.volume = self.height * self.width * \
                 self.length / (self.qty * 1000000)
-        else:
-            for product in self.product_tmpl_id.product_variant_ids:
-                product.weight = self.max_weight / self.qty
-                product.volume = self.height * self.width * \
-                    self.length / (self.qty * 1000000)
+            volume += product.volume
+
+        self.product_tmpl_id.weight = weight / self.product_variant_count
+        self.product_tmpl_id.volume = volume / self.product_variant_count
 
         return True
 

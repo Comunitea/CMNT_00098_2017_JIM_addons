@@ -754,11 +754,6 @@ msgid "Nombre Radiofrecuencia"
 msgstr "Nombre Radiofrecuencia"
 
 #. module: sga_file
-#: model:ir.model.fields,help:sga_file.field_sgavar_file_var_odoo_many_name
-msgid "Nombre del campo related"
-msgstr "Nombre del campo relacionado"
-
-#. module: sga_file
 #: model:ir.model.fields,field_description:sga_file.field_stock_pack_operation_line_number
 msgid "Number de linea"
 msgstr "Numero de linea"
@@ -777,11 +772,6 @@ msgstr "Numero de veces que debe aparecer el error antes de mover a error"
 #: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_required
 msgid "Obligatorio"
 msgstr "Obligatorio"
-
-#. module: sga_file
-#: model:ir.model.fields,field_description:sga_file.field_sgavar_file_var_odoo_many_name
-msgid "Odoo 'related'"
-msgstr "Odoo 'related'"
 
 #. module: sga_file
 #: model:ir.model.fields,field_description:sga_file.field_sgavar_file_odoo_model

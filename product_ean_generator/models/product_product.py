@@ -24,13 +24,24 @@ class ProductProduct(models.Model):
 
     _inherit = 'product.product'
 
+    @api.multi
+    def write(self, vals):
+        # Comprobamos si hay movimientos. No podemos por el tema de Mecalux
+        if vals.get('barcode', False):
+            for product in self:
+                if product.stock_move_ids:
+                    raise ValidationError(_("You can change barcode because this product has moves"))
+        return super(ProductProduct, self).write(vals)
+
     def next_barcode(self):
-
-        sql_last_barcode = "select MAX(left(barcode,12)) from product_product " \
-                          "where length(barcode)=13 and barcode like '%s'" % DEFAULT_PRE
-
-        self.env.cr.execute(sql_last_barcode)
-        EAN = self.env.cr.fetchall()[0][0]
+        sequence = self.env.ref('product_ean_generator.seq_product_ean_auto')
+        EAN = sequence.next_by_id()
+        #
+        # sql_last_barcode = "select MAX(left(barcode,12)) from product_product " \
+        #                   "where length(barcode)=13 and barcode like '%s'" % DEFAULT_PRE
+        #
+        # self.env.cr.execute(sql_last_barcode)
+        # EAN = self.env.cr.fetchall()[0][0]
         EAN = str(int(EAN) + 1)
         iSum = 0
         for i in range(len(EAN) - 1, 0, -1):
@@ -45,14 +56,13 @@ class ProductProduct(models.Model):
     @api.model
     def create(self, vals):
         barcode = vals.get('barcode', False)
-        if barcode and barcode.upper() == "ASIGNAR":
+        if barcode == 'ASIGNAR':
             vals['barcode'] = self.next_barcode()
-
         return super(ProductProduct, self).create(vals)
 
 
     @api.multi
     def asign_barcode(self):
-        for product in self.filtered(lambda s: s.barcode == "ASIGNAR"):
+        for product in self.filtered(lambda s: s.barcode == "ASIGNAR" or not s.barcode):
             product.barcode = product.next_barcode()
 

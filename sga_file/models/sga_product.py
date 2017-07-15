@@ -210,24 +210,27 @@ class SGAProductProduct(models.Model):
 
     @api.multi
     def write(self, values):
-        res = super(SGAProductProduct, self).write(values)
 
-        if self.type != 'product':
-            return res
-        if res:
-            fields_to_check = ('default_code', 'barcode', 'categ_id',
-                               'sga_material_abc_code', 'sga_change_material_abc',
-                               'uom_id', 'name', 'sga_prod_shortdesc',
-                               'packaging_ids')
-            fields = sorted(list(set(values).intersection(set(fields_to_check))))
-            if fields and self.check_mecalux_ok:
-                icp = self.env['ir.config_parameter']
-                if icp.get_param('product_auto'):
-                    self.new_mecalux_file(operation="F")
+        res = super(SGAProductProduct, self).write(values)
+        if not self._context.get('no_sga', False):
+            icp = self.env['ir.config_parameter']
+            product_auto = icp.get_param('product_auto')
+            print "PASA POR EL WRITE con %s"%values
+            print "Contexto %s" %self._context
+            for product in self:
+                if product.type == 'product':
+                    fields_to_check = ('default_code', 'barcode', 'categ_id',
+                                       'sga_material_abc_code', 'sga_change_material_abc',
+                                       'uom_id', 'name', 'packaging_ids')
+                    fields = sorted(list(set(values).intersection(set(fields_to_check))))
+                    if fields and product.check_mecalux_ok and product_auto:
+                        print "Desde product_product write"
+                        product.new_mecalux_file(operation="F")
         return res
 
     def check_mecalux_ok(self):
         ## Comprobaciones para ver si se puede enviar
+        ## TODO HAY QUE ELIMINAR ESTO MUY FEO
         mecalux_ok = True
         notification = ''
         # compruebo si hay un
@@ -261,9 +264,11 @@ class SGAProductProduct(models.Model):
 
     @api.model
     def create(self, values):
-        res = super(SGAProductProduct, self).create(values)
+        context = {"no_sga": True}
+        res = super(SGAProductProduct, self.with_context(context)).create(values)
         # Necesito descripcion corta para la pda
-        if self.type != 'product':
+
+        if res.type != 'product':
             return res
         if not res.sga_prod_shortdesc:
             short = res.product_tmpl_id.name
@@ -271,10 +276,10 @@ class SGAProductProduct(models.Model):
                 short = u' %s [%s]'%(res.product_tmpl_id.name,
                                     self.get_variants_name(res.attribute_value_ids))
             res.sga_prod_shortdesc = short[0:80]
-
-        if res and res.check_mecalux_ok() and \
-                        values.get('sga_state', False) != 'AC':
+        if not self._context.get('no_sga', False) and \
+                len(res.attribute_value_ids)==1:
             icp = self.env['ir.config_parameter']
+            print "Desde product_product create"
             if icp.get_param('product_auto'):
                 res.new_mecalux_file(operation="F")
         return res
@@ -289,7 +294,8 @@ class SGAProductProduct(models.Model):
             if 'operation' not in ctx:
                 ctx['operation'] = 'F'
             new_sga_file = self.env['sga.file'].with_context(ctx).check_sga_file('product.product', ids, code='PRO')
-            self.sga_state = 'AC'
+            if self.sga_state != 'AC':
+                self.sga_state = 'AC'
             return True
         except:
             self.sga_state = 'ER'
@@ -318,7 +324,6 @@ class SGAProductTemplate(models.Model):
         if dst:
             return dst
 
-    type = fields.Selection(default='product')
     sga_state = fields.Selection(SGA_STATE, 'Estado Mecalux',
                                  default='PA',
                                  help="Estado integracion con mecalux",
@@ -340,7 +345,6 @@ class SGAProductTemplate(models.Model):
 
     @api.one
     def _set_sga_state(self):
-
         for product in self.product_variant_ids:
             product.sga_state = self.sga_state
 
@@ -359,9 +363,11 @@ class SGAProductTemplate(models.Model):
     @api.model
     def create(self, vals):
         #Necesito un packaging para para cada template, si no se crea al vuelo.
-        create_sga_packaging = True if self.type == "product" else False
-        if create_sga_packaging:
-            for sga_packaging in vals.get('packaging_ids', False):
+        if vals.get('type', False) == "product":
+            create_sga_packaging = True
+            if not vals.get('packaging_ids', False):
+                vals['packaging_ids'] = []
+            for sga_packaging in vals['packaging_ids']:
                 if sga_packaging[2]['ul_type'] == 'sga':
                     create_sga_packaging = False
                     break
@@ -374,8 +380,11 @@ class SGAProductTemplate(models.Model):
                         self.env['sga.containertype'].search([('code', '=', 'EU')]).id
                     }
                 vals['packaging_ids'].append([0, 0, sga_pack_vals])
-        return super(SGAProductTemplate, self).create(vals)
+        context = {"no_sga": True}
+        res = super(SGAProductTemplate, self.with_context(context)).create(vals)
+        res.new_mecalux_file()
+        return res
 
 class SGAProductUOM(models.Model):
     _inherit = "product.uom"
-    sga_uom_base_code = fields.Char("Codigo de u.m.(SGA)", size=12, required=True)
+    sga_uom_base_code = fields.Char("Codigo de u.m.(SGA)", size=12)

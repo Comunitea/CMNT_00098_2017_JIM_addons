@@ -6,14 +6,29 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-13 15:12+0000\n"
-"PO-Revision-Date: 2017-07-13 15:12+0000\n"
+"POT-Creation-Date: 2017-07-14 10:27+0000\n"
+"PO-Revision-Date: 2017-07-14 10:27+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_delivery_carrier_customer_prices_count
+#: model:ir.model.fields,field_description:jim_sale.field_product_product_customer_prices_count
+#: model:ir.model.fields,field_description:jim_sale.field_product_template_customer_prices_count
+msgid "#Prices"
+msgstr "#Precios"
+
+#. module: jim_sale
+#: model:ir.actions.act_window,help:jim_sale.action_customer_prices_tmpl
+#: model:ir.actions.act_window,help:jim_sale.action_customer_prices_tmpl2
+#: model:ir.actions.act_window,help:jim_sale.action_customer_prices_variant
+#: model:ir.actions.act_window,help:jim_sale.action_customer_prices_variant2
+msgid "Click to add a new customer price rule."
+msgstr "Click to add a new customer price rule."
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_company_id
@@ -37,22 +52,28 @@ msgstr "Creado en"
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_partner_id
+#: model:ir.ui.view,arch_db:jim_sale.view_customer_price_filter
 msgid "Customer"
 msgstr "Cliente"
 
 #. module: jim_sale
+#: model:ir.actions.act_window,name:jim_sale.action_customer_prices_tmpl
+#: model:ir.actions.act_window,name:jim_sale.action_customer_prices_tmpl2
+#: model:ir.actions.act_window,name:jim_sale.action_customer_prices_variant
+#: model:ir.actions.act_window,name:jim_sale.action_customer_prices_variant2
 #: model:ir.model.fields,field_description:jim_sale.field_delivery_carrier_customer_product_prices
 #: model:ir.model.fields,field_description:jim_sale.field_delivery_carrier_customer_tmpl_prices
 #: model:ir.model.fields,field_description:jim_sale.field_product_product_customer_product_prices
 #: model:ir.model.fields,field_description:jim_sale.field_product_product_customer_tmpl_prices
 #: model:ir.model.fields,field_description:jim_sale.field_product_template_customer_tmpl_prices
-msgid "Customer Prices"
-msgstr "Precios de cliente"
-
-#. module: jim_sale
+#: model:ir.ui.menu,name:jim_sale.menu_customer_prices
 #: model:ir.ui.view,arch_db:jim_sale.product_normal_form_view_prices
 #: model:ir.ui.view,arch_db:jim_sale.product_template_only_form_view_prices
-msgid "Customer prices"
+#: model:ir.ui.view,arch_db:jim_sale.view_customer_price_filter
+#: model:ir.ui.view,arch_db:jim_sale.view_customer_price_form
+#: model:ir.ui.view,arch_db:jim_sale.view_customer_price_tree_tmpl
+#: model:ir.ui.view,arch_db:jim_sale.view_customer_price_tree_variant
+msgid "Customer Prices"
 msgstr "Precios de cliente"
 
 #. module: jim_sale
@@ -69,6 +90,11 @@ msgstr "Fecha finalización"
 #: model:ir.model.fields,help:jim_sale.field_customer_price_date_end
 msgid "End date for this customer price"
 msgstr "Fecha final para este precio de cliente"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.view_customer_price_filter
+msgid "Group By"
+msgstr "Agrupar por"
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_id
@@ -152,7 +178,7 @@ msgstr "Pendiente aprobación"
 #. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.view_order_form_add_states
 msgid "Pending Done"
-msgstr "Pending Done"
+msgstr "Pendiente Realizado"
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_price
@@ -164,6 +190,11 @@ msgstr "Precio"
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_product_id
 msgid "Product"
 msgstr "Producto"
+
+#. module: jim_sale
+#: model:ir.ui.menu,name:jim_sale.menu_customer_prices_variant
+msgid "Product Prices"
+msgstr "Precios variantes"
 
 #. module: jim_sale
 #: model:ir.model,name:jim_sale.model_product_template
@@ -202,8 +233,14 @@ msgstr "Start date for this customer price"
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_product_tmpl_id
+#: model:ir.ui.view,arch_db:jim_sale.view_customer_price_filter
 msgid "Template"
 msgstr "Plantilla"
+
+#. module: jim_sale
+#: model:ir.ui.menu,name:jim_sale.menu_customer_prices_tmpl
+msgid "Template Prices"
+msgstr "Precios plantillas"
 
 #. module: jim_sale
 #: model:ir.model.fields,help:jim_sale.field_customer_price_price
@@ -214,6 +251,19 @@ msgstr "El precio al que se compra un producto"
 #: model:ir.model,name:jim_sale.model_stock_picking
 msgid "Transfer"
 msgstr "Transferir"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.view_customer_price_filter
+msgid "Variant"
+msgstr "Variante"
+
+#. module: jim_sale
+#: model:ir.actions.act_window,help:jim_sale.action_customer_prices_tmpl
+#: model:ir.actions.act_window,help:jim_sale.action_customer_prices_tmpl2
+#: model:ir.actions.act_window,help:jim_sale.action_customer_prices_variant
+#: model:ir.actions.act_window,help:jim_sale.action_customer_prices_variant2
+msgid "You can define a specific price by customer and a range of dates."
+msgstr "Pues definir precios específicos por clientes y un rango de fechas"
 
 #. module: jim_sale
 #: model:ir.model,name:jim_sale.model_customer_price

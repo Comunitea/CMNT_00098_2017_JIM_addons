@@ -6,6 +6,10 @@ access_sga_file_user,sga.file user,model_sga_file,stock.group_stock_user,1,1,1,1
 access_sga_containertype_manager,sga.file manager,model_sga_containertype,stock.group_stock_manager,1,1,1,1
 access_sga_containertype_user,sga.file user,model_sga_containertype,stock.group_stock_user,1,0,0,0
 
+access_sga_container_manager,sga.file manager,model_sga_container,stock.group_stock_manager,1,1,1,1
+access_sga_container_user,sga.file user,model_sga_container,stock.group_stock_user,1,1,1,1
+
+
 access_stock_picking_sgatype_manager,stock.picking.sgatype manager,model_stock_picking_sgatype,stock.group_stock_manager,1,1,1,1
 access_stock_picking_sgatype_user,stock.picking.sgatype user,model_stock_picking_sgatype,stock.group_stock_user,1,0,0,0
 
@@ -17,10 +21,6 @@ access_sgavar_file_user,sgavar.file user,model_sgavar_file,stock.group_stock_use
 
 access_sga_file_line_manager, sga.file.line manager,model_sga_file_line,stock.group_stock_manager,1,1,1,1
 access_sga_file_line_user, sga.file.line user,model_sga_file_line,stock.group_stock_user,1,1,1,1
-
-
-access_sale_order_type_manager, sale.order.type manager,model_sale_order_type,sales_team.group_sale_manager,1,1,1,1
-access_sale_order_type_user, sale.order.type user,model_sale_order_type,sales_team.group_sale_salesman,1,0,0,0
 
 access_sga_file_error_manager, sga.file.error manager,model_sga_file_error,stock.group_stock_manager,1,1,1,1
 access_sga_file_error_user, sga.file.error user,model_sga_file_error,stock.group_stock_user,1,1,1,1
