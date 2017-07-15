@@ -39,7 +39,7 @@ class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
     template_code = fields.Char("Template code", size=45)
-    
+
     @api.onchange('default_code')
     def onchange_default_code(self):
         self.template_code = self.default_code
