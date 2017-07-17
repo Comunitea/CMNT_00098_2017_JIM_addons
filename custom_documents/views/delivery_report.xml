@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <!-- © 2017 Comunitea
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-     albaran valorado -->
-<!--doc. y o. se usan para lo mismo, mirar que se usa en el documento padre-->
+    delivery_report -->
 <odoo>
 	<data>
 		<!--borramos documentos que heredan para que non haxa problemas -->
@@ -10,7 +9,7 @@
 		<delete id="sale_stock.report_delivery_document_inherit_sale_stock" model="ir.ui.view"/>
 		<delete id="stock_valued_picking_report.valued_report_picking" model="ir.ui.view"/>
 		<!--heredamos del documento correspondiente y reescribimos -->
-		<template id="custom_albaran_valorado" inherit_id="stock.report_delivery_document">
+		<template id="custom_delivery_report" inherit_id="stock.report_delivery_document">
 			<xpath expr="//t[@t-call='report.external_layout']" position="replace">
 				<t t-call="custom_documents.custom_layout">
 					<t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />

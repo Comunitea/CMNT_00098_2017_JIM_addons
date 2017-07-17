@@ -18,12 +18,19 @@
         "sale_stock",
         "sale_margin",
         'delivery',
-        'account_payment_sale'
+        'account_payment_sale',
+        'stock_valued_picking_report'
     ],
     "data": [
         'views/layout_templates.xml',
         'data/report_paperformat_data.xml',
         'views/sale_order_report.xml',
-        'views/company.xml'
+        #'views/delivery_report.xml',
+        #'views/sale_order_report_warehouse.xml',
+        #'views/invoice_report.xml',
+        'views/company.xml',
+        'views/stock_picking.xml',
+        'views/sale_order.xml',
+        #'views/report_purchase_order.xml',
     ],
 }
