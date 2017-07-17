@@ -21,10 +21,21 @@ class AccountInvoice(models.Model):
                    inv.commercial_partner_id = old_value[0][0]
                 continue
             if inv.partner_id.consolidate and inv.partner_id.parent_id:
-                inv.commercial_partner_id = inv.partner_id.parent_id.id
-            else:
                 inv.commercial_partner_id = \
-                    inv.partner_id.commercial_partner_id
+                    inv.partner_id.parent_id.commercial_partner_id
+            else:
+                if not inv.partner_id.parent_id:
+                    inv.commercial_partner_id = \
+                        inv.partner_id.commercial_partner_id
+                else:
+                    if inv.partner_id.parent_id.consolidate and \
+                            inv.partner_id.parent_id.parent_id:
+                        inv.commercial_partner_id = \
+                            inv.partner_id.parent_id.parent_id
+                    else:
+                        inv.commercial_partner_id = \
+                            inv.partner_id.commercial_partner_id
+
 
     commercial_partner_id = fields.Many2one('res.partner',
                                             string='Invoice to',
