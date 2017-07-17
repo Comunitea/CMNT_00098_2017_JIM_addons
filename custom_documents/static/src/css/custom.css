@@ -76,6 +76,7 @@
 
 .blue_text {
     color: blue;
+    text-decoration: underline;
 }
 
 .radius_border_min{

@@ -218,7 +218,7 @@
                                     Page: <span class="page"/> of <span class="topage"/>
                                 </td>
                                 <td><span t-field="o.date_invoice"/></td>
-                                <td><span t-field="o.name"/></td>
+                                <td><span t-field="o.number"/></td>
                                 <td><span t-field="o.user_id"/></td>
                             </tr>
                         </tbody>
@@ -253,6 +253,11 @@
 
     <template id="custom_layout_footer">
         <div class="footer">
+            <t t-if="o._name == 'account.invoice'">
+                <div class="col-xs-1">
+                    <img src="/custom_documents/static/src/img/calidad.png" style="height: 50px;"/>
+                </div>
+            </t>
             <div class="text-center">
                 <!--para que non aparezca o pe con etiquetas html usar t-raw-->
                 <span t-raw="company.qweb_footer"/>
