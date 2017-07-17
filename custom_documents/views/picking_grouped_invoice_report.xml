@@ -112,7 +112,19 @@
                 <div class="radius_border row">
                     <p t-if="o.payment_mode_id">Payment mode: <span t-field="o.payment_mode_id.name"/></p>
                     <p t-if="o.payment_mode_id">Bank account: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number"/></p>
-
+                    <p>Maturity:
+                        <span t-foreach="o.move_id.line_ids.sorted(key=lambda b: b.date_maturity)" t-as="ml">
+                            <span t-if="ml.account_id == o.account_id">
+                                - <span t-field="ml.date_maturity"/>:
+                                <t t-if="ml.debit">
+                                    <span t-field="ml.debit"/>
+                                </t>
+                                <t t-if="ml.credit">
+                                    <span t-field="ml.credit"/>
+                                </t>
+                            </span>
+                        </span>
+                    </p>
                 </div>
             </div>
         </t>
