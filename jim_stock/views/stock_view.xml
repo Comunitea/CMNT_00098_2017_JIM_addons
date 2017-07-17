@@ -48,7 +48,21 @@
                 <field name="return_location" position="after">
                     <field name="deposit"/>
                 </field>
-            </field>  
-        </record>   
+            </field>
+        </record>
+
+        <record id="view_picking_carrier_readonly" model="ir.ui.view">
+            <field name="name">stock.picking</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form"/>
+            <field name="arch" type="xml">
+                <field name="carrier_id" position="attributes">
+                    <attribute name="attrs"></attribute>
+                </field>
+                <field name="number_of_packages" position="attributes">
+                    <attribute name="attrs"></attribute>
+                </field>
+            </field>
+        </record>
     </data>
 </odoo>

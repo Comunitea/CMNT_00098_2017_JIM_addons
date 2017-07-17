@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+    <template id="report_picking_grouped_invoice_document">
+        <t t-call="custom_documents.custom_layout">
+            <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+            <div class="page">
+                <div class="oe_structure"/>
+                <table class="custom_table">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Price/unit</th>
+                            <th>Discount</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Se recorre las lineas que no tengan albarán relacionado para que aparezcan primero-->
+                        <t t-if="False in invoice_lines_dict[o.id].keys()">
+                            <tr t-foreach="invoice_lines_dict[o.id][False]" t-as="invoice_line">
+                                <td><span t-esc="invoice_line['default_code']"/></td>
+                                <td><span t-esc="invoice_line['name']"/></td>
+                                <td><span t-esc="invoice_line['quantity']"/></td>
+                                <td><span t-esc="invoice_line['price_unit']"/></td>
+                                <td><span t-esc="invoice_line['discount']"/></td>
+                                <td><span t-esc="invoice_line['price_subtotal']"/></td>
+                            </tr>
+                        </t>
+                        <t t-foreach="invoice_lines_dict[o.id].keys()" t-as="picking">
+                            <!-- Evitamos que se impriman los tr para las lineas sin albarán relacionado -->
+                            <t t-if="picking">
+                                <tr>
+                                    <td></td>
+                                    <td><span class="blue_text">Picking:</span> <span t-field="picking.name"/> <span class="blue_text">Picking date:</span> <span t-field="picking.date"/></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr t-foreach="invoice_lines_dict[o.id][picking]" t-as="invoice_line">
+                                    <td><span t-esc="invoice_line['default_code']"/></td>
+                                    <td><span t-esc="invoice_line['name']"/></td>
+                                    <td><span t-esc="invoice_line['quantity']"/></td>
+                                    <td><span t-esc="invoice_line['price_unit']"/></td>
+                                    <td><span t-esc="invoice_line['discount']"/></td>
+                                    <td><span t-esc="invoice_line['price_subtotal']"/></td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+                <div class="row">
+                    <div class="col-xs-2">
+                        <img src="/custom_documents/static/src/img/invoice_logo.jpg"/>
+                    </div>
+                    <div class="col-xs-4 pull-right">
+                        <table class="table table-condensed">
+                            <tr class="border-black">
+                                <td><strong>Subtotal</strong></td>
+                                <td class="text-right">
+                                    <span t-field="o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </td>
+                            </tr>
+                            <t t-foreach="o._get_tax_amount_by_group()" t-as="amount_by_group">
+                                <tr>
+                                    <td><span t-esc="amount_by_group[0] if len(o.tax_line_ids) > 1 else (o.tax_line_ids.tax_id.description or o.tax_line_ids.tax_id.name)"/></td>
+                                    <td class="text-right">
+                                        <span t-esc="amount_by_group[1]" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <tr class="border-black">
+                                <td><strong>Total</strong></td>
+                                <td class="text-right">
+                                     <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- DO NOT REMOVE THIS TABLE. MANDATORY IN SOME COUNTRIES -->
+                <div class="row" t-if="len(o.tax_line_ids) > 0">
+                    <div class="col-xs-6">
+                        <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th>Tax</th>
+                                    <th class="text-right">Base</th>
+                                    <th class="text-right">Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.tax_line_ids" t-as="t">
+                                    <td><span t-field="t.name"/></td>
+                                    <td class="text-right">
+                                        <span t-field="t.base" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="t.amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="radius_border row">
+                    <p t-if="o.payment_mode_id">Payment mode: <span t-field="o.payment_mode_id.name"/></p>
+                    <p t-if="o.payment_mode_id">Bank account: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number"/></p>
+                    <p>Maturity:
+                        <span t-foreach="o.move_id.line_ids.sorted(key=lambda b: b.date_maturity)" t-as="ml">
+                            <span t-if="ml.account_id == o.account_id">
+                                - <span t-field="ml.date_maturity"/>:
+                                <t t-if="ml.debit">
+                                    <span t-field="ml.debit"/>
+                                </t>
+                                <t t-if="ml.credit">
+                                    <span t-field="ml.credit"/>
+                                </t>
+                            </span>
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </t>
+    </template>
+
+
+    <template id="report_picking_grouped_invoice">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="custom_documents.report_picking_grouped_invoice_document" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>
