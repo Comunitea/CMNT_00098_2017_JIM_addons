@@ -35,13 +35,13 @@ class ShippingContainer(models.Model):
     @api.multi
     def _available_volume(self):
         for container in self:
-            volume = self.shipping_container_type_id.volume
+            volume = container.shipping_container_type_id.volume
             weight = 0.00
-            for move in self.move_ids:
+            for move in container.move_ids:
                 volume -= move.product_id.volume * move.product_uom_qty
                 weight += move.product_id.weight * move.product_uom_qty
-            self.available_volume = volume
-            self.weight = weight
+            container.available_volume = volume
+            container.weight = weight
 
 
 

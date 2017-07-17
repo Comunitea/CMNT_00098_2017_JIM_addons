@@ -13,6 +13,7 @@
     'summary': '''Set product.product default code from variant seq''',
     'website': 'http://www.comunitea.com',
     'data': ["views/product_attribute.xml",
+             "views/product_template.xml",
              ],
     'installable': True,
     'auto_install': False,

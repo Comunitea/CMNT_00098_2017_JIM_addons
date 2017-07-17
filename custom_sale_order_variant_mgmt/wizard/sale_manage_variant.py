@@ -37,9 +37,16 @@ class SaleManageVariant(models.TransientModel):
                 active_id=template.order_id.id)).button_transfer_to_order()
         if not template.order_lines:
             template.unlink()
-        else:
-            template.product_uom_qty = \
-                sum([x.product_uom_qty for x in template.order_lines])
+        else:           
+            # Calculate total qty an new prices (grom specific prices)
+            sum_qty = 0
+            for line in template.order_lines:
+                sum_qty += line.product_uom_qty
+                line.product_uom_change()  # Update prices depend of qty
+            # Get total qty
+            template.product_uom_qty = sum_qty
+
+
 
     @api.multi
     @api.onchange('product_tmpl_id')

@@ -11,6 +11,8 @@
     'depends': [
         'purchase',
         'stock',
+        'product_custom',
+        'product_code_generator'
 
     ],
     'contributors': [

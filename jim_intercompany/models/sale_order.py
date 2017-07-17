@@ -64,3 +64,59 @@ class SaleOrder(models.Model):
             action['views'] = [(self.env.ref('purchase.purchase_order_form').id, 'form')]
             action['res_id'] = purchases.id
         return action
+
+    @api.multi
+    def write(self, vals):
+        fpos_p = self.env['account.fiscal.position'].sudo()
+        paymode_p = self.env['account.payment.mode'].sudo()
+        pricelist_p = self.env['product.pricelist'].sudo()
+        tax_p = self.env['account.tax'].sudo()
+        for order in self:
+            if vals.get('company_id', False) and \
+                    vals['company_id'] != order.company_id:
+                # Search Fiscal position in new company
+                if order.fiscal_position_id:
+                    domain = [
+                        ('name', '=', order.fiscal_position_id.name),
+                        ('company_id', '=', vals['company_id'])]
+                    fpos = fpos_p.search(domain, limit=1)
+                    if fpos:
+                        vals['fiscal_position_id'] = fpos.id
+                    else:
+                        vals['fiscal_position_id'] = \
+                            vals.get('fiscal_position_id', False)
+
+                # Search Payment mode in new company
+                if order.payment_mode_id:
+                    domain = [
+                        ('name', '=', order.payment_mode_id.name),
+                        ('company_id', '=', vals['company_id'])]
+                    paymode = paymode_p.search(domain, limit=1)
+                    if paymode:
+                        vals['payment_mode_id'] = paymode.id
+                    else:
+                        vals['payment_mode_id'] = \
+                            vals.get('payment_mode_id', False)
+
+                # Search Pricelist in new company
+                if order.pricelist_id:
+                    domain = [
+                        ('name', '=', order.pricelist_id.name),
+                        ('company_id', '=', vals['company_id'])]
+                    pricelist = pricelist_p.search(domain, limit=1)
+                    if pricelist:
+                        vals['pricelist_id'] = pricelist.id
+
+                #Search taxes lines in new company
+                for line in order.order_line:
+                    tax_ids = []
+                    for tax in line.tax_id:
+                        domain = [
+                            ('name', '=', tax.name),
+                            ('company_id', '=', vals['company_id'])]
+                        new_tax = tax_p.search(domain, limit=1)
+                        if new_tax:
+                            tax_ids.append(new_tax.id)
+                    if tax_ids:
+                        line.write({'tax_id': [(6, 0, tax_ids)]})
+        return super(SaleOrder, self.sudo()).write(vals)

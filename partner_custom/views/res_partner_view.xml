@@ -16,6 +16,9 @@
             <field name="company_id" position="after">
                 <field name="propietary"/>
             </field>
+            <field name="lang" position="before">
+                <field name="default_contact_person"/>
+            </field>
         </field>
     </record>
 
