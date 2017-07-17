@@ -97,7 +97,7 @@
                             </thead>
                             <tbody>
                                 <tr t-foreach="o.tax_line_ids" t-as="t">
-                                    <td><span t-field="t.tax_id.description"/></td>
+                                    <td><span t-field="t.name"/></td>
                                     <td class="text-right">
                                         <span t-field="t.base" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                     </td>
