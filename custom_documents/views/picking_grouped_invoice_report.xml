@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+    <template id="report_picking_grouped_invoice_document">
+        <t t-call="custom_documents.custom_layout">
+            <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+            <div class="page">
+                <div class="oe_structure"/>
+                <table class="custom_table">
+                    <thead>
+                        <tr>
+                            <th>Referencia</th>
+                            <th>Descripción</th>
+                            <th>Cantidad</th>
+                            <th>Precio/unidad</th>
+                            <th>Descuento</th>
+                            <th>Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Se recorre las lineas que no tengan albarán relacionado para que aparezcan primero-->
+                        <t t-if="False in invoice_lines_dict[o.id].keys()">
+                            <tr t-foreach="invoice_lines_dict[o.id][False]" t-as="invoice_line">
+                                <td><span t-esc="invoice_line['default_code']"/></td>
+                                <td><span t-esc="invoice_line['name']"/></td>
+                                <td><span t-esc="invoice_line['quantity']"/></td>
+                                <td><span t-esc="invoice_line['price_unit']"/></td>
+                                <td><span t-esc="invoice_line['discount']"/></td>
+                                <td><span t-esc="invoice_line['price_subtotal']"/></td>
+                            </tr>
+                        </t>
+                        <t t-foreach="invoice_lines_dict[o.id].keys()" t-as="picking">
+                            <!-- Evitamos que se impriman los tr para las lineas sin albarán relacionado -->
+                            <t t-if="picking">
+                                <tr>
+                                    <td></td>
+                                    <td><span class="blue_text">Albarán:</span> <span t-esc="picking.name"/> <span class="blue_text">Fecha de albarán:</span> <span t-esc="picking.date"/></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr t-foreach="invoice_lines_dict[o.id][picking]" t-as="invoice_line">
+                                    <td><span t-esc="invoice_line['default_code']"/></td>
+                                    <td><span t-esc="invoice_line['name']"/></td>
+                                    <td><span t-esc="invoice_line['quantity']"/></td>
+                                    <td><span t-esc="invoice_line['price_unit']"/></td>
+                                    <td><span t-esc="invoice_line['discount']"/></td>
+                                    <td><span t-esc="invoice_line['price_subtotal']"/></td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+            </div>
+        </t>
+    </template>
+
+
+    <template id="report_picking_grouped_invoice">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="custom_documents.report_picking_grouped_invoice_document" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+
+</odoo>

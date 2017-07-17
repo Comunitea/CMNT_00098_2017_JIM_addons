@@ -36,3 +36,7 @@
     border-radius:6px;
     -moz-border-radius:6px;
 }
+
+.blue_text {
+    color: blue;
+}
