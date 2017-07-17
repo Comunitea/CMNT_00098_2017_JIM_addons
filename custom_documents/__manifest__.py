@@ -19,7 +19,8 @@
         "sale_margin",
         'delivery',
         'account_payment_sale',
-        'stock_picking_invoice_link'
+        'stock_picking_invoice_link',
+        'partner_consolidate'
     ],
     "data": [
         'views/layout_templates.xml',

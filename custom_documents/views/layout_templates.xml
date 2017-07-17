@@ -193,7 +193,7 @@
                             t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
                 </div>
                 <div class="col-xs-6 radius_border">
-                    <div t-field="o.partner_id"
+                    <div t-field="o.commercial_partner_id"
                             t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
                 </div>
             </div>
@@ -212,14 +212,14 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><span t-field="o.partner_id.ref"/></td>
-                                <td><span t-field="o.partner_id.vat"/></td>
+                                <td><span t-field="o.commercial_partner_id.ref"/></td>
+                                <td><span t-field="o.commercial_partner_id.vat"/></td>
                                 <td>
                                     Page: <span class="page"/> of <span class="topage"/>
                                 </td>
                                 <td><span t-field="o.date_invoice"/></td>
                                 <td><span t-field="o.name"/></td>
-                                <td><span/> </td>
+                                <td><span t-field="o.user_id"/></td>
                             </tr>
                         </tbody>
                     </table>
