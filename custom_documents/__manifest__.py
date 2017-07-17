@@ -20,7 +20,8 @@
         'delivery',
         'account_payment_sale',
         'stock_picking_invoice_link',
-        'partner_consolidate'
+        'partner_consolidate',
+        'stock_valued_picking_report'
     ],
     "data": [
         'views/layout_templates.xml',
@@ -28,6 +29,8 @@
         'views/sale_order_report.xml',
         'views/company.xml',
         'views/picking_grouped_invoice_report.xml',
-        'report_invoice.xml'
+        'report_invoice.xml',
+        'views/stock_picking.xml',
+        'views/sale_order.xml'
     ],
 }

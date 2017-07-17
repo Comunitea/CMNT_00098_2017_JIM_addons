@@ -2,13 +2,17 @@
 # © 2017 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from openerp import models, api
+from odoo import models, fields, api
 
 
 class SaleOrder(models.Model):
 
     _inherit = 'sale.order'
 
+    copy_printing = fields.Boolean("Imprime copia")
+    documento_neutro = fields.Boolean()
+
+#función para separar impuestos,luego la llamamos desde el pedido
     @api.multi
     def _get_tax_amount_disaggregated(self):
         self.ensure_one()
