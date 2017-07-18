@@ -45,13 +45,13 @@ class StockInventoryLineSGA(models.Model):
         #         global_qty = self.product_id.uom_id._compute_quantity(global_qty, self.product_uom_id)
         #     self.global_qty = global_qty
 
-    def _get_quants_global(self):
-        return self.env['stock.quant'].search([
-            ('location_id', '=', self.location_id.id),
-            ('lot_id', '=', self.prod_lot_id.id),
-            ('product_id', '=', self.product_id.id),
-            ('owner_id', '=', self.partner_id.id),
-            ('package_id', '=', self.package_id.id)])
+    # def _get_quants_global(self):
+    #     return self.env['stock.quant'].search([
+    #         ('location_id', '=', self.location_id.id),
+    #         ('lot_id', '=', self.prod_lot_id.id),
+    #         ('product_id', '=', self.product_id.id),
+    #         ('owner_id', '=', self.partner_id.id),
+    #         ('package_id', '=', self.package_id.id)])
 
     def _get_move_values(self, qty, location_id, location_dest_id):
 
@@ -59,12 +59,12 @@ class StockInventoryLineSGA(models.Model):
         # res['company_id'] = inventory_id.company_id.id >> move company ...
         res['company_id'] = self.company_id.id
         return res
-
-    @api.onchange('product_id')
-    def onchange_product(self):
-        if self.product_id:
-            self.company_id = self.product_id.company_id
-        return super(StockInventoryLineSGA, self).onchange_product()
+    #
+    # @api.onchange('product_id')
+    # def onchange_product(self):
+    #     if self.product_id:
+    #         self.company_id = self.product_id.company_id
+    #     return super(StockInventoryLineSGA, self).onchange_product()
 
 class StockInventorySGA(models.Model):
 
