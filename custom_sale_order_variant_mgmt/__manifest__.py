@@ -17,7 +17,8 @@
         'sale_stock',
         'delivery',
         'sale_order_variant_mgmt',
-        'chained_discount_commercial_rules'
+        'chained_discount_commercial_rules',
+        'jim_stock',
     ],
     "data": [
         'views/sale_order.xml',
