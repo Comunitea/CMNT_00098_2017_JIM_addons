@@ -43,6 +43,11 @@
     -moz-border-radius:6px;
 }
 
+.blue_text {
+    color: blue;
+    text-decoration: underline;
+}
+
 .radius_border_min{
     border:solid black 1px;
     border-radius:6px;

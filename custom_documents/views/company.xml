@@ -12,6 +12,8 @@
             <field name="arch" type="xml">
                 <notebook position="inside">
                     <page string="Qweb">
+                        <separator string="ISO logo"/>
+                        <field name="iso_logo" widget="image"/>
                         <separator string="Footer"/>
                         <field name="qweb_footer"/>
                     </page>

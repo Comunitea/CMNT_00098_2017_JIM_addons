@@ -12,12 +12,11 @@ class SaleOrder(models.Model):
     copy_printing = fields.Boolean("Imprime copia")
     documento_neutro = fields.Boolean()
 
-#función para separar impuestos,luego la llamamos desde el pedido
+    # función para separar impuestos,luego la llamamos desde el pedido
     @api.multi
     def _get_tax_amount_disaggregated(self):
         self.ensure_one()
         res = {}
-        currency = self.currency_id or self.company_id.currency_id
         for line in self.order_line:
             base_tax = 0
             for tax in line.tax_id:

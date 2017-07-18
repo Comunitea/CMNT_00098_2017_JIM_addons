@@ -3,6 +3,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
     <data>
+        
         <template id="custom_sale_order_report" inherit_id="sale.report_saleorder_document">
             <xpath expr="//t[@t-call='report.external_layout']" position="replace">
                 <t t-call="custom_documents.custom_layout">
@@ -51,6 +52,7 @@
                                 <table class="table table-condensed">
                                     <tr class="border-black">
                                         <td><strong>Total Without Taxes</strong></td>
+
                                         <td class="text-right">
                                             <span t-field="doc.amount_untaxed"
                                                 t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
@@ -83,7 +85,9 @@
                                     <p t-if="doc.payment_mode_id">Payment mode: <span t-field="doc.payment_mode_id.name"/></p>
                                 </div>
                             </div>
-                            <div class="col-xs-3"><img src="/custom_documents/static/src/img/calidad.png"/></div>
+                            <div class="col-xs-3" t-if="doc.company_id.iso_logo">
+                                <img t-att-src="'data:image/png;base64,%s' % doc.company_id.iso_logo"/>
+                            </div>
                         </div>
                         <div class="oe_structure"/>
                     </div>

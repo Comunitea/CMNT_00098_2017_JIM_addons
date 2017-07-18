@@ -11,3 +11,4 @@ class StockPicking(models.Model):
 
     copy_printing = fields.Boolean("Imprime copia")
     documento_neutro = fields.Boolean()
+    operator = fields.Char()
