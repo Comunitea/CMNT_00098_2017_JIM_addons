@@ -3,63 +3,63 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
     delivery_report -->
 <odoo>
-	<data>
-		<!--borramos documentos que heredan para que non haxa problemas -->
-		<delete id="delivery.report_delivery_document2" model="ir.ui.view"/>
-		<delete id="sale_stock.report_delivery_document_inherit_sale_stock" model="ir.ui.view"/>
-		<delete id="stock_valued_picking_report.valued_report_picking" model="ir.ui.view"/>
-		<!--heredamos del documento correspondiente y reescribimos -->
-		<template id="custom_delivery_report" inherit_id="stock.report_delivery_document">
-			<xpath expr="//t[@t-call='report.external_layout']" position="replace">
-				<t t-call="custom_documents.custom_layout">
-					<t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
-					<div class="page">
-						<div name="payment_term"/>
-                        
+    <data>
+        <!--borramos documentos que heredan para que non haxa problemas -->
+        <delete id="delivery.report_delivery_document2" model="ir.ui.view"/>
+        <delete id="sale_stock.report_delivery_document_inherit_sale_stock" model="ir.ui.view"/>
+        <delete id="stock_valued_picking_report.valued_report_picking" model="ir.ui.view"/>
+        <!--heredamos del documento correspondiente y reescribimos -->
+        <template id="custom_delivery_report" inherit_id="stock.report_delivery_document">
+            <xpath expr="//t[@t-call='report.external_layout']" position="replace">
+                <t t-call="custom_documents.custom_layout">
+                    <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+                    <div class="page">
+                        <div name="payment_term"/>
+
                         <div class="radius_border_min">
                             Obs: <span t-field="o.note"/>
                         </div>
 
-							<div class="radius_border_min">
-                                <strong>Transportista: </strong><span t-field="o.carrier_id"/> 
+                            <div class="radius_border_min">
+                                <strong>Transportista: </strong><span t-field="o.carrier_id"/>
                                 <strong>Bultos: </strong><span t-field="o.number_of_packages"/>
                                 <strong>kilos: </strong><span t-field="o.weight"/>
                             </div>
-						<table class="custom_table" style="margin-top: 20px;">
-							<thead>
-								<tr>
-									<th>Reference</th>
-									<th>Description</th>
-									<th>Quantity</th>
-									<th>Price/unit</th>
-									<th>Disc.</th>
-									<th>Amount</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr t-foreach="o.pack_operation_product_ids" t-as="line">
-									<td>
-										<span t-field="line.product_id.default_code"/>
-									</td>
-									 <td>
-										<span t-field="line.product_id.name"/><br></br><span t-field="line.product_id.barcode"/>
-									</td> 
+                        <table class="custom_table" style="margin-top: 20px;">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+                                    <th>Price/unit</th>
+                                    <th>Disc.</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.pack_operation_product_ids" t-as="line">
+                                    <td>
+                                        <span t-field="line.product_id.default_code"/>
+                                    </td>
+                                     <td>
+                                        <span t-field="line.product_id.name"/><br></br><span t-field="line.product_id.barcode"/>
+                                    </td>
                                      <td>
                                         <span t-field="line.ordered_qty"/>
-									</td> 
-									<td>
-										<span t-field="line.sale_price_unit"/>
-									</td> 
+                                    </td>
                                     <td>
-										<span t-field="line.sale_discount"/>
-									</td> 
+                                        <span t-field="line.sale_price_unit"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.sale_discount"/>
+                                    </td>
                                         <td>
                                        <span t-field="line.sale_price_subtotal"/>
                                     </td>
-								</tr>
+                                </tr>
 
-							</tbody>
-						</table>
+                            </tbody>
+                        </table>
                         <!--prueba precio-->
                         <div class="row" name="total">
                             <div class="col-xs-4 pull-right">
@@ -89,18 +89,19 @@
                             </div>
                         </div>
                 <div class="row">
-                 <div class="col-xs-3 col-xs-offset-9"><img src="/custom_documents/static/src/img/calidad.png"/></div>
+                    <div class="col-xs-3 col-xs-offset-9" t-if="o.company_id.iso_logo">
+                        <img t-att-src="'data:image/png;base64,%s' % doc.company_id.iso_logo"/>
+                    </div>
                  </div>
 
                     </div>
-                   
-				</t>
-			</xpath>
-		</template> 
-		<record id="stock.action_report_delivery" model="ir.actions.report.xml">
-			<field name="paperformat_id" ref="paperformat_euro" />
-		</record>
 
-	</data>
+                </t>
+            </xpath>
+        </template>
+        <record id="stock.action_report_delivery" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="paperformat_euro" />
+        </record>
+
+    </data>
 </odoo>
-

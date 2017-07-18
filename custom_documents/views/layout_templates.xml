@@ -254,8 +254,8 @@
     <template id="custom_layout_footer">
         <div class="footer">
             <t t-if="o._name == 'account.invoice'">
-                <div class="col-xs-1">
-                    <img src="/custom_documents/static/src/img/calidad.png" style="height: 50px;"/>
+                <div class="col-xs-1" t-if="o.company_id.iso_logo">
+                    <img t-att-src="'data:image/png;base64,%s' % o.company_id.iso_logo" style="height: 50px;"/>
                 </div>
             </t>
             <div class="text-center footer_text">

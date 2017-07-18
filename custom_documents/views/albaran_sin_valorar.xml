@@ -14,7 +14,7 @@
                         </div>
                         <table class="custom_table" style="margin-top: 20px;">
                             <thead>
-                                <tr>  
+                                <tr>
                                     <th>Reference</th>
                                     <th>Description</th>
                                     <th>Quantity</th>
@@ -83,7 +83,9 @@
                                     <p t-if="doc.payment_mode_id">Payment mode: <span t-field="doc.payment_mode_id.name"/></p>
                                 </div>
                             </div>
-                            <div class="col-xs-3"><img src="/custom_documents/static/src/img/calidad.png"/></div>
+                            <div class="col-xs-3" t-if="doc.company_id.iso_logo">
+                                <img t-att-src="'data:image/png;base64,%s' % doc.company_id.iso_logo"/>
+                            </div>
                         </div>
                         <div class="oe_structure"/>
                     </div>
@@ -97,4 +99,3 @@
 
     </data>
 </odoo>
-
