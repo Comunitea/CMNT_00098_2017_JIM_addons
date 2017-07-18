@@ -3,7 +3,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
     <data>
-        <template id="custom_sale_order_report_sin_precio"> 
+        <template id="custom_sale_order_report_warehouse"> 
             <t t-foreach="docs" t-as="doc">
                 <t t-set="noproforma" t-value="True"/>
                 <t t-call="custom_documents.custom_layout">
@@ -13,14 +13,14 @@
                         <div class="radius_border">
                             Obs.: <span t-field="doc.note"/>
                         </div>
-                        <table class="custom_table" style="margin-top: 20px;">
+                        <table class="custom_table" style="margin-top: 10px;">
                             <thead>
                                 <tr>
                                     <th>Reference</th>
                                     <th>Description</th>
                                     <th>Quantity</th>
-                                     <th>Warehouse</th>
-                                    
+                                    <th>Warehouse</th>
+
                                 </tr>
                             </thead>
                             <tbody>
@@ -45,17 +45,21 @@
                         <table class="custom_table" style="margin-top: 20px;">
                     
                             <tr>
-                              <td><strong>Firma</strong></td>
-                              <td><strong>Bultos Jim</strong></td>
-                              <td><strong>Bultos EME</strong></td>
-                               <td><strong>Total Bultos</strong></td>
+                               <th><strong>Operario</strong></th>
+                                <th><strong>Bultos JIM</strong></th>
+                                <th><strong>Bultos EME</strong></th>
+                                <th><strong>Total bultos</strong></th>
+                                <th><strong>Total peso</strong></th>
+                                 <th><strong>Transportista</strong></th>
                             </tr>
                              
                             <tr>
-                              <td><strong>Peso</strong></td>
-                              <td> </td>
-                              <td> </td>
-                              <td> </td>
+                                <td class="empty"></td>
+                                <td class="empty"></td>
+                                <td class="empty"></td>
+                                <td class="empty"></td>
+                                <td class="empty"></td>
+                                <td class="empty"></td>
                             </tr>
                              
                             </table>
@@ -67,12 +71,12 @@
         </template>
 
         <report 
-            id="report_sale_order_report_sin_precio" 
-            name="custom_documents.custom_sale_order_report_sin_precio" 
-            file="custom_documents.custom_sale_order_report_sin_precio" 
+            id="report_sale_order_report_warehouse" 
+            name="custom_documents.custom_sale_order_report_warehouse" 
+            file="custom_documents.custom_sale_order_report_warehouse" 
             report_type="qweb-pdf" 
             model="sale.order" 
-            string="Pedido sin valorar"/>
+            string="Pedido Almacén"/>
         <record id="custom_documents.report_sale_order_report_warehouse" model="ir.actions.report.xml">
             <field name="paperformat_id" ref="paperformat_euro" />
         </record>
