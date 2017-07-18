@@ -17,7 +17,8 @@
         'jim_stock',
         'delivery',
         'product_custom',
-        'product_code_generator'
+        'product_code_generator',
+        'commercial_rules'
     ],
     'contributors': [
         "Comunitea",
