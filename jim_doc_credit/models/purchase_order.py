@@ -9,9 +9,9 @@ class PurchaseOrder(models.Model):
     _inherit = 'purchase.order'
 
     @api.depends('proforma_invoice_ref', 'proforma_invoice_date',
-                           'limit_expedition_date', 'mail_confirm_packing_list',
-                           'partner_bank_contact_id', 'expire_credit_letter_date',
-                           'incoterm_id', 'doc_credit_bank_id', 'harbor_id')
+                'limit_expedition_date', 'mail_confirm_packing_list',
+                'partner_bank_contact_id', 'expire_credit_letter_date',
+                'incoterm_id', 'doc_credit_bank_id', 'harbor_id')
     def check_doc_credit_ok(self):
         fields_to_check = ('proforma_invoice_ref', 'proforma_invoice_date',
                            'limit_expedition_date', 'mail_confirm_packing_list',

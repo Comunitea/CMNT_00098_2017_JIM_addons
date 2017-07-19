@@ -99,7 +99,9 @@ class ProcurementOrder(models.Model):
                 ('partner_id', '=', partner.id),
                 ('state', '=', 'draft'),
                 ('picking_type_id', '=',
-                 procurement.rule_id.picking_type_id.id),
+                 procurement.rule_id.ic_picking_type_id \
+                 and procurement.rule_id.ic_picking_type_id.id \
+                 or procurement.rule_id.picking_type_id.id),
                 ('company_id', '=', procurement.company_id.id),
                 ('dest_address_id', '=', procurement.partner_dest_id.id))
             if group:
