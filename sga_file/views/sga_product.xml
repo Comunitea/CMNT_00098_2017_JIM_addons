@@ -68,7 +68,7 @@
                             </div>
                         </header>
                     </xpath>
-                <xpath expr="//button[@name='110']" position="before">
+                <!-- <xpath expr="//button[@name='110']" position="before">
                     <field name="sga_state" invisible="1"/>
                     <button class="oe_stat_button" name="export_category_to_mecalux" icon="fa-refresh" type="object"
                     attrs="{'invisible': [('sga_state', '=', 'AC')]}">
@@ -76,7 +76,7 @@
                             <span class="o_stat_text">Mecalux</span>
                         </div>
                     </button>
-                </xpath>
+                </xpath> -->
 
 
                 <xpath expr="//h1" position="after">

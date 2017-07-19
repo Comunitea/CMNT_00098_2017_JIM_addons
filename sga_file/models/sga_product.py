@@ -165,7 +165,7 @@ class SGAProductProduct(models.Model):
         self.sga_name_get = self.name_get[0][1]
 
     @api.multi
-    @api.depends('name')
+    # @api.depends('name')
     def get_variant_name(self):
         for prod in self:
             prod.sga_name_get = prod.name_get()[0][1]
@@ -327,12 +327,11 @@ class SGAProductTemplate(models.Model):
     sga_state = fields.Selection(SGA_STATE, 'Estado Mecalux',
                                  default='PA',
                                  help="Estado integracion con mecalux",
-                                 compute='_compute_sga_state', readonly=True, store=True)
+                                 compute='_compute_sga_state', readonly=True, store=False)
     sga_dst = fields.Many2one('sga.destination', 'Ubicación-Destino', default=_get_default_dst)
     sga_dst_code = fields.Char(related="sga_dst.code")
 
     @api.one
-    @api.depends('product_variant_ids', 'product_variant_ids.sga_state')
     def _compute_sga_state(self):
         sga_state = 'AC'
         for product in self.product_variant_ids:
