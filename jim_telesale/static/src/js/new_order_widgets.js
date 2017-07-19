@@ -11,7 +11,7 @@ var OrderWidget = NewOrderWidgets.OrderWidget.include({
         added_line.set('qty', line_vals.qty || 1.0);
         added_line.set('pvp', line_vals.price || 0.0);
         added_line.set('discount', line_vals.discount || 0.0);
-        added_line.set('taxes_ids', line_vals.tax_ids || []); 
+        added_line.set('taxes_ids', line_vals.tax_ids || []);
         added_line.update_line_values();
         return added_line;
     },
@@ -42,7 +42,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         this.$('.col-description').focus(_.bind(this.click_handler, this, 'description'));
     },
 
-    
+
     // Convert a chained discout like (10.5+20) in a float (20.5)
     // or returns false if something wrong.
     chained_discount2float: function(value){
@@ -51,7 +51,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         }
         var split_disc = value.split('+')
         var discount = 0.0
-        var disc = 0 
+        var disc = 0
         for (var i in split_disc){
             disc = split_disc[i]
             if (isNaN(disc) || disc == "") {
@@ -80,7 +80,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
             else{
                 this.model.set('discount', discount);
             }
-            this.refresh('chained_discount');  
+            this.refresh('chained_discount');
         }
     },
 
@@ -118,7 +118,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
             self.model.set('qty', add_qty);
             self.model.set('discount', 0.0);
             self.model.set('pvp', self.ts_model.my_round( result.price_unit));
-           
+
             var subtotal = self.model.get('pvp') * self.model.get('qty') * (1 - self.model.get('discount') / 100.0)
             self.model.set('total', self.ts_model.my_round(subtotal || 0,2));
 
@@ -169,7 +169,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         this._super()
         this.$('.col-chained_discount').keydown(function(event){
           var keyCode = event.keyCode || event.which;
-          if (keyCode == 40) {  // KEY DOWWN (40) 
+          if (keyCode == 40) {  // KEY DOWWN (40)
                 event.preventDefault();
                 $(this).parent().parent().next().find('.col-chained_discount').select();
 
@@ -208,7 +208,7 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
                     var cus_name = self.ts_model.getComplexName(partner_obj);
                     self.order_model.set('partner', cus_name);
                     self.order_model.set('partner_code', partner_obj.ref ? partner_obj.ref : "");
-                    
+
                     self.order_model.set('customer_comment', partner_obj.comment);
                     // TODO nan_partner_risk migrar a la 10
                     // self.order_model.set('limit_credit', self.ts_model.my_round(partner_obj.credit_limit,2));
@@ -228,7 +228,7 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
                         if (result.mode == 'block'){
                             self.order_model.set('partner', "");
                         }
-                        
+
                     }
                     self.refresh();
                     // New line and VUA button when chang
@@ -275,11 +275,12 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                 return;
             }
             this.do_action({
+                 model: 'sale.order',
                  context: {'active_ids': [currentOrder.get('erp_id')]},
                  data: null,
                  name: 'Quotation / Order',
-                 report_file: 'sale.report_saleorder',
-                 report_name: 'sale.report_saleorder',
+                 report_file: 'custom_documents.custom_sale_order_report_warehouse',
+                 report_name: 'custom_documents.custom_sale_order_report_warehouse',
                  report_type: 'qweb-pdf',
                  type: 'ir.actions.report.xml'
             });
@@ -318,5 +319,3 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
 
 
 });
-
-
