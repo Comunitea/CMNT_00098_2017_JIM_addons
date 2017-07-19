@@ -27,13 +27,15 @@
         'views/layout_templates.xml',
         'data/report_paperformat_data.xml',
         'views/sale_order_report.xml',
-       'views/sale_order_report_warehouse.xml',
+        'views/sale_order_report_warehouse.xml',
         'views/company.xml',
         'views/picking_grouped_invoice_report.xml',
         'report_invoice.xml',
         'views/stock_picking.xml',
         'views/sale_order.xml',
-         'views/invoice_report.xml',
-        'views/delivery_report.xml'
+        'views/invoice_report.xml',
+        #'views/albaran_sin_valorar.xml',
+        'views/delivery_report.xml',
+        'views/delivery_report_unrated.xml'
     ],
 }

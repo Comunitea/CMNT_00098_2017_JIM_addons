@@ -10,4 +10,5 @@ class ResCompany(models.Model):
     _inherit = 'res.company'
 
     qweb_footer = fields.Html(translate=True)
+    qweb_invoice_footer = fields.Html(translate=True)
     iso_logo = fields.Binary()
