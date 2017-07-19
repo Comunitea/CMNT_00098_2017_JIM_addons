@@ -6,7 +6,6 @@
     width: 100%;
 }
 
-
 .table_fixed_height {
     table-layout: fixed;
     min-height:200px;

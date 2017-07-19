@@ -94,6 +94,7 @@
                 </t>
             </xpath>
         </template>
+    
 			<record id="sale.report_sale_order" model="ir.actions.report.xml">
             <field name="paperformat_id" ref="paperformat_euro" />
         </record>

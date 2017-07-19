@@ -24,12 +24,12 @@
                         <table class="custom_table" style="margin-top: 10px;">
                             <thead>
                                 <tr>
-                                    <th>Referencia</th>
-                                    <th>Descripción</th>
-                                    <th>Cantidad</th>
-                                    <th>Precio/unidad</th>
-                                    <th>Descuento</th>
-                                    <th>Importe</th>
+                                  	<th>Reference</th>
+									<th>Description</th>
+									<th>Quantity</th>
+									<th>Price/unit</th>
+									<th>Disc.</th>
+									<th>Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -110,7 +110,9 @@
                         </table>
                     </div>
                 </div>
-                 <div class="radius_border row">
+                
+                
+                <div class="radius_border row">
                     <p t-if="o.payment_mode_id">Payment mode: <span t-field="o.payment_mode_id.name"/></p>
                     <p t-if="o.payment_mode_id">Bank account: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number"/></p>
                     <p>Maturity:
@@ -127,10 +129,13 @@
                         </span>
                     </p>
                 </div>
-                   </div>
-                </t>
-            </xpath>
-        </template> 
+                
+                
+                
+                </div>
+            </t>
+        </xpath>
+    </template> 
         
 			<record id="account.account_invoices" model="ir.actions.report.xml">
 				<field name="paperformat_id" ref="paperformat_euro" />

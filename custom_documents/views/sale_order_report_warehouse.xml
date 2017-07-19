@@ -45,23 +45,42 @@
                         <table class="custom_table" style="margin-top: 20px;">
                     
                             <tr>
-                               <th><strong>Operario</strong></th>
-                                <th><strong>Bultos JIM</strong></th>
-                                <th><strong>Bultos EME</strong></th>
-                                <th><strong>Total bultos</strong></th>
-                                <th><strong>Total peso</strong></th>
-                                 <th><strong>Transportista</strong></th>
+                                <th style= "border: 0px;"></th>
+                                <th><strong>Packages JIM</strong></th>
+                                <th><strong>Packages EME</strong></th>
+                                <th><strong>Total</strong></th>
+                                
                             </tr>
                              
                             <tr>
+                                <td>Packages</td>
                                 <td class="empty"></td>
                                 <td class="empty"></td>
                                 <td class="empty"></td>
-                                <td class="empty"></td>
-                                <td class="empty"></td>
-                                <td class="empty"></td>
+                               
                             </tr>
-                             
+                              <tr>
+                                <td>Peso</td>
+                                <td class="empty"></td>
+                                <td class="empty"></td>
+                                <td class="empty"></td>
+                                
+                            </tr>
+                          
+                            </table>
+                                           
+                        <table class="custom_table" style="margin-top:5px;">
+                    
+                            <tr>
+                                <th><strong>Operator</strong></th>
+                                <th><strong>carrier</strong></th>
+                            </tr>
+                            
+                            <tr>
+                                <td class="empty"></td>
+                                <td class="empty"></td>
+                               
+                            </tr>
                             </table>
                                                     
                         <div class="oe_structure"/>

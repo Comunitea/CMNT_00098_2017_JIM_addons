@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <data>
+        <template id="custom_delivery_report_unrated">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="custom_documents.custom_layout">
+                   	<t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+                    <div class="page">
+						<div name="payment_term"/>
+                        
+                        <div class="radius_border_min">
+                            Obs: <span t-field="o.note"/>
+                        </div>
+
+						
+        
+                        <div class="radius_border_min">
+                                <strong>Carrier: </strong><span t-field="o.carrier_id"/> 
+                                <strong>Bultos: </strong><span t-field="o.number_of_packages"/>
+                                <strong>kilos: </strong><span t-field="o.weight"/>
+                            </div>
+						<table class="custom_table" style="margin-top: 20px;">
+							<thead>
+								<tr>
+									<th>Reference</th>
+									<th>Description</th>
+									<th>Quantity</th>
+								
+								</tr>
+							</thead>
+							<tbody>
+								<tr t-foreach="o.pack_operation_product_ids" t-as="line">
+									<td>
+										<span t-field="line.product_id.default_code"/>
+									</td>
+									 <td>
+										<span t-field="line.product_id.name"/><br></br><span t-field="line.product_id.barcode"/>
+									</td> 
+                                     <td>
+                                        <span t-field="line.ordered_qty"/>
+									</td> 
+									
+								</tr>
+
+							</tbody>
+						</table>
+                        
+
+                    </div>
+                   
+                    </t>
+                </t>
+
+		</template> 
+		 <report
+            id="report_delivery_report_unrated"
+            name="custom_documents.custom_delivery_report_unrated"
+            file="custom_documents.custom_delivery_report_unrated"
+            report_type="qweb-pdf"
+            model="stock.picking"
+            string="albará sin valorar"/>
+            
+        <record id="custom_documents.report_delivery_report_unrated" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="paperformat_euro" />
+        </record>
+    </data>
+</odoo>
