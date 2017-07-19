@@ -150,7 +150,7 @@ class FixTemplateProduct(object):
         print "templates no: ", len(template_ids)
         cont = 1
         for templ_id in template_ids:
-            tmpl_data = self.read("product.template", templ_id, ['attribute_line_ids', 'product_variant_ids'])
+            tmpl_data = self.read("product.template", templ_id, ['attribute_line_ids', 'product_variant_ids', 'name'])
             templ_attributes = {}
             att_data = self.read('product.attribute.line',
                                  tmpl_data[0]['attribute_line_ids'],
@@ -168,7 +168,7 @@ class FixTemplateProduct(object):
                         for val in prod_data[0]['attribute_value_ids']:
                             att_data = self.read('product.attribute.value',
                                                  val, ['attribute_id'])
-                            if val not in templ_attributes[att_data[0]['attribute_id']][0]:
+                            if att_data[0]['attribute_id'] in templ_attributes and val not in templ_attributes[att_data[0]['attribute_id']][0]:
                                 templ_attributes[att_data[0]['attribute_id']][0].append(val)
 
                 for att in templ_attributes:
@@ -180,7 +180,8 @@ class FixTemplateProduct(object):
                 print "%s de %s" % (cont, len(template_ids))
                 cont += 1
             except Exception, e:
-                print "EXCEPTION: Prod:", tmpl_data['name'], repr(e)
+                print "EXCEPTION: Prod:", tmpl_data[0]['name'], repr(e)
+                raise e
 
         return True
 
