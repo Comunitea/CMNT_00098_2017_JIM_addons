@@ -7,7 +7,8 @@ from odoo import models, api, fields
 class ProductProduct(models.Model):
     _inherit = 'product.product'
 
-    route_name = fields.Char('Route name', related='route_ids.name')
+    route_name = fields.Char('Route name', related='route_ids.name',
+                              store=True)
 
     # @api.model
     # def ts_get_global_stocks(self, product_id):
@@ -47,6 +48,10 @@ class ProductProduct(models.Model):
         """
         super(ProductProduct, self)._get_product_stock(product)
         return product and product.global_available_stock or 0
+
+    @api.model
+    def _get_stock_field(self):
+        return 'global_available_stock'
 
     @api.model
     def _get_line_discount(self, line):

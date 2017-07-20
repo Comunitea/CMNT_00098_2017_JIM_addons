@@ -76,6 +76,7 @@ class StockPicking(models.Model):
             ops = assigned_lines.linked_move_operation_ids.mapped('operation_id')
             ops_qty = sum(x.product_qty for x in ops)
             remain_qty = orig_product_qty
+            last_op =False
             if len(ops) == 1:
                 ops[0].qty_done = ops[0].product_qty = orig_product_qty
                 remain_qty = 0
@@ -92,7 +93,7 @@ class StockPicking(models.Model):
                             op.done_qty = op.product_qty = remain_qty
                             remain_qty = 0
                     last_op = op
-            if remain_qty > 0:
+            if remain_qty > 0 and last_op:
                 last_op.done_qty = last_op.product_qty = last_op.product_qty + remain_qty
 
 
@@ -118,16 +119,19 @@ class StockPicking(models.Model):
                 ic_purchases = self.env['purchase.order'].search([('group_id', '=', picking.group_id.id),
                                                                   ('intercompany', '=', True)])
                 if ic_purchases:
-                    picking_in_ids = ic_purchases.picking_ids.filtered(lambda x: x.picking_type_id.code == 'internal'
-                                                                                 and x.location_id.usage == 'supplier'
-                                                                       and x.state != 'done')
+                    for purchase in ic_purchases:
+                        picking_in_ids = \
+                            purchase.picking_ids.filtered(lambda x: x.picking_type_id.code == 'internal'
+                                                         and x.location_id.usage == 'supplier'
+                                                         and x.state != 'done')
                     #CANCELA ALBARANES DE COMPRA RELACIONADOS
-                    picking_in_ids.action_cancel()
+                        picking_in_ids.action_cancel()
 
             if picking.purchase_id.intercompany:
                 ic_sale = self.env['sale.order'].sudo().search([('auto_purchase_order_id', '=', picking.purchase_id.id)])
-                sale_pickings = ic_sale.picking_ids.filtered(lambda x: x.state != 'done')
-                sale_pickings.action_cancel()
+                for sale in ic_sale:
+                    sale_pickings = sale.picking_ids.filtered(lambda x: x.state != 'done')
+                    sale_pickings.action_cancel()
 
         res = super(StockPicking, self).action_cancel()
 

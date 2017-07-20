@@ -30,7 +30,8 @@ class SaleOrder(models.Model):
         ic_sales = self.env['sale.order'].sudo().search(
             [('auto_purchase_order_id', 'in', self.purchase_ids.mapped('id')),('id', '!=', self.id)])
         if ic_sales:
-            ic_sales.action_cancel()
+            for sale in ic_sales:
+                sale.action_cancel()
         if self.purchase_ids:
             self.purchase_ids.button_cancel()
         res = super(SaleOrder, self).action_cancel()
