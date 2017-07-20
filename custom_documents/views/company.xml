@@ -14,8 +14,10 @@
                     <page string="Qweb">
                         <separator string="ISO logo"/>
                         <field name="iso_logo" widget="image"/>
-                        <separator string="Footer"/>
+                        <separator string="Generic footer"/>
                         <field name="qweb_footer"/>
+                        <separator string="Invoice footer"/>
+                        <field name="qweb_invoice_footer"/>
                     </page>
                 </notebook>
             </field>

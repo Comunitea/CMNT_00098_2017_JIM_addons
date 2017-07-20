@@ -16,7 +16,6 @@ class StockQuantPackage(models.Model):
 
     _inherit = "stock.quant.package"
 
-    @api.one
     @api.depends('quant_ids', 'children_ids')
     def _compute_volume(self):
         volume = 0
@@ -27,7 +26,6 @@ class StockQuantPackage(models.Model):
             volume += pack.volume
         self.volume = volume
 
-    @api.one
     @api.depends('height', 'width', 'length', 'volume')
     def _compute_package_volume(self):
 
