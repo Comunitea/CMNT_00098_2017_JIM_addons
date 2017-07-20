@@ -105,7 +105,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         return model.call("ts_product_id_change", [product_id, customer_id, pricelist_id])
         .then(function(result){
             var product_obj = self.ts_model.db.get_product_by_id(product_id);
-            var uom_obj = self.ts_model.db.get_unit_by_id(product_obj.uom_id[0])
+            var uom_obj = self.ts_model.db.get_unit_by_id(product_obj.uom_id)
             var description = product_obj.name;
             if (product_obj.description_sale){
                 description = description + '\n' + product.description_sale
