@@ -76,3 +76,18 @@ class PurchaseOrder(models.Model):
             'res_id': self.ids[0],
             'context': self.env.context
         }
+
+    @api.multi
+    def _add_supplier_to_product(self):
+        res = super(PurchaseOrder, self)._add_supplier_to_product()
+        for line in self.order_line:
+            partner = self.partner_id if not self.partner_id.parent_id else \
+                self.partner_id.parent_id
+            if line.product_id.seller_ids.filtered(lambda x: x.name == partner):
+                seller_id = line.product_id.seller_ids.filtered(lambda x: x.name == partner)
+                currency = partner.property_purchase_currency_id or self.env.user.company_id.currency_id
+
+                try:
+                    seller_id.write({'price': self.currency_id.compute(line.price_unit, currency)})
+                except AccessError:  # no write access rights -> just ignore
+                    break
