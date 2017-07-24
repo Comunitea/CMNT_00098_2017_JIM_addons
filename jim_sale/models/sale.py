@@ -92,35 +92,10 @@ class SaleOrderLine(models.Model):
         # Search for specific prices in variants
         qty = product._context.get('quantity', 1.0)
         vals = {}
-
-        today = self.order_id.date_order or time.strftime('%Y-%m-%d')
-        domain = [('partner_id', '=', self.order_id.partner_id.id),
-                  ('product_id', '=', self.product_id.id),
-                  ('min_qty', '<=', qty),
-                  '|',
-                  ('date_start', '=', False),
-                  ('date_start', '<=', today),
-                  '|',
-                  ('date_end', '=', False),
-                  ('date_end', '>=', today),
-        ]
-        customer_prices = self.env['customer.price'].\
-            search(domain, limit=1, order='min_qty desc')
-         # Search for specific prices in templates
-        if not customer_prices:
-            domain = [
-                ('partner_id', '=', self.order_id.partner_id.id),
-                ('product_tmpl_id', '=', self.product_id.product_tmpl_id.id),
-                ('min_qty', '<=', qty),
-                '|',
-                ('date_start', '=', False),
-                ('date_start', '<=', today),
-                '|',
-                ('date_end', '=', False),
-                ('date_end', '>=', today),
-            ]
-            customer_prices = self.env['customer.price'].\
-                search(domain, limit=1, order='min_qty desc')
-        if customer_prices:
-            return customer_prices.price
+        partner_id = self.order_id.partner_id.id
+        date = self.order_id.date_order
+        customer_price = self.env['customer.price'].\
+                    get_customer_price(partner_id, product, qty, date=date)
+        if customer_price:
+            return customer_price
         return res

@@ -33,6 +33,22 @@ class ProductPorduct(models.Model):
     customer_prices_count = fields.\
       Integer(compute='_get_customer_prices_count', string='#Prices')
 
+    def _compute_product_price(self):
+        """
+        When read price, search in customer prices first
+        """
+        self_super = self.env['product.product']
+        partner_id = self._context.get('partner', False)
+        qty = self._context.get('quantity', 1.0)
+        if partner_id:
+            for product in self:
+                customer_price = self.env['customer.price'].\
+                    get_customer_price(partner_id, product, qty)
+                if customer_price:
+                    product.price = customer_price
+                else:
+                    self_super += product
+        return super(ProductPorduct, self_super)._compute_product_price()
    
 class CustomerPrice(models.Model):
     _name = "customer.price"
