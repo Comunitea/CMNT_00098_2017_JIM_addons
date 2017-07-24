@@ -12,7 +12,7 @@
         'sale_stock',
         'sales_team',
         'sale_order_dates',
-        'product'
+        'product',
     ],
     'contributors': [
         "Comunitea ",
@@ -24,8 +24,9 @@
         'views/product_view.xml',
         'views/sale_view.xml',
         'views/stock_picking.xml',
+        'views/res_partner_view.xml',
         'report/report_stock_forecast.xml',
-
+        'security/jim_sale_security.xml'
     ],
     "installable": True
 }

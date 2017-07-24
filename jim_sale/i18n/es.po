@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-14 10:27+0000\n"
-"PO-Revision-Date: 2017-07-14 10:27+0000\n"
+"POT-Creation-Date: 2017-07-24 16:09+0000\n"
+"PO-Revision-Date: 2017-07-24 16:09+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -23,14 +23,16 @@ msgid "#Prices"
 msgstr "#Precios"
 
 #. module: jim_sale
+#: model:ir.actions.act_window,help:jim_sale.action_customer_prices_partner
 #: model:ir.actions.act_window,help:jim_sale.action_customer_prices_tmpl
 #: model:ir.actions.act_window,help:jim_sale.action_customer_prices_tmpl2
 #: model:ir.actions.act_window,help:jim_sale.action_customer_prices_variant
 #: model:ir.actions.act_window,help:jim_sale.action_customer_prices_variant2
 msgid "Click to add a new customer price rule."
-msgstr "Click to add a new customer price rule."
+msgstr "Click para añadir un nuevo precio específicos de cliente."
 
 #. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_customer_price_company_id
 #: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_company_id
 msgid "Company"
 msgstr "Compañía"
@@ -71,8 +73,7 @@ msgstr "Cliente"
 #: model:ir.ui.view,arch_db:jim_sale.product_template_only_form_view_prices
 #: model:ir.ui.view,arch_db:jim_sale.view_customer_price_filter
 #: model:ir.ui.view,arch_db:jim_sale.view_customer_price_form
-#: model:ir.ui.view,arch_db:jim_sale.view_customer_price_tree_tmpl
-#: model:ir.ui.view,arch_db:jim_sale.view_customer_price_tree_variant
+#: model:ir.ui.view,arch_db:jim_sale.view_customer_price_tree
 msgid "Customer Prices"
 msgstr "Precios de cliente"
 
@@ -84,7 +85,7 @@ msgstr "Nombre mostrado"
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_date_end
 msgid "End Date"
-msgstr "Fecha finalización"
+msgstr "Fecha final"
 
 #. module: jim_sale
 #: model:ir.model.fields,help:jim_sale.field_customer_price_date_end
@@ -107,6 +108,8 @@ msgid "Incoming qty"
 msgstr "Cantidad entrante"
 
 #. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_delivery_carrier_lqdr
+#: model:ir.model.fields,field_description:jim_sale.field_product_product_lqdr
 #: model:ir.model.fields,field_description:jim_sale.field_product_template_lqdr
 #: model:ir.model.fields,field_description:jim_sale.field_sale_order_line_lqdr
 #: model:ir.model.fields,field_description:jim_sale.field_sale_order_line_template_lqdr
@@ -162,7 +165,7 @@ msgstr "Cantidad saliente"
 #. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.stock_pack_picks_tree
 msgid "Package in tree"
-msgstr "Package in tree"
+msgstr "Paquetes en árbol"
 
 #. module: jim_sale
 #: code:addons/jim_sale/models/stock_picking.py:19
@@ -222,6 +225,16 @@ msgid "Sales Order Line"
 msgstr "Línea de pedido de venta"
 
 #. module: jim_sale
+#: model:ir.actions.act_window,name:jim_sale.action_customer_prices_partner
+msgid "Specific Prices"
+msgstr "Precios específicos"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.res_partner_view_buttons_add_prices
+msgid "Specific prices"
+msgstr "Precios específ."
+
+#. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_date_start
 msgid "Start Date"
 msgstr "Fecha de inicio"
@@ -229,7 +242,7 @@ msgstr "Fecha de inicio"
 #. module: jim_sale
 #: model:ir.model.fields,help:jim_sale.field_customer_price_date_start
 msgid "Start date for this customer price"
-msgstr "Start date for this customer price"
+msgstr "Fecha de inicio para el precio de cliente"
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_product_tmpl_id
@@ -258,6 +271,7 @@ msgid "Variant"
 msgstr "Variante"
 
 #. module: jim_sale
+#: model:ir.actions.act_window,help:jim_sale.action_customer_prices_partner
 #: model:ir.actions.act_window,help:jim_sale.action_customer_prices_tmpl
 #: model:ir.actions.act_window,help:jim_sale.action_customer_prices_tmpl2
 #: model:ir.actions.act_window,help:jim_sale.action_customer_prices_variant
@@ -266,17 +280,6 @@ msgid "You can define a specific price by customer and a range of dates."
 msgstr "Pues definir precios específicos por clientes y un rango de fechas"
 
 #. module: jim_sale
-#: model:ir.model,name:jim_sale.model_customer_price
-msgid "customer.price"
-msgstr "customer.price"
-
-#. module: jim_sale
-#: model:ir.model,name:jim_sale.model_report_stock_forecast
-msgid "report.stock.forecast"
-msgstr "report.stock.forecast"
-
-#. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.view_picking_form_jim_packs
 msgid "📋Tree packs"
-msgstr "📋Tree packs"
-
+msgstr "📋Lista paquetes"
