@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#       * product_custom
+#	* product_custom
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-26 17:44+0000\n"
-"PO-Revision-Date: 2017-03-26 17:44+0000\n"
+"POT-Creation-Date: 2017-07-24 15:25+0000\n"
+"PO-Revision-Date: 2017-07-24 15:25+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,9 +16,38 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: product_custom
-#: model:ir.model,name:product_custom.model_product_category
-msgid "Product Category"
-msgstr "Categoría de producto"
+#: model:ir.ui.view,arch_db:product_custom.product_packagin_tree_apply_dimens
+#: model:ir.ui.view,arch_db:product_custom.product_packaging_form_view_compute_dimensions
+msgid "Apply dimensions"
+msgstr "Aplicar dimensiones"
+
+#. module: product_custom
+#: code:addons/product_custom/models/product.py:34
+#, python-format
+msgid "Check quantity !!!!"
+msgstr "¡Compruebe la cantidad!"
+
+#. module: product_custom
+#: model:ir.model.fields,field_description:product_custom.field_product_attribute_legacy_code
+#: model:ir.model.fields,field_description:product_custom.field_product_attribute_value_legacy_code
+#: model:ir.model.fields,field_description:product_custom.field_product_tag_legacy_code
+msgid "Legacy code"
+msgstr "Código heredado"
+
+#. module: product_custom
+#: model:ir.model,name:product_custom.model_product_packaging
+msgid "Packaging"
+msgstr "Empaquetado"
+
+#. module: product_custom
+#: model:ir.model,name:product_custom.model_product_product
+msgid "Product"
+msgstr "Producto"
+
+#. module: product_custom
+#: model:ir.model,name:product_custom.model_product_attribute
+msgid "Product Attribute"
+msgstr "Atributo de producto"
 
 #. module: product_custom
 #: model:ir.model,name:product_custom.model_product_tag
@@ -31,11 +60,23 @@ msgid "Product Template"
 msgstr "Plantilla de producto"
 
 #. module: product_custom
+#: model:ir.model.fields,field_description:product_custom.field_delivery_carrier_tariff
+#: model:ir.model.fields,field_description:product_custom.field_product_product_tariff
 #: model:ir.model.fields,field_description:product_custom.field_product_template_tariff
 msgid "Tariff"
 msgstr "Arancel"
 
 #. module: product_custom
+#: model:ir.ui.view,arch_db:product_custom.product_template_form_view_add_idescription
+msgid "Technical description"
+msgstr "Descripción técnica"
+
+#. module: product_custom
 #: model:ir.model.fields,field_description:product_custom.field_product_tag_web
 msgid "Web"
 msgstr "Web"
+
+#. module: product_custom
+#: model:ir.model,name:product_custom.model_product_attribute_value
+msgid "product.attribute.value"
+msgstr "product.attribute.value"
