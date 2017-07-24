@@ -30,10 +30,7 @@ class ProductPorduct(models.Model):
     customer_product_prices = fields.One2many('customer.price', 'product_id',
                                               'Customer Prices')
     customer_prices_count = fields.\
-<<<<<<< HEAD
         Integer(compute='_get_customer_prices_count', string='#Prices')
-=======
-      Integer(compute='_get_customer_prices_count', string='#Prices')
 
     def _compute_product_price(self):
         """
@@ -51,19 +48,3 @@ class ProductPorduct(models.Model):
                 else:
                     self_super += product
         return super(ProductPorduct, self_super)._compute_product_price()
-   
-class CustomerPrice(models.Model):
-    _name = "customer.price"
-
-    product_tmpl_id = fields.Many2one('product.template', 'Template')
-    product_id = fields.Many2one('product.product', 'Product')
-    partner_id = fields.Many2one('res.partner', 'Customer', required=True)
-    min_qty = fields.Float('Min Quantity', default=0.0, required=True)
-    price = fields.Float(
-        'Price', default=0.0, digits=dp.get_precision('Product Price'),
-        required=True, help="The price to purchase a product")
-    date_start = fields.Date('Start Date',
-                             help="Start date for this customer price")
-    date_end = fields.Date('End Date',
-                           help="End date for this customer price")
->>>>>>> 29fd39ef42901527fccc30aeca5682e21e065926
