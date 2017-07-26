@@ -8,6 +8,8 @@
     'depends': [
         'base',
         'purchase',
+        'account',
+        'partner_consolidate'
     ],
     'author': "Comunitea",
     'license': "AGPL-3",
@@ -17,7 +19,8 @@
              'views/res_partner_view.xml',
              'views/res_company_view.xml',
              'views/harbor_partner_product.xml',
-             'security/ir.model.access.csv'],
+             'security/ir.model.access.csv',
+             'views/account_invoice_view.xml'],
     'installable': True,
     'auto_install': False,
 }

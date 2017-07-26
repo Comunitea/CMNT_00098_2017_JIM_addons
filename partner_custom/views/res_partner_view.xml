@@ -12,6 +12,7 @@
             <field name="user_id" position="after">
                 <field name="partner_discount"/>
                 <field name="web_password"/>
+                <field name="invoice_in_paper"/>
             </field>
             <field name="company_id" position="after">
                 <field name="propietary"/>
