@@ -37,28 +37,36 @@ class ProductProduct(models.Model):
 
     @api.multi
     def _get_web_stock(self):
+        bom_obj = self.env["mrp.bom"]
+        bom_line_obj = self.env["mrp.bom.line"]
         for product in self:
-            stock = product.global_real_stock
+            stock = product.global_available_stock
             if product.bom_count:
-                for bom in product.bom_ids:
+                boms = \
+                    bom_obj.search(['|', '&',
+                                    ('product_tmpl_id', '=',
+                                     product.product_tmpl_id.id),
+                                    ('product_id', '=', False),
+                                    ('product_id', '=', product.id)])
+                for bom in boms:
                     min_qty = 0
                     for line in bom.bom_line_ids:
                         qty = line.product_id.global_available_stock / \
                             line.product_qty
-                        if qty < min_qty:
+                        if not min_qty or qty < min_qty:
                             min_qty = qty
                     if min_qty < 0:
                         min_qty = 0
                     stock += (min_qty * bom.product_qty)
             else:
-                bom_lines = self.env["mrp.bom.line"].\
+                bom_lines = bom_line_obj.\
                     search([('product_id', '=', product.id)])
                 for line in bom_lines:
                     if line.product_qty:
                         stock += \
                             line.bom_id.product_tmpl_id.\
                             global_available_stock * line.product_qty
-            product.web_global_stock = stock
+            product.web_global_stock = int(stock)
 
     global_real_stock = fields.Float('Global Real Stock',
                                      compute='_compute_global_stock',
