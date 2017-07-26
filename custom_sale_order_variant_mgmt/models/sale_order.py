@@ -47,7 +47,7 @@ class SaleOrderLineTemplate(models.Model):
                 line_vals.pop('purchase_price', False)
                 line_vals.pop('name', False)
             template.order_lines.write(line_vals)
-        return super(SaleOrderLineTemplate, self).write(vals)
+        return super(models.Model, self).write(vals)
 
     @api.model
     def create(self, vals):
