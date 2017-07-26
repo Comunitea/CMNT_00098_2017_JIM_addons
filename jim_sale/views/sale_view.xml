@@ -91,5 +91,6 @@
             <field name="domain">[('state', 'not in', ('draft', 'sent', 'cancel'))]</field>
         </record>
 
+      
     </data>
 </odoo>

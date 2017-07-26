@@ -2,7 +2,8 @@
 # © 2017 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
+from odoo.tools import float_compare
 
 
 class SaleOrderLineTemplate(models.Model):
@@ -80,8 +81,21 @@ class SaleOrderLine(models.Model):
 
     _inherit = 'sale.order.line'
 
+    @api.multi
+    @api.depends('product_id')
+    def _get_global_stock(self):
+        for line in self:
+            if line.product_id:
+                line.global_available_stock = \
+                    line.product_id.web_global_stock
+            else:
+                line.global_available_stock = 0.0
+
     template_line = fields.Many2one('sale.order.line.template')
-    global_available_stock = fields.Float('Stock')
+
+    global_available_stock = fields.Float('Stock', readonly=True,
+                                          compute="_get_global_stock",
+                                          store=True)
 
     @api.model
     def create(self, vals):
@@ -98,6 +112,34 @@ class SaleOrderLine(models.Model):
             vals['template_line'] = new_template.id
         return super(SaleOrderLine, self).create(vals)
 
+    @api.onchange('product_uom_qty', 'product_uom', 'route_id')
+    def _onchange_product_id_check_availability(self):
+        res = super(SaleOrderLine, self).\
+            _onchange_product_id_check_availability()
+        if not self.product_id or self.product_id.type != 'product':
+            return res
+        precision = self.env['decimal.precision'].\
+            precision_get('Product Unit of Measure')
+        product_qty = self.product_uom.\
+            _compute_quantity(self.product_uom_qty,
+                              self.product_id.uom_id)
+        if float_compare(self.product_id.web_global_stock,
+                         product_qty, precision_digits=precision) == -1:
+            warning_mess = {
+                'title': _('Not enough inventory!'),
+                'message':
+                _('You plan to sell %s %s but you only have %s %s '
+                  'available!\nThe stock on hand is %s %s.') %
+                (self.product_uom_qty, self.product_uom.name,
+                    self.product_id.web_global_stock,
+                    self.product_id.uom_id.name,
+                    self.product_id.web_global_stock,
+                    self.product_id.uom_id.name)}
+            res['warning'] = warning_mess
+        elif res.get('warning'):
+            del res['warning']
+        return res
+
 
 class SaleOrder(models.Model):
 
@@ -108,8 +150,6 @@ class SaleOrder(models.Model):
     order_line = fields.One2many(copy=False)
     sale_order_line_count = fields.Integer(
         compute='_compute_sale_order_line_count')
-    global_available_stock = fields.\
-        Float('Stock', related='product_id.global_available_stock')
 
     @api.depends('order_line')
     def _compute_sale_order_line_count(self):

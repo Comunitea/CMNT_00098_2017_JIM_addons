@@ -10,7 +10,8 @@
     'license': 'AGPL-3',
     'depends': [
         'stock',
-        'delivery'
+        'delivery',
+        'mrp'
     ],
     'contributors': [
         "Comunitea ",
