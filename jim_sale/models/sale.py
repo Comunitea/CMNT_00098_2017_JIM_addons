@@ -20,6 +20,8 @@ class SaleOrder(models.Model):
         ('cancel', 'Cancelled'),
     ])
 
+    work_to_do = fields.Text('Trabajo a realizar')
+
     @api.multi
     def action_proforma(self):
         for order in self:

@@ -4,7 +4,29 @@
 
 <odoo>
     <data>
-
+        <record id="sale_order_line_custom_form_note" model ="ir.ui.view">
+            <field name="sequence">500</field>
+            <field name="name">sale.order.line.form.note</field>
+            <field name="model">sale.order.line</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Update notes in sale order line" create="false">
+                    <group>
+                        <group>
+                            <field name="product_id" readonly="True"/>
+                            <field name="name"/>
+                        </group>
+                        <group>
+                            <field name="product_uom_qty" readonly="True"/>
+                            <field name="global_available_stock" />
+                        </group>
+                    </group>
+                    <group>
+                        <field name="note"/>
+                    </group>
+               </form>
+            </field>
+        </record>
         <record id="sale_order_line_custom_tree" model="ir.ui.view">
             <field name="sequence">500</field>
             <field name="name">sale.order.line.tree</field>
@@ -36,6 +58,7 @@
                     <field name="invoice_status" invisible="1"/>
                     <field name="customer_lead" invisible="1"/>
                     <field name="currency_id" invisible="1"/>
+                    <button name="show_details" string="Añadir notas" type="object" icon="fa-pencil"/>
                 </tree>
             </field>
         </record>
