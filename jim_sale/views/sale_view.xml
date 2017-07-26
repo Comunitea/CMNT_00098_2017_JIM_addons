@@ -34,6 +34,11 @@
                 <button name="action_cancel"  position="attributes">
                     <attribute name="states">draft,sent,proforma,sale,lqdr,pending,progress_lqdr</attribute>
                 </button>
+                <xpath expr="//page[1]" position="inside">
+                    <group>
+                        <field name="work_to_do"/>
+                    </group>
+                </xpath>
             </field>
         </record>
 
