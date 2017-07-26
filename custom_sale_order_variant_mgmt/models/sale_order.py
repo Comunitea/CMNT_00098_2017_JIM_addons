@@ -80,8 +80,20 @@ class SaleOrderLine(models.Model):
 
     _inherit = 'sale.order.line'
 
+    @api.multi
+    @api.depends('product_id')
+    def _get_global_stock(self):
+        for line in self:
+            if line.product_id:
+                line.global_available_stock = \
+                    line.product_id.global_available_stock
+            else:
+                line.global_available_stock = 0.0
+
     template_line = fields.Many2one('sale.order.line.template')
-    global_available_stock = fields.Float('Stock')
+    global_available_stock = fields.Float('Stock', readonly=True,
+                                          compute="_get_global_stock",
+                                          store=True)
 
     @api.model
     def create(self, vals):
@@ -108,8 +120,6 @@ class SaleOrder(models.Model):
     order_line = fields.One2many(copy=False)
     sale_order_line_count = fields.Integer(
         compute='_compute_sale_order_line_count')
-    global_available_stock = fields.\
-        Float('Stock', related='product_id.global_available_stock')
 
     @api.depends('order_line')
     def _compute_sale_order_line_count(self):
