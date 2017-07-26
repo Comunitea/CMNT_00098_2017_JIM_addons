@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # © 2016 Comunitea - Javier Colmenero <javier@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
-from odoo import fields, models
+from odoo import fields, models, api
 from odoo.addons import decimal_precision as dp
 
 
@@ -20,6 +20,7 @@ class ProductTemplate(models.Model):
                                           help="Real stock minus outgoing "
                                           " in all companies.")
 
+    @api.multi
     def _compute_global_stock(self):
         global_real_stock = 0.0
         global_available_stock = 0.0
@@ -34,6 +35,31 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
+    @api.multi
+    def _get_web_stock(self):
+        for product in self:
+            stock = product.global_real_stock
+            if product.bom_count:
+                for bom in product.bom_ids:
+                    min_qty = 0
+                    for line in bom.bom_line_ids:
+                        qty = line.product_id.global_available_stock / \
+                            line.product_qty
+                        if qty < min_qty:
+                            min_qty = qty
+                    if min_qty < 0:
+                        min_qty = 0
+                    stock += (min_qty * bom.product_qty)
+            else:
+                bom_lines = self.env["mrp.bom.line"].\
+                    search([('product_id', '=', product.id)])
+                for line in bom_lines:
+                    if line.product_qty:
+                        stock += \
+                            line.bom_id.product_tmpl_id.\
+                            global_available_stock * line.product_qty
+            product.web_global_stock = stock
+
     global_real_stock = fields.Float('Global Real Stock',
                                      compute='_compute_global_stock',
                                      digits=dp.get_precision
@@ -45,7 +71,12 @@ class ProductProduct(models.Model):
                                           ('Product Unit of Measure'),
                                           help="Real stock minus outgoing "
                                           " in all companies.")
+    web_global_stock = fields.Float('Web stock', readonly=True,
+                                    digits=dp.get_precision
+                                    ('Product Unit of Measure'),
+                                    compute="_get_web_stock")
 
+    @api.multi
     def _compute_global_stock(self):
         global_real_stock = 0
         global_available_stock = 0
