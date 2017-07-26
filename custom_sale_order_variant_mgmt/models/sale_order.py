@@ -2,7 +2,7 @@
 # © 2017 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class SaleOrderLineTemplate(models.Model):
@@ -95,6 +95,7 @@ class SaleOrderLine(models.Model):
     global_available_stock = fields.Float('Stock', readonly=True,
                                           compute="_get_global_stock",
                                           store=True)
+    note = fields.Text("Notas")
 
     @api.model
     def create(self, vals):
@@ -111,6 +112,20 @@ class SaleOrderLine(models.Model):
             vals['template_line'] = new_template.id
         return super(SaleOrderLine, self).create(vals)
 
+    @api.multi
+    def show_details(self):
+        view_id = self.env.ref('custom_sale_order_variant_mgmt.sale_order_line_custom_form_note').id
+        return {
+            'name': _('Sale order line details'),
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'sale.order.line',
+            'views': [(view_id, 'form')],
+            'view_id': view_id,
+            'target': 'new',
+            'res_id': self.ids[0],
+            'context': self.env.context}
 
 class SaleOrder(models.Model):
 
