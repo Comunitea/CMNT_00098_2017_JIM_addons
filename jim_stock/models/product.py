@@ -22,9 +22,10 @@ class ProductTemplate(models.Model):
 
     @api.multi
     def _compute_global_stock(self):
-        global_real_stock = 0.0
-        global_available_stock = 0.0
+
         for template in self:
+            global_real_stock = 0.0
+            global_available_stock = 0.0
             for p in template.product_variant_ids:
                 global_real_stock += p.global_real_stock
                 global_available_stock += p.global_available_stock
