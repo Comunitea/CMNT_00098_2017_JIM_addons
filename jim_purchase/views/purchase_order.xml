@@ -36,6 +36,9 @@
             <xpath expr="//field[@name='order_line']/tree" position="attributes">
                 <attribute name="editable">bottom</attribute>
             </xpath>
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="expediente" />
+            </xpath>
         </field>
     </record>
 

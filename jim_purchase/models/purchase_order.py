@@ -46,6 +46,8 @@ class PurchaseOrder(models.Model):
 
     order_volume = fields.Float("Volume", compute="_compute_dimensions")
     order_weight = fields.Float("Weight", compute="_compute_dimensions")
+    expediente = fields.Char("Expediente")
+
 
     @api.depends('order_line.line_volume', 'order_line.line_weight')
     def _compute_dimensions(self):
