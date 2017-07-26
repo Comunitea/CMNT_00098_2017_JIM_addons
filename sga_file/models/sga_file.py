@@ -29,6 +29,8 @@ class ConfigPathFiles(models.TransientModel):
 
     path_files = fields.Char('Files Path', help="Path to SGA Mecalux exchange files. Must content in, out, error, processed and history folders\nAlso a scheduled action is created: Archive SGA files")
     product_auto = fields.Boolean('Auto update productos', help="Enviar cambios en productos automaticamente al servidor", default=False)
+    picking_auto = fields.Boolean("Auto validación de picks")
+    inventary_auto = fields.Boolean("Auto validación de inventarios")
 
     @api.model
     def get_default_path_files(self, fields):
@@ -46,11 +48,39 @@ class ConfigPathFiles(models.TransientModel):
             'product_auto')
         return res
 
+    @api.model
+    def get_default_picking_auto(self, fields):
+        res = {}
+        icp = self.env['ir.config_parameter']
+        res['picking_auto'] = icp.get_param(
+            'picking_auto')
+        return res
+
+    @api.model
+    def get_default_inventary_auto(self, fields):
+        res = {}
+        icp = self.env['ir.config_parameter']
+        res['inventary_auto'] = icp.get_param(
+            'inventary_auto')
+        return res
+
     @api.multi
     def set_product_auto(self):
         icp = self.env['ir.config_parameter']
         icp.set_param('product_auto',
                       self.product_auto)
+
+    @api.multi
+    def set_picking_auto(self):
+        icp = self.env['ir.config_parameter']
+        icp.set_param('picking_auto',
+                      self.picking_auto)
+
+    @api.multi
+    def set_inventary_auto(self):
+        icp = self.env['ir.config_parameter']
+        icp.set_param('inventary_auto',
+                      self.inventary_auto)
 
     @api.multi
     def set_path_files(self):

@@ -22,6 +22,20 @@
 
                             </div>
                         </div>
+                        <label for="inventary_auto"/>
+                        <div>
+                            <div>
+                                <field name="inventary_auto"/>
+
+                            </div>
+                        </div>
+                        <label for="picking_auto"/>
+                        <div>
+                            <div>
+                                <field name="picking_auto"/>
+
+                            </div>
+                        </div>
                     </group>
                 </xpath>
             </field>

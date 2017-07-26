@@ -23,6 +23,8 @@ class StockInventoryLineSGA(models.Model):
 
     _inherit = "stock.inventory.line"
 
+    from_sga = fields.Boolean("From mecalux", default=False)
+
     global_qty = fields.Float(
         'Global Quantity', compute='_compute_global_qty',
         digits=dp.get_precision('Product Unit of Measure'), readonly=True, store=True)
@@ -62,7 +64,7 @@ class StockInventoryLineSGA(models.Model):
     #
     # @api.onchange('product_id')
     # def onchange_product(self):
-    #     if self.product_id:
+    #     if self.product_id and self.from_sga:
     #         self.company_id = self.product_id.company_id
     #     return super(StockInventoryLineSGA, self).onchange_product()
 
@@ -157,7 +159,7 @@ class StockInventorySGA(models.Model):
 
             product_id = self.env['product.product'].search([('default_code', '=', product_code)])
             if not product_id:
-                #continue. en producción descomentar esta linea para ignorar satocks no conocidos
+                #continue. en producción descomentar esta linea para ignorar stocks no conocidos
                 new_prod_vals={'name': u'%s (creado desde inventario %s)'%(product_code, sga_file_name),
                                'default_code': product_code}
                 product_id = self.env['product.product'].create(new_prod_vals)
@@ -178,7 +180,7 @@ class StockInventorySGA(models.Model):
                     quantity = 0.00
                 forced_company_id = False
 
-
+            ## TODO DE MOMENTO NO HACEMOS EL action_done, pendiente de confirmar que es automatico
             # for stock_inv in stock_inv_pool:
             #     stock_inv.sudo().action_done()
 
@@ -203,7 +205,8 @@ class StockInventorySGA(models.Model):
             'product_qty': qty,
             'inventory_id': inventory_id.id,
             'company_id': inventory_id.company_id.id,
-            'location_id': inventory_id.location_id.id
+            'location_id': inventory_id.location_id.id,
+            'from_sga': True
         }
         new_inventory_line = self.env['stock.inventory.line'].sudo().create(new_line_vals)
         return new_inventory_line
@@ -252,7 +255,7 @@ class StockInventorySGA(models.Model):
                 ## No debería pasar que la nueva cantidad sea mayor que la cantidad de la compañia (CASO 2)
 
         ctx = dict(product_id._context)
-        ctx.update({'location_id': [location_id.id]})
+        ctx.update({'location_id': [location_id.id], 'from_sga': True})
         total_qties = product_id.with_context(ctx).sudo()._product_available()
         total_qty = total_qties[product_id.id]['qty_available']
 
