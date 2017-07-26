@@ -78,14 +78,14 @@ class ProductProduct(models.Model):
 
     @api.multi
     def _compute_global_stock(self):
-        global_real_stock = 0
-        global_available_stock = 0
-        deposit_real_stock = 0
-        deposit_available_stock = 0
-        ctx = self._context.copy()
+        order_line_obj = self.env["sale.order.line"]
         deposit_ids = \
             self.env['stock.location'].search([('deposit', '=', True)]).ids
+        ctx = self._context.copy()
         for product in self:
+            deposit_real_stock = 0
+            deposit_available_stock = 0
+            sale_lines_stock = 0
             global_real_stock = product.sudo().qty_available
             global_available_stock = product.sudo().qty_available - \
                 product.sudo().outgoing_qty
@@ -99,6 +99,14 @@ class ProductProduct(models.Model):
                     product.with_context(ctx).sudo().qty_available - \
                     product.with_context(ctx).sudo().outgoing_qty
 
+            slines = order_line_obj.search([('product_id', '=', product.id),
+                                            ('order_id.state', 'in',
+                                             ['lqdr', 'pending',
+                                              'progress_lqdr'])])
+            for sline in slines:
+                sale_lines_stock += sline.product_uom_qty
+
             product.global_real_stock = global_real_stock - deposit_real_stock
             product.global_available_stock = \
-                global_available_stock - deposit_available_stock
+                global_available_stock - deposit_available_stock - \
+                sale_lines_stock
