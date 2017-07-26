@@ -120,4 +120,7 @@ class SaleOrder(models.Model):
                             tax_ids.append(new_tax.id)
                     if tax_ids:
                         line.write({'tax_id': [(6, 0, tax_ids)]})
-        return super(SaleOrder, self.sudo()).write(vals)
+        if vals.get('company_id', False):
+            return super(SaleOrder, self.sudo()).write(vals)
+        else:
+            return super(SaleOrder, self).write(vals)

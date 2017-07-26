@@ -43,6 +43,38 @@ class ProcurementOrder(models.Model):
         return vals
 
     @api.multi
+    def _check(self):
+        if self.rule_id and self.rule_id.action == 'product_company':
+            # Si depende de la compañia pero es de la misma compañia es
+            # movimiento
+            if self.company_id.id == self.product_id.company_id.id:
+                # In case Phantom BoM splits only into procurements
+                if not self.move_ids:
+                    return True
+                move_all_done_or_cancel = all(
+                    move.state in ['done', 'cancel'] for move in self.move_ids)
+                move_all_cancel = all(
+                    move.state == 'cancel' for move in self.move_ids)
+                if not move_all_done_or_cancel:
+                    return False
+                elif move_all_done_or_cancel and not move_all_cancel:
+                    return True
+                else:
+                    self.message_post(body=_(
+                        'All stock moves have been cancelled for this procurement.'))
+                    # TDE FIXME: strange that a check method actually modified the procurement...
+                    self.write({'state': 'cancel'})
+                    return False
+            else:
+                #Lo comprueba como una compra...
+                if self.purchase_line_id:
+                    if not self.move_ids:
+                        return False
+                    return all(move.state == 'done' for move in self.move_ids)
+        return super(ProcurementOrder, self)._check()
+
+
+    @api.multi
     def _run(self):
         if self.rule_id and self.rule_id.action == 'product_company':
             if self.company_id.id == self.product_id.company_id.id:

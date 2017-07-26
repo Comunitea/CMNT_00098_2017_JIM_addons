@@ -51,12 +51,6 @@ class StockPicking(models.Model):
     @api.multi
     def intercompany_picking_process(self, picking):
         picking = picking.with_context(force_company=picking.company_id.id, company_id=picking.company_id.id)
-        # if picking.state != 'assigned':
-        #     if picking.state in ['waiting', 'confirmed', 'partially_available']:
-        #         message = _("This picking has been forced by intercompany operation %s") % (self.name)
-        #         picking.message_post(body=message)
-        #         picking.force_assign()
-        #for pack_operation in picking.pack_operation_product_ids:
 
         origin_pack_operations = self.pack_operation_product_ids.filtered(lambda x: x.qty_done > 0)
         origin_products = origin_pack_operations.mapped('product_id')
@@ -95,7 +89,6 @@ class StockPicking(models.Model):
                     last_op = op
             if remain_qty > 0 and last_op:
                 last_op.done_qty = last_op.product_qty = last_op.product_qty + remain_qty
-
 
         for pack in picking.pack_operation_ids:
             if pack.qty_done <= 0:
@@ -146,10 +139,6 @@ class StockPicking(models.Model):
             for picking in ic_sale.picking_ids.filtered(lambda x: x.sale_id.auto_generated):
                 self.intercompany_picking_process(picking)
 
-        # pack_operations_ids = self.pack_operation_product_ids.filtered(lambda x: x.qty_done > 0).mapped('id')
-        # move_lines_ids = self.env['stock.move.operation.link'].search([
-        #     ('operation_id', 'in', pack_operations_ids)]).mapped('move_id').mapped('id')
-
         #Si es entrega a cliente buscar lineas en albaranes de compra intercompañia
         if self.picking_type_id.code == 'outgoing':
             ic_purchases = self.env['purchase.order'].search([('group_id', '=', self.group_id.id),
@@ -159,15 +148,6 @@ class StockPicking(models.Model):
                                                                              and x.location_id.usage == 'supplier')
                 for ic_purchase_picking in picking_in_ids:
                     self.intercompany_picking_process(ic_purchase_picking)
-
-        # ic_purchase_moves = self.env['stock.move'].search([('move_dest_id', 'in', move_lines_ids)]). \
-        #     filtered(lambda x: x.picking_id.purchase_id.intercompany)
-        # if ic_purchase_moves:
-        #     ic_purchase_pickings = ic_purchase_moves.mapped('picking_id')
-        #     ic_purchases = ic_purchase_pickings.mapped('purchase_id')
-        #     # Recorre y procesa los albaranes de la compra intercompañía
-        #     for ic_purchase_picking in ic_purchase_pickings:
-        #         self.intercompany_picking_process(ic_purchase_picking)
 
         res = super(StockPicking, self).do_transfer()
         return res
