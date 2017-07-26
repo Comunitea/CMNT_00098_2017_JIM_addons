@@ -91,15 +91,6 @@
             <field name="domain">[('state', 'not in', ('draft', 'sent', 'cancel'))]</field>
         </record>
 
-        <record id="sale_order_line_custom_tree_with_stock" model="ir.ui.view">
-            <field name="name">sale.orderline.with.stock</field>
-            <field name="model">sale.order.line</field>
-            <field name="inherit_id" ref="custom_sale_order_variant_mgmt.sale_order_line_custom_tree"/>
-            <field name="arch" type="xml">
-                <field name="global_available_stock" position="after">
-                    <field name="stock_at_sale" attrs="{'readonly': True, 'invisible': [('state', 'in', ('draft','sent','proforma'))]}"/>
-                </field>
-            </field>
-        </record>
+      
     </data>
 </odoo>

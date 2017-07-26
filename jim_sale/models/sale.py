@@ -33,9 +33,6 @@ class SaleOrder(models.Model):
                 order.state = 'lqdr'
             else:
                order.state = 'pending'
-            for line in order.order_line:
-                line.stock_at_sale = line.global_available_stock
-
         return True
 
     @api.multi
@@ -80,9 +77,6 @@ class SaleOrderLine(models.Model):
     ])
 
     lqdr = fields.Boolean(related="product_id.lqdr", store=False)
-    stock_at_sale = fields.Float("Sale stock", help="Available stock at sale confirm",
-                                 readonly=True,
-                                 digits=dp.get_precision('Product Unit of Measure'))
 
     @api.multi
     @api.onchange('product_id')
