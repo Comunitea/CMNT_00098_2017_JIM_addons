@@ -49,5 +49,41 @@
             </field>
         </record>
 
+        <record id="view_stock_product_tree_rep_stock_fields" model="ir.ui.view">
+            <field name="name">product.stock.tree.inherit.rep_stock_fields</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="stock.view_stock_product_tree"/>
+            <field name="arch" type="xml">
+                <tree position="attributes">
+                    <attribute name="decoration-danger">global_available_stock&lt;0</attribute>
+                    <attribute name="decoration-info">global_available_stock&gt;=0</attribute>
+                </tree>
+                <field name="qty_available" position="replace">
+                    <field name="global_real_stock"/>
+                </field>
+                <field name="virtual_available" position="replace">
+                    <field name="global_available_stock"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_stock_product_template_tree_rep_stock_fields" model="ir.ui.view">
+            <field name="name">product.template.stock.tree.rep_stock_fields</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.view_stock_product_template_tree"/>
+            <field name="arch" type="xml">
+                <tree position="attributes">
+                    <attribute name="decoration-danger">global_available_stock&lt;0</attribute>
+                    <attribute name="decoration-info">global_available_stock&gt;=0</attribute>
+                </tree>
+                <field name="qty_available" position="replace">
+                    <field name="global_real_stock"/>
+                </field>
+                <field name="virtual_available" position="replace">
+                    <field name="global_available_stock"/>
+                </field>
+            </field>
+        </record>
+
     </data>
 </odoo>
