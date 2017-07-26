@@ -92,6 +92,7 @@ class SaleOrderLine(models.Model):
                 line.global_available_stock = 0.0
 
     template_line = fields.Many2one('sale.order.line.template')
+
     global_available_stock = fields.Float('Stock', readonly=True,
                                           compute="_get_global_stock",
                                           store=True)

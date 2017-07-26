@@ -12,6 +12,7 @@
         'sale_stock',
         'sales_team',
         'sale_order_dates',
+        'jim_stock',
         'product',
     ],
     'contributors': [
