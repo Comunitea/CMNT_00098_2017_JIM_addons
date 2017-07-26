@@ -50,6 +50,23 @@ class SaleOrder(models.Model):
             order.purchase_count = len(order.purchase_ids)
 
     @api.multi
+    @api.depends('procurement_group_id')
+    def _compute_picking_ids(self):
+        for order in self:
+            order.picking_ids = self.env['stock.picking'].search([('group_id',
+                                                                   '=',
+                                                                   order.procurement_group_id.id)]) if order.procurement_group_id else []
+            if order.purchase_ids:
+                for purchase in order.purchase_ids:
+                    if purchase.intercompany:
+                        ic_sale = self.env['sale.order'].search(
+                            [('auto_purchase_order_id', '=',
+                              purchase.id)])
+                        if ic_sale:
+                            order.picking_ids |= ic_sale.picking_ids
+            order.delivery_count = len(order.picking_ids)
+
+    @api.multi
     def action_view_purchase(self):
         '''
         This function returns an action that display existing purchase orders
