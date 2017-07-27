@@ -21,6 +21,7 @@
     "data": [
         'views/purchase_order.xml',
         'views/account_payment.xml',
+        'wizard/product_purchase_wizard.xml',
 
     ],
     "installable": True
