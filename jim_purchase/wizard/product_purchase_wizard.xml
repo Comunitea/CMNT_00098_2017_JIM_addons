@@ -29,25 +29,15 @@
                 </form>
             </field>
         </record>
-       <!-- <record id="action_add_product_purchase_line_wzd" model="ir.actions.act_window">
-            <field name="name">Add to purchase order</field>
-            <field name="type">ir.actions.act_window</field>
-            <field name="res_model">product.purchase.wizard</field>
-             <field name="view_type">form</field>
-            <field name="view_mode">form</field>
-            <field name="target">new</field>
-            <field name="groups"></field>
-            <field name="groups" eval="[(6,ref('purchase.group_purchase_user'))]"/>
-        </record>
-        -->
 
-    <act_window name="Add to purchase order"
+        <act_window name="Add to purchase order"
             res_model="product.purchase.wizard"
             view_mode="form"
             view_type="form"
             target="new"
             id="action_add_product_purchase_line_wzd"
             groups="purchase.group_purchase_user"/>
+
         <record model="ir.values" id="values_action_add_product_purchase_line_wzd">
             <field name="model_id" ref="product.model_product_product" />
             <field name="name">val Add to purchase order</field>
