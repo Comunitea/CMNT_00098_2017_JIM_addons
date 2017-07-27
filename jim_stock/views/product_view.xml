@@ -91,13 +91,13 @@
             <field name="inherit_id" ref="stock.product_template_search_form_view_stock"/>
             <field name="arch" type="xml">
                 <filter name="real_stock_available" position="attributes">
-                    <attribute name="domain">[('global_available_stock','&gt;',0)]</attribute>
+                    <attribute name="domain">[('global_real_stock','&gt;',0)]</attribute>
                 </filter>
                 <filter name="real_stock_exhausted" position="attributes">
-                    <attribute name="domain">[('global_available_stock','&lt;=',0),('type','not in',('service', 'consu'))]</attribute>
+                    <attribute name="domain">[('global_real_stock','&lt;=',0),('type','not in',('service', 'consu'))]</attribute>
                 </filter>
                 <filter name="real_stock_negative" position="attributes">
-                    <attribute name="domain">[('global_available_stock','&lt;',0)]</attribute>
+                    <attribute name="domain">[('global_real_stock','&lt;',0)]</attribute>
                 </filter>
             </field>
         </record>
@@ -108,7 +108,7 @@
             <field name="inherit_id" ref="stock.product_template_kanban_stock_view"/>
             <field name="arch" type="xml">
                 <field name="qty_available" position="replace">
-                    <field name="global_available_stock"/>
+                    <field name="global_real_stock"/>
                 </field>
             </field>
         </record>
