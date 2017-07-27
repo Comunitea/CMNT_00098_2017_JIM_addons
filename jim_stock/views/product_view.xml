@@ -85,5 +85,33 @@
             </field>
         </record>
 
+        <record id="product_template_search_form_view_stock_change_qty_search" model="ir.ui.view">
+            <field name="name">product.template.search.stock.form.change_qty_search</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.product_template_search_form_view_stock"/>
+            <field name="arch" type="xml">
+                <filter name="real_stock_available" position="attributes">
+                    <attribute name="domain">[('global_available_stock','&gt;',0)]</attribute>
+                </filter>
+                <filter name="real_stock_exhausted" position="attributes">
+                    <attribute name="domain">[('global_available_stock','&lt;=',0),('type','not in',('service', 'consu'))]</attribute>
+                </filter>
+                <filter name="real_stock_negative" position="attributes">
+                    <attribute name="domain">[('global_available_stock','&lt;',0)]</attribute>
+                </filter>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_template_kanban_stock_view_change_qty">
+            <field name="name">Product Template Kanban Stock change qty</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="stock.product_template_kanban_stock_view"/>
+            <field name="arch" type="xml">
+                <field name="qty_available" position="replace">
+                    <field name="global_available_stock"/>
+                </field>
+            </field>
+        </record>
+
     </data>
 </odoo>

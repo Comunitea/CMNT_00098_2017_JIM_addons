@@ -1,24 +1,38 @@
 # -*- coding: utf-8 -*-
 # © 2016 Comunitea - Javier Colmenero <javier@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
-from odoo import fields, models, api
+from odoo import fields, models, api, _
 from odoo.addons import decimal_precision as dp
+from odoo.exceptions import UserError
+from odoo.addons.stock.models.product import OPERATORS
 
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+    def _search_global_real_stock(self, operator, value):
+        domain = [('global_real_stock', operator, value)]
+        product_variant_ids = self.env['product.product'].search(domain)
+        return [('product_variant_ids', 'in', product_variant_ids.ids)]
+
+    def _search_global_avail_stock(self, operator, value):
+        domain = [('global_available_stock', operator, value)]
+        product_variant_ids = self.env['product.product'].search(domain)
+        return [('product_variant_ids', 'in', product_variant_ids.ids)]
+
     global_real_stock = fields.Float('Global Real Stock',
                                      compute='_compute_global_stock',
                                      digits=dp.get_precision
                                      ('Product Unit of Measure'),
-                                     help="Real stock in all companies.")
+                                     help="Real stock in all companies.",
+                                     search='_search_global_real_stock')
     global_available_stock = fields.Float('Global Available Stock',
                                           compute='_compute_global_stock',
                                           digits=dp.get_precision
                                           ('Product Unit of Measure'),
                                           help="Real stock minus outgoing "
-                                          " in all companies.")
+                                          " in all companies.",
+                                          search='_search_global_avail_stock')
 
     @api.multi
     def _compute_global_stock(self):
@@ -69,17 +83,49 @@ class ProductProduct(models.Model):
                             global_available_stock * line.product_qty
             product.web_global_stock = int(stock)
 
+    def _search_global_product_quantity(self, operator, value, field):
+        if field not in ('global_available_stock', 'global_real_stock'):
+            raise UserError(_('Invalid domain left operand %s') % field)
+        if operator not in ('<', '>', '=', '!=', '<=', '>='):
+            raise UserError(_('Invalid domain operator %s') % operator)
+        if not isinstance(value, (float, int)):
+            raise UserError(_('Invalid domain right operand %s') % value)
+
+        ids = []
+        for product in self.search([]):
+            if OPERATORS[operator](product[field], value):
+                ids.append(product.id)
+        return [('id', 'in', ids)]
+
+    def _search_global_real_stock(self, operator, value):
+        if value == 0.0 and operator in ('=', '>=', '<='):
+            return self._search_global_product_quantity(operator, value,
+                                                        'global_real_stock')
+        product_ids = self.sudo().\
+            _search_qty_available_new(operator, value,
+                                      self._context.get('lot_id'),
+                                      self._context.get('owner_id'),
+                                      self._context.get('package_id'))
+        return [('id', 'in', product_ids)]
+
+    def _search_global_avail_stock(self, operator, value):
+        return self.\
+            _search_global_product_quantity(operator, value,
+                                            'global_available_stock')
+
     global_real_stock = fields.Float('Global Real Stock',
                                      compute='_compute_global_stock',
                                      digits=dp.get_precision
                                      ('Product Unit of Measure'),
-                                     help="Real stock in all companies.")
+                                     help="Real stock in all companies.",
+                                     search='_search_global_real_stock')
     global_available_stock = fields.Float('Global Available Stock',
                                           compute='_compute_global_stock',
                                           digits=dp.get_precision
                                           ('Product Unit of Measure'),
                                           help="Real stock minus outgoing "
-                                          " in all companies.")
+                                          " in all companies.",
+                                          search='_search_global_avail_stock')
     web_global_stock = fields.Float('Web stock', readonly=True,
                                     digits=dp.get_precision
                                     ('Product Unit of Measure'),
