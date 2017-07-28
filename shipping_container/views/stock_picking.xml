@@ -10,7 +10,13 @@
                 <field name="shipping_container_id"
                        attrs="{'invisible': [('picking_type_code','!=','incoming')]}"
                        options="{'no_quick_create':True,'no_create_edit':True}"/>
+                <field name="harbor_id"
+                       attrs="{'invisible': [('picking_type_code','!=','incoming')]}"
+                       options="{'no_quick_create':True,'no_create_edit':True}"/>
             </xpath>
+            <field name="shipping_weight" position="after">
+                <field name="shipping_volume"/>
+            </field>
         </field>
     </record>
 </odoo>

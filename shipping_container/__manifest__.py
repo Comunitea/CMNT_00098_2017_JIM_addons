@@ -10,6 +10,7 @@
     'license': 'AGPL-3',
     'depends': [
         'purchase',
+        'delivery',
         'stock',
         'product_custom',
         'product_code_generator'
@@ -24,7 +25,9 @@
         #'views/purchase_order.xml',
         'views/stock_picking.xml',
         'views/shipping_container.xml',
-        'security/ir.model.access.csv'
+        'views/purchase_order.xml',
+        'wizard/container_picking_wizard.xml',
+        'security/ir.model.access.csv',
 
     ],
     "installable": True

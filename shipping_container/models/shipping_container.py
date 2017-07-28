@@ -14,6 +14,7 @@ class ShippingContainerType(models.Model):
     height = fields.Float("Height", help="Height(m)")
     width = fields.Float("Width", help="Width(m)")
 
+
     @api.onchange('length', 'height', 'width')
     def onchange_dimensions(self):
         if self.length and self.height and self.width:
@@ -43,8 +44,6 @@ class ShippingContainer(models.Model):
             container.available_volume = volume
             container.weight = weight
 
-
-
     name = fields.Char("Container Ref.", required=True)
     date_expected = fields.Date("Date expected", required=True)
     date_shipment = fields.Date("Shipment date")
@@ -57,9 +56,7 @@ class ShippingContainer(models.Model):
     move_ids = fields.One2many('stock.move', 'shipping_container_id', string="Moves")
     move_ids_count = fields.Integer('Move ids count', compute="_get_moves")
     harbor_dest_id = fields.Many2one('res.harbor', string="Dest. harbor")
-    _sql_constraints = [
-        ('name_uniq', 'unique(name)', 'Container name must be unique')
-    ]
+
     state = fields.Selection([('loading', 'Loading'),
                               ('transit', 'Transit'),
                               ('destination', 'Destination')],
@@ -69,6 +66,9 @@ class ShippingContainer(models.Model):
     weight = fields.Float("Weight (kgr.)", compute="_available_volume")
     incoterm_id = fields.Many2one('stock.incoterms', string='Incoterm')
 
+    _sql_constraints = [
+        ('name_uniq', 'unique(name)', 'Container name must be unique')
+    ]
 
     @api.multi
     def action_view_move_ids(self):
@@ -88,7 +88,6 @@ class ShippingContainer(models.Model):
 
     @api.multi
     def write(self, vals):
-
         if vals.get('date_expected', False):
             for container in self:
                 if vals['date_expected'] != container.date_expected:

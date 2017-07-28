@@ -8,7 +8,6 @@
             <field name="inherit_id" ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
                 <field name="incoterm_id" position="before">
-                    <field name="harbor_id"/>
                     <field name="loc_harbor_id"/>
                 </field>
                 <field name="incoterm_id" position="after">

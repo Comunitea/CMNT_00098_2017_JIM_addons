@@ -31,7 +31,6 @@ class PurchaseOrder(models.Model):
     proforma_invoice_ref = fields.Char("Proforma invoice")
     proforma_invoice_date = fields.Datetime("Proforma invoice date")
     doc_credit_bank_id = fields.Many2one("res.bank", "Doc credit bank")
-    harbor_id = fields.Many2one("res.harbor", string="Harbor")
     loc_harbor_id = fields.Many2one("res.harbor", string="Loc Harbor")
 
     @api.onchange('partner_id', 'company_id')

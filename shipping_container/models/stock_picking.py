@@ -5,12 +5,38 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, ValidationError
 
+class PurchaseOrder(models.Model):
+
+    _inherit = 'purchase.order'
+
+    harbor_id = fields.Many2one("res.harbor", string="Harbor")
+
+    @api.model
+    def _prepare_picking(self):
+        res = super (PurchaseOrder, self)._prepare_picking()
+        res['harbor_id'] = self.harbor_id and self.harbor_id.id or False
+        return res
+
+
 class StockPicking(models.Model):
 
     _inherit = 'stock.picking'
 
     shipping_container_id = fields.Many2one("shipping.container", "Shipping container",
                                             domain="[('state','in',['draft', 'loading'])]")
+    shipping_volume = fields.Float("Volume for Shipping", compute='_compute_shipping_volume')
+    harbor_id = fields.Many2one("res.harbor", string="Harbor")
+
+
+    @api.one
+    @api.depends('pack_operation_ids')
+    def _compute_shipping_volume(self):
+        volume = 0.000
+        for packop in self.pack_operation_ids:
+            if packop.product_id and not packop.result_package_id:
+                volume += packop.product_uom_id._compute_quantity(packop.product_qty,
+                                                                  packop.product_id.uom_id) * packop.product_id.volume
+        self.shipping_volume = volume
 
     def write(self, vals):
         res = super(StockPicking, self).write(vals)

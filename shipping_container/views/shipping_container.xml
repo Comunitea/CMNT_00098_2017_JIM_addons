@@ -65,8 +65,8 @@
                     </group>
                     <notebook>
                         <page string="Pickings">
-                            <field name="picking_ids"
-                                   />
+                            <field name="picking_ids">
+                            </field>
                         <group class="oe_subtotal_footer oe_right">
                             <field name="available_volume"/>
                             <field name="weight"/>

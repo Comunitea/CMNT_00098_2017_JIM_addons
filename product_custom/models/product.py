@@ -29,16 +29,15 @@ class ProductPackaging(models.Model):
 
     _inherit = "product.packaging"
 
-    @api.model
+
     def compute_product_dimensions(self):
         if self.qty == 0:
             raise ValidationError(_("Check quantity !!!!"))
-
         self.product_tmpl_id.weight = self.max_weight / self.qty
         self.product_tmpl_id.volume = self.height * self.width * \
                 self.length / (self.qty )
 
-        for product in self.product_tmpl_id.variant_ids:
+        for product in self.product_tmpl_id.product_variant_ids:
             product.weight = self.product_tmpl_id.weight
             product.volume = self.product_tmpl_id.volume
 

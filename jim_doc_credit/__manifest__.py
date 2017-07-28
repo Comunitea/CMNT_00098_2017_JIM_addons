@@ -8,7 +8,8 @@
     'depends': [
         'purchase',
         'purchase_advance_payment',
-        'res_currency_fixed_rate'
+        'res_currency_fixed_rate',
+        'shipping_container'
     ],
     'author': "Comunitea",
     'license': "AGPL-3",
