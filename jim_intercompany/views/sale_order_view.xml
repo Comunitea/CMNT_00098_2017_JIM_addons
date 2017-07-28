@@ -8,11 +8,15 @@
         <field name="inherit_id" ref="sale_stock.view_order_form_inherit_sale_stock"/>
         <field name="arch" type="xml">
             <xpath expr="//button[@name='action_view_delivery']" position="before">
-                    <field name="picking_ids" invisible="1"/>
-                    <button type="object" name="action_view_purchase" class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('purchase_count', '=', 0)]}" groups="base.group_user">
-                        <field name="purchase_count" widget="statinfo" string="Purchase"/>
-                    </button>
-                </xpath>
+                <field name="picking_ids" invisible="1"/>
+                <button type="object" name="action_view_purchase" class="oe_stat_button" icon="fa-shopping-cart" attrs="{'invisible': [('purchase_count', '=', 0)]}" groups="base.group_user">
+                    <field name="purchase_count" widget="statinfo" string="Purchase"/>
+                </button>
+                <button type="object" name="action_view_productions" class="oe_stat_button" icon="fa-wrench" attrs="{'invisible': [('mrp_productions_count', '=', 0)]}" groups="base.group_user">
+                    <field name="mrp_productions_count" widget="statinfo" string="Productions"/>
+                </button>
+
+            </xpath>
         </field>
     </record>
 
