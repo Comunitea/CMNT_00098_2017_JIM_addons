@@ -1,6 +1,6 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* jim_intercompany
+#   * jim_intercompany
 #
 msgid ""
 msgstr ""
@@ -162,6 +162,11 @@ msgid "Related Pickings"
 msgstr "Operaciones relacionadas"
 
 #. module: jim_intercompany
+#: model:ir.ui.view,arch_db:jim_intercompany.sale_order_add_button_purchase
+msgid "Productions"
+msgstr "Fabricaciones"
+
+#. module: jim_intercompany
 #: model:ir.ui.view,arch_db:jim_intercompany.view_picking_search_ready
 msgid "Reviewed"
 msgstr "Revisado (a procesar)"
@@ -230,4 +235,3 @@ msgstr "propagate.partner.properties"
 #: model:ir.model,name:jim_intercompany.model_propagate_product_properties
 msgid "propagate.product.properties"
 msgstr "propagate.product.properties"
-

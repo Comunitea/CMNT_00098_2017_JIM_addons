@@ -14,7 +14,8 @@
         'purchase',
         'procurement',
         'sale_stock',
-        'inter_company_rules'
+        'inter_company_rules',
+        'mrp'
     ],
     'contributors': [
         "Comunitea ",

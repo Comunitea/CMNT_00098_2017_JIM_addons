@@ -98,11 +98,11 @@ class StockPicking(models.Model):
     @api.multi
     def view_related_pickings(self):
         pickings = self.browse(self._context.get('active_ids', []))
-
         #action = self.env.ref('stock.do_view_pickings').read()[0]
-        domain = [('group_id', 'in', pickings.mapped('group_id').ids),
-                            ('id', 'not in', pickings.mapped('id'))]
-
+        groups = pickings.mapped('group_id')
+        groups |= pickings.mapped('sale_id.procurement_groups')
+        domain = [('group_id', 'in', groups.ids),
+                  ('id', 'not in', pickings.mapped('id'))]
         return domain
 
     @api.multi
@@ -194,8 +194,3 @@ class StockMove(models.Model):
                 message = _("The quantity for product %s  has been set to %d by intercompany operation %s from company %s") % (
                     self.product_id.name, forced_qty, self.picking_id.name, self.picking_id.company_id.name)
                 ic_purchase_move.move_dest_id.picking_id.message_post(body=message)
-
-
-
-
-

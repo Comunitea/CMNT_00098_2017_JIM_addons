@@ -15,6 +15,28 @@ class SaleOrder(models.Model):
     purchase_ids = fields.Many2many('purchase.order', compute='_compute_purchase_ids',
                                    string='Purchases associated to this sale')
     purchase_count = fields.Integer(string='Purchases', compute='_compute_purchase_ids')
+    procurement_groups = fields.Many2many('procurement.group', compute='_compute_procurements')
+    mrp_productions = fields.Many2many('mrp.production', compute='_compute_mrp_productions')
+    mrp_productions_count = fields.Integer(compute='_compute_mrp_productions')
+
+    @api.depends('procurement_group_id')
+    def _compute_procurements(self):
+        for order in self:
+            procurements = order.procurement_group_id
+            for purchase in order.purchase_ids:
+                if purchase.intercompany:
+                    ic_sale = self.env['sale.order'].search(
+                        [('auto_purchase_order_id', '=',
+                          purchase.id)])
+                    if ic_sale:
+                        procurements += ic_sale.procurement_group_id
+            order.procurement_groups = procurements
+
+    @api.depends('procurement_group_id')
+    def _compute_mrp_productions(self):
+        for order in self:
+            order.mrp_productions = self.env['mrp.production'].search([('procurement_group_id', 'in', order.procurement_groups.ids)])
+            order.mrp_productions_count = len(order.mrp_productions)
 
     @api.multi
     def action_confirm(self):
@@ -54,16 +76,8 @@ class SaleOrder(models.Model):
     def _compute_picking_ids(self):
         for order in self:
             order.picking_ids = self.env['stock.picking'].search([('group_id',
-                                                                   '=',
-                                                                   order.procurement_group_id.id)]) if order.procurement_group_id else []
-            if order.purchase_ids:
-                for purchase in order.purchase_ids:
-                    if purchase.intercompany:
-                        ic_sale = self.env['sale.order'].search(
-                            [('auto_purchase_order_id', '=',
-                              purchase.id)])
-                        if ic_sale:
-                            order.picking_ids |= ic_sale.picking_ids
+                                                                   'in',
+                                                                   order.procurement_groups.ids)]) if order.procurement_groups else []
             order.delivery_count = len(order.picking_ids)
 
     @api.multi
@@ -81,6 +95,18 @@ class SaleOrder(models.Model):
         elif purchases:
             action['views'] = [(self.env.ref('purchase.purchase_order_form').id, 'form')]
             action['res_id'] = purchases.id
+        return action
+
+    @api.multi
+    def action_view_productions(self):
+        action = self.env.ref('mrp.mrp_production_action').read()[0]
+
+        productions = self.mapped('mrp_productions')
+        if len(productions) > 1:
+            action['domain'] = [('id', 'in', productions.ids)]
+        elif productions:
+            action['views'] = [(self.env.ref('mrp.mrp_production_form_view').id, 'form')]
+            action['res_id'] = productions.id
         return action
 
     @api.multi
