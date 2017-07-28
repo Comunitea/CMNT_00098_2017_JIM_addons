@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+
+        <record id="add_product_purchase_line_wzd" model="ir.ui.view">
+            <field name="name">add.product.purchase.line.wzd</field>
+            <field name="model">product.purchase.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Select sale order to add selected products">
+                    <group>
+                        <field name ="purchase_order" domain="[('state','not in',['purchase','cancel','done'])]"/>
+                    </group>
+                    <separator string="New order lines" colspan="4"/>
+                    <group>
+                        <field name="line_ids" nolabel="1">
+                            <tree string="Order lines" editable="top" delete="1" create="1">
+                                <field name="product_id"/>
+                                <field name="product_qty"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="add_to_purchase_order" string="Add to order" type="object" class="btn-primary"/>
+                        <button special="cancel" string="Cancel" class="btn-default"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window name="Add to purchase order"
+            res_model="product.purchase.wizard"
+            view_mode="form"
+            view_type="form"
+            target="new"
+            id="action_add_product_purchase_line_wzd"
+            groups="purchase.group_purchase_user"/>
+
+        <record model="ir.values" id="values_action_add_product_purchase_line_wzd">
+            <field name="model_id" ref="product.model_product_product" />
+            <field name="name">val Add to purchase order</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.act_window,' +str(ref('action_add_product_purchase_line_wzd'))" />
+            <field name="key">action</field>
+            <field name="model">product.product</field>
+        </record>
+</odoo>
