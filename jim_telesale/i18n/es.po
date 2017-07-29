@@ -232,11 +232,6 @@ msgid "Tags"
 msgstr "Etiquetas"
 
 #. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_tariff
-msgid "Tariff"
-msgstr "Arancel"
-
-#. module: jim_telesale
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_material_abc_code
 msgid "Tipo de rotabilidad"
 msgstr "Tipo de rotabilidad"

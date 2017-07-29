@@ -17,7 +17,8 @@ class ProductAttributeValue(models.Model):
 
     _inherit = 'product.attribute.value'
 
-    code = fields.Char("Code", help="Code number for this variant")
+    code = fields.Char("Code", help="Code number for this variant",
+                       required=True)
     is_color = fields.Boolean("Represents a color",
                               related="attribute_id.is_color")
 

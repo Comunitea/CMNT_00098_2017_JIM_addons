@@ -17,6 +17,4 @@ class ResPartner(models.Model):
                                     digits=dp.get_precision('Discount'))
     web_password = fields.Char("Password web", size=32)
     default_contact_person = fields.Char("Contact person", size=90)
-    default_shipment = fields.Boolean()
-    default_invoicing = fields.Boolean()
     invoice_in_paper = fields.Boolean()

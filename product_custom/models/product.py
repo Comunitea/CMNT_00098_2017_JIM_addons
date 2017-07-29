@@ -10,7 +10,6 @@ class ProductTemplate(models.Model):
 
     _inherit = "product.template"
 
-    tariff = fields.Float('Tariff', digits=(16, 2))
     volume = fields.Float(
         'Volume', compute='_compute_volume', inverse='_set_volume',
         help="The volume in m3.", store=True, digits=(10, 6))
@@ -46,12 +45,6 @@ class ProductPackaging(models.Model):
 
 class ProductAttribute(models.Model):
     _inherit = "product.attribute"
-
-    legacy_code = fields.Char("Legacy code", size=18)
-
-
-class ProductAttributeValue(models.Model):
-    _inherit = "product.attribute.value"
 
     legacy_code = fields.Char("Legacy code", size=18)
 
