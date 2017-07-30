@@ -26,6 +26,15 @@ class ProcurementRule(models.Model):
 class ProcurementOrder(models.Model):
     _inherit = "procurement.order"
 
+    move_dest_IC_id = fields.Many2one('stock.move', 'Destination Move IC',
+                                      copy=False, index=True,
+                                      help="Optional: next IC stock move when "
+                                           "chaining them")
+    purchase_line_IC = fields.Many2one('purchase.order.line',
+                                       'Related purchase line', copy=False,
+                                       index=True)
+
+
     @api.model
     def create(self, values):
         if self.env.context.get('user_company'):
@@ -40,6 +49,12 @@ class ProcurementOrder(models.Model):
                 vals['procure_method'] = 'make_to_stock'
             else:
                 vals['procure_method'] = 'make_to_order'
+        vals['move_dest_IC_id'] = self.move_dest_IC_id.id
+        if self.purchase_line_IC:
+            ml_IC = self.env['stock.move'].search([('purchase_line_id', '=',
+                                            self.purchase_line_IC.id)])
+            if ml_IC:
+                vals['move_purchase_IC_id'] = ml_IC.id
         return vals
 
     @api.multi

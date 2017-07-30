@@ -61,6 +61,8 @@
         <field name="arch" type="xml">
 
         <field name="picking_type_id" position="replace">
+            <!--field name="orig_sale_id" />
+            <field name="orig_sale_str" /-->
             <field name="picking_type_id" />
             <field name="company_id" />
         </field>

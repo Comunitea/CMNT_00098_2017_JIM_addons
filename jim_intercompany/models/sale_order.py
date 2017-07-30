@@ -7,6 +7,25 @@ from odoo import api, fields, models, _
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT, float_compare
 from odoo.exceptions import UserError
 
+class SaleOrderLine(models.Model):
+
+    _inherit = 'sale.order.line'
+
+    move_dest_IC_id = fields.Many2one('stock.move', 'Destination Move IC',
+                                      copy=False, index=True,
+                                      help="Optional: next IC stock move when "
+                                           "chaining them")
+    purchase_line_IC = fields.Many2one('purchase.order.line',
+                                       'Related purchase line', copy=False,
+                                       index=True)
+
+    def _prepare_order_line_procurement(self, group_id=False):
+        vals = super(SaleOrderLine, self)._prepare_order_line_procurement(
+            group_id)
+        vals['move_dest_IC_id'] = self.move_dest_IC_id.id
+        vals['purchase_line_IC'] = self.purchase_line_IC.id
+        return vals
+
 
 class SaleOrder(models.Model):
 

@@ -62,4 +62,7 @@ class purchase_order(models.Model):
         vals = super(purchase_order, self)._prepare_sale_order_line_data(line, company, sale_id)
         if line.procurement_ids and line.procurement_ids[0].route_ids:
             vals['route_id'] = line.procurement_ids[0].route_ids[0].id
+            vals['move_dest_IC_id'] = line.procurement_ids[0].move_dest_id.id \
+                                      or False
+            vals['purchase_line_IC'] = line.id
         return vals
