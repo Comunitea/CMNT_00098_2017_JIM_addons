@@ -3,7 +3,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
     <data>
-        
+
         <template id="custom_sale_order_report" inherit_id="sale.report_saleorder_document">
             <xpath expr="//t[@t-call='report.external_layout']" position="replace">
                 <t t-call="custom_documents.custom_layout">
@@ -94,9 +94,9 @@
                 </t>
             </xpath>
         </template>
-    
-			<record id="sale.report_sale_order" model="ir.actions.report.xml">
-            <field name="paperformat_id" ref="paperformat_euro" />
+
+            <record id="sale.report_sale_order" model="ir.actions.report.xml">
+            <field name="paperformat_id" ref="sale_paperformat_euro" />
         </record>
     </data>
 </odoo>
