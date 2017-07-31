@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <data noupdate="0">
+
+        <!--Email template -->
+        <record id="email_template_sale_confirmation" model="mail.template">
+            <field name="name">Sales confirmation</field>
+            <field name="email_from">${(object.user_id.email and '%s &lt;%s&gt;' % (object.user_id.name, object.user_id.email) or '')|safe}</field>
+            <field name="subject">Confirmación de pedido nº ${object.name}</field>
+            <field name="partner_to">${object.partner_id.id}</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="body_html"><![CDATA[
+<div id="content" style="font-family:Arial, sans-serif;font-size:14px;">
+    <h1 style="color:red;">GRUPO JIM SPORTS</h1>
+    <img src="data:image/png;base64,${object.company_id.logo}" width="150" height="46" border="0" alt=""><br><br>
+    Hola, <b> ${object.partner_id.name} </b>,<br><br>
+    gracias por la confianza al realizar tu pedido en Jim Sports.<br><br>
+    <table class="tg" style="font-family:Arial, sans-serif;font-size:14px; width:50%; padding:10px 5px;border-collapse:collapse;border-spacing:0;border-color:#aabcfe;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;">
+        <tbody>
+            <tr style="padding:10px;">
+                <th colspan="2" style="color:#039;background-color:#b9c9fe;">Tu pedido es el número: ${object.name} </th>
+            </tr>
+        <tr style="padding:10px;">
+            <td style="color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 5px;"> La fecha estimada de salida es:<br><br><b> ${format_date(object.date_order, context={'lang': object.partner_id.lang})} </b></td>
+            <td style="color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 5px;">Enviaremos tu pedido a:<br><br><b>
+            ${object.partner_shipping_id.name or ''} </b><br>
+            ${object.partner_shipping_id.street or ''}  ${object.partner_shipping_id.street2 or ''} <br>
+            ${object.partner_shipping_id.city or ''} <br>
+            ${object.partner_shipping_id.zip or ''} ${object.partner_shipping_id.state_id.name or ''} </td>
+        </tr>
+    </tbody></table>
+    <br>
+    Puedes <a href="http://jimsports.website/index.php?controller=sapdocs">ver aquí el detalle de todos tus documentos.</a> Por favor, revísalo.<br><br>
+    Te enviaremos un nuevo email para confirmarte la salida de tu mercancía.<br>
+            Para cualquier consulta, llámanos al número de teléfono 982.286.100, o escríbenos al email ventas@jimsports.com<br>
+            Gracias.<br><br>
+
+    <small><b>${object.company_id.name}</b><br>
+    ${object.company_id.street}<br>
+    ${object.company_id.zip} ${object.company_id.city} (${object.company_id.state_id.name})<br>
+    <a href="${object.company_id.website}">${object.company_id.website}</a><small>
+</small></small></div>
+]]></field>
+        </record>
+
+
+    </data>
+</odoo>

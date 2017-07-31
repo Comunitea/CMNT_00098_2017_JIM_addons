@@ -3,7 +3,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
     <data>
-        <template id="custom_sale_order_report_warehouse"> 
+        <template id="custom_sale_order_report_warehouse">
             <t t-foreach="docs" t-as="doc">
                 <t t-set="noproforma" t-value="True"/>
                 <t t-call="custom_documents.custom_layout">
@@ -41,63 +41,63 @@
                             </tbody>
                         </table>
                      <!-->tabla almacén</-->
-                        
+
                         <table class="custom_table" style="margin-top: 20px;">
-                    
+
                             <tr>
                                 <th style= "border: 0px;"></th>
                                 <th><strong>Packages JIM</strong></th>
                                 <th><strong>Packages EME</strong></th>
                                 <th><strong>Total</strong></th>
-                                
+
                             </tr>
-                             
+
                             <tr>
                                 <td>Packages</td>
                                 <td class="empty"></td>
                                 <td class="empty"></td>
                                 <td class="empty"></td>
-                               
+
                             </tr>
                               <tr>
                                 <td>Peso</td>
                                 <td class="empty"></td>
                                 <td class="empty"></td>
                                 <td class="empty"></td>
-                                
+
                             </tr>
-                          
+
                             </table>
-                                           
+
                         <table class="custom_table" style="margin-top:5px;">
-                    
+
                             <tr>
                                 <th><strong>Operator</strong></th>
                                 <th><strong>carrier</strong></th>
                             </tr>
-                            
+
                             <tr>
                                 <td class="empty"></td>
                                 <td class="empty"></td>
-                               
+
                             </tr>
                             </table>
-                                                    
+
                         <div class="oe_structure"/>
                     </div>
                 </t>
             </t>
         </template>
 
-        <report 
-            id="report_sale_order_report_warehouse" 
-            name="custom_documents.custom_sale_order_report_warehouse" 
-            file="custom_documents.custom_sale_order_report_warehouse" 
-            report_type="qweb-pdf" 
-            model="sale.order" 
+        <report
+            id="report_sale_order_report_warehouse"
+            name="custom_documents.custom_sale_order_report_warehouse"
+            file="custom_documents.custom_sale_order_report_warehouse"
+            report_type="qweb-pdf"
+            model="sale.order"
             string="Pedido Almacén"/>
         <record id="custom_documents.report_sale_order_report_warehouse" model="ir.actions.report.xml">
-            <field name="paperformat_id" ref="paperformat_euro" />
+            <field name="paperformat_id" ref="sale_paperformat_euro" />
         </record>
-	</data>
+    </data>
 </odoo>
