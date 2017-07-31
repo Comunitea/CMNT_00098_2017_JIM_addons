@@ -170,6 +170,7 @@ class StockPicking(models.Model):
                 #self.intercompany_picking_process(picking)
                 picking.do_transfer()
 
+
         #Si es entrega a cliente buscar lineas en albaranes de compra intercompañia
         if self.picking_type_id.code == 'outgoing':
             ic_purchases = self.env['purchase.order'].search([('group_id', '=', self.group_id.id),
@@ -182,7 +183,22 @@ class StockPicking(models.Model):
                     #self.intercompany_picking_process(ic_purchase_picking)
                     ic_purchase_picking.do_transfer()
 
+
         res = super(StockPicking, self).do_transfer()
+        ##Propagamos peso y numero de bultos
+        next_pick = False
+        move = self.move_ids[0]
+        if move.move_dest_id.picking_id.sale_id \
+                and not move.picking_id.purchase_id.intercompany \
+                and not move.dest_id.picking_id.sale_id.auto_generated:
+            next_pick = move.move_dest_id.picking_id
+        elif move.move_dest_IC_id.id \
+                and not move.dest_IC_id.picking_id.sale_id.auto_generated:
+            next_pick = move.move_dest_IC_id.picking_id
+        if next_pick:
+            next_pick.number_of_package += self.number_of_package
+            next_pick.pick_weight += self.pick_weight
+
         return res
 
     def _create_extra_moves(self):
@@ -200,10 +216,6 @@ class StockPicking(models.Model):
             if new_moves:
                 new_moves.with_context(skip_check=True).action_confirm()
         return moves
-
-
-
-
 
     @api.multi
     def check_received_qty(self):
