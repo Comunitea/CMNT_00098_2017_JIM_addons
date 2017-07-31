@@ -36,6 +36,8 @@
         'views/invoice_report.xml',
         #'views/albaran_sin_valorar.xml',
         'views/delivery_report.xml',
-        'views/delivery_report_unrated.xml'
+        'views/delivery_report_unrated.xml',
+        'data/stock_mail_template.xml',
+        'data/sale_mail_template.xml'
     ],
 }

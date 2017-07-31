@@ -71,7 +71,7 @@
             model="sale.order"
             string="Pedido con EAN"/>
         <record id="custom_documents.report_sale_order_report_ean" model="ir.actions.report.xml">
-            <field name="paperformat_id" ref="paperformat_euro" />
+            <field name="paperformat_id" ref="sale_paperformat_euro" />
         </record>
     </data>
 </odoo>

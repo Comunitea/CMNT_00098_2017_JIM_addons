@@ -4,13 +4,12 @@
     <record id="view_partner_form_add_harbor" model="ir.ui.view">
         <field name="name">res.partner.form.add_harbor</field>
         <field name="model">res.partner</field>
-        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="inherit_id" ref="base_vat.view_partner_form"/>
         <field name="arch" type="xml">
             <group name="purchase" position="inside">
                 <field name="harbor_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
             </group>
             <field name="user_id" position="after">
-                <field name="partner_discount"/>
                 <field name="web_password"/>
                 <field name="invoice_in_paper"/>
             </field>
@@ -20,7 +19,102 @@
             <field name="lang" position="before">
                 <field name="default_contact_person"/>
             </field>
+            <field name="ref" position="replace"/>
+            <field name="lang" position="after">
+                <field name="ref" attrs="{'required': [('is_company', '=', True)]}"/>
+            </field>
+            <field name="vat" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
+            </field>
+            <field name="phone" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
+            </field>
+            <field name="email" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
+            </field>
+            <field name="company_id" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
+            </field>
+            <field name="street" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
+            </field>
+            <field name="country_id" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
+            </field>
+            <field name="city" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
+            </field>
+            <field name="zip" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
+            </field>
+            <field name="property_account_position_id" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True),('customer', '=', True)]}</attribute>
+            </field>
+            <xpath expr="//field[@name='child_ids']/form//field[@name='street']" position="attributes">
+                <attribute name="attrs">{'required': [('type', 'in', ['invoice', 'delivery'])]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']/form//field[@name='country_id']" position="attributes">
+                <attribute name="attrs">{'required': [('type', 'in', ['invoice', 'delivery'])]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']/form//field[@name='city']" position="attributes">
+                <attribute name="attrs">{'required': [('type', 'in', ['invoice', 'delivery'])]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='child_ids']/form//field[@name='zip']" position="attributes">
+                <attribute name="attrs">{'required': [('type', 'in', ['invoice', 'delivery'])]}</attribute>
+            </xpath>
         </field>
     </record>
+
+    <record id="view_partner_form_req_field" model="ir.ui.view">
+        <field name="name">res.partner.form.add_harbor</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account_payment_partner.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <field name="property_payment_term_id" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True),('customer', '=', True)]}</attribute>
+            </field>
+            <field name="customer_payment_mode_id" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True),('customer', '=', True)]}</attribute>
+            </field>
+            <field name="property_supplier_payment_term_id" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True),('supplier', '=', True)]}</attribute>
+            </field>
+            <field name="supplier_payment_mode_id" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True),('supplier', '=', True)]}</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="view_partner_property_form_req_pricelist" model="ir.ui.view">
+        <field name="name">res.partner.product.property.form.inherit</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="product.view_partner_property_form"/>
+        <field name="arch" type="xml">
+            <field name="property_product_pricelist" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True),('customer', '=', True)]}</attribute>
+            </field>
+        </field>
+    </record>
+
+     <record id="view_partner_address_form_req_field" model="ir.ui.view">
+        <field name="name">res.partner.form.address.req_field</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_address_form"/>
+        <field name="arch" type="xml">
+            <field name="street" position="attributes">
+                <attribute name="attrs">{'required': [('type', 'in', ['invoice', 'delivery'])]}</attribute>
+            </field>
+            <field name="country_id" position="attributes">
+                <attribute name="attrs">{'required': [('type', 'in', ['invoice', 'delivery'])]}</attribute>
+            </field>
+            <field name="city" position="attributes">
+                <attribute name="attrs">{'required': [('type', 'in', ['invoice', 'delivery'])]}</attribute>
+            </field>
+            <field name="zip" position="attributes">
+                <attribute name="attrs">{'required': [('type', 'in', ['invoice', 'delivery'])]}</attribute>
+            </field>
+        </field>
+    </record>
+
 
 </odoo>
