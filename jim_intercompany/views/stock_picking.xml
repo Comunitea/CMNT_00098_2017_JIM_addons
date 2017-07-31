@@ -78,6 +78,13 @@
             <field name="has_scrap_move" position="before">
                 <field name="ready" />
             </field>
+            <field name="product_qty" position="before">
+                <field name="ordered_qty" readonly="1" />
+            </field>
+            <xpath expr="//field[@name='pack_operation_product_ids']/tree" position="attributes">
+                <attribute name="colors">green:ordered_qty&lt;product_qty;red:ordered_qty&gt;product_qty
+                </attribute>
+            </xpath>
         </field>
     </record>
 
@@ -110,6 +117,22 @@ if records:
             <field name="value" eval="'ir.actions.server,' + str(ref('action_view_related_pickings'))" />
             <field name="key">action</field>
             <field name="model">stock.picking</field>
+        </record>
+
+
+        <record id="view_stock_move_color" model="ir.ui.view">
+        <field name="name">view.stock.move.color</field>
+        <field name="model">stock.move</field>
+        <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+        <field name="arch" type="xml">
+            <field name="state" position="after">
+                <field name="extra_move" invisible="True"/>
+            </field>
+            <xpath expr="//tree" position="attributes">
+                <attribute name="colors">red:state =='cancel';green:extra_move == True
+                </attribute>
+            </xpath>
+        </field>
         </record>
 
 
