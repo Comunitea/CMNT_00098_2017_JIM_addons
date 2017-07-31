@@ -187,16 +187,16 @@ class StockPicking(models.Model):
         res = super(StockPicking, self).do_transfer()
         ##Propagamos peso y numero de bultos
         next_pick = False
-        move = self.move_ids[0]
+        move = self.move_lines[0]
         if move.move_dest_id.picking_id.sale_id \
                 and not move.picking_id.purchase_id.intercompany \
-                and not move.dest_id.picking_id.sale_id.auto_generated:
+                and not move.move_dest_id.picking_id.sale_id.auto_generated:
             next_pick = move.move_dest_id.picking_id
         elif move.move_dest_IC_id.id \
                 and not move.dest_IC_id.picking_id.sale_id.auto_generated:
             next_pick = move.move_dest_IC_id.picking_id
         if next_pick:
-            next_pick.number_of_package += self.number_of_package
+            next_pick.number_of_packages += self.number_of_packages
             next_pick.pick_weight += self.pick_weight
 
         return res
