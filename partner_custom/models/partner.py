@@ -3,7 +3,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields
-import odoo.addons.decimal_precision as dp
 
 
 class ResPartner(models.Model):
@@ -12,7 +11,7 @@ class ResPartner(models.Model):
 
     harbor_ids = fields.Many2many("res.harbor", string="Harbors")
     propietary = fields.\
-        Char("Propietary", default=lambda self: self.env.user.company_id.ref)
+        Char("Propietary", related="company_id.ref", readonly=True)
     web_password = fields.Char("Password web", size=32)
     default_contact_person = fields.Char("Contact person", size=90)
     invoice_in_paper = fields.Boolean()
