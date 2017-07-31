@@ -10,7 +10,6 @@
                 <field name="harbor_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
             </group>
             <field name="user_id" position="after">
-                <field name="partner_discount"/>
                 <field name="web_password"/>
                 <field name="invoice_in_paper"/>
             </field>

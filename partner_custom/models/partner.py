@@ -13,8 +13,6 @@ class ResPartner(models.Model):
     harbor_ids = fields.Many2many("res.harbor", string="Harbors")
     propietary = fields.\
         Char("Propietary", default=lambda self: self.env.user.company_id.ref)
-    partner_discount = fields.Float("Partner discount", default=0.0,
-                                    digits=dp.get_precision('Discount'))
     web_password = fields.Char("Password web", size=32)
     default_contact_person = fields.Char("Contact person", size=90)
     invoice_in_paper = fields.Boolean()
