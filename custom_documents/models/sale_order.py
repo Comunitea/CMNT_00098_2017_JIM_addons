@@ -9,7 +9,6 @@ class SaleOrder(models.Model):
 
     _inherit = 'sale.order'
 
-    copy_printing = fields.Boolean("Imprime copia")
     documento_neutro = fields.Boolean()
 
     # función para separar impuestos,luego la llamamos desde el pedido
