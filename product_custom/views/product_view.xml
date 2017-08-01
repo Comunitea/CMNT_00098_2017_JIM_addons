@@ -36,6 +36,53 @@
                     <separator string="Technical description" colspan="4"/>
                     <field name="description" nolabel="1" colspan="4"/>
                 </group>
+                <field name="company_id" position="attributes">
+                    <attribute name='attrs'>{'required': [('type', '!=', 'service')]}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="product_template_only_form_view_req_fields" model="ir.ui.view">
+            <field name="name">product.template.product.form.req_fields</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+            <field name="arch" type="xml">
+                <field name="default_code" position="attributes">
+                    <attribute name="attrs">{'invisible': [('product_variant_count', '>', 1)], 'required': [('product_variant_count', '&lt;', 2),('type', '!=', 'service')]}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="product_normal_form_view_req_fields" model="ir.ui.view">
+            <field name="name">product.product.form.req_fields</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <field name="default_code" position="attributes">
+                    <attribute name="attrs">{'required': [('type', '!=', 'service')]}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="product_variant_easy_edit_view_req_fields" model="ir.ui.view">
+            <field name="name">product.product.view.form.easy.req_fields</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+            <field name="arch" type="xml">
+                <field name="default_code" position="attributes">
+                    <attribute name="attrs">{'required': [('type', '!=', 'service')]}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="product_template_form_inherit_req_field" model="ir.ui.view">
+            <field name="name">product.template.view.form</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product_tags.product_template_form_inherit"/>
+            <field name="arch" type="xml">
+                <field name="tag_ids" position="attributes">
+                    <attribute name="attrs">{'required': [('type', '!=', 'service')]}</attribute>
+                </field>
             </field>
         </record>
 
