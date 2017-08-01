@@ -81,7 +81,7 @@
                             <div class="col-xs-9">
                                 <p t-if="doc.validity_date"><strong>Offer valid until: <span t-field="doc.validity_date"/></strong></p>
                                 <div class="radius_border">
-                                    <p>Carrier: </p>
+                                    <p>Carrier: <span t-field="doc.carrier_id.name"/></p>
                                     <p t-if="doc.payment_mode_id">Payment mode: <span t-field="doc.payment_mode_id.name"/></p>
                                 </div>
                             </div>
