@@ -191,7 +191,7 @@ class StockPicking(models.Model):
                 and not move.move_dest_id.picking_id.sale_id.auto_generated:
             next_pick = move.move_dest_id.picking_id
         elif move.move_dest_IC_id.id \
-                and not move.dest_IC_id.picking_id.sale_id.auto_generated:
+                and not move.move_dest_IC_id.picking_id.sale_id.auto_generated:
             next_pick = move.move_dest_IC_id.picking_id
         if next_pick:
             next_pick.number_of_packages += self.number_of_packages
