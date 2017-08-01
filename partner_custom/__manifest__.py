@@ -9,7 +9,9 @@
         'base',
         'purchase',
         'account',
-        'partner_consolidate'
+        'partner_consolidate',
+        'base_vat',
+        'account_payment_partner'
     ],
     'author': "Comunitea",
     'license': "AGPL-3",

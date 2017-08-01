@@ -13,6 +13,6 @@
 
 
     <record id="report_picking_grouped_invoice_action" model="ir.actions.report.xml">
-        <field name="paperformat_id" ref="paperformat_euro" />
+        <field name="paperformat_id" ref="invoice_paperformat_euro" />
     </record>
 </odoo>

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <data noupdate="0">
+
+        <!--Email template -->
+        <record id="email_template_picking_confirmation" model="mail.template">
+            <field name="name">Picking confirmation</field>
+            <field name="email_from">${(object.sale_id.user_id.email and '%s &lt;%s&gt;' % (object.sale_id.user_id.name, object.sale_id.user_id.email) or '')|safe}</field>
+            <field name="subject">Confirmación de envío nº ${object.name}</field>
+            <field name="partner_to">${object.sale_id.partner_id.id}</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="auto_delete" eval="True"/>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="body_html"><![CDATA[
+<div id="content" style="font-family:Arial, sans-serif;font-size:14px;">
+<img src="data:image/png;base64,${object.company_id.logo}" width="150" height="46" border="0" alt=""><br><br>
+Hola, <b> ${object.sale_id.partner_id.name} </b>,<br><br>
+% if object.same_day_delivery
+    te confirmamos a través de este email que ya hemos enviado tu pedido.<br><br>
+% else
+    te confirmamos a través de este email que ya hemos preparado tu pedido.<br><br>
+% endif
+<table class="tg" style="font-family:Arial, sans-serif;font-size:14px; width:60%; padding:10px 5px;border-collapse:collapse;border-spacing:0;border-color:#aabcfe;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;">
+    <tr style="padding:10px;">
+        <th colspan="2" style="color:#039;background-color:#b9c9fe;">Tu albarán es el número: ${object.name}</th>
+    </tr>
+    <tr style="padding:10px;">
+        <td style="color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 10px;">
+            Fecha de salida:<br><b>${format_date(object.delivery_date, context={'lang': object.sale_id.partner_id.lang})}</b><br><br>
+            Agencia de transportes: <b>${object.carrier_id.name}</b><br>
+            Bultos: <b>${object.number_of_packages}</b>
+        </td>
+        <td style="color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 10px;">
+            % if object.same_day_delivery
+                Tu pedido ha sido enviado a:<br><br><b>
+            % else
+                Tu pedido está preparado y se enviará en breve a:<br><br><b>
+            % endif
+            ${object.partner_id.name} </b><br>
+            ${object.partner_id.street or ''} ${object.partner_id.street_2 or ''}<br>
+            ${object.partner_id.city or ''}<br>
+            ${object.partner_id.zip or ''} ${object.partner_id.state_id.name or ''}
+        </td>
+    </tr>
+</table>
+Puedes <a href="http://jimsports.website/index.php?controller=sapdocs">ver aquí el detalle de todos tus documentos.</a><br><br>
+El plazo de entrega de tu mercancía son 24/72h, exceptuando imprevistos, sábados, domingos y festivos.<br><br>
+Recuerda verificar el número de bultos entregados antes de firmar el albarán e indicar a la empresa de transportes cualquier anomalía en ese mismo momento, transmitiéndonosla también a nosotros.<br><br>
+Para cualquier consulta, llámanos al número de teléfono 982.286.100, o escríbenos al email xabi@jimsports.com<br><br>
+Esperamos contactar de nuevo.<br>
+Gracias.<br><br>
+<small><b>${object.company_id.name}</b><br>
+${object.company_id.street}<br>
+${object.company_id.zip} ${object.company_id.city} (${object.company_id.state_id.name})<br>
+<a href="${object.company_id.website}">${object.company_id.website}</a><small>
+</div>
+]]></field>
+        </record>
+
+
+    </data>
+</odoo>

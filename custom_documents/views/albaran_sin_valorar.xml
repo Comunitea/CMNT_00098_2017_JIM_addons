@@ -6,55 +6,55 @@
         <template id="custom_albaran_sin_valorar">
             <t t-foreach="docs" t-as="o">
                 <t t-call="custom_documents.custom_layout">
-                   	<t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+                    <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
                     <div class="page">
-						<div name="payment_term"/>
-                        
+                        <div name="payment_term"/>
+
                         <div class="radius_border_min">
                             Obs: <span t-field="o.note"/>
                         </div>
 
-						
-        
+
+
                         <div class="radius_border_min">
-                                <strong>Carrier: </strong><span t-field="o.carrier_id"/> 
+                                <strong>Carrier: </strong><span t-field="o.carrier_id"/>
                                 <strong>Bultos: </strong><span t-field="o.number_of_packages"/>
                                 <strong>kilos: </strong><span t-field="o.weight"/>
                             </div>
-						<table class="custom_table" style="margin-top: 20px;">
-							<thead>
-								<tr>
-									<th>Reference</th>
-									<th>Description</th>
-									<th>Quantity</th>
-								
-								</tr>
-							</thead>
-							<tbody>
-								<tr t-foreach="o.pack_operation_product_ids" t-as="line">
-									<td>
-										<span t-field="line.product_id.default_code"/>
-									</td>
-									 <td>
-										<span t-field="line.product_id.name"/><br></br><span t-field="line.product_id.barcode"/>
-									</td> 
+                        <table class="custom_table" style="margin-top: 20px;">
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Description</th>
+                                    <th>Quantity</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="o.pack_operation_product_ids" t-as="line">
+                                    <td>
+                                        <span t-field="line.product_id.default_code"/>
+                                    </td>
+                                     <td>
+                                        <span t-field="line.product_id.name"/><br></br><span t-field="line.product_id.barcode"/>
+                                    </td>
                                      <td>
                                         <span t-field="line.ordered_qty"/>
-									</td> 
-									
-								</tr>
+                                    </td>
 
-							</tbody>
-						</table>
-                        
+                                </tr>
+
+                            </tbody>
+                        </table>
+
 
                     </div>
-                   
+
                     </t>
                 </t>
 
-		</template> 
-		 <report
+        </template>
+         <report
             id="report_albaran_sin_valorar"
             name="custom_documents.custom_albaran_sin_valorar"
             file="custom_documents.custom_albaran_sin_valorar"
@@ -62,7 +62,7 @@
             model="stock.picking"
             string="albará sin valorar"/>
         <record id="custom_documents.report_albaran_sin_valorar" model="ir.actions.report.xml">
-            <field name="paperformat_id" ref="paperformat_euro" />
+            <field name="paperformat_id" ref="sale_paperformat_euro" />
         </record>
     </data>
 </odoo>

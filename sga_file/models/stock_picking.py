@@ -103,7 +103,7 @@ class StockPickingSGA(models.Model):
     shipping_partner_name = fields.Char(related="partner_id.name")
     account_code = fields.Char("Account code", compute="_get_account_code")
 
-    sga_weight = fields.Float(string='Shipping Weight', help="Imported weight from mecalux")
+
 
     @api.onchange('picking_type_id', 'partner_id')
     def onchange_picking_type(self):
@@ -247,7 +247,7 @@ class StockPickingSGA(models.Model):
                     st = 378
                     en = st + 10
                     weight = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
-                    pick.sga_weight = weight
+                    pick.pick_weight = weight
 
                     st = 388
                     en = st + 10
@@ -382,7 +382,7 @@ class StockPickingSGA(models.Model):
                 st = 378
                 en = st + 10
                 weight = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
-                pick.sga_weight = weight
+                pick.pick_weight = weight
 
                 st = 388
                 en = st + 10

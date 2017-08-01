@@ -23,6 +23,11 @@ class ProductPurchaseWizard(models.TransientModel):
         if not self.purchase_order:
             raise ValidationError(_("No order selected"))
         OrderLine = self.env['purchase.order.line']
+        ids = [x.product_id.id for x in self.line_ids]
+        domain = [('order_id', '=', self.purchase_order.id), ('product_id','in', ids)]
+        lines_to_unlink = self.env['purchase.order.line'].search(domain)
+        lines_to_unlink.unlink()
+
         for line in self.line_ids:
             order_line = OrderLine.new({
                 'product_id': line.product_id.id,
@@ -34,6 +39,8 @@ class ProductPurchaseWizard(models.TransientModel):
             order_line_vals = order_line._convert_to_write(
                 order_line._cache)
             self.purchase_order.order_line.create(order_line_vals)
+
+
 
         return {
             'view_type': 'form',
