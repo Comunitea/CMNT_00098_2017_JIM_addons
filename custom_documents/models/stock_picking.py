@@ -11,7 +11,6 @@ class StockPicking(models.Model):
 
     _inherit = 'stock.picking'
 
-    copy_printing = fields.Boolean("Imprime copia")
     documento_neutro = fields.Boolean()
     operator = fields.Char()
     same_day_delivery = fields.Boolean(compute='_compute_same_day_delivery')
