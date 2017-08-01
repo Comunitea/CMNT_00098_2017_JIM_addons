@@ -8,6 +8,28 @@
             <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
             <div class="page">
                 <div class="oe_structure"/>
+
+                <t t-if="o.type in ('in_refund', 'out_refund')">
+                    <table class="custom_table" style="margin-bottom:10px;">
+                        <thead>
+                            <tr>
+                                <th>
+                                    Refunded invoice
+                                </th>
+                                <th>
+                                    Refund reason
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span t-esc="', '.join(o.mapped('origin_invoice_ids.number'))"/></td>
+                                <td><span t-esc="o.refund_reason"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </t>
+
                 <table class="custom_table">
                     <thead>
                         <tr>

@@ -189,7 +189,9 @@
                     <p><strong>Telf.:</strong> <span t-field="company.phone"/> <strong>FAX:</strong> <span t-field="company.fax"/></p>
                 </div>
                 <div class="col-xs-5 col-xs-offset-1">
-                    <h1>INVOICE</h1>
+                    <t t-if="o.type in ('in_invoice', 'out_invoice')">
+                        <h1>INVOICE</h1>
+                    </t>
                     <t t-if="o.type in ('in_refund', 'out_refund')">
                         <h1>CREDIT NOTE</h1>
                     </t>
