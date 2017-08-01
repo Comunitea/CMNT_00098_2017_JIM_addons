@@ -21,6 +21,7 @@ class SaleOrder(models.Model):
     ])
 
     work_to_do = fields.Text('Trabajo a realizar')
+    route_id = fields.Many2one('stock.location.route', string='Force Route', domain=[('sale_selectable', '=', True)])
 
     @api.multi
     def action_proforma(self):
@@ -64,6 +65,12 @@ class SaleOrder(models.Model):
         """
         return
 
+    def apply_route_to_order_lines(self):
+
+        for line in self.order_line:
+            line.route_id = self.route_id
+        for line in self.template_lines:
+            line.route_id = self.route_id
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -84,8 +91,8 @@ class SaleOrderLine(models.Model):
     @api.onchange('product_id')
     def product_id_change(self):
         res = super(SaleOrderLine, self).product_id_change()
-        if self.product_id.route_ids:
-            self.route_id = self.product_id.route_ids[0]
+        #if self.product_id.route_ids:
+        self.route_id = self.order_id.route_id or self.product_id.route_ids and self.product_id.route_ids[0]
         return res
 
     @api.multi

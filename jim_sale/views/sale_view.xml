@@ -39,6 +39,18 @@
                         <field name="work_to_do"/>
                     </group>
                 </xpath>
+                <xpath expr="//field[@name='partner_shipping_id']" position="after">
+
+                        <label for="route_id"/>
+                        <div>
+                            <field name="route_id" class="oe_inline"/>
+                            <button name="apply_route_to_order_lines" string="Applicar a las lineas" type="object" icon="fa-indent" class="oe_inline"/>
+                        </div>
+
+                </xpath>
+                <xpath expr="//field[@name='carrier_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
             </field>
         </record>
 
