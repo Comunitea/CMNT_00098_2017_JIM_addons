@@ -185,3 +185,14 @@ class SaleOrder(models.Model):
             SaleOrder,
             self.with_context(no_create_line=True,
                               no_create_template_line=True)).copy(default)
+
+    def clear_existing_promotion_lines(self):
+        order = self
+        order_line_obj = self.env['sale.order.line']
+        # Delete all template lines related with promotion sale order lines
+        domain = [('order_id', '=', order.id), ('promotion_line', '=', True)]
+        order_line_objs = order_line_obj.search(domain)
+        related_template_lines = order_line_objs.mapped('template_line')
+        related_template_lines.unlink()
+        res = super(SaleOrder, self).clear_existing_promotion_lines()
+        return res

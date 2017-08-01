@@ -34,7 +34,7 @@
                     </xpath>
                     <field name="categ_id" position="after">
                         <field name="sga_dst"
-                               attrs="{'invisible': [('type','!=','product')]}"/>
+                               attrs="{'invisible': [('type','!=','product')],'required': [('type', '=', 'product')]}"/>
                     </field>
             </field>
         </record>

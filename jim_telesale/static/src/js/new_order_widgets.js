@@ -270,66 +270,72 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
         this.$('.print-alm-button').click(function (){ self.printAlmOrder() });
     },
     printAlmOrder: function() {
-            var self = this;
-            var current_order = this.ts_model.get('selectedOrder')
-            this.ts_widget.new_order_screen.totals_order_widget.saveCurrentOrder()
-            $.when( self.ts_model.ready2 )
-            .done(function(){
-            var loaded = self.ts_model.fetch('sale.order',
-                                           ['id', 'name'],
-                                           [
-                                               ['chanel', '=', 'telesale']
-                                           ])
-               .then(function(orders){
-                   if (orders[0]) {
-                   var my_id = orders[0].id
-                   $.when( self.ts_widget.new_order_screen.order_widget.load_order_from_server(my_id) )
-                   .done(function(){
-                        var currentOrder = self.ts_model.get('selectedOrder')
-                        self.do_action({
-                             model: 'sale.order',
-                             context: {'active_ids': [currentOrder.get('erp_id')]},
-                             data: null,
-                             name: 'Quotation / Order',
-                             report_file: 'custom_documents.custom_sale_order_report_warehouse',
-                             report_name: 'custom_documents.custom_sale_order_report_warehouse',
-                             report_type: 'qweb-pdf',
-                             type: 'ir.actions.report.xml'
-                        });
-                   });
-
-                 }
-               });
-            });
-        },
-    promoCurrentOrder: function() {
-          var self = this;
-            var currentOrder = this.order_model;
-            self.saveCurrentOrder()
-            $.when( self.ts_model.ready2 )
-            .done(function(){
-                var loaded = self.ts_model.fetch('sale.order',
-                                                ['id', 'name'],
-                                                [
-                                                    ['chanel', '=', 'telesale']
-                                                ])
-                    .then(function(orders){
-                       console.log('Entro')
-                        if (orders[0]) {
-                          // var my_id = orders[0].id
-                          (new Model('sale.order')).call('ts_action_proforma',[orders[0].id])
-                              .fail(function(unused, event){
-                                  //don't show error popup if it fails
-                                  console.error('Failed confirm order: ',orders[0].name);
-                              })
-                              .done(function(){
-                                    console.log('Confirmado en segundo plano Yeeeeeah');
-                              });
-
-                        }
+        var self = this;
+        var current_order = this.ts_model.get('selectedOrder')
+        this.ts_widget.new_order_screen.totals_order_widget.saveCurrentOrder()
+        $.when( self.ts_model.ready2 )
+        .done(function(){
+        var loaded = self.ts_model.fetch('sale.order',
+                                       ['id', 'name'],
+                                       [
+                                           ['chanel', '=', 'telesale']
+                                       ])
+           .then(function(orders){
+               if (orders[0]) {
+               var my_id = orders[0].id
+               $.when( self.ts_widget.new_order_screen.order_widget.load_order_from_server(my_id) )
+               .done(function(){
+                    var currentOrder = self.ts_model.get('selectedOrder')
+                    self.do_action({
+                         model: 'sale.order',
+                         context: {'active_ids': [currentOrder.get('erp_id')]},
+                         data: null,
+                         name: 'Quotation / Order',
+                         report_file: 'custom_documents.custom_sale_order_report_warehouse',
+                         report_name: 'custom_documents.custom_sale_order_report_warehouse',
+                         report_type: 'qweb-pdf',
+                         type: 'ir.actions.report.xml'
                     });
-             });
-        },
+               });
+
+             }
+           });
+        });
+    },
+    promoCurrentOrder: function() {
+        var self = this;
+        var currentOrder = this.order_model;
+        self.saveCurrentOrder()
+        $.when( self.ts_model.ready2 )
+        .done(function(){
+            var loaded = self.ts_model.fetch('sale.order',
+                                            ['id', 'name'],
+                                            [
+                                                ['chanel', '=', 'telesale']
+                                            ])
+                .then(function(orders){
+                   console.log('Entro')
+                    if (orders[0]) {
+                      // var my_id = orders[0].id
+                      (new Model('sale.order')).call('ts_action_proforma',[orders[0].id])
+                          .fail(function(unused, event){
+                              //don't show error popup if it fails
+                              console.error('Failed confirm order: ',orders[0].name);
+                          })
+                          .done(function(){
+                                console.log('Confirmado en segundo plano Yeeeeeah');
+                          });
+
+                    }
+                });
+         });
+    },
+    // Allways apply promotion when apply to server
+    saveCurrentOrder: function() {
+        var current_order = this.ts_model.get('selectedOrder')
+        current_order.set('set_promotion', true)
+        this._super();
+    },
 
 });
 

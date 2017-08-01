@@ -62,6 +62,12 @@
                 <field name="number_of_packages" position="attributes">
                     <attribute name="attrs"></attribute>
                 </field>
+                <field name="shipping_weight" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="number_of_packages" position="after">
+                    <field name="pick_weight"/>
+                </field>
             </field>
         </record>
 
@@ -73,6 +79,7 @@
                 <field name="partner_id" position="attributes">
                     <attribute name="attrs"></attribute>
                 </field>
+
             </field>
         </record>
 

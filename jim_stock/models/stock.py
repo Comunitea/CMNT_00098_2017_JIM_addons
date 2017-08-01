@@ -6,6 +6,11 @@ from odoo.exceptions import UserError
 
 import odoo.addons.decimal_precision as dp
 
+class StockPicking (models.Model):
+    _inherit = "stock.picking"
+    pick_weight = fields.Float(string='Shipping Weight',
+                 help="Manual weight in pick. Propagate to next asociated pick.")
+
 class StockLocation(models.Model):
     _inherit = "stock.location"
 
