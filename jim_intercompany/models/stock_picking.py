@@ -196,6 +196,8 @@ class StockPicking(models.Model):
         if next_pick:
             next_pick.number_of_packages += self.number_of_packages
             next_pick.pick_weight += self.pick_weight
+            if self.carrier_id:
+                next_pick.carrier_id = self.carrier_id
 
         return res
 

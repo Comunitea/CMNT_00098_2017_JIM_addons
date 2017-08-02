@@ -314,7 +314,6 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                                                 ['chanel', '=', 'telesale']
                                             ])
                 .then(function(orders){
-                   console.log('Entro')
                     if (orders[0]) {
                       // var my_id = orders[0].id
                       (new Model('sale.order')).call('ts_action_proforma',[orders[0].id])
@@ -323,7 +322,6 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                               console.error('Failed confirm order: ',orders[0].name);
                           })
                           .done(function(){
-                                console.log('Confirmado en segundo plano Yeeeeeah');
                           });
 
                     }
