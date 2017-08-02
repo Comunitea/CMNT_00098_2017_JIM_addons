@@ -44,8 +44,6 @@
                 </div>
                 <div class="col-xs-5 col-xs-offset-1">
 
-    <!-- Limpiar código con todo lo que sobra de copy-->
-
                      <t t-if="not noproforma">
                         <h1 t-if="o.state != 'proforma'">ORDER</h1>
                         <h1 t-if="o.state == 'proforma'">PROFORMA</h1>
@@ -148,8 +146,6 @@
                     </div>
                 </t>
                 <t t-if="o.partner_id == o.sale_id.partner_invoice_id">
-
-
                     <div class="col-xs-6 col-xs-offset-6 radius_border_min">
                         <strong>Shipping and billing address:</strong>
                         <div t-field="o.partner_id"
@@ -264,8 +260,6 @@
     </template>
 
      <!-- cabecera para pedido de compra-->
-
-
     <template id="custom_layout_header_purchase">
         <div class="header">
             <div class="row">
@@ -277,14 +271,47 @@
                     <p><strong>CIF/NIF:</strong> <span t-field="company.vat"/></p>
                     <p><strong>Telf.:</strong> <span t-field="company.phone"/> <strong>FAX:</strong> <span t-field="company.fax"/></p>
                 </div>
+                <div class="col-xs-6">
+                    <h1 style="text-align:center;">PURCHASE ORDER</h1>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xs-6 radius_border">
+                    <strong>Shipping address:</strong>
+                    <div t-field="o.company_id.partner_id"
+                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                </div>
+                <div class="col-xs-6 radius_border">
+                    <div t-field="o.partner_id"
+                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                </div>
+            </div>
+            <div class="row" style="margin-top: 15px;">
+                <div class="col-xs-12">
+                    <table class="custom_table">
+                        <thead>
+                            <tr>
+                                <th>Supplier Nª</th>
+                                <th>Date</th>
+                                <th>Purchase order Nº</th>
+                                <th>Payment term</th>
+                                <th>Sale employee</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><span t-field="o.partner_id.ref"/></td>
+                                <td><span t-field="o.date_order"/></td>
+                                <td><span t-field="o.name"/></td>
+                                <td><span t-field="o.payment_term_id.note"/></td>
+                                <td><span t-field="o.name"/></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </template>
-
-
-
-
-
 
     <template id="custom_layout_footer">
         <div class="footer">
@@ -298,7 +325,7 @@
                 </div>
 
             </t>
-            <t t-if="o._name != 'account.invoice' and not o.documento_neutro">
+            <t t-if="o._name != 'account.invoice' and (o._name == 'purchase.order' or not o.documento_neutro)">
                 <div class="text-center">
                     <!--para que non aparezca o pe con etiquetas html usar t-raw-->
                     <span t-raw="company.qweb_footer"/>
