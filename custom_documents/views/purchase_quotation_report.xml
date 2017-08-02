@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+    <template id="custom_purchase_order_report" inherit_id="purchase.report_purchasequotation_document">
+        <xpath expr="//t[@t-call='report.external_layout']" position="replace">
+            <t t-call="custom_documents.custom_layout">
+                <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+                <div class="page">
+                    <div class="radius_border" style="margin-bottom: 10px;">
+                        Obs.: <span t-field="o.notes"/>
+                    </div>
+
+                    <table class="custom_table">
+                        <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="o.order_line" t-as="line">
+                                <td>
+                                    <span t-field="line.product_id.default_code"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.name"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.product_qty"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+
+    <record id="purchase.report_purchase_quotation" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="sale_paperformat_euro" />
+    </record>
+</odoo>

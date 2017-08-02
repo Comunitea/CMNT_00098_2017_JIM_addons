@@ -52,15 +52,13 @@
     border-radius:6px;
     -moz-border-radius:3px;
 }
-.custom_table{
-border-collapse: collapse;
-}
 
 .empty{
+    border-collapse: collapse;
+    border: 1px solid black;
+    height: 35px;
+}
 
-border-collapse: collapse;
-border: 1px solid black;
-height: 35px;
-
-
+.header{
+    font-size: 12px;
 }

@@ -11,7 +11,11 @@
                     <div class="page">
                         <div name="payment_term"/>
                         <div class="radius_border">
-                            Obs.: <span t-field="doc.note"/>
+                            Obs.:
+                            <t t-if="doc.client_order_ref">
+                                Customer order number <span t-field="doc.client_order_ref"/> <br/>
+                            </t>
+                            <span t-field="doc.note"/>
                         </div>
                         <table class="custom_table" style="margin-top: 20px;">
                             <thead>
@@ -85,7 +89,7 @@
                                     <p t-if="doc.payment_mode_id">Payment mode: <span t-field="doc.payment_mode_id.name"/></p>
                                 </div>
                             </div>
-                            <div class="col-xs-3" t-if="doc.company_id.iso_logo">
+                            <div class="col-xs-3" t-if="doc.company_id.iso_logo and not o.documento_neutro">
                                 <img t-att-src="'data:image/png;base64,%s' % doc.company_id.iso_logo"/>
                             </div>
                         </div>
