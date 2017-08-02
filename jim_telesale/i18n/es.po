@@ -129,7 +129,7 @@ msgstr "Nombre Radiofrecuencia"
 #: code:addons/jim_telesale/static/src/xml/new_order_template.xml:131
 #, python-format
 msgid "PRINT ORDER ALM"
-msgstr "IMPRIMIR PRESUPUESTO ALM"
+msgstr "IMPRIMIR PEDIDO ALM"
 
 #. module: jim_telesale
 #. openerp-web
