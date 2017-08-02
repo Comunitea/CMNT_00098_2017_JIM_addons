@@ -3,7 +3,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
-    <template id="custom_purchase_order_report" inherit_id="purchase.report_purchaseorder_document">
+    <template id="custom_purchase_order_report" inherit_id="purchase.report_purchasequotation_document">
         <xpath expr="//t[@t-call='report.external_layout']" position="replace">
             <t t-call="custom_documents.custom_layout">
                 <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
@@ -15,19 +15,13 @@
                     <table class="custom_table">
                         <thead>
                             <tr>
-                                <th>Delivery date</th>
                                 <th>Reference</th>
                                 <th>Description</th>
                                 <th>Quantity</th>
-                                <th>Price/unit</th>
-                                <th>Amount</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr t-foreach="o.order_line" t-as="line">
-                                <td>
-                                    <span t-field="line.date_planned"/>
-                                </td>
                                 <td>
                                     <span t-field="line.product_id.default_code"/>
                                 </td>
@@ -36,12 +30,6 @@
                                 </td>
                                 <td>
                                     <span t-field="line.product_qty"/>
-                                </td>
-                                 <td>
-                                    <span t-field="line.price_unit"/>
-                                </td>
-                                <td>
-                                    <span t-field="line.price_subtotal"/>
                                 </td>
                             </tr>
                         </tbody>
@@ -53,7 +41,7 @@
     </template>
 
 
-    <record id="purchase.action_report_purchase_order" model="ir.actions.report.xml">
+    <record id="purchase.report_purchase_quotation" model="ir.actions.report.xml">
         <field name="paperformat_id" ref="sale_paperformat_euro" />
     </record>
 </odoo>
