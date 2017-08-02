@@ -58,24 +58,27 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-6 radius_border_min">
-                    <strong>Shipping address:</strong>
-                    <div t-field="o.partner_shipping_id"
-                        t-options='{"widget": "contact", "fields": ["address", "name", "phone", "fax"], "no_marker": True, "phone_icons": True}'/>
-                </div>
-                <div class="col-xs-6 radius_border_min">
-                     <strong>Billing address:</strong>
-                    <div t-field="o.partner_id"
-                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
-                </div>
+                <t t-if="o.partner_shipping_id != o.partner_id">
+                    <div class="col-xs-6 radius_border_min">
+                        <strong>Shipping address:</strong>
+                        <div t-field="o.partner_shipping_id"
+                            t-options='{"widget": "contact", "fields": ["address", "name", "phone", "fax"], "no_marker": True, "phone_icons": True}'/>
+                    </div>
+                    <div class="col-xs-6 radius_border_min">
+                         <strong>Billing address:</strong>
+                        <div t-field="o.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                    </div>
+                </t>
+                <t t-if="o.partner_shipping_id == o.partner_id">
+                    <div class="col-xs-6 col-xs-offset-6 radius_border_min">
+                         <strong>Shipping and Billing address:</strong>
+                        <div t-field="o.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                    </div>
+                </t>
             </div>
-            <div class="row" t-if="o._name == 'stock.picking'">
-                <div class="col-xs-6 col-xs-offset-6 radius_border">
-                    <div t-field="o.partner_id"
-                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
-                </div>
-            </div>
-            <div class="row mt32">
+            <div class="row" style="margin-top: 15px;">
                 <div class="col-xs-12">
                     <table class="custom_table">
                         <thead>
@@ -105,6 +108,8 @@
             </div>
         </div>
     </template>
+
+
     <!-- cabecera para albarán, mira si está marcado o campo neutro -->
     <template id="custom_layout_header_picking">
         <div class="header">
@@ -126,25 +131,35 @@
                     <h1>PICKING</h1>
                 </div>
             </div>
-    <!--dirección de facturación e envío-->
+            <!--dirección de facturación e envío-->
             <div class="row">
+                <t t-if="o.partner_id != o.sale_id.partner_invoice_id">
+                    <div class="col-xs-6 radius_border_min">
+                         <strong>Shipping address:</strong>
+                        <div t-field="o.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                    </div>
 
-                 <div class="col-xs-6 radius_border_min">
-                     <strong>Shipping address:</strong>
-                    <div t-field="o.partner_id"
-                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
-                </div>
+
+                    <div class="col-xs-6 radius_border_min">
+                        <strong>Billing address:</strong>
+                        <div t-field="o.sale_id.partner_invoice_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                    </div>
+                </t>
+                <t t-if="o.partner_id == o.sale_id.partner_invoice_id">
 
 
-                <div class="col-xs-6 radius_border_min">
-                    <strong>Billing address:</strong>
-                    <div t-field="o.sale_id.partner_invoice_id"
-                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
-                </div>
+                    <div class="col-xs-6 col-xs-offset-6 radius_border_min">
+                        <strong>Shipping and billing address:</strong>
+                        <div t-field="o.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                    </div>
+                </t>
 
             </div>
 
-            <div class="row mt32">
+            <div class="row" style="margin-top: 15px;">
                 <div class="col-xs-12">
                     <table class="custom_table">
                         <thead>
@@ -174,6 +189,8 @@
             </div>
         </div>
     </template>
+
+
     <!-- cabeceira para facturas-->
      <template id="custom_layout_header_invoce">
         <div class="header">
@@ -198,16 +215,24 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-6 radius_border">
-                    <div t-field="o.partner_shipping_id"
-                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
-                </div>
-                <div class="col-xs-6 radius_border">
-                    <div t-field="o.commercial_partner_id"
-                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
-                </div>
+                <t t-if="o.partner_shipping_id != o.commercial_partner_id">
+                    <div class="col-xs-6 radius_border">
+                        <div t-field="o.partner_shipping_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                    </div>
+                    <div class="col-xs-6 radius_border">
+                        <div t-field="o.commercial_partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                    </div>
+                </t>
+                <t t-if="o.partner_shipping_id == o.commercial_partner_id">
+                    <div class="col-xs-6 col-xs-offset-6 radius_border">
+                        <div t-field="o.commercial_partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                    </div>
+                </t>
             </div>
-            <div class="row mt32">
+            <div class="row" style="margin-top: 15px;">
                 <div class="col-xs-12">
                     <table class="custom_table">
                         <thead>
@@ -273,7 +298,7 @@
                 </div>
 
             </t>
-            <t t-if="o._name != 'account.invoice'">
+            <t t-if="o._name != 'account.invoice' and not o.documento_neutro">
                 <div class="text-center">
                     <!--para que non aparezca o pe con etiquetas html usar t-raw-->
                     <span t-raw="company.qweb_footer"/>
