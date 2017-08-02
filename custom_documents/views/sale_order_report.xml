@@ -89,7 +89,7 @@
                                     <p t-if="doc.payment_mode_id">Payment mode: <span t-field="doc.payment_mode_id.name"/></p>
                                 </div>
                             </div>
-                            <div class="col-xs-3" t-if="doc.company_id.iso_logo and not doc.documento_neutro">
+                            <div class="col-xs-3" t-if="doc.company_id.iso_logo and not doc.neutral_document">
                                 <img t-att-src="'data:image/png;base64,%s' % doc.company_id.iso_logo"/>
                             </div>
                         </div>
