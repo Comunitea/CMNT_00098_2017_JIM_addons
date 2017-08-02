@@ -11,16 +11,20 @@
                         <div name="payment_term"/>
 
                         <div class="radius_border_min">
-                            Obs: <span t-field="o.note"/>
+                            Obs:
+                            <t t-if="o.sale_id.client_order_ref">
+                                Customer order number <span t-field="o.sale_id.client_order_ref"/> <br/>
+                            </t>
+                            <span t-field="o.note"/>
                         </div>
 
 
-
                         <div class="radius_border_min">
-                                <strong>Carrier: </strong><span t-field="o.carrier_id"/>
-                                <strong>Bultos: </strong><span t-field="o.number_of_packages"/>
-                                <strong>kilos: </strong><span t-field="o.weight"/>
-                            </div>
+                            <strong>Operator: </strong><span t-field="o.operator"/>
+                            <strong>Carrier: </strong><span t-field="o.carrier_id"/>
+                            <strong>Bultos: </strong><span t-field="o.number_of_packages"/>
+                            <strong>kilos: </strong><span t-field="o.pick_weight"/>
+                        </div>
                         <table class="custom_table" style="margin-top: 20px;">
                             <thead>
                                 <tr>

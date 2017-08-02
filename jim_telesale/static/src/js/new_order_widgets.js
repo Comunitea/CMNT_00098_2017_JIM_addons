@@ -184,9 +184,23 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
 });
 
 var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
-    // Overwrited to show warning  orblocking menssage menssagge
+    // fUllOverwrited to show warning  orblocking menssage menssagge and neutral documente
     // Maybe an improvement geting warning mode and message from the customer
     // and calling super after do the warning checks
+    renderElement: function () {
+        var self=this;
+        this._super();
+        this.$('#neutral').blur(_.bind(this.set_neutral_value, this, 'neutral'))
+        var current_order = this.ts_model.get('selectedOrder')
+        var neutral_document = current_order.get('neutral');
+        if (neutral_document) {
+            this.$('#neutral').prop('checked', true);
+        }
+    },
+    set_neutral_value: function(key) {
+        var value = this.$('#' + key).is(':checked');
+        this.order_model.set(key, value);
+    },
     perform_onchange: function(key, value) {
         var self=this;
         if (!value) {return;}
@@ -314,7 +328,6 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                                                 ['chanel', '=', 'telesale']
                                             ])
                 .then(function(orders){
-                   console.log('Entro')
                     if (orders[0]) {
                       // var my_id = orders[0].id
                       (new Model('sale.order')).call('ts_action_proforma',[orders[0].id])
@@ -323,7 +336,6 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                               console.error('Failed confirm order: ',orders[0].name);
                           })
                           .done(function(){
-                                console.log('Confirmado en segundo plano Yeeeeeah');
                           });
 
                     }

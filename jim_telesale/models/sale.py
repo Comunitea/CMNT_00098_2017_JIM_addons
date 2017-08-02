@@ -86,6 +86,12 @@ class SaleOrder(models.Model):
     def ts_action_proforma(self, order_id):
         self.browse(order_id).action_proforma()
 
+    @api.model
+    def get_head_order_vals(self, order):
+        res = super(SaleOrder, self).get_head_order_vals(order)
+        res.update(neutral_document=order.get('neutral', False))
+        return res
+
 
 class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'

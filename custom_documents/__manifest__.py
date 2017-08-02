@@ -36,6 +36,8 @@
         'views/invoice_report.xml',
         'views/delivery_report.xml',
         'views/delivery_report_unrated.xml',
+        'views/purchase_order_report.xml',
+        'views/purchase_quotation_report.xml',
         'data/stock_mail_template.xml',
         'data/sale_mail_template.xml'
     ],

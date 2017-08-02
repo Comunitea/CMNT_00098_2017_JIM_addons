@@ -136,4 +136,33 @@
         </t>
     </t>
 
+    <t t-extend="Data-Order-Widget">
+        <t t-jquery="#inherit_me" t-operation="replace">
+            <div id="inherit_me" class="col-xs-3 fullheight">
+                  <div class="row semiheight">
+                    <div class="col-xs-12 fullheight">
+                      <div class="fullheight centerinside fullwidth">
+                        <div class="centerthis">
+                          <label for="shipp_addr">Shipp Addr:</label>
+                          <input onclick="this.select()" class="mandatory" type="text" id='shipp_addr' name="shipp_addr" t-att-value="widget.order_model.get('shipp_addr')" tabIndex="2"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+            <div class="col-xs-1 fullheight">
+                  <div class="row semiheight">
+                    <div class="col-xs-12 fullheight">
+                      <div class="fullheight centerinside fullwidth">
+                        <div class="centerthis">
+                          <label for="shipp_addr">Neutral Doc:</label>
+                          <input onclick="this.select()" class="checkboxFive" type="checkbox" id='neutral' name="neutral" tabIndex="-1"/>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+            </div>
+        </t>
+    </t>
+
 </templates>

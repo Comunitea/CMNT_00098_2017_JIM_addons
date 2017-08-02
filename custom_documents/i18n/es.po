@@ -1,13 +1,13 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#   * custom_documents
+#	* custom_documents
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-28 08:30+0000\n"
-"PO-Revision-Date: 2017-04-28 08:30+0000\n"
+"POT-Creation-Date: 2017-08-02 16:30+0000\n"
+"PO-Revision-Date: 2017-08-02 16:30+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -16,94 +16,311 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
-msgid "Description"
-msgstr "Descripción"
+#: model:mail.template,body_html:custom_documents.email_template_sale_confirmation
+msgid "\n"
+"<div id=\"content\" style=\"font-family:Arial, sans-serif;font-size:14px;\">\n"
+"    <h1 style=\"color:red;\">GRUPO JIM SPORTS</h1>\n"
+"    <img src=\"data:image/png;base64,${object.company_id.logo}\" width=\"150\" height=\"46\" border=\"0\" alt=\"\"><br><br>\n"
+"    Hola, <b> ${object.partner_id.name} </b>,<br><br>\n"
+"    gracias por la confianza al realizar tu pedido en Jim Sports.<br><br>\n"
+"    <table class=\"tg\" style=\"font-family:Arial, sans-serif;font-size:14px; width:50%; padding:10px 5px;border-collapse:collapse;border-spacing:0;border-color:#aabcfe;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;\">\n"
+"        <tbody>\n"
+"            <tr style=\"padding:10px;\">\n"
+"                <th colspan=\"2\" style=\"color:#039;background-color:#b9c9fe;\">Tu pedido es el número: ${object.name} </th>\n"
+"            </tr>\n"
+"        <tr style=\"padding:10px;\">\n"
+"            <td style=\"color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 5px;\"> La fecha estimada de salida es:<br><br><b> ${format_date(object.date_order, context={'lang': object.partner_id.lang})} </b></td>\n"
+"            <td style=\"color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 5px;\">Enviaremos tu pedido a:<br><br><b>\n"
+"            ${object.partner_shipping_id.name or ''} </b><br>\n"
+"            ${object.partner_shipping_id.street or ''}  ${object.partner_shipping_id.street2 or ''} <br>\n"
+"            ${object.partner_shipping_id.city or ''} <br>\n"
+"            ${object.partner_shipping_id.zip or ''} ${object.partner_shipping_id.state_id.name or ''} </td>\n"
+"        </tr>\n"
+"    </tbody></table>\n"
+"    <br>\n"
+"    Puedes <a href=\"http://jimsports.website/index.php?controller=sapdocs\">ver aquí el detalle de todos tus documentos.</a> Por favor, revísalo.<br><br>\n"
+"    Te enviaremos un nuevo email para confirmarte la salida de tu mercancía.<br>\n"
+"            Para cualquier consulta, llámanos al número de teléfono 982.286.100, o escríbenos al email ventas@jimsports.com<br>\n"
+"            Gracias.<br><br>\n"
+"\n"
+"    <small><b>${object.company_id.name}</b><br>\n"
+"    ${object.company_id.street}<br>\n"
+"    ${object.company_id.zip} ${object.company_id.city} (${object.company_id.state_id.name})<br>\n"
+"    <a href=\"${object.company_id.website}\">${object.company_id.website}</a><small>\n"
+"</small></small></div>\n"
+""
+msgstr "\n"
+"<div id=\"content\" style=\"font-family:Arial, sans-serif;font-size:14px;\">\n"
+"    <h1 style=\"color:red;\">GRUPO JIM SPORTS</h1>\n"
+"    <img src=\"data:image/png;base64,${object.company_id.logo}\" width=\"150\" height=\"46\" border=\"0\" alt=\"\"><br><br>\n"
+"    Hola, <b> ${object.partner_id.name} </b>,<br><br>\n"
+"    gracias por la confianza al realizar tu pedido en Jim Sports.<br><br>\n"
+"    <table class=\"tg\" style=\"font-family:Arial, sans-serif;font-size:14px; width:50%; padding:10px 5px;border-collapse:collapse;border-spacing:0;border-color:#aabcfe;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;\">\n"
+"        <tbody>\n"
+"            <tr style=\"padding:10px;\">\n"
+"                <th colspan=\"2\" style=\"color:#039;background-color:#b9c9fe;\">Tu pedido es el número: ${object.name} </th>\n"
+"            </tr>\n"
+"        <tr style=\"padding:10px;\">\n"
+"            <td style=\"color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 5px;\"> La fecha estimada de salida es:<br><br><b> ${format_date(object.date_order, context={'lang': object.partner_id.lang})} </b></td>\n"
+"            <td style=\"color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 5px;\">Enviaremos tu pedido a:<br><br><b>\n"
+"            ${object.partner_shipping_id.name or ''} </b><br>\n"
+"            ${object.partner_shipping_id.street or ''}  ${object.partner_shipping_id.street2 or ''} <br>\n"
+"            ${object.partner_shipping_id.city or ''} <br>\n"
+"            ${object.partner_shipping_id.zip or ''} ${object.partner_shipping_id.state_id.name or ''} </td>\n"
+"        </tr>\n"
+"    </tbody></table>\n"
+"    <br>\n"
+"    Puedes <a href=\"http://jimsports.website/index.php?controller=sapdocs\">ver aquí el detalle de todos tus documentos.</a> Por favor, revísalo.<br><br>\n"
+"    Te enviaremos un nuevo email para confirmarte la salida de tu mercancía.<br>\n"
+"            Para cualquier consulta, llámanos al número de teléfono 982.286.100, o escríbenos al email ventas@jimsports.com<br>\n"
+"            Gracias.<br><br>\n"
+"\n"
+"    <small><b>${object.company_id.name}</b><br>\n"
+"    ${object.company_id.street}<br>\n"
+"    ${object.company_id.zip} ${object.company_id.city} (${object.company_id.state_id.name})<br>\n"
+"    <a href=\"${object.company_id.website}\">${object.company_id.website}</a><small>\n"
+"</small></small></div>\n"
+""
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
-msgid "Quantity"
-msgstr "Cantidad"
+#: model:mail.template,body_html:custom_documents.email_template_picking_confirmation
+msgid "\n"
+"<div id=\"content\" style=\"font-family:Arial, sans-serif;font-size:14px;\">\n"
+"<img src=\"data:image/png;base64,${object.company_id.logo}\" width=\"150\" height=\"46\" border=\"0\" alt=\"\"><br><br>\n"
+"Hola, <b> ${object.sale_id.partner_id.name} </b>,<br><br>\n"
+"% if object.same_day_delivery\n"
+"    te confirmamos a través de este email que ya hemos enviado tu pedido.<br><br>\n"
+"% else\n"
+"    te confirmamos a través de este email que ya hemos preparado tu pedido.<br><br>\n"
+"% endif\n"
+"<table class=\"tg\" style=\"font-family:Arial, sans-serif;font-size:14px; width:60%; padding:10px 5px;border-collapse:collapse;border-spacing:0;border-color:#aabcfe;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;\">\n"
+"    <tr style=\"padding:10px;\">\n"
+"        <th colspan=\"2\" style=\"color:#039;background-color:#b9c9fe;\">Tu albarán es el número: ${object.name}</th>\n"
+"    </tr>\n"
+"    <tr style=\"padding:10px;\">\n"
+"        <td style=\"color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 10px;\">\n"
+"            Fecha de salida:<br><b>${format_date(object.delivery_date, context={'lang': object.sale_id.partner_id.lang})}</b><br><br>\n"
+"            Agencia de transportes: <b>${object.carrier_id.name}</b><br>\n"
+"            Bultos: <b>${object.number_of_packages}</b>\n"
+"        </td>\n"
+"        <td style=\"color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 10px;\">\n"
+"            % if object.same_day_delivery\n"
+"                Tu pedido ha sido enviado a:<br><br><b>\n"
+"            % else\n"
+"                Tu pedido está preparado y se enviará en breve a:<br><br><b>\n"
+"            % endif\n"
+"            ${object.partner_id.name} </b><br>\n"
+"            ${object.partner_id.street or ''} ${object.partner_id.street_2 or ''}<br>\n"
+"            ${object.partner_id.city or ''}<br>\n"
+"            ${object.partner_id.zip or ''} ${object.partner_id.state_id.name or ''}\n"
+"        </td>\n"
+"    </tr>\n"
+"</table>\n"
+"Puedes <a href=\"http://jimsports.website/index.php?controller=sapdocs\">ver aquí el detalle de todos tus documentos.</a><br><br>\n"
+"El plazo de entrega de tu mercancía son 24/72h, exceptuando imprevistos, sábados, domingos y festivos.<br><br>\n"
+"Recuerda verificar el número de bultos entregados antes de firmar el albarán e indicar a la empresa de transportes cualquier anomalía en ese mismo momento, transmitiéndonosla también a nosotros.<br><br>\n"
+"Para cualquier consulta, llámanos al número de teléfono 982.286.100, o escríbenos al email xabi@jimsports.com<br><br>\n"
+"Esperamos contactar de nuevo.<br>\n"
+"Gracias.<br><br>\n"
+"<small><b>${object.company_id.name}</b><br>\n"
+"${object.company_id.street}<br>\n"
+"${object.company_id.zip} ${object.company_id.city} (${object.company_id.state_id.name})<br>\n"
+"<a href=\"${object.company_id.website}\">${object.company_id.website}</a><small>\n"
+"</div>\n"
+""
+msgstr "\n"
+"<div id=\"content\" style=\"font-family:Arial, sans-serif;font-size:14px;\">\n"
+"<img src=\"data:image/png;base64,${object.company_id.logo}\" width=\"150\" height=\"46\" border=\"0\" alt=\"\"><br><br>\n"
+"Hola, <b> ${object.sale_id.partner_id.name} </b>,<br><br>\n"
+"% if object.same_day_delivery\n"
+"    te confirmamos a través de este email que ya hemos enviado tu pedido.<br><br>\n"
+"% else\n"
+"    te confirmamos a través de este email que ya hemos preparado tu pedido.<br><br>\n"
+"% endif\n"
+"<table class=\"tg\" style=\"font-family:Arial, sans-serif;font-size:14px; width:60%; padding:10px 5px;border-collapse:collapse;border-spacing:0;border-color:#aabcfe;border-style:solid;border-width:1px;overflow:hidden;word-break:normal;\">\n"
+"    <tr style=\"padding:10px;\">\n"
+"        <th colspan=\"2\" style=\"color:#039;background-color:#b9c9fe;\">Tu albarán es el número: ${object.name}</th>\n"
+"    </tr>\n"
+"    <tr style=\"padding:10px;\">\n"
+"        <td style=\"color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 10px;\">\n"
+"            Fecha de salida:<br><b>${format_date(object.delivery_date, context={'lang': object.sale_id.partner_id.lang})}</b><br><br>\n"
+"            Agencia de transportes: <b>${object.carrier_id.name}</b><br>\n"
+"            Bultos: <b>${object.number_of_packages}</b>\n"
+"        </td>\n"
+"        <td style=\"color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 10px;\">\n"
+"            % if object.same_day_delivery\n"
+"                Tu pedido ha sido enviado a:<br><br><b>\n"
+"            % else\n"
+"                Tu pedido está preparado y se enviará en breve a:<br><br><b>\n"
+"            % endif\n"
+"            ${object.partner_id.name} </b><br>\n"
+"            ${object.partner_id.street or ''} ${object.partner_id.street_2 or ''}<br>\n"
+"            ${object.partner_id.city or ''}<br>\n"
+"            ${object.partner_id.zip or ''} ${object.partner_id.state_id.name or ''}\n"
+"        </td>\n"
+"    </tr>\n"
+"</table>\n"
+"Puedes <a href=\"http://jimsports.website/index.php?controller=sapdocs\">ver aquí el detalle de todos tus documentos.</a><br><br>\n"
+"El plazo de entrega de tu mercancía son 24/72h, exceptuando imprevistos, sábados, domingos y festivos.<br><br>\n"
+"Recuerda verificar el número de bultos entregados antes de firmar el albarán e indicar a la empresa de transportes cualquier anomalía en ese mismo momento, transmitiéndonosla también a nosotros.<br><br>\n"
+"Para cualquier consulta, llámanos al número de teléfono 982.286.100, o escríbenos al email xabi@jimsports.com<br><br>\n"
+"Esperamos contactar de nuevo.<br>\n"
+"Gracias.<br><br>\n"
+"<small><b>${object.company_id.name}</b><br>\n"
+"${object.company_id.street}<br>\n"
+"${object.company_id.zip} ${object.company_id.city} (${object.company_id.state_id.name})<br>\n"
+"<a href=\"${object.company_id.website}\">${object.company_id.website}</a><small>\n"
+"</div>\n"
+""
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
-msgid "Price/unit"
-msgstr "Precio/unidad"
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "<span class=\"blue_text\"> Picking:</span>"
+msgstr "<span class=\"blue_text\"> Picking:</span>"
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
-msgid "Disc."
-msgstr "Desc."
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "<span class=\"blue_text\">Picking date:</span>"
+msgstr "<span class=\"blue_text\">Picking date:</span>"
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
-msgid "Amount"
-msgstr "Importe"
-
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "<strong>Billing address:</strong>"
+msgstr "<strong>Billing address:</strong>"
 
 #. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+msgid "<strong>Bultos: </strong>"
+msgstr "<strong>Bultos: </strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "<strong>CIF/NIF:</strong>"
+msgstr "<strong>CIF/NIF:</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+msgid "<strong>Carrier: </strong>"
+msgstr "<strong>Carrier: </strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "<strong>FAX:</strong>"
+msgstr "<strong>FAX:</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+msgid "<strong>Operator</strong>"
+msgstr "<strong>Operator</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+msgid "<strong>Packages EME</strong>"
+msgstr "<strong>Packages EME</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+msgid "<strong>Packages JIM</strong>"
+msgstr "<strong>Packages JIM</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "<strong>Shipping address:</strong>"
+msgstr "<strong>Dirección de Envío</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "<strong>Subtotal</strong>"
+msgstr "<strong>Subtotal</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "<strong>Telf.:</strong>"
+msgstr "<strong>Telf.:</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
 msgid "<strong>Total Without Taxes</strong>"
 msgstr "<strong>Total base</strong>"
 
 #. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "<strong>Total</strong>"
 msgstr "<strong>Total</strong>"
 
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+msgid "<strong>carrier</strong>"
+msgstr "<strong>carrier</strong>"
 
 #. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+msgid "<strong>kilos: </strong>"
+msgstr "<strong>kilos: </strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "Agent"
+msgstr "Agente"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
-msgid "Offer valid until:"
-msgstr "Oferta válida hasta:"
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Amount"
+msgstr "Importe"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Bank account:"
+msgstr "Bank account:"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Base"
+msgstr "Base"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "CIF/NIF"
+msgstr "CIF/NIF"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+msgid "CREDIT NOTE"
+msgstr "CREDIT NOTE"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
 msgid "Carrier:"
 msgstr "Transportista:"
-
-
-#. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
-msgid "Payment mode:"
-msgstr "Modo de pago:"
-
-
-#. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
-msgid "Reference"
-msgstr "Referencia"
-
-#. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
-msgid "<strong>CIF/NIF:</strong>"
-msgstr "<strong>CIF/NIF:</strong>"
-
-#. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
-msgid "<strong>FAX:</strong>"
-msgstr "<strong>FAX:</strong>"
-
-
-#. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
-msgid "<strong>Shipping address:</strong>"
-msgstr "<strong>Dirección de Envío</strong>"
-
-#. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
-msgid "<strong>Telf.:</strong>"
-msgstr "<strong>Telf.:</strong>"
-
-#. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
-msgid "Agent"
-msgstr "Agente"
-
-#. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
-msgid "CIF/NIF"
-msgstr "CIF/NIF"
 
 #. module: custom_documents
 #: model:ir.model,name:custom_documents.model_res_company
@@ -111,39 +328,224 @@ msgid "Companies"
 msgstr "Compañías"
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+#: model:mail.template,subject:custom_documents.email_template_picking_confirmation
+msgid "Confirmación de envío nº ${object.name}"
+msgstr "Confirmación de envío nº ${object.name}"
+
+#. module: custom_documents
+#: model:mail.template,subject:custom_documents.email_template_sale_confirmation
+msgid "Confirmación de pedido nº ${object.name}"
+msgstr "Confirmación de pedido nº ${object.name}"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "Customer Nª"
 msgstr "Cliente Nª"
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+msgid "Customer Nº"
+msgstr "Customer Nº"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "Date"
 msgstr "Fecha"
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.res_company_add_qweb_footer
-msgid "Footer"
-msgstr "Pie de página"
+#: model:ir.model.fields,field_description:custom_documents.field_stock_picking_delivery_date
+msgid "Delivery date"
+msgstr "Delivery date"
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Description"
+msgstr "Descripción"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "Disc."
+msgstr "Desc."
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Discount"
+msgstr "Discount"
+
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_report_custom_documents_report_picking_grouped_invoice_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.res_company_add_qweb_footer
+msgid "Generic footer"
+msgstr "Generic footer"
+
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_report_custom_documents_report_picking_grouped_invoice_id
+msgid "ID"
+msgstr "ID"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+msgid "INVOICE"
+msgstr "INVOICE"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.res_company_add_qweb_footer
+msgid "ISO logo"
+msgstr "ISO logo"
+
+#. module: custom_documents
+#: model:ir.model,name:custom_documents.model_account_invoice_line
+msgid "Invoice Line"
+msgstr "Linea de Factura"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.res_company_add_qweb_footer
+msgid "Invoice footer"
+msgstr "Invoice footer"
+
+#. module: custom_documents
+#: model:ir.actions.report.xml,name:custom_documents.report_picking_grouped_invoice_action
+msgid "Invoice grouped by picking"
+msgstr "Invoice grouped by picking"
+
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_res_company_iso_logo
+msgid "Iso logo"
+msgstr "Iso logo"
+
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_report_custom_documents_report_picking_grouped_invoice___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Maturity:"
+msgstr "Maturity:"
+
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_stock_picking_neutral_document
+msgid "Neutral Document"
+msgstr "Documento neutro"
+
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_sale_order_neutral_document
+msgid "Neutral document"
+msgstr "Documento neutro"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "ORDER"
+msgstr "ORDER"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+msgid "Obs.:"
+msgstr "Obs.:"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+msgid "Obs:"
+msgstr "Obs:"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+msgid "Offer valid until:"
+msgstr "Oferta válida hasta:"
+
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_stock_picking_operator
+msgid "Operator"
+msgstr "Operador"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "Order Nº"
 msgstr "Nº pedido"
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+msgid "PICKING"
+msgstr "PICKING"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "PROFORMA"
+msgstr "PROFORMA"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+msgid "Packages"
+msgstr "Paquetes"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "Page nº"
 msgstr "Hoja nº"
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "Page: <span class=\"page\"/> of <span class=\"topage\"/>"
 msgstr "Página: <span class=\"page\"/> de <span class=\"topage\"/>"
 
 #. module: custom_documents
-#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header
-msgid "QUOTATION"
-msgstr "PRESUPUESTO"
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Payment mode:"
+msgstr "Modo de pago:"
+
+#. module: custom_documents
+#: model:ir.actions.report.xml,name:custom_documents.report_sale_order_report_warehouse
+msgid "Pedido Almacén"
+msgstr "Pedido Almacén"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+msgid "Peso"
+msgstr "Peso"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Price/unit"
+msgstr "Precio/unidad"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Quantity"
+msgstr "Cantidad"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.res_company_add_qweb_footer
@@ -154,3 +556,72 @@ msgstr "Qweb"
 #: model:ir.model.fields,field_description:custom_documents.field_res_company_qweb_footer
 msgid "Qweb footer"
 msgstr "Pie de página"
+
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_res_company_qweb_invoice_footer
+msgid "Qweb invoice footer"
+msgstr "Qweb invoice footer"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Reference"
+msgstr "Referencia"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Refund reason"
+msgstr "Razón de la rectificación"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Refunded invoice"
+msgstr "Refunded invoice"
+
+#. module: custom_documents
+#: model:ir.model,name:custom_documents.model_sale_order
+msgid "Sales Order"
+msgstr "Pedido de venta"
+
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_stock_picking_same_day_delivery
+msgid "Same day delivery"
+msgstr "Same day delivery"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Tax"
+msgstr "Impuesto"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+msgid "Taxes"
+msgstr "Impuestos"
+
+#. module: custom_documents
+#: model:ir.model,name:custom_documents.model_stock_picking
+msgid "Transfer"
+msgstr "Transferir"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+msgid "Warehouse"
+msgstr "Almacén"
+
+#. module: custom_documents
+#: model:ir.actions.report.xml,name:custom_documents.report_delivery_report_unrated
+msgid "albará sin valorar"
+msgstr "albará sin valorar"
+
+#. module: custom_documents
+#: model:ir.model,name:custom_documents.model_report_custom_documents_report_picking_grouped_invoice
+msgid "report.custom_documents.report_picking_grouped_invoice"
+msgstr "report.custom_documents.report_picking_grouped_invoice"
+
