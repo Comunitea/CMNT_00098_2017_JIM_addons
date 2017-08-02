@@ -34,7 +34,7 @@
     <template id="custom_layout_header_sale">
         <div class="header">
             <div class="row">
-                <div class="col-xs-6 sombreado" style="margin-bottom: 15px;" t-if=" not o.documento_neutro">
+                <div class="col-xs-6 sombreado" style="margin-bottom: 15px;" t-if=" not o.neutral_document">
                     <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
 
                     <span t-field="company.partner_id"
@@ -109,7 +109,7 @@
     <template id="custom_layout_header_picking">
         <div class="header">
             <div class="row">
-                <div class="col-xs-6 sombreado" style="margin-bottom: 15px;" t-if=" not o.documento_neutro">
+                <div class="col-xs-6 sombreado" style="margin-bottom: 15px;" t-if=" not o.neutral_document">
                     <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
 
                     <span t-field="company.partner_id"
@@ -117,7 +117,7 @@
                     <p><strong>CIF/NIF:</strong> <span t-field="company.vat"/></p>
                     <p><strong>Telf.:</strong> <span t-field="company.phone"/> <strong>FAX:</strong> <span t-field="company.fax"/></p>
                 </div>
-                <div t-if="o.documento_neutro">
+                <div t-if="o.neutral_document">
 
                     <span t-field="o.sale_id.partner_id"
                         t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>

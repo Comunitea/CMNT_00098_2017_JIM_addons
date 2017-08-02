@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-12 12:18+0000\n"
-"PO-Revision-Date: 2017-07-12 12:18+0000\n"
+"POT-Creation-Date: 2017-08-02 16:32+0000\n"
+"PO-Revision-Date: 2017-08-02 16:32+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -58,33 +58,18 @@ msgid "CONFIRM"
 msgstr "CONFIRMAR"
 
 #. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_change_material_abc
-msgid "Cambio rotabilidad"
-msgstr "Cambio rotabilidad"
-
-#. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_product_type_code
-msgid "Codigo de categoria"
-msgstr "Codigo de categoria"
-
-#. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_uom_base_code
-msgid "Codigo de u.m.(SGA)"
-msgstr "Codigo de u.m.(SGA)"
-
-#. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:197
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:212
 #, python-format
 msgid "Customer name '' does not exist"
-msgstr "El nombre del cliente no existe"
+msgstr "El nombre del cliente'' no existe"
 
 #. module: jim_telesale
 #. openerp-web
 #: code:addons/jim_telesale/static/src/xml/new_order_template.xml:37
 #, python-format
 msgid "Description"
-msgstr "Description"
+msgstr "Descripción"
 
 #. module: jim_telesale
 #. openerp-web
@@ -97,32 +82,23 @@ msgstr "Disc"
 #. openerp-web
 #: code:addons/jim_telesale/static/src/xml/new_order_template.xml:38
 #: code:addons/jim_telesale/static/src/xml/order_history_template.xml:7
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_lqdr
 #, python-format
 msgid "LQDR"
 msgstr "LQDR"
 
 #. module: jim_telesale
-#: model:ir.model.fields,help:jim_telesale.field_product_product_sga_stock
-msgid "Last PST from Mecalux"
-msgstr "Last PST from Mecalux"
-
-#. module: jim_telesale
-#: selection:product.product,sga_change_material_abc:0
-msgid "NO"
-msgstr "NO"
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:158
+#, python-format
+msgid "Neutral Doc:"
+msgstr "Doc. neutro:"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:153
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:154
 #, python-format
 msgid "No"
 msgstr "No"
-
-#. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_prod_shortdesc
-msgid "Nombre Radiofrecuencia"
-msgstr "Nombre Radiofrecuencia"
 
 #. module: jim_telesale
 #. openerp-web
@@ -161,7 +137,7 @@ msgstr "Pendiente aprobación"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:254
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:269
 #, python-format
 msgid "Pricelist name '' does not exist"
 msgstr "La tarifa con nombre '' no existe"
@@ -170,11 +146,6 @@ msgstr "La tarifa con nombre '' no existe"
 #: model:ir.model,name:jim_telesale.model_product_product
 msgid "Product"
 msgstr "Producto"
-
-#. module: jim_telesale
-#: model:ir.model,name:jim_telesale.model_product_template
-msgid "Product Template"
-msgstr "Plantilla de producto"
 
 #. module: jim_telesale
 #. openerp-web
@@ -197,11 +168,6 @@ msgid "SAVE"
 msgstr "GUARDAR"
 
 #. module: jim_telesale
-#: selection:product.product,sga_change_material_abc:0
-msgid "SI"
-msgstr "SI"
-
-#. module: jim_telesale
 #: model:ir.model,name:jim_telesale.model_sale_order
 msgid "Sales Order"
 msgstr "Pedido de venta"
@@ -212,34 +178,11 @@ msgid "Sales Order Line"
 msgstr "Línea de pedido de venta"
 
 #. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_warehouse_code
-msgid "Short Name"
-msgstr "Nombre corto"
-
-#. module: jim_telesale
-#: model:ir.model.fields,help:jim_telesale.field_product_product_sga_warehouse_code
-msgid "Short name used to identify your warehouse"
-msgstr "Nombre corto usado para identificar su almacén"
-
-#. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_stock
-msgid "Stock (SGA)"
-msgstr "Stock (SGA)"
-
-#. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_tag_ids
-msgid "Tags"
-msgstr "Etiquetas"
-
-#. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_material_abc_code
-msgid "Tipo de rotabilidad"
-msgstr "Tipo de rotabilidad"
-
-#. module: jim_telesale
-#: model:ir.model.fields,field_description:jim_telesale.field_product_product_sga_desc_uom_base_code
-msgid "Unit of Measure"
-msgstr "Unidad de medida"
+#. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:146
+#, python-format
+msgid "Shipp Addr:"
+msgstr "Dir. envío:"
 
 #. module: jim_telesale
 #. openerp-web
@@ -250,17 +193,10 @@ msgstr "Almacén"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:153
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:154
 #, python-format
 msgid "Yes"
 msgstr "Sí"
-
-#. module: jim_telesale
-#. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:274
-#, python-format
-msgid "You must save the order in the server in order to print it"
-msgstr "Debes guardar el pedido en el servidor para poder imprimirlo"
 
 #. module: jim_telesale
 #. openerp-web
