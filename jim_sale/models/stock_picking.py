@@ -38,3 +38,7 @@ class StockPicking(models.Model):
             pick.number_of_packages = len(list(set(number_of_packages)))
 
 
+    def ordered_qty_to_qty_done(self):
+        for op in self.pack_operation_product_ids:
+            if op.qty_done == 0:
+                op.qty_done = op.ordered_qty
