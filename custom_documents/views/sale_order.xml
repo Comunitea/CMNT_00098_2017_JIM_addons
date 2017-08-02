@@ -2,14 +2,13 @@
 <odoo>
     <data>
 
-     <record id="sale_order_add_copy_printing" model="ir.ui.view">
-        <field name="name">sale_order_add_copy_printing</field>
+     <record id="sale_order_add_custom_fields" model="ir.ui.view">
+        <field name="name">sale_order_add_custom_fields</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='origin']" position="before">
-				<field name="copy_printing"/>
-				<field name="documento_neutro"/>
+                <field name="documento_neutro"/>
             </xpath>
         </field>
     </record>

@@ -12,8 +12,9 @@
         'sale_stock',
         'sales_team',
         'sale_order_dates',
+        'delivery',
+        'custom_sale_order_variant_mgmt',
         'jim_stock',
-        'product',
     ],
     'contributors': [
         "Comunitea ",

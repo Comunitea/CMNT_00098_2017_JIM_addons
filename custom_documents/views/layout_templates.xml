@@ -47,11 +47,11 @@
     <!-- Limpiar código con todo lo que sobra de copy-->
 
                      <t t-if="not noproforma">
-                        <h1 t-if="o.state != 'proforma'">ORDER <span t-if="o.copy_printing">(COPY)</span></h1>
-                        <h1 t-if="o.state == 'proforma'">PROFORMA <span t-if="o.copy_printing">(COPY)</span></h1>
+                        <h1 t-if="o.state != 'proforma'">ORDER</h1>
+                        <h1 t-if="o.state == 'proforma'">PROFORMA</h1>
                     </t>
                      <t t-if="noproforma">
-                        <h1>ORDER <span t-if="o.copy_printing">(COPY)</span></h1>
+                        <h1>ORDER</h1>
                     </t>
 
 
