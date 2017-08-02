@@ -140,3 +140,5 @@ class SaleOrderLineTemplate(models.Model):
     def create_template_procurements(self):
         for line in self.order_lines:
             line.action_procurement_create()
+
+        return True
