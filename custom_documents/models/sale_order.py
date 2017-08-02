@@ -9,7 +9,7 @@ class SaleOrder(models.Model):
 
     _inherit = 'sale.order'
 
-    documento_neutro = fields.Boolean()
+    neutral_document = fields.Boolean()
 
     # función para separar impuestos,luego la llamamos desde el pedido
     @api.multi
@@ -35,3 +35,20 @@ class SaleOrder(models.Model):
         res = sorted(res.items(), key=lambda l: l[0].sequence)
         res = map(lambda l: (l[0].name, l[1]), res)
         return res
+
+    @api.model
+    def create(self, vals):
+        order = super(SaleOrder, self).create(vals)
+        if 'neutral_document' in vals:
+            if order.partner_shipping_id:
+                order.partner_shipping_id.active = not vals['neutral_document']
+        return order
+
+    @api.multi
+    def write(self, vals):
+        super(SaleOrder, self).write(vals)
+        if 'neutral_document' in vals:
+            for order in self:
+                if order.partner_shipping_id:
+                    order.partner_shipping_id.active = not vals['neutral_document']
+        return True

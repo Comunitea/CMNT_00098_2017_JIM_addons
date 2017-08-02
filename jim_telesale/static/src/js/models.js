@@ -22,6 +22,12 @@ TsModels.TsModel = TsModels.TsModel.extend({
         res.chained_discount = line.chained_discount || '0.00';
         res.description = line.name || '0.00';
         return res
+    },
+
+    // Get neutral focument when fetching back a order
+    build_order: function(order_obj, order_model, order_lines){
+        TsModelSuper.prototype.build_order.call(this, order_obj, order_model, order_lines);
+        order_model.set('neutral', order_obj.neutral_document);
     }
 });
 
@@ -50,6 +56,26 @@ TsModels.Orderline.prototype.export_as_JSON = function(){
     var res = _exportJSON_.call(this, {});
     var to_add = {chained_discount: this.get('chained_discount') || '0.0',
                   description: this.get('description')}
+    res = $.extend(res, to_add)
+    return res
+}
+
+// Set neutral field
+var _initialize2_ = TsModels.Order.prototype.initialize;
+TsModels.Order.prototype.initialize = function(options){
+    var self = this;
+    this.set({
+        neutral:  false,
+    });
+    return _initialize2_.call(this, options);
+}
+
+// Overwraited to get neutral document
+var _exportJSON2_ = TsModels.Order.prototype.exportAsJSON;
+TsModels.Order.prototype.exportAsJSON = function(){
+    var res = _exportJSON2_.call(this, {});
+    var neutral_document = this.get('neutral')
+    var to_add = {neutral: neutral_document}
     res = $.extend(res, to_add)
     return res
 }

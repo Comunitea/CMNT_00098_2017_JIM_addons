@@ -11,8 +11,9 @@ class StockPicking(models.Model):
 
     _inherit = 'stock.picking'
 
-    documento_neutro = fields.Boolean()
-    operator = fields.Char()
+    neutral_document = fields.Boolean('Neutral Document',
+                                      related='sale_id.neutral_document')
+    operator = fields.Char('Operator')
     same_day_delivery = fields.Boolean(compute='_compute_same_day_delivery')
     delivery_date = fields.Char(compute='_compute_delivery_date')
 
