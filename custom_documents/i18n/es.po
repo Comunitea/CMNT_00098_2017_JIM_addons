@@ -667,15 +667,16 @@ msgstr "Qweb invoice footer"
 msgid "Reference"
 msgstr "Referencia"
 
-
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Refund reason"
 msgstr "Razón de la rectificación"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Refunded invoice"
 msgstr "Factura rectificada"
