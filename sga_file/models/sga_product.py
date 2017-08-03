@@ -85,7 +85,7 @@ class SGAProductCategory(models.Model):
             return res
 
         ids = [self.id]
-        ctx = dict(self.env.context)
+        ctx = self._context.copy()
         force = ctx.get('force', True)
         for x in self:
             ids += get_ids(x)
@@ -265,7 +265,8 @@ class SGAProductProduct(models.Model):
 
     @api.model
     def create(self, values):
-        context = {"no_sga": True}
+        context = self._context.copy()
+        context.update({"no_sga": True})
         res = super(SGAProductProduct, self.with_context(context)).create(values)
         # Necesito descripcion corta para la pda
 
@@ -289,7 +290,7 @@ class SGAProductProduct(models.Model):
     def new_mecalux_file(self, operation=False):
         try:
             ids = [x.id for x in self]
-            ctx = dict(self.env.context)
+            ctx = self._context.copy()
             if operation:
                 ctx['operation'] = operation
             if 'operation' not in ctx:
@@ -380,7 +381,8 @@ class SGAProductTemplate(models.Model):
                         self.env['sga.containertype'].search([('code', '=', 'EU')]).id
                     }
                 vals['packaging_ids'].append([0, 0, sga_pack_vals])
-        context = {"no_sga": True}
+        context = self._context.copy()
+        context.update({"no_sga": True})
         res = super(SGAProductTemplate, self.with_context(context)).create(vals)
         res.new_mecalux_file()
         return res
