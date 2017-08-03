@@ -20,8 +20,8 @@ import re
 
 DELETE_FILE = False
 ERRORS = 3
-ODOO_READ_FOLDER = 'SendOdoo'
-ODOO_WRITE_FOLDER = 'ReceiveOdoo'
+ODOO_READ_FOLDER = 'Send'
+ODOO_WRITE_FOLDER = 'Receive'
 
 class ConfigPathFiles(models.TransientModel):
 
