@@ -91,7 +91,9 @@
                     </div>
                 </field>
                 <field name="picking_type_id" position="after">
+                    <field name="sga_integrated" invisible="1"/>
                     <field name="stock_picking_sgatype_id" invisible="1"/>
+                    <field name="action_done_bool" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
                     <!--<field name="sga_state" attrs="{'invisible': [('sga_state', '=', 'NI')], 'readonly': '1'}"/>-->
                 </field>
 

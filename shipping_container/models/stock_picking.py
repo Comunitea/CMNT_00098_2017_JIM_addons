@@ -24,7 +24,7 @@ class StockPicking(models.Model):
 
     shipping_container_id = fields.Many2one("shipping.container", "Shipping container",
                                             domain="[('state','in',['draft', 'loading'])]")
-    shipping_volume = fields.Float("Volume for Shipping", compute='_compute_shipping_volume')
+    shipping_volume = fields.Float("Shipping volume", compute='_compute_shipping_volume')
     harbor_id = fields.Many2one("res.harbor", string="Harbor")
 
 
