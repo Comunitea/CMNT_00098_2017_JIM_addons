@@ -3,6 +3,13 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import models, api, fields
 
+class Route(models.Model):
+    _inherit = 'stock.location.route'
+
+    # Avoid translate in related above because of slow when creae product with
+    # translate fields
+    name = fields.Char(translate=False)
+
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'

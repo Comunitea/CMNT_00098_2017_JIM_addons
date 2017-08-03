@@ -103,7 +103,8 @@ class StockPickingSGA(models.Model):
     shipping_partner_name = fields.Char(related="partner_id.name")
     account_code = fields.Char("Account code", compute="_get_account_code")
 
-
+    action_done_bool = fields.Boolean("Validación automática", default=True)
+    sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
 
     @api.onchange('picking_type_id', 'partner_id')
     def onchange_picking_type(self):
@@ -220,6 +221,11 @@ class StockPickingSGA(models.Model):
             line = line.strip()
             n_line += 1
             if len(line) == LEN_HEADER:
+
+                if pick:
+                    if pick.action_done_bool:
+                        pick.action_done()
+                    pick = False
                 #Busco pick
 
                 st = 40
@@ -334,8 +340,8 @@ class StockPickingSGA(models.Model):
             else:
                 continue
 
-        if not bool_error:
-            fd = 'HAGO ACTION DONE '  # pick.action_done()
+        if not bool_error and pick.action_done_bool:
+            pick.action_done()
 
         return list(set(pool_ids))
 
@@ -361,10 +367,11 @@ class StockPickingSGA(models.Model):
         for line in sga_file_lines:
             n_line += 1
             if len(line) == LEN_HEADER:
-                if not pick:
-                    ## si hay un pick anterior, lo valida ...
-                    #pick.action_done()
+                if pick:
+                    if pick.action_done_bool:
+                        pick.action_done()
                     pick = False
+
                 #Buscamos el pick asociado. (sorder_code)
                 st = 10
                 en = st + 50
@@ -457,8 +464,8 @@ class StockPickingSGA(models.Model):
 
             if bool_error:
                 pick.sga_state = 'EI'
-            else:
-                fd = 'HAGO ACTION DONE ' #pick.action_done()
+            elif pick.action_done_bool:
+                pick.action_done()
 
         return list(set(pool_ids))
 

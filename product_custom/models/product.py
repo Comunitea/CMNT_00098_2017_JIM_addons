@@ -13,6 +13,13 @@ class ProductTemplate(models.Model):
     volume = fields.Float(
         'Volume', compute='_compute_volume', inverse='_set_volume',
         help="The volume in m3.", store=True, digits=(10, 6))
+    # Avoid translations in those fields because of slow performance when 
+    # create a product.product with lang in context.
+    name = fields.Char(translate=False)
+    description = fields.Text(translate=False)
+    description_sale = fields.Text(translate=False)
+    description_picking = fields.Text(translate=False)
+    description_purchase = fields.Text(translate=False)
 
 
 class ProductProduct(models.Model):

@@ -19,6 +19,10 @@
                     <attribute name="invisible">0</attribute>
                 </xpath>
 
+                <xpath expr="//field[@name='pack_operation_pack_ids']" position="after">
+                    <button class="oe_link oe_right" name="ordered_qty_to_qty_done" type="object" string="&#8627;Fill qty done" attrs="{'invisible': [('state', 'in', ('done', 'cancel'))]}" groups="stock.group_tracking_lot"/>
+                </xpath>
+
             </field>
         </record>
 

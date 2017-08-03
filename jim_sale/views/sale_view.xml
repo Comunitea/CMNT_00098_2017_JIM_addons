@@ -16,8 +16,8 @@
                     <button name="action_proforma" states="draft,sent" string="Proforma" class="o_sale_confirm" type="object" />
 
                     <button name="action_lqdr_option" states="draft,sent,proforma" string="Confirm Sale" class="o_sale_confirm" type="object" />
-                    <button name="action_lqdr_ok" states="lqdr" string="LQDR Review Done" class="o_sale_confirm" type="object" />
-                     <button name="action_pending_ok" states="pending" string="Pending Done" class="o_sale_confirm" type="object" />
+                    <button name="action_lqdr_ok" states="lqdr" string="LQDR Review Done" groups="jim_stock.group_stock_lqdr" class="o_sale_confirm" type="object" />
+                     <button name="action_pending_ok" states="pending" string="Pending Done" groups="jim_stock.group_stock_lqdr,jim_stock.group_stock_review" class="o_sale_confirm" type="object" />
                     <!--button name="action_lqdr_done" states="progress_lqdr" string="LQDR Done" class="o_sale_confirm" type="object" /-->
                 </button>
 
@@ -108,6 +108,34 @@
             <field name="domain">[('state', 'not in', ('draft', 'sent', 'cancel'))]</field>
         </record>
 
-      
+        <record id="sale_order_line_custom_tree_lqdr" model="ir.ui.view">
+            <field name="name">sale.order.view.line.custom.lqdr</field>
+            <field name="model">sale.order.line</field>
+            <field name="inherit_id" ref="custom_sale_order_variant_mgmt.sale_order_line_custom_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='route_id']" position="before">
+                    <field name="lqdr" />
+                </xpath>
+            </field>
+        </record>
+        <record id="sale_order_variants_lqdr" model="ir.ui.view">
+            <field name="name">sale.order.variants.lqdr</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="custom_sale_order_variant_mgmt.sale_order_variants"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='template_lines']/tree/field[@name='route_id']" position="before">
+                    <field name="lqdr" />
+                </xpath>
+                <xpath expr="//field[@name='template_lines']/tree/field[@name='price_subtotal']" position="after">
+                    <button name="create_template_procurements"
+                                    type="object"
+                                    icon="fa-truck"
+                                    class="oe_edit_only"
+                                    groups="jim_stock.group_stock_lqdr"
+                                    />
+                </xpath>
+
+            </field>
+        </record>
     </data>
 </odoo>

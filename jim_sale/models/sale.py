@@ -4,6 +4,8 @@
 from odoo import api, fields, models
 import time
 from odoo.addons import decimal_precision as dp
+from odoo.tools import float_compare
+
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
@@ -65,15 +67,17 @@ class SaleOrder(models.Model):
         """
         return
 
-    def apply_route_to_order_lines(self):
 
-        for line in self.order_line:
-            line.route_id = self.route_id
-        for line in self.template_lines:
-            line.route_id = self.route_id
+    def apply_route_to_order_lines(self):
+        if self.apply_route_to_order_lines():
+            for line in self.order_line:
+                line.route_id = self.route_id
+            for line in self.template_lines:
+                line.route_id = self.route_id
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
+
 
     state = fields.Selection([
         ('draft', 'Quotation'),
@@ -93,6 +97,7 @@ class SaleOrderLine(models.Model):
         res = super(SaleOrderLine, self).product_id_change()
         #if self.product_id.route_ids:
         self.route_id = self.order_id.route_id or self.product_id.route_ids and self.product_id.route_ids[0]
+
         return res
 
     @api.multi
@@ -108,3 +113,32 @@ class SaleOrderLine(models.Model):
         if customer_price:
             return customer_price
         return res
+
+    @api.multi
+    def action_procurement_create(self):
+        old_state = self.order_id.state
+        self.order_id.state = 'sale'
+        new_procs = self._action_procurement_create()
+        self.order_id.state = old_state
+        return new_procs
+
+    @api.multi
+    def _action_procurement_create(self):
+        return super(SaleOrderLine, self)._action_procurement_create()
+
+
+
+
+class SaleOrderLineTemplate(models.Model):
+
+    _inherit = 'sale.order.line.template'
+
+    lqdr = fields.Boolean(related="product_template.lqdr", store=False)
+
+
+    @api.multi
+    def create_template_procurements(self):
+        for line in self.order_lines:
+            line.action_procurement_create()
+
+        return True
