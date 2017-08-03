@@ -61,9 +61,16 @@ class ProductTemplate(models.Model):
             vals['template_code'] = vals.get('default_code', False)
         return super(ProductTemplate, self).write(vals)
 
+    @api.model
+    def create(self, vals):
+        # Si viene en el vals, actualizamos el template_code
+        if vals.get('default_code', False):
+            vals['template_code'] = vals.get('default_code', False)
+        return super(ProductTemplate, self).create(vals)
+
     def set_product_product_default_code(self):
         for tmpl_id in self.with_context(active_test=False).\
-                filtered(lambda x: len(x.product_variant_ids) > 1):
+                filtered(lambda x: x.attribute_line_ids):
             for product_id in tmpl_id.product_variant_ids:
                 default_code = tmpl_id.template_code
                 for att in product_id.attribute_line_ids.\
@@ -75,7 +82,8 @@ class ProductTemplate(models.Model):
                 product_id.default_code = default_code
 
         for tmpl_id in self.with_context(active_test=False). \
-                filtered(lambda x: len(x.product_variant_ids) == 1):
+                filtered(lambda x: len(x.product_variant_ids) == 1 and not
+                         x.attribute_line_ids):
             tmpl_id.product_variant_ids[0].default_code = tmpl_id.template_code
 
     @api.multi
@@ -83,21 +91,6 @@ class ProductTemplate(models.Model):
         res = super(ProductTemplate, self).create_variant_ids()
         self.set_product_product_default_code()
         return res
-
-    # Aqui sobre escribo directamente la función porque es más rápido
-    # La función original distingue entre productos con variantes y sin.
-
-    # @api.depends('product_variant_ids', 'product_variant_ids.default_code')
-    # def _compute_default_code(self):
-    #     unique_variants = self.\
-    #         filtered(lambda template: len(template.product_variant_ids) == 1)
-    #     for template in unique_variants:
-    #         template.default_code = template.product_variant_ids.default_code
-    #     for template in (self - unique_variants):
-    #         template.default_code = ''
-
-    # Creo que en este caso, si tiene variantes, el default_code puede ser la
-    # raiz del default_code del las variantes. Creo que vale así:
 
     @api.depends('product_variant_ids', 'product_variant_ids.default_code')
     def _compute_default_code(self):
@@ -107,7 +100,7 @@ class ProductTemplate(models.Model):
     @api.one
     def _set_default_code(self):
         self.template_code = self.default_code
-        if len(self.product_variant_ids) == 1:
+        if len(self.product_variant_ids) == 1 and not self.attribute_line_ids:
             self.product_variant_ids.default_code = self.default_code
         else:
             self.set_product_product_default_code()
