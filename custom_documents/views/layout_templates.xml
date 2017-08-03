@@ -131,10 +131,10 @@
             </div>
             <!--dirección de facturación e envío-->
             <div class="row">
-                <t t-if="o.partner_id != o.sale_id.partner_invoice_id">
+                <t t-if="o.sale_id.partner_shipping_id != o.sale_id.partner_invoice_id">
                     <div class="col-xs-6 radius_border_min">
                          <strong>Shipping address:</strong>
-                        <div t-field="o.partner_id"
+                        <div t-field="o.sale_id.partner_shipping_id"
                                 t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
                     </div>
 
@@ -145,10 +145,10 @@
                                 t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
                     </div>
                 </t>
-                <t t-if="o.partner_id == o.sale_id.partner_invoice_id">
+                <t t-if="o.sale_id.partner_shipping_id == o.sale_id.partner_invoice_id">
                     <div class="col-xs-6 col-xs-offset-6 radius_border_min">
                         <strong>Shipping and billing address:</strong>
-                        <div t-field="o.partner_id"
+                        <div t-field="o.sale_id.partner_shipping_id"
                                 t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
                     </div>
                 </t>
@@ -325,7 +325,7 @@
                 </div>
 
             </t>
-            <t t-if="o._name != 'account.invoice' and (o._name == 'purchase.order' or not o.documento_neutro)">
+            <t t-if="o._name != 'account.invoice' and (o._name == 'purchase.order' or not o.neutral_document)">
                 <div class="text-center">
                     <!--para que non aparezca o pe con etiquetas html usar t-raw-->
                     <span t-raw="company.qweb_footer"/>

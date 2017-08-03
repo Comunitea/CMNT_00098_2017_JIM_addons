@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data noupdate="0">
+
+
+
+    <record id="group_stock_lqdr" model="res.groups">
+        <field name="name">Review LQDR</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+
+    <record id="group_stock_review" model="res.groups">
+        <field name="name">Review Sale for confirm</field>
+        <field name="category_id" ref="base.module_category_hidden"/>
+    </record>
+</data>
+
+</odoo>

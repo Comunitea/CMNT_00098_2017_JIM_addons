@@ -20,6 +20,7 @@
     "data": [
         'views/product_view.xml',
         'views/stock_view.xml',
+        'security/stock_security.xml'
     ],
     "installable": True
 }
