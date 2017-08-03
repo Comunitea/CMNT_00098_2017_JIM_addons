@@ -2,109 +2,108 @@
 <!-- © 2017 Comunitea
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
-    <data>
-        <template id="custom_sale_order_report_warehouse">
-            <t t-foreach="docs" t-as="doc">
-                <t t-set="noproforma" t-value="True"/>
-                <t t-call="custom_documents.custom_layout">
-                    <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})" />
-                    <div class="page">
-                        <div name="payment_term"/>
-                        <t t-if="doc.order_line.filtered('product_id.lqdr')">
-                            <h3 style="text-align:center;">LQDR</h3>
+    <template id="custom_sale_order_report_warehouse">
+        <t t-foreach="docs" t-as="doc">
+            <t t-set="noproforma" t-value="True"/>
+            <t t-call="custom_documents.custom_layout">
+                <t t-set="doc" t-value="doc.with_context({'lang':doc.partner_id.lang})" />
+                <div class="page">
+                    <div name="payment_term"/>
+                    <t t-if="doc.order_line.filtered('product_id.lqdr')">
+                        <h3 style="text-align:center;">LQDR</h3>
+                    </t>
+                    <div class="radius_border">
+                        Obs.:
+                        <t t-if="doc.client_order_ref">
+                            Customer order number <span t-field="doc.client_order_ref"/> <br/>
                         </t>
-                        <div class="radius_border">
-                            Obs.:
-                            <t t-if="doc.client_order_ref">
-                                Customer order number <span t-field="doc.client_order_ref"/> <br/>
-                            </t>
-                            <span t-field="doc.note"/>
-                        </div>
-                        <table class="custom_table" style="margin-top: 10px;">
-                            <thead>
-                                <tr>
-                                    <th>Reference</th>
-                                    <th>Description</th>
-                                    <th>Quantity</th>
-                                    <th>Warehouse</th>
-
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr t-foreach="doc.order_line" t-as="line">
-                                    <td>
-                                        <span t-field="line.product_id.default_code"/>
-                                    </td>
-                                    <td>
-                                        <span t-field="line.name"/>
-                                    </td>
-                                    <td>
-                                        <span t-field="line.product_uom_qty"/>
-                                    </td>
-                                    <td>
-                                        <span t-field="line.order_id.warehouse_id.code"/>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                     <!-->tabla almacén</-->
-
-                        <table class="custom_table" style="margin-top: 20px;">
-
-                            <tr>
-                                <th style= "border: 0px;"></th>
-                                <th><strong>Packages JIM</strong></th>
-                                <th><strong>Packages EME</strong></th>
-                                <th><strong>Total</strong></th>
-
-                            </tr>
-
-                            <tr>
-                                <td>Packages</td>
-                                <td class="empty"></td>
-                                <td class="empty"></td>
-                                <td class="empty"></td>
-
-                            </tr>
-                              <tr>
-                                <td>Peso</td>
-                                <td class="empty"></td>
-                                <td class="empty"></td>
-                                <td class="empty"></td>
-
-                            </tr>
-
-                        </table>
-
-                        <table class="custom_table" style="margin-top:5px;">
-
-                            <tr>
-                                <th><strong>Operator</strong></th>
-                                <th><strong>carrier</strong></th>
-                            </tr>
-
-                            <tr>
-                                <td class="empty"></td>
-                                <td class="empty"></td>
-
-                            </tr>
-                            </table>
-
-                        <div class="oe_structure"/>
+                        <span t-field="doc.note"/>
                     </div>
-                </t>
-            </t>
-        </template>
+                    <table class="custom_table" style="margin-top: 10px;">
+                        <thead>
+                            <tr>
+                                <th>Reference</th>
+                                <th>Description</th>
+                                <th>Quantity</th>
+                                <th>Warehouse</th>
 
-        <report
-            id="report_sale_order_report_warehouse"
-            name="custom_documents.custom_sale_order_report_warehouse"
-            file="custom_documents.custom_sale_order_report_warehouse"
-            report_type="qweb-pdf"
-            model="sale.order"
-            string="Pedido Almacén"/>
-        <record id="custom_documents.report_sale_order_report_warehouse" model="ir.actions.report.xml">
-            <field name="paperformat_id" ref="sale_paperformat_euro" />
-        </record>
-    </data>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr t-foreach="doc.order_line" t-as="line">
+                                <td>
+                                    <span t-field="line.product_id.default_code"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.name"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.product_uom_qty"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.order_id.warehouse_id.code"/>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                 <!-->tabla almacén</-->
+
+                    <table class="custom_table" style="margin-top: 20px;">
+
+                        <tr>
+                            <th style= "border: 0px;"></th>
+                            <th><strong>Packages JIM</strong></th>
+                            <th><strong>Packages EME</strong></th>
+                            <th><strong>Total</strong></th>
+
+                        </tr>
+
+                        <tr>
+                            <td>Packages</td>
+                            <td class="empty"></td>
+                            <td class="empty"></td>
+                            <td class="empty"></td>
+
+                        </tr>
+                          <tr>
+                            <td>Peso</td>
+                            <td class="empty"></td>
+                            <td class="empty"></td>
+                            <td class="empty"></td>
+
+                        </tr>
+
+                    </table>
+
+                    <table class="custom_table" style="margin-top:5px;">
+
+                        <tr>
+                            <th><strong>Operator</strong></th>
+                            <th><strong>carrier</strong></th>
+                        </tr>
+
+                        <tr>
+                            <td class="empty"></td>
+                            <td class="empty"></td>
+
+                        </tr>
+                        </table>
+
+                    <div class="oe_structure"/>
+                </div>
+            </t>
+        </t>
+    </template>
+
+    <report
+        id="report_sale_order_report_warehouse"
+        name="custom_documents.custom_sale_order_report_warehouse"
+        file="custom_documents.custom_sale_order_report_warehouse"
+        report_type="qweb-pdf"
+        model="sale.order"
+        string="Pedido Almacén"/>
+
+    <record id="custom_documents.report_sale_order_report_warehouse" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="sale_paperformat_euro" />
+    </record>
 </odoo>

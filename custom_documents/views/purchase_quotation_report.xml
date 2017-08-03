@@ -3,7 +3,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
-    <template id="custom_purchase_order_report" inherit_id="purchase.report_purchasequotation_document">
+    <template id="custom_purchase_quotation_report" inherit_id="purchase.report_purchasequotation_document">
         <xpath expr="//t[@t-call='report.external_layout']" position="replace">
             <t t-call="custom_documents.custom_layout">
                 <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />

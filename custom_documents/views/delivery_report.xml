@@ -3,7 +3,6 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
     delivery_report -->
 <odoo>
-    <data>
         <!--borramos documentos que heredan para que non tener problemas -->
         <delete id="delivery.report_delivery_document2" model="ir.ui.view"/>
         <delete id="sale_stock.report_delivery_document_inherit_sale_stock" model="ir.ui.view"/>
@@ -27,7 +26,7 @@
                         <div class="radius_border_min">
                             <strong>Operator: </strong><span t-field="o.operator"/>
                             <strong>Carrier: </strong><span t-field="o.carrier_id"/>
-                            <strong>Bultos: </strong><span t-field="o.number_of_packages"/>
+                            <strong>Packages: </strong><span t-field="o.number_of_packages"/>
                             <strong>kilos: </strong><span t-field="o.pick_weight"/>
                         </div>
                         <table class="custom_table" style="margin-top: 20px;">
@@ -47,7 +46,7 @@
                                         <span t-field="line.product_id.default_code"/>
                                     </td>
                                      <td>
-                                        <span t-field="line.linked_move_operation_ids[0].move_id.name"/><br></br><span t-field="line.product_id.barcode"/>
+                                        <span t-field="line.linked_move_operation_ids[0].move_id.name"/>
                                     </td>
                                      <td>
                                         <span t-field="line.qty_done"/>
@@ -108,5 +107,4 @@
             <field name="paperformat_id" ref="picking_paperformat_euro" />
         </record>
 
-    </data>
 </odoo>
