@@ -1,6 +1,6 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* custom_documents
+#   * custom_documents
 #
 msgid ""
 msgstr ""
@@ -184,10 +184,27 @@ msgid "<span class=\"blue_text\">Picking date:</span>"
 msgstr "<span class=\"blue_text\">Picking date:</span>"
 
 #. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+msgid "<strong>Operator: </strong>"
+msgstr "<strong>Operario: </strong>"
+
+#. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "<strong>Billing address:</strong>"
-msgstr "<strong>Billing address:</strong>"
+msgstr "<strong>Dirección de facturación:</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "<strong>Shipping and Billing address:</strong>"
+msgstr "<strong>Dirección de envío y facturación:</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+msgid "<strong>Shipping and billing address:</strong>"
+msgstr "<strong>Dirección de envío y facturación:</strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
@@ -205,9 +222,15 @@ msgstr "<strong>CIF/NIF:</strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
-#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
 msgid "<strong>Carrier: </strong>"
-msgstr "<strong>Carrier: </strong>"
+msgstr "<strong>Transportista: </strong>"
+
+#. module: custom_documents
+#: model:ir.actions.report.xml,name:custom_documents.custom_delivery_report_ean_action
+msgid "Delivery order with EAN"
+msgstr "Vale de entrega con EAN"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
@@ -220,7 +243,7 @@ msgstr "<strong>FAX:</strong>"
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
 msgid "<strong>Operator</strong>"
-msgstr "<strong>Operator</strong>"
+msgstr "<strong>Operario</strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
@@ -254,7 +277,10 @@ msgstr "<strong>Telf.:</strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_purchase_order_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_ean_document
 msgid "<strong>Total Without Taxes</strong>"
 msgstr "<strong>Total base</strong>"
 
@@ -268,9 +294,14 @@ msgid "<strong>Total</strong>"
 msgstr "<strong>Total</strong>"
 
 #. module: custom_documents
+#: model:ir.actions.report.xml,name:custom_documents.report_sale_order_report_ean
+msgid "Sale order with EAN"
+msgstr "Presupuesto / Pedido con EAN"
+
+#. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
 msgid "<strong>carrier</strong>"
-msgstr "<strong>carrier</strong>"
+msgstr "<strong>transportista</strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
@@ -287,17 +318,22 @@ msgstr "Agente"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_purchase_order_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Amount"
 msgstr "Importe"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Bank account:"
-msgstr "Bank account:"
+msgstr "Cuenta bancaria:"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
@@ -346,7 +382,7 @@ msgstr "Cliente Nª"
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
 msgid "Customer Nº"
-msgstr "Customer Nº"
+msgstr "Nº de cliente"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
@@ -362,9 +398,14 @@ msgstr "Delivery date"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
-#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_purchase_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_purchase_quotation_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Description"
@@ -372,8 +413,11 @@ msgstr "Descripción"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_ean_document
 msgid "Disc."
 msgstr "Desc."
 
@@ -400,7 +444,7 @@ msgstr "ID"
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
 msgid "INVOICE"
-msgstr "INVOICE"
+msgstr "FACTURA"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.res_company_add_qweb_footer
@@ -420,7 +464,34 @@ msgstr "Invoice footer"
 #. module: custom_documents
 #: model:ir.actions.report.xml,name:custom_documents.report_picking_grouped_invoice_action
 msgid "Invoice grouped by picking"
-msgstr "Invoice grouped by picking"
+msgstr "Factura agrupada por albarán"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+msgid "Customer order number"
+msgstr "Número de pedido de cliente"
+
+#. module: custom_documents
+#: model:ir.actions.report.xml,name:custom_documents.custom_invoice_report_ean_action
+msgid "Invoice with EAN"
+msgstr "Factura con EAN"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "<span class=\"blue_text\"> Picking:</span>"
+msgstr "<span class=\"blue_text\"> Albarán:</span>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "<span class=\"blue_text\">Picking date:</span>"
+msgstr "<span class=\"blue_text\">Fecha albarán:</span>"
 
 #. module: custom_documents
 #: model:ir.model.fields,field_description:custom_documents.field_res_company_iso_logo
@@ -434,9 +505,10 @@ msgstr "Última modificación en"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Maturity:"
-msgstr "Maturity:"
+msgstr "Vencimiento:"
 
 #. module: custom_documents
 #: model:ir.model.fields,field_description:custom_documents.field_stock_picking_neutral_document
@@ -451,7 +523,7 @@ msgstr "Documento neutro"
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "ORDER"
-msgstr "ORDER"
+msgstr "PEDIDO"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
@@ -474,7 +546,7 @@ msgstr "Oferta válida hasta:"
 #. module: custom_documents
 #: model:ir.model.fields,field_description:custom_documents.field_stock_picking_operator
 msgid "Operator"
-msgstr "Operador"
+msgstr "Operario"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
@@ -486,7 +558,7 @@ msgstr "Nº pedido"
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
 msgid "PICKING"
-msgstr "PICKING"
+msgstr "ALBARÁN"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
@@ -497,6 +569,13 @@ msgstr "PROFORMA"
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
 msgid "Packages"
 msgstr "Paquetes"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+msgid "<strong>Packages: </strong>"
+msgstr "<strong>Paquetes: </strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
@@ -514,7 +593,9 @@ msgstr "Página: <span class=\"page\"/> de <span class=\"topage\"/>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Payment mode:"
 msgstr "Modo de pago:"
@@ -531,17 +612,26 @@ msgstr "Peso"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_purchase_order_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Price/unit"
 msgstr "Precio/unidad"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
-#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_purchase_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_purchase_quotation_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Quantity"
@@ -564,13 +654,19 @@ msgstr "Qweb invoice footer"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
-#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_purchase_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_purchase_quotation_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Reference"
 msgstr "Referencia"
+
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
@@ -582,7 +678,7 @@ msgstr "Razón de la rectificación"
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Refunded invoice"
-msgstr "Refunded invoice"
+msgstr "Factura rectificada"
 
 #. module: custom_documents
 #: model:ir.model,name:custom_documents.model_sale_order
@@ -596,12 +692,15 @@ msgstr "Same day delivery"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Tax"
 msgstr "Impuesto"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_purchase_order_report
 msgid "Taxes"
 msgstr "Impuestos"
 
@@ -624,4 +723,3 @@ msgstr "albará sin valorar"
 #: model:ir.model,name:custom_documents.model_report_custom_documents_report_picking_grouped_invoice
 msgid "report.custom_documents.report_picking_grouped_invoice"
 msgstr "report.custom_documents.report_picking_grouped_invoice"
-
