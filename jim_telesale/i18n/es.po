@@ -91,7 +91,7 @@ msgstr "LQDR"
 #: code:addons/jim_telesale/static/src/xml/new_order_template.xml:158
 #, python-format
 msgid "Neutral Doc:"
-msgstr "Doc. neutro:"
+msgstr "3ª Plaza:"
 
 #. module: jim_telesale
 #. openerp-web
