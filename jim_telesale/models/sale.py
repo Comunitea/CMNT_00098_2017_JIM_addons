@@ -16,13 +16,13 @@ class SaleOrder(models.Model):
         self.browse(order_id).action_lqdr_option()
 
     @api.model
-    def _get_ts_line_vals(self, order_obj, line):
+    def _get_ts_line_vals(self, line):
         """
         Get the firtst product route to the line
         """
         t_product = self.env['product.product']
         product_obj = t_product.browse(line['product_id'])
-        vals = super(SaleOrder, self)._get_ts_line_vals(order_obj, line)
+        vals = super(SaleOrder, self)._get_ts_line_vals(line)
         if product_obj.route_ids:
             vals.update({'route_id': product_obj.route_ids[0].id})
         vals.update({'chained_discount': line.get('chained_discount', '0.00'),
@@ -30,9 +30,9 @@ class SaleOrder(models.Model):
         return vals
 
     @api.model
-    def _get_ts_template_line_vals(self, order_obj, line):
+    def _get_ts_template_line_vals(self, line):
         vals = super(SaleOrder, self).\
-            _get_ts_template_line_vals(order_obj, line)
+            _get_ts_template_line_vals(line)
         t_product = self.env['product.product']
         product_obj = t_product.browse(line['product_id'])
         if product_obj.route_ids:
@@ -42,9 +42,9 @@ class SaleOrder(models.Model):
         return vals
 
     @api.model
-    def _get_ts_parent_template_line_vals(self, order_obj, line, total_qty):
+    def _get_ts_parent_template_line_vals(self, line, total_qty):
         vals = super(SaleOrder, self).\
-            _get_ts_parent_template_line_vals(order_obj, line, total_qty)
+            _get_ts_parent_template_line_vals(line, total_qty)
         t_product = self.env['product.product']
         product_obj = t_product.browse(line['product_id'])
         if product_obj.route_ids:
