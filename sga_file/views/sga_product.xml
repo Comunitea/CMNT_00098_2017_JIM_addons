@@ -50,7 +50,7 @@
 
                 </tree>
                 <xpath expr="//field[@name='display_name']" position="after">
-                    <field name="code"/>
+                    <field name="code" required="1"/>
                     <field name="sga_state" readonly="1"/>
                 </xpath>
 
