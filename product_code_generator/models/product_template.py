@@ -36,7 +36,7 @@ class ProductProduct(models.Model):
     @api.multi
     def write(self, vals):
         # Comprobamos si hay movimientos.
-        if vals.get('default_code', False):
+        if vals.get('default_code', False) and False:
             for product in self:
                 if product.stock_move_ids:
                     raise ValidationError(_("You can change code because this "
