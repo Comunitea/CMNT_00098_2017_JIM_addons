@@ -120,7 +120,7 @@
                     <p><strong>CIF/NIF:</strong> <span t-field="company.vat"/></p>
                     <p><strong>Telf.:</strong> <span t-field="company.phone"/> <strong>FAX:</strong> <span t-field="company.fax"/></p>
                 </div>
-                <div t-if="o.neutral_document">
+                <div class="col-xs-6" t-if="o.neutral_document">
 
                     <span t-field="o.sale_id.partner_id"
                         t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
@@ -129,25 +129,11 @@
                     <h1>PICKING</h1>
                 </div>
             </div>
-            <!--dirección de facturación e envío-->
+            <!--dirección e envío-->
             <div class="row">
-                <t t-if="o.sale_id.partner_shipping_id != o.sale_id.partner_invoice_id">
-                    <div class="col-xs-6">
-                         <strong>Shipping address:</strong>
-                        <div t-field="o.sale_id.partner_shipping_id"
-                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
-                    </div>
-
-
-                    <div class="col-xs-6">
-                        <strong>Billing address:</strong>
-                        <div t-field="o.sale_id.partner_invoice_id"
-                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
-                    </div>
-                </t>
-                <t t-if="o.sale_id.partner_shipping_id == o.sale_id.partner_invoice_id">
+                <t>
                     <div class="col-xs-6 col-xs-offset-6">
-                        <strong>Shipping and billing address:</strong>
+                         <strong>Shipping address:</strong>
                         <div t-field="o.sale_id.partner_shipping_id"
                                 t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
                     </div>
