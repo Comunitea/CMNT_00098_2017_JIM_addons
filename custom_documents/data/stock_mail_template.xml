@@ -2,7 +2,7 @@
 <!-- © 2017 Comunitea
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
-    <data noupdate="0">
+    <data noupdate="1">
 
         <!--Email template -->
         <record id="email_template_picking_confirmation" model="mail.template">
