@@ -513,12 +513,12 @@ msgstr "Vencimiento:"
 #. module: custom_documents
 #: model:ir.model.fields,field_description:custom_documents.field_stock_picking_neutral_document
 msgid "Neutral Document"
-msgstr "Documento neutro"
+msgstr "3ª Plaza"
 
 #. module: custom_documents
 #: model:ir.model.fields,field_description:custom_documents.field_sale_order_neutral_document
 msgid "Neutral document"
-msgstr "Documento neutro"
+msgstr "3ª Plaza"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
