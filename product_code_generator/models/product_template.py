@@ -43,6 +43,14 @@ class ProductProduct(models.Model):
                                             "product has moves"))
         return super(ProductProduct, self).write(vals)
 
+    @api.model
+    def create(self, vals):
+        product = super(ProductProduct, self).create(vals)
+        if vals.get('default_code', False):
+            if not product.product_tmpl_id.default_code:
+                product.product_tmpl_id.default_code = vals['default_code']
+        return product
+
 
 class ProductTemplate(models.Model):
 
