@@ -193,7 +193,7 @@ class SGAProductProduct(models.Model):
 
     @api.onchange('name')
     def on_change(self):
-        if self.name:
+        if self.name and self.sga_name_get:
             self.sga_prod_shortdesc = self.sga_name_get[0:50]
 
     @api.multi
@@ -205,7 +205,8 @@ class SGAProductProduct(models.Model):
 
         print "write de product con values %s"%values
 
-        if not self.sga_prod_shortdesc and not values.get('sga_prod_shortdesc', False):
+        if not self.sga_prod_shortdesc and not |
+            values.get('sga_prod_shortdesc', False) and sga_name_get:
             values['sga_prod_shortdesc'] = self.sga_name_get[0:80]
 
         fields_to_check = ('default_code', 'barcode', 'categ_id',
