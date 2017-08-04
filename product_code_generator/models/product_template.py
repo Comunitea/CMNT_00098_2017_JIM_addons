@@ -50,24 +50,6 @@ class ProductTemplate(models.Model):
 
     template_code = fields.Char("Template code", size=45, copy=False)
 
-    @api.onchange('default_code')
-    def onchange_default_code(self):
-        self.template_code = self.default_code
-
-    @api.multi
-    def write(self, vals):
-        # Si viene en el vals, actualizamos el template_code
-        if vals.get('default_code', False):
-            vals['template_code'] = vals.get('default_code', False)
-        return super(ProductTemplate, self).write(vals)
-
-    @api.model
-    def create(self, vals):
-        # Si viene en el vals, actualizamos el template_code
-        if vals.get('default_code', False):
-            vals['template_code'] = vals.get('default_code', False)
-        return super(ProductTemplate, self).create(vals)
-
     def set_product_product_default_code(self):
         for tmpl_id in self.with_context(active_test=False).\
                 filtered(lambda x: x.attribute_line_ids):
@@ -92,7 +74,7 @@ class ProductTemplate(models.Model):
         self.set_product_product_default_code()
         return res
 
-    @api.depends('product_variant_ids', 'product_variant_ids.default_code')
+    @api.depends('template_code')
     def _compute_default_code(self):
         for template in self:
             template.default_code = template.template_code or ''
@@ -100,7 +82,9 @@ class ProductTemplate(models.Model):
     @api.one
     def _set_default_code(self):
         self.template_code = self.default_code
-        if len(self.product_variant_ids) == 1 and not self.attribute_line_ids:
-            self.product_variant_ids.default_code = self.default_code
-        else:
-            self.set_product_product_default_code()
+        if self.product_variant_ids:
+            if len(self.product_variant_ids) == 1 and not \
+                    self.attribute_line_ids:
+                self.product_variant_ids.default_code = self.default_code
+            else:
+                self.set_product_product_default_code()
