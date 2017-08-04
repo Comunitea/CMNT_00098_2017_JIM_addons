@@ -165,7 +165,7 @@ class SGAProductProduct(models.Model):
     def get_variant_name(self):
         for prod in self:
             sga_name_get = prod.name_get()[0][1]
-            if ']' in sga_name_get:
+            if sga_name_get and ']' in sga_name_get:
                 sga_name_get = sga_name_get.split(']')[1].strip()
             prod.sga_name_get = sga_name_get
 
