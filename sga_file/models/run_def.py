@@ -150,16 +150,12 @@ class run_def(object):
         domain = [('name', 'like','PROD'),'|',('active', '=', True), ('active', '=', False)]
         product_ids = self.search('product.product', domain)
         #buscamos todos lo s productos de nombre test esten activos o no, devuielve lista ids
-        print product_ids
         if len(product_ids) > 1:
             cont = 0
             #recorremos lista de id
             for id in product_ids:
                 vals = self.read('product.product', id, ('id', 'sga_name_get'), context={})
-                print "Id [%s]: %s"%(id, vals[0]['sga_name_get'])
-
         else:
-            print "No se han encontrado productos"
             return False
         return True
 

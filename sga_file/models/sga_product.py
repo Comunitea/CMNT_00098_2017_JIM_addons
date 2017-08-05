@@ -203,6 +203,7 @@ class SGAProductProduct(models.Model):
     @api.multi
     def write(self, values):
 
+        create_product_product = False
         if not self.sga_prod_shortdesc and not \
             values.get('sga_prod_shortdesc', False) and self.sga_name_get:
             values['sga_prod_shortdesc'] = self.sga_name_get[0:80]
