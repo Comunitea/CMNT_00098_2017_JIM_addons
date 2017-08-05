@@ -68,7 +68,6 @@ class ProductTemplate(models.Model):
                     seq = product_id.attribute_value_ids.\
                         filtered(lambda r: r.attribute_id == att.attribute_id)
                     default_code += '.%s' % seq.code
-                    print default_code
                 product_id.default_code = default_code
 
         for tmpl_id in self.with_context(active_test=False). \

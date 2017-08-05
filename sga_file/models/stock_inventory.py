@@ -120,7 +120,6 @@ class StockInventorySGA(models.Model):
         warehouse_code = "PLS"
         warehouse_id = self.env['stock.warehouse'].search([('code', '=', warehouse_code)])
         location_id = warehouse_id.lot_stock_id
-        print "Black company = %s" % black_company.name
         for line in sga_file_lines:
             if len(line) != 423:
                 continue

@@ -189,7 +189,6 @@ class MecaluxFile(models.Model):
 
         domain = [('id', '!=', 0)]
         pool_files = self.env['sgavar.file'].search(domain)
-        print "Numero de registros: %s"%len(pool_files)
         for sga in pool_files:
             st=0
             en=0
