@@ -1,6 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
+
+        <record id="sga_error_ack_action" model="ir.actions.server">
+            <field name="name">Confirmar ACK</field>
+            <field name="model_id" ref="model_sga_file_error"/>
+            <field name="state">code</field>
+            <field name="condition">True</field>
+            <field name="code">records.confirm_ack()</field>
+         </record>
+        <record id="sga_error_ack_values" model="ir.values">
+            <field name="name">sga.error.ack_.values</field>
+            <field name="model">sga.file.error</field>
+            <field name="key" >action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,%d'%sga_error_ack_action"/>
+        </record>
+
         <record id="model_sgafile__error_form_view" model="ir.ui.view">
             <field name="name">sgavar.file.error.form.view</field>
             <field name="model">sga.file.error</field>
@@ -14,6 +30,7 @@
                             <field name="version"/>
                         </group>
                         <group>
+                            <field name="ack"/>
                             <field name="object_id"/>
                             <field name="error_code"/>
                             <field name="date_error"/>
@@ -31,7 +48,11 @@
             <field name="name">sga.file.error.tree.view</field>
             <field name="model">sga.file.error</field>
             <field name="arch" type="xml">
-                <tree editable="0" create="0">
+                <tree editable="0" create="0"
+                decoration-success="ack== True"
+                decoration-danger="ack== False">
+
+                    <field name="ack"/>
                     <field name="file_name" />
                     <field name="line_number"/>
                     <field name="object_type"/>
