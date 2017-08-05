@@ -77,7 +77,7 @@ class StockPickingSGA(models.Model):
     @api.multi
     def _get_action_done_bool(self):
 
-        action_done =  eval(self.env['ir.config_parameter'].get_param('picking_auto'))
+        action_done =  eval(self.env['ir.config_parameter'].get_param('picking_auto', 'False'))
         for pick in self:
             pick.action_done_bool = action_done
 
