@@ -20,10 +20,13 @@ class SGAfileerror(models.Model):
     object_type = fields.Char('Tipo de objeto', size=3)
     version = fields.Integer('version')
     object_id = fields.Char("Id del objeto", size=50)
-    error_code = fields.Integer('Codigo de error')
+    error_code = fields.Char('Codigo de error')
     error_message = fields.Char("Mensaje de error")
     date_error = fields.Char('Fecha')
+    ack = fields.Boolean("Ack", default=False)
 
+    def confirm_ack(self):
+        self.write({'ack': True})
 
     def import_mecalux_EIM(self, file_id):
 

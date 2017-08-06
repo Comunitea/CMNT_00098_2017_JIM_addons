@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="sale_order_note_to_picks" model="ir.ui.view">
+        <field name="name">sale.order.note.to.picks</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook/page[2]" position="after">
+                <page string="Detailed notes">
+                    <group>
+                        <group>
+                            <label for ="invoice_note"/>
+                            <div>
+                                <field name="invoice_note" placeholder="To add a invoice note"/>
+                                <button class="oe_link" name="write_invoice_note" type="object" string="↳"
+                                attrs="{'invisible':[('delivery_note', '=', False)]}"/>
+                            </div>
+                            <label for ="pick_note"/>
+                            <div>
+                                <field name="pick_note"  placeholder="To add a picking note"/>
+                                <button class="oe_link" name="write_pick_note" type="object" string="↳"
+                                        attrs="{'invisible':[('delivery_note', '=', False)]}"/>
+                            </div>
+                        </group>
+                        <group>
+                            <label for ="delivery_note"/>
+                            <div>
+                                <field name="delivery_note" placeholder="To add a delivery note"/>
+                                <button class="oe_link" name="write_delivery_note" type="object" string="↳"
+                                attrs="{'invisible':[('delivery_note', '=', False)]}"/>
+                            </div>
+                            <label for ="work_to_do"/>
+                            <div>
+                                <field name="work_to_do"  placeholder="To add a production note"/>
+                                <button class="oe_link" name="write_work_to_do" type="object" string="↳"
+                                attrs="{'invisible':[('delivery_note', '=', False)]}"/>
+                            </div>
+                        </group>
+                    </group>
+
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+
+</odoo>

@@ -142,7 +142,7 @@ class SGAProductPackaging(models.Model):
     def create(self, vals):
         new_sga = super(SGAProductPackaging, self).create(vals)
         # si está asociado a un template
-        if new_sga.product_tmpl_id:
+        if new_sga.product_tmpl_id and new_sga.product_tmpl_id.sga_state != 'AC':
             new_sga.product_tmpl_id.sga_state = 'PA'
             new_sga.product_tmpl_id.export_template_to_mecalux()
         return new_sga
@@ -152,7 +152,7 @@ class SGAProductPackaging(models.Model):
         res_write = super(SGAProductPackaging, self).write(vals)
         # Si están asociados a templates ....
         for pack in self:
-            if pack.product_tmpl_id:
+            if pack.product_tmpl_id and new_sga.product_tmpl_id.sga_state != 'AC':
                 pack.product_tmpl_id.sga_state = 'PA'
                 pack.product_tmpl_id.export_template_to_mecalux()
         return res_write
@@ -202,8 +202,8 @@ class SGAProductProduct(models.Model):
 
     @api.multi
     def write(self, values):
-        create_product_product = False
 
+        create_product_product = False
         if not self.sga_prod_shortdesc and not \
             values.get('sga_prod_shortdesc', False) and self.sga_name_get:
             values['sga_prod_shortdesc'] = self.sga_name_get[0:80]
@@ -213,7 +213,7 @@ class SGAProductProduct(models.Model):
                            'name', 'packaging_ids', 'sga_prod_shortdesc')
 
         fields = sorted(list(set(values).intersection(set(fields_to_check))))
-        if fields:
+        if fields and values.get('sga_state') != 'AC':
             values['sga_state'] = 'PA'
 
         res = super(SGAProductProduct, self).write(values)

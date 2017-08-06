@@ -28,9 +28,9 @@ class ConfigPathFiles(models.TransientModel):
     _inherit = 'stock.config.settings'
 
     path_files = fields.Char('Files Path', help="Path to SGA Mecalux exchange files. Must content in, out, error, processed and history folders\nAlso a scheduled action is created: Archive SGA files")
-    product_auto = fields.Boolean('Auto update productos', help="Enviar cambios en productos automaticamente al servidor", default=False)
-    picking_auto = fields.Boolean("Auto validación de picks")
-    inventary_auto = fields.Boolean("Auto validación de inventarios")
+    product_auto = fields.Boolean('Auto update productos', help="Enviar cambios en productos y clientes automaticamente al servidor", default=False)
+    picking_auto = fields.Boolean("Auto validación de picks", help = "Valor por defecto para autovalidacion de Mecalux")
+    inventary_auto = fields.Boolean("Auto validación de inventarios", help ="Validación automatica de ajustes de inventarios creados desde Mecalux")
 
     @api.model
     def get_default_path_files(self, fields):
