@@ -132,7 +132,7 @@
                                     icon="fa-truck"
                                     class="oe_edit_only"
                                     groups="jim_stock.group_stock_lqdr"
-                                    />
+                                    states="lqdr,pending"/>
                 </xpath>
 
             </field>
