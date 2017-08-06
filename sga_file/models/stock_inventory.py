@@ -169,7 +169,7 @@ class StockInventorySGA(models.Model):
             while quantity > 0.00:
                 quantity, new_inventory = self.reg_stock(product_id,
                                                          location_id, product_company_id,
-                                                         quantity, forced_company_id=forced_company_id)
+                                                         quantity, forced_company_id = forced_company_id)
                 if new_inventory:
                     inventories.append(new_inventory)
                 if not forced_company_id and quantity > 0.00:

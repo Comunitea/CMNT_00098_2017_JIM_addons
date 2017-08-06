@@ -637,7 +637,7 @@ class MecaluxFileHeader(models.Model):
             f = open(new_sga_file.sga_file, 'a')
             if f:
                 file_str = get_line(sgavar, model_pool)
-                f.write(file_str.encode('utf-8'))
+                f.write(file_str.encode("latin_1"))
                 f.close()
             else:
                 raise ValidationError("Error al escribir los datos en %s" % new_sga_file.sga_file)

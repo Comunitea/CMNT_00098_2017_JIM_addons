@@ -152,7 +152,7 @@ class SGAProductPackaging(models.Model):
         res_write = super(SGAProductPackaging, self).write(vals)
         # Si están asociados a templates ....
         for pack in self:
-            if pack.product_tmpl_id and new_sga.product_tmpl_id.sga_state != 'AC':
+            if pack.product_tmpl_id and pack.product_tmpl_id.sga_state != 'AC':
                 pack.product_tmpl_id.sga_state = 'PA'
                 pack.product_tmpl_id.export_template_to_mecalux()
         return res_write
@@ -207,7 +207,6 @@ class SGAProductProduct(models.Model):
         if not self.sga_prod_shortdesc and not \
             values.get('sga_prod_shortdesc', False) and self.sga_name_get:
             values['sga_prod_shortdesc'] = self.sga_name_get[0:80]
-
         fields_to_check = ('default_code', 'barcode', 'categ_id',
                            'sga_material_abc_code', 'sga_change_material_abc',
                            'name', 'packaging_ids', 'sga_prod_shortdesc')
