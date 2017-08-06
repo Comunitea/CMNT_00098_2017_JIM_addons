@@ -76,11 +76,10 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def _get_action_done_bool(self):
-
-        #action_done =  eval(self.env['ir.config_parameter'].get_param('picking_auto'))
-        action_done = False
-        for pick in self:
-            pick.action_done_bool = action_done
+        action_done = True if self.env['ir.config_parameter'].get_param('picking_auto') == u'True' else False
+        if action_done:
+            for pick in self:
+                pick.action_done_bool = action_done
 
     sga_operation = fields.Selection([('A', 'Alta'), ('M', 'Modificacion'),
                                       ('B', 'Baja'), ('F', 'Modificacion + Alta')], default='A')
