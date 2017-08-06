@@ -69,10 +69,13 @@ class SaleOrder(models.Model):
 
 
     def apply_route_to_order_lines(self):
-        if self.apply_route_to_order_lines():
+
+        for order in self:
+            if order.state == 'done':
+                raise ValueError ("No puedes asignar rutas a un pedido confirmado")
+            for line in order.template_lines:
+                line.route_id = order.route_id
             for line in self.order_line:
-                line.route_id = self.route_id
-            for line in self.template_lines:
                 line.route_id = self.route_id
 
 class SaleOrderLine(models.Model):
@@ -127,18 +130,14 @@ class SaleOrderLine(models.Model):
         return super(SaleOrderLine, self)._action_procurement_create()
 
 
-
-
 class SaleOrderLineTemplate(models.Model):
 
     _inherit = 'sale.order.line.template'
 
     lqdr = fields.Boolean(related="product_template.lqdr", store=False)
 
-
     @api.multi
     def create_template_procurements(self):
         for line in self.order_lines:
             line.action_procurement_create()
-
         return True
