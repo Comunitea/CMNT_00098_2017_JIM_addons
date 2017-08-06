@@ -19,6 +19,13 @@ class ProductTemplate(models.Model):
         Integer(compute='_get_customer_prices_count', string='#Prices')
 
 
+class ProductPricelist(models.Model):
+
+    _inherit = "product.pricelist"
+
+    legacy_code = fields.Char(size=5)
+
+
 class ProductPorduct(models.Model):
     _inherit = "product.product"
 
