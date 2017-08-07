@@ -305,7 +305,7 @@ class StockPickingSGA(models.Model):
 
                 # Si op existe, escribo qty_done, si no creo una linea de operacion con lo recibido
                 if op:
-                    op.qty_done += qty_done
+                    op.qty_done = qty_done
                     op.sga_changed = True
                     sga_ops_exists = True
 
