@@ -455,8 +455,7 @@ class MecaluxFileHeader(models.Model):
 
         process = []
         proc_error = False
-
-        if self.file_code=="CSO":
+        if self.file_code == "CSO":
             self.write_log("Desde mecalux picking CSO ...")
             process = self.env['stock.picking'].import_mecalux_CSO(self.id)
 
@@ -475,16 +474,18 @@ class MecaluxFileHeader(models.Model):
         elif self.file_code == 'EIM':
             self.write_log("Desde mecalux error EIM ...")
             process = self.env['sga.file.error'].import_mecalux_EIM(self.id)
-
         try:
             if process:
-                self.write_log("-- OK >> %s" % self.sga_file)
                 self.move_file('archive', self.name)
+                self.write_log("-- OK >> %s" % self.sga_file)
+
             else:
                 proc_error = True
+                print "error al mover el fichero"
 
         except:
             proc_error = True
+            print "error en el try al mover el fichero"
         if proc_error:
             self.errors += 1
             self.write_log("-- ERROR >> %s" % self.sga_file)
@@ -500,7 +501,7 @@ class MecaluxFileHeader(models.Model):
         res_file = False
         global_path = u'%s/%s' %(self.get_global_path(), folder)
         self.write_log("Buscando ficheros en >> %s" % global_path)
-        pool_ids=[]
+        pool_id = False
         for path, directories, files in os.walk(global_path, topdown=False):
             for name in files:
                 if file_type:
@@ -510,14 +511,13 @@ class MecaluxFileHeader(models.Model):
                 if sga_file:
                     # lo proceso
                     pool_id = sga_file.import_file_from_mecalux()
-                    if pool_id:
-                        pool_ids += pool_id
+
 
         #Si solo hay un tipo de fichero , devuelvo los ids, si no True
-        if pool_ids:
-            pool_ids = pool_ids if file_type else True
+        #if pool_ids:
+        #    pool_ids = pool_ids if file_type else True
 
-        return pool_ids
+        return pool_id
 
     def move_file(self, folder, file_name=False):
         new_path = False
