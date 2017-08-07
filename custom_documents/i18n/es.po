@@ -213,6 +213,11 @@ msgid "<strong>Bultos: </strong>"
 msgstr "<strong>Bultos: </strong>"
 
 #. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "QUOTATION"
+msgstr "PRESUPUESTO"
+
+#. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase

@@ -45,11 +45,13 @@
                 <div class="col-xs-5 col-xs-offset-1">
 
                      <t t-if="not noproforma">
-                        <h1 t-if="o.state != 'proforma'">ORDER</h1>
+                        <h1 t-if="o.state in ('draft', 'sent')">QUOTATION</h1>
+                        <h1 t-if="o.state not in ('proforma', 'draft', 'sent')">ORDER</h1>
                         <h1 t-if="o.state == 'proforma'">PROFORMA</h1>
                     </t>
                      <t t-if="noproforma">
-                        <h1>ORDER</h1>
+                        <h1 t-if="o.state in ('draft', 'sent')">QUOTATION</h1>
+                        <h1 t-if="o.state not in ('draft', 'sent')">ORDER</h1>
                     </t>
 
 
