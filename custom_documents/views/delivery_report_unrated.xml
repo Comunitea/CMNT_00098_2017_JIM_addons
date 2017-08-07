@@ -38,15 +38,21 @@
                                 <span t-field="line.product_id.default_code"/>
                             </td>
                              <td>
-                                <span t-field="line.product_id.name"/><br></br><span t-field="line.product_id.barcode"/>
+                                <span t-field="line.product_id.name"/>
                             </td>
                              <td>
                                 <span t-field="line.qty_done"/>
                             </td>
 
                         </tr>
-
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
                 </table>
 
 

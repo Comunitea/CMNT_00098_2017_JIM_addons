@@ -47,11 +47,12 @@ class ResPartnerSGA(models.Model):
         fields_to_check = ('ref', 'name')
         fields = sorted(list(set(values).intersection(set(fields_to_check))))
         if fields and self.check_mecalux_ok():
-            self.sga_state = 'PA'
-            icp = self.env['ir.config_parameter']
-            if icp.get_param('product_auto'):
-                self.new_mecalux_file(operation="F")
-                self.sga_state = 'AC'
+            for partner in self:
+                partner.sga_state = 'PA'
+                icp = self.env['ir.config_parameter']
+                if icp.get_param('product_auto'):
+                    partner.new_mecalux_file(operation="F")
+                    partner.sga_state = 'AC'
         return res
 
 
