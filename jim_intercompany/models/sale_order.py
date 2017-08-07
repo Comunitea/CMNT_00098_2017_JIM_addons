@@ -48,8 +48,8 @@ class SaleOrder(models.Model):
                         [('auto_purchase_order_id', '=',
                           purchase.id)])
                     if ic_sale:
-                        procurements = ic_sale.procurement_group_id
-            order.procurement_groups |= procurements
+                        procurements |= ic_sale.procurement_group_id
+            order.procurement_groups = procurements
 
     @api.depends('procurement_group_id')
     def _compute_mrp_productions(self):
