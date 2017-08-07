@@ -80,6 +80,10 @@
                             </table>
                         </div>
                     </div>
+                    <div class="radius_border" style="margin-top: 10px;"  t-if="doc.work_to_do">
+                        <h5>Work to do</h5>
+                        <span t-field="doc.work_to_do"/>
+                    </div>
                     <div class="row">
                         <div class="col-xs-9">
                             <p t-if="doc.validity_date"><strong>Offer valid until: <span t-field="doc.validity_date"/></strong></p>

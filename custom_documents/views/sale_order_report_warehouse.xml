@@ -47,6 +47,10 @@
                         </tbody>
                     </table>
                  <!-->tabla almacén</-->
+                    <div class="radius_border" style="margin-top: 10px;"  t-if="doc.work_to_do">
+                        <h5>Work to do</h5>
+                        <span t-field="doc.work_to_do"/>
+                    </div>
 
                     <table class="custom_table" style="margin-top: 20px;  page-break-inside:avoid">
 
