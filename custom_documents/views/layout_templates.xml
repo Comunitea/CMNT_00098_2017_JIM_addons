@@ -164,7 +164,7 @@
                                     Page: <span class="page"/> of <span class="topage"/>
                                 </td>
                                 <td><span t-field="o.min_date"/></td>
-                                <td><span t-field="o.name"/></td>
+                                <td><span t-field="o.sale_id.name"/></td>
                                 <td><span/> </td>
                             </tr>
                         </tbody>
