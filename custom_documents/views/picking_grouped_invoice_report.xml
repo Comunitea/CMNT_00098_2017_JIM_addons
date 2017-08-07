@@ -27,6 +27,12 @@
                                 <td><span t-esc="o.refund_reason"/></td>
                             </tr>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </t>
 
@@ -75,6 +81,16 @@
                             </t>
                         </t>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
                 </table>
                 <div class="row">
                     <div class="col-xs-6"  t-if="len(o.tax_line_ids) > 0">

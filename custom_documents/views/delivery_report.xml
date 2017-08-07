@@ -63,6 +63,16 @@
                                 </tr>
 
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
                         </table>
                         <!--prueba precio-->
                         <div class="row" name="total">

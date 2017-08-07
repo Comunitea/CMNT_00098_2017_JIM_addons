@@ -37,6 +37,12 @@
                                 <td><span t-esc="o.refund_reason"/></td>
                             </tr>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </t>
                 <table class="custom_table">
@@ -82,6 +88,16 @@
                             </tr>
                         </t>
                     </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
                 </table>
                 <div class="row">
                     <div class="col-xs-2">
