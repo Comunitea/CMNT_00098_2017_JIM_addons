@@ -193,9 +193,6 @@ class StockInventorySGA(models.Model):
 
         return inventories
 
-
-
-
     def new_inv_line(self, product_id, qty, inventory_id):
 
         # Si hay alguno pendiente lo borro

@@ -428,7 +428,7 @@ class StockPickingSGA(models.Model):
 
                 # cantidad a realizar
                 st = 284
-                en = st + 122
+                en = st + 12
                 qty_done = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (12, 7, 5))
 
                 # Si op existe, escribo qty_done, si no creo una linea de operacion con lo recibido
