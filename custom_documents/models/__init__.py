@@ -5,3 +5,4 @@ from . import company
 from . import account
 from . import sale_order
 from . import stock_picking
+from . import ir_qweb
