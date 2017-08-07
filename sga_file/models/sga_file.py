@@ -28,9 +28,9 @@ class ConfigPathFiles(models.TransientModel):
     _inherit = 'stock.config.settings'
 
     path_files = fields.Char('Files Path', help="Path to SGA Mecalux exchange files. Must content in, out, error, processed and history folders\nAlso a scheduled action is created: Archive SGA files")
-    product_auto = fields.Boolean('Auto update productos', help="Enviar cambios en productos automaticamente al servidor", default=False)
-    picking_auto = fields.Boolean("Auto validación de picks")
-    inventary_auto = fields.Boolean("Auto validación de inventarios")
+    product_auto = fields.Boolean('Auto update productos', help="Enviar cambios en productos y clientes automaticamente al servidor", default=False)
+    picking_auto = fields.Boolean("Auto validación de picks", help = "Valor por defecto para autovalidacion de Mecalux")
+    inventary_auto = fields.Boolean("Auto validación de inventarios", help ="Validación automatica de ajustes de inventarios creados desde Mecalux")
 
     @api.model
     def get_default_path_files(self, fields):
@@ -189,7 +189,6 @@ class MecaluxFile(models.Model):
 
         domain = [('id', '!=', 0)]
         pool_files = self.env['sgavar.file'].search(domain)
-        print "Numero de registros: %s"%len(pool_files)
         for sga in pool_files:
             st=0
             en=0
@@ -638,7 +637,7 @@ class MecaluxFileHeader(models.Model):
             f = open(new_sga_file.sga_file, 'a')
             if f:
                 file_str = get_line(sgavar, model_pool)
-                f.write(file_str.encode('utf-8'))
+                f.write(file_str.encode("latin_1"))
                 f.close()
             else:
                 raise ValidationError("Error al escribir los datos en %s" % new_sga_file.sga_file)

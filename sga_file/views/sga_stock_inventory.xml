@@ -63,10 +63,11 @@
             <field name="model">stock.inventory.issue</field>
             <field name="arch" type="xml">
                 <tree string="Inventory issue">
+                    <field name="active"/>
+                    <field name="file"/>
                     <field name="product_id"/>
                     <field name="pending_qty"/>
-                    <field name="active"/>
-
+                    <field name="notes"/>
                 </tree>
             </field>
         </record>

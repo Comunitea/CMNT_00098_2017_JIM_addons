@@ -8,14 +8,14 @@
             <field name="state">code</field>
             <field name="condition">True</field>
             <field name="code">records.move_to_NE()</field>
-        </record>
+         </record>
 
         <record id="stock_picking_menu_move_to_NE" model="ir.values">
             <field name="name">stock.picking.menu.move.to.NE</field>
             <field name="model">stock.picking</field>
             <field name="key" >action</field>
             <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.server,%d'%stock_picking_action_move_to_NE"/>
+            <field name="code">records.move_to_NE()</field>
         </record>
 
         <record id="stock_picking_action_move_to_done" model="ir.actions.server">

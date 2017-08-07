@@ -46,7 +46,4 @@ class PropagateProductProperties(models.TransientModel):
                 vals = {
                     field: [(6, 0, new_tax_ids)]
                 }
-                print "********************************"
-                print vals
-                print "********************************"
                 product2.sudo().write(vals)

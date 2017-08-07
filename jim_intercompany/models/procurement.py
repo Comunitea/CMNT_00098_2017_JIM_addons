@@ -200,7 +200,10 @@ class ProcurementOrder(models.Model):
                         _compute_quantity(procurement.product_qty,
                                           procurement.product_id.uom_po_id)
                     # CHANGED, GET PRICE UNIT FROM NEW FIELD
-                    intercompany_price = line.product_id.intercompany_price
+                    intercompany_price = \
+                        line.product_id.get_intercompany_price(
+                            po.company_id.id, po.partner_id.id)
+                    #intercompany_price = line.product_id.intercompany_price
                     price_unit = self.env['account.tax'].\
                         _fix_tax_included_price(intercompany_price,
                                                 line.product_id.supplier_taxes_id,
@@ -225,7 +228,8 @@ class ProcurementOrder(models.Model):
                     taxes_id = taxes_id.\
                         filtered(lambda x: x.company_id.id == po.company_id.id)
                 vals['price_unit'] = self.env['account.tax'].\
-                    _fix_tax_included_price(prod.intercompany_price,
+                    _fix_tax_included_price(prod.get_intercompany_price(
+                    po.company_id.id, po.partner_id.id),
                                             prod.supplier_taxes_id, taxes_id)
                 self.env['purchase.order.line'].create(vals)
 

@@ -15,9 +15,11 @@ import re
 class StockInventoryIssue(models.Model):
 
     _name = "stock.inventory.issue"
-    pending_qty = fields.Float("Pending Qty")
+    pending_qty = fields.Float("Cantidad pendiente")
     product_id = fields.Many2one('product.product')
-    active = fields.Boolean('Pending', default="True")
+    active = fields.Boolean('ACK', default="True")
+    notes = fields.Char('Notas')
+    file = fields.Many2one('sga.file')
 
 class StockInventoryLineSGA(models.Model):
 
@@ -113,27 +115,26 @@ class StockInventorySGA(models.Model):
         sga_file_lines = sga_file.readlines()
 
         sga_file.close()
-        pool_ids = []
         inventories = []
         warehouse_id = False
         black_company = self.env['res.company'].search([('parent_id','=',False)])[0]
         warehouse_code = "PLS"
         warehouse_id = self.env['stock.warehouse'].search([('code', '=', warehouse_code)])
         location_id = warehouse_id.lot_stock_id
-        print "Black company = %s" % black_company.name
         for line in sga_file_lines:
+
             if len(line) != 423:
                 continue
             # POR RENDIMIENTO LO HAGO AL PRINCIPIO Y GENERICO
             # Warehouse code
-            # st = 0
+            st = 0
             en = 10
-            # warehouse_code = line[st:en].strip()
-            # if not warehouse_id:
-            #     warehouse_id = self.env['stock.warehouse'].search([('code', '=', warehouse_code)])
-            #     # POR SEGURIDAD
-            #     if not warehouse_id.sga_integrated:
-            #         raise ValidationError("Solo almacenes con gestion SGA")
+            warehouse_code = line[st:en].strip()
+            if not warehouse_id:
+                warehouse_id = self.env['stock.warehouse'].search([('code', '=', warehouse_code)])
+                # POR SEGURIDAD
+                if not warehouse_id.sga_integrated:
+                    raise ValidationError("Solo almacenes con gestion SGA")
             #
             #     if not warehouse_id:
             #         raise ValidationError("Codigo de almacen no encontrado")
@@ -159,32 +160,38 @@ class StockInventorySGA(models.Model):
 
             product_id = self.env['product.product'].search([('default_code', '=', product_code)])
             if not product_id:
-                #continue. en producción descomentar esta linea para ignorar stocks no conocidos
-                new_prod_vals={'name': u'%s (creado desde inventario %s)'%(product_code, sga_file_name),
-                               'default_code': product_code}
-                product_id = self.env['product.product'].create(new_prod_vals)
+                issue_vals = {'note': 'No existe el código: %s'%product_code,
+                              'file_name': sga_file.id}
+                self.env['stock.inventory.issue'].create(issue_vals)
+                continue
 
             product_company_id = product_id.company_id
             forced_company_id = black_company
-
-            while quantity > 0.00:
+            first = False
+            while quantity > 0.00 or not first:
+                first = True
                 quantity, new_inventory = self.reg_stock(product_id,
                                                          location_id, product_company_id,
-                                                         quantity, forced_company_id=forced_company_id)
+                                                         quantity, forced_company_id = forced_company_id)
                 if new_inventory:
                     inventories.append(new_inventory)
+
                 if not forced_company_id and quantity > 0.00:
                     issue_vals = {'pending_qty': quantity,
-                            'product_id': product_id.id}
+                          'product_id': product_id.id,
+                          'note': 'Incidencia',
+                          'file_name': sga_file.id}
                     self.env['stock.inventory.issue'].create(issue_vals)
                     quantity = 0.00
                 forced_company_id = False
 
             ## TODO DE MOMENTO NO HACEMOS EL action_done, pendiente de confirmar que es automatico
-            # for stock_inv in stock_inv_pool:
-            #     stock_inv.sudo().action_done()
+            action_done = True if self.env['ir.config_parameter'].get_param('inventary_auto') == u'True' else False
+            if action_done:
+                for stock_inv in inventories:
+                    stock_inv.sudo().action_done()
 
-        return pool_ids
+        return inventories
 
 
 
@@ -240,7 +247,6 @@ class StockInventorySGA(models.Model):
 
         if not product_id or not location_id or not company_id:
             return 0.00, False
-
         ## FUNCION QUE REGULARIZA STOCK
 
         ## CASO 1 . LO QUE HAY COINCIDE CON ODOO >> NO SE HACE NADA

@@ -95,5 +95,5 @@ class ContainerPickingWizard(models.TransientModel):
                           'container_id': pick.shipping_container_id.id})
 
         res['line_ids'] = map(lambda x: (0,0,x), lines)
-        print res
+
         return res

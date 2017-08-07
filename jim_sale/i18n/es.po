@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-24 16:09+0000\n"
-"PO-Revision-Date: 2017-07-24 16:09+0000\n"
+"POT-Creation-Date: 2017-08-06 18:14+0000\n"
+"PO-Revision-Date: 2017-08-06 18:14+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,6 +21,11 @@ msgstr ""
 #: model:ir.model.fields,field_description:jim_sale.field_product_template_customer_prices_count
 msgid "#Prices"
 msgstr "#Precios"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.view_order_form_add_states
+msgid "Applicar a las lineas"
+msgstr "Applicar a las lineas"
 
 #. module: jim_sale
 #: model:ir.actions.act_window,help:jim_sale.action_customer_prices_partner
@@ -93,6 +98,11 @@ msgid "End date for this customer price"
 msgstr "Fecha final para este precio de cliente"
 
 #. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_sale_order_route_id
+msgid "Force Route"
+msgstr "Ruta del pedido"
+
+#. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.view_customer_price_filter
 msgid "Group By"
 msgstr "Agrupar por"
@@ -151,6 +161,12 @@ msgstr "Ubicación"
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_min_qty
 msgid "Min Quantity"
 msgstr "Cantidad mínima"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_sale_order_line_note
+#: model:ir.model.fields,field_description:jim_sale.field_sale_order_line_template_note
+msgid "Notas"
+msgstr "Notas"
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_sale_order_line_template_state
@@ -242,7 +258,7 @@ msgstr "Fecha de inicio"
 #. module: jim_sale
 #: model:ir.model.fields,help:jim_sale.field_customer_price_date_start
 msgid "Start date for this customer price"
-msgstr "Fecha de inicio para el precio de cliente"
+msgstr "Start date for this customer price"
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_product_tmpl_id
@@ -261,9 +277,14 @@ msgid "The price to purchase a product"
 msgstr "El precio al que se compra un producto"
 
 #. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_sale_order_work_to_do
+msgid "Trabajo a realizar"
+msgstr "Trabajo a realizar"
+
+#. module: jim_sale
 #: model:ir.model,name:jim_sale.model_stock_picking
 msgid "Transfer"
-msgstr "Transferir"
+msgstr "Transfer"
 
 #. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.view_customer_price_filter
@@ -280,6 +301,27 @@ msgid "You can define a specific price by customer and a range of dates."
 msgstr "Pues definir precios específicos por clientes y un rango de fechas"
 
 #. module: jim_sale
+#: model:ir.model,name:jim_sale.model_customer_price
+msgid "customer.price"
+msgstr "customer.price"
+
+#. module: jim_sale
+#: model:ir.model,name:jim_sale.model_report_stock_forecast
+msgid "report.stock.forecast"
+msgstr "report.stock.forecast"
+
+#. module: jim_sale
+#: model:ir.model,name:jim_sale.model_sale_order_line_template
+msgid "sale.order.line.template"
+msgstr "sale.order.line.template"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.view_picking_form_jim_packs
+msgid "↳Fill qty done"
+msgstr "↳Rellenar cantidad"
+
+#. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.view_picking_form_jim_packs
 msgid "📋Tree packs"
 msgstr "📋Lista paquetes"
+
