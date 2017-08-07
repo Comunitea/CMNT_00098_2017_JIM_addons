@@ -306,8 +306,14 @@
             <div class="row">
                 <div class="col-xs-6">
                     <strong>Shipping address:</strong>
-                    <div t-field="o.company_id.partner_id"
+                    <t t-if="o.dest_address_id">
+                        <div t-field="o.dest_address_id"
                             t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                    </t>
+                    <t t-if="not o.dest_address_id">
+                        <div t-field="o.company_id.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                    </t>
                 </div>
                 <div class="col-xs-6">
                     <div t-field="o.partner_id"
