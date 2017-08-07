@@ -188,6 +188,10 @@ class ProcurementOrder(models.Model):
                 else:
                     po.write({'origin': procurement.origin})
                 name = (self.group_id and (self.group_id.name + ":") or "") + (self.name != "/" and self.name or self.move_dest_id.raw_material_production_id and self.move_dest_id.raw_material_production_id.name or "")
+                message = _("This purchase order has been created from: \
+                                    <a href=# data-oe-model=procurement.order \
+                                    data-oe-id=%d>%s</a>") % (
+                            procurement.id, name)
                 po.message_post(body=message)
             if po:
                 res += [procurement.id]
