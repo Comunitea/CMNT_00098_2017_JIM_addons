@@ -20,7 +20,7 @@ var OrderWidget = NewOrderWidgets.OrderWidget.include({
     create_line_empty: function(product_id){
         var added_line = this._super(product_id);
         var product_obj = this.ts_model.db.get_product_by_id(product_id);
-        var description = product_obj.name;
+        var description = product_obj.display_name;
         if (product_obj.description_sale){
             description = description + '\n' + product.description_sale
         }

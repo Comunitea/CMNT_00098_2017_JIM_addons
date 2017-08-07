@@ -213,12 +213,24 @@ msgid "<strong>Bultos: </strong>"
 msgstr "<strong>Bultos: </strong>"
 
 #. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
+msgid "QUOTATION"
+msgstr "PRESUPUESTO"
+
+#. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "<strong>CIF/NIF:</strong>"
 msgstr "<strong>CIF/NIF:</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+msgid "Work to do"
+msgstr "Trabajo a realizar"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
