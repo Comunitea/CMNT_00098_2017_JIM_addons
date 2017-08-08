@@ -33,6 +33,7 @@
         'views/company.xml',
         'views/picking_grouped_invoice_report.xml',
         'report_invoice.xml',
+        'views/product.xml',
         'views/stock_picking.xml',
         'views/sale_order.xml',
         'views/invoice_report.xml',
