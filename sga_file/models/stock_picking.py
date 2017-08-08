@@ -220,7 +220,13 @@ class StockPickingSGA(models.Model):
             res = False
 
         if self.action_done_bool:
-            self.action_done()
+            all_done = True
+            for op in self.pack_operation_product_ids:
+                if op.qty_done != op.product_qty:
+                    all_done = False
+                    break
+            if all_done:
+                self.action_done()
         self.sga_state = 'MT'
 
         return bool_error
