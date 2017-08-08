@@ -29,7 +29,7 @@ class ProductProduct(models.Model):
         # Comprobamos si hay movimientos. No podemos por el tema de Mecalux
         if vals.get('barcode', False):
             for product in self:
-                if product.stock_move_ids:
+                if product.stock_move_ids and False:
                     raise ValidationError(_("You can change barcode because this product has moves"))
         return super(ProductProduct, self).write(vals)
 
