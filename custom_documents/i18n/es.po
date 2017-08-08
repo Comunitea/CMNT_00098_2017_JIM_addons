@@ -15,6 +15,18 @@ msgstr ""
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
 
+#. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_delivery_carrier_delivery_cost
+#: model:ir.model.fields,field_description:custom_documents.field_product_product_delivery_cost
+#: model:ir.model.fields,field_description:custom_documents.field_product_template_delivery_cost
+msgid "Delivery cost"
+msgstr "Gasto de envío"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+msgid "Global discount"
+msgstr "Descuento global"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase

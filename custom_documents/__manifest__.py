@@ -22,7 +22,8 @@
         'stock_picking_invoice_link',
         'partner_consolidate',
         'stock_valued_picking_report',
-        'purchase'
+        'purchase',
+        'commercial_rules'
     ],
     "data": [
         'views/layout_templates.xml',
