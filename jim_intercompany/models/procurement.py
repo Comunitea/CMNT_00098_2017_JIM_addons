@@ -62,7 +62,9 @@ class ProcurementOrder(models.Model):
         if self.rule_id and self.rule_id.action == 'product_company':
             # Si depende de la compañia pero es de la misma compañia es
             # movimiento
-            if self.company_id.id == self.product_id.company_id.id:
+            if self.company_id.id == self.product_id.company_id.id or \
+                            self.company_id.no_ic:
+
                 # In case Phantom BoM splits only into procurements
                 if not self.move_ids:
                     return True
@@ -92,8 +94,9 @@ class ProcurementOrder(models.Model):
     @api.multi
     def _run(self):
         if self.rule_id and self.rule_id.action == 'product_company':
-            if self.company_id.id == self.product_id.company_id.id:
-                # get teh product only with move
+            if self.company_id.id == self.product_id.company_id.id or \
+                            self.company_id.no_ic:
+                # get the product only with move
                 if not self.rule_id.location_src_id:
                     self.message_post(body=_('No source location defined!'))
                     return False
@@ -105,7 +108,8 @@ class ProcurementOrder(models.Model):
                 # if product belongs to another compamy generate intercompany_buy
                 return self.make_intercompany_buy_po()
 
-        if self.rule_id and self.rule_id.action == 'intercompany_buy':
+        if self.rule_id and self.rule_id.action == 'intercompany_buy' and \
+                not self.company_id.no_ic:
             return self.po_or_ic_po()
 
         return super(ProcurementOrder, self)._run()
