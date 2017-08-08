@@ -72,11 +72,24 @@ class SaleOrder(models.Model):
 
         for order in self:
             if order.state == 'done':
-                raise ValueError ("No puedes asignar rutas a un pedido confirmado")
+                raise ValueError("No puedes asignar rutas a un pedido confirmado")
             for line in order.template_lines:
                 line.route_id = order.route_id
             for line in self.order_line:
                 line.route_id = self.route_id
+
+    @api.multi
+    def action_view_delivery(self):
+        '''
+        TODO HARDCODEADO
+        Añado para filtrar intercompañia
+
+        '''
+        action = super(SaleOrder, self).action_view_delivery()
+        if 'domain' in action and action['domain']:
+            action['domain'].append(('picking_type_id.name', 'not like', '%Inter%'))
+
+        return action
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
