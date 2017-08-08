@@ -48,11 +48,9 @@ class StockPackOperationSGA(models.Model):
                                              "0 (por defecto) se coge el peso de la ficha de producto", default='0')
     sga_sustitute_qty = fields.Float("Sustitute qty", help="Si se informa sustitute_prod_code, es la cantidad\n"
                                                            "de producto a sustituir", default=0)
-
     sga_disable_alt_product = fields.Selection([('1', 'True'), ('0', 'False')], 'Disable alt product',
                                         help="1 Se deshabilita el producto alternativo\n"
                                              "0 (por defecto) No se deshabilita", default='1')
-
     container_id = fields.Many2one('sga.container')
     container_src_id = fields.Many2one('sga.container')
     sga_changed = fields.Boolean ('SGA modified/created', default=False)
@@ -65,13 +63,32 @@ class StockPickingSGA(models.Model):
     @api.multi
     def _get_account_code(self):
         for pick in self:
-            res = pick.partner_id.ref
-            partner = pick.partner_id
-            while partner.parent_id:
-                partner = partner.parent_id
-                if partner:
-                    res = partner.ref
-            pick.account_code = res
+            ref = False
+            partner_id = pick.partner_id
+            if partner_id.ref:
+                ref = pick.account_code
+            else:
+                partner = pick.partner_id
+                while not ref:
+                    partner = partner.parent_id
+                    if partner:
+                        ref = partner.ref
+            if not ref:
+                ref = self.env.user.company_id.partner_id.ref
+            pick.account_code = ref
+        return ref
+
+    @api.multi
+    def get_shipping_city(self):
+        for pick in self:
+            if pick.sale_id.partner_shipping_id and pick.sale_id.partner_shipping_id.ref:
+                res = pick.sale_id.partner_shipping_id.state_id.name
+                name = pick.sale_id.partner_id.name
+            else:
+                res = pick.partner_id.state_id.name
+                name = pick.partner_id.name
+            pick.shipping_city = res
+            pick.shipping_partner_name = name
         return res
 
     def _get_action_done_bool(self):
@@ -102,10 +119,9 @@ class StockPickingSGA(models.Model):
                                    ('MT', 'Realizado'),
                                    ('MC', 'Cancelado')], 'Estado Mecalux', default="NI", track_visibility='onchange')
 
-    shipping_city = fields.Char(related="partner_id.state_id.name")
-    shipping_partner_name = fields.Char(related="partner_id.name")
-    account_code = fields.Char("Account code", compute="_get_account_code")
-
+    shipping_city = fields.Char(compute=get_shipping_city, string ="Provincia de entrega")
+    shipping_partner_name = fields.Char(compute=get_shipping_city, string="Entregar a")
+    account_code = fields.Char("Account code", compute=_get_account_code)
     action_done_bool = fields.Boolean("Validación automática", default=_get_action_done_bool)
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
 

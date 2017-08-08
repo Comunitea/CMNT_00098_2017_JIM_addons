@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <openerp>
     <data>
-        # Stock Picking to Mecalux
+
          <record id="stock_picking_action_move_to_NE" model="ir.actions.server">
             <field name="name">Move to Mecalux not sended</field>
             <field name="model_id" ref="model_stock_picking"/>
@@ -94,7 +94,9 @@
                     <field name="sga_integrated" invisible="1"/>
                     <field name="stock_picking_sgatype_id" invisible="1"/>
                     <field name="action_done_bool" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
-                    <!--<field name="sga_state" attrs="{'invisible': [('sga_state', '=', 'NI')], 'readonly': '1'}"/>-->
+                    <field name="shipping_city" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
+                    <field name="shipping_partner_name" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
+                    <!--<field name="sga_state" attrs="{'invisib1le': [('sga_state', '=', 'NI')], 'readonly': '1'}"/>-->
                 </field>
 
 

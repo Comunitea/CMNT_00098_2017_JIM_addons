@@ -13,12 +13,11 @@ class SGAfileerror(models.Model):
 
     sga_file_id = fields.Many2one('sga.file')
 
-    file_name = fields.Char(string='Fichero', size=10)
-    line_number = fields.Integer('Linea')
-    sga_operation = fields.Selection([('A', 'Alta'), ('M', 'Modificacion'),
-                                      ('B', 'Baja'), ('F', 'Modificacion + Alta')], default='A')
+    file_name = fields.Char(string='Fichero', size=50)
+    line_number = fields.Char('Linea')
+    sga_operation = fields.Char("Operacion")
     object_type = fields.Char('Tipo de objeto', size=3)
-    version = fields.Integer('version')
+    version = fields.Char('version')
     object_id = fields.Char("Id del objeto", size=50)
     error_code = fields.Char('Codigo de error')
     error_message = fields.Char("Mensaje de error")
@@ -38,24 +37,29 @@ class SGAfileerror(models.Model):
 
         line_number = 0
         val = {}
-        pool_ids = []
-        bom = True
+        res = False
+        bom = False
+        inc = 1
         for line_d in sga_file:
             try:
                 if bom:
-                    line = line_d.decode("utf-8-sig").encode("utf-8")
+                    line = line_d.decode("latin_1").encode("latin_1")
                 else:
                     line = line_d
 
                 line_number += 1
                 val['sga_file_id'] = sga_file_obj.id
-
-                st = 0
-                en = st + 50
+                inc = 1 if line_number == 1 else 0
+                st = 2 + inc
+                en = st + 25
                 val['file_name'] = line[st:en].strip()
-                st = en
+                if len(val['file_name']) != 19:
+                    st = inc
+                    en = st + 25
+                    val['file_name'] = line[st:en].strip()
+                st = en +25
                 en = st + 10
-                val['line_number'] = int(line[st:en].strip())
+                val['line_number'] = (line[st:en].strip())
                 st = en
                 en = st + 1
                 val['sga_operation'] = line[st:en].strip()
@@ -83,14 +87,18 @@ class SGAfileerror(models.Model):
                 st = en
                 en = st + 14
                 val['date_error'] = line[st:en].strip()
-                new_error = error_obj.create(val)
-                pool_ids.append(new_error)
+                error_file = error_obj.search([('file_name', '=', val['file_name']), ('error_code', '=', val['error_code'])])
 
+                if error_file:
+                    error_file.unlink()
+
+                error_obj.create(val)
+                res = True
             except:
 
                 sga_file_obj.write_log("-- ERROR >> Error Al procesar el fichero:\n%s"
-                                "\nComprueba los valores de la linea nº %s"% (sga_file_obj.sga_file, line_number))
+                                "\nComprueba los valores de la linea %s"% (sga_file_obj.sga_file, line_number))
 
         sga_file.close()
-        return pool_ids
+        return res
 
