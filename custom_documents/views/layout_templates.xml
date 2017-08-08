@@ -145,7 +145,7 @@
             <div class="row">
                 <t>
                     <div class="col-xs-6 col-xs-offset-6">
-                         <strong>Shipping address:</strong>
+                        <strong>Shipping address:</strong>
                         <t t-if="o.location_id.usage == 'supplier'">
                             <div t-field="o.sale_id.partner_shipping_id"
                                     t-field-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": true, "phone_icons": True, "min_name": True}' />
@@ -175,8 +175,8 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><span t-field="o.partner_id.ref"/></td>
-                                <td><span t-field="o.partner_id.vat"/></td>
+                                <td><span t-field="o.sale_id.partner_id.ref"/></td>
+                                <td><span t-field="o.sale_id.partner_id.vat"/></td>
                                 <td>
                                     Page: <span class="page"/> of <span class="topage"/>
                                 </td>
