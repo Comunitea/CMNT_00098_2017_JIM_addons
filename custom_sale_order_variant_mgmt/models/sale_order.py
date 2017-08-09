@@ -59,8 +59,14 @@ class SaleOrderLineTemplate(models.Model):
                 if line_vals[0] == 0:
                     line_vals[2]['order_id'] = vals.get('order_id', False)
         if not self._context.get('no_create_line', False):
+            # Nos aseguramos que el name de sale.order.line sea el correcto
+            # (con referencia y atributos de variante)
+            line_vals = vals.copy()
+            product_vals = self.env['product.product'].browse(
+                line_vals['product_id'])
+            line_vals['name'] = product_vals.display_name
             new_line = self.env['sale.order.line'].with_context(
-                no_create_template_line=True).create(vals)
+                no_create_template_line=True).create(line_vals)
             vals['order_lines'] = [(6, 0, [new_line.id])]
         return super(
             SaleOrderLineTemplate,
