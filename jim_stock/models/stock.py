@@ -10,6 +10,9 @@ class StockPicking (models.Model):
     _inherit = "stock.picking"
     pick_weight = fields.Float(string='Shipping Weight',
                  help="Manual weight in pick. Propagate to next asociated pick.")
+    partner_id = fields.Many2one(
+        'res.partner', 'Partner',
+        states={})
 
 class StockLocation(models.Model):
     _inherit = "stock.location"
