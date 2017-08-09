@@ -52,7 +52,7 @@
                         <t t-if="False in invoice_lines_dict[o.id].keys()">
                             <tr t-foreach="invoice_lines_dict[o.id][False]" t-as="invoice_line">
                                 <td><span t-esc="invoice_line['default_code']"/></td>
-                                <td><span t-esc="invoice_line['name']"/></td>
+                                <td><span t-esc="invoice_line['name_report']"/></td>
                                 <td><span t-esc="invoice_line['quantity']"/></td>
                                 <td><span t-esc="invoice_line['price_unit']"/></td>
                                 <td><span t-esc="invoice_line['discount']"/></td>
@@ -72,7 +72,7 @@
                                 </tr>
                                 <tr t-foreach="invoice_lines_dict[o.id][picking]" t-as="invoice_line">
                                     <td><span t-esc="invoice_line['default_code']"/></td>
-                                    <td><span t-esc="invoice_line['name']"/></td>
+                                    <td><span t-esc="invoice_line['name_report']"/></td>
                                     <td><span t-esc="invoice_line['quantity']"/></td>
                                     <td><span t-esc="invoice_line['price_unit']"/></td>
                                     <td><span t-esc="invoice_line['discount']"/></td>

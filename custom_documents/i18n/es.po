@@ -272,7 +272,7 @@ msgstr "<strong>Transportista: </strong>"
 #. module: custom_documents
 #: model:ir.actions.report.xml,name:custom_documents.custom_delivery_report_ean_action
 msgid "Delivery order with EAN"
-msgstr "Vale de entrega con EAN"
+msgstr "Albarán valorado EAN"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce

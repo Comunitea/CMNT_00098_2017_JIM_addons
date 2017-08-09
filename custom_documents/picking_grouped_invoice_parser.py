@@ -11,7 +11,7 @@ class PickingGroupedInvoiceParser(models.AbstractModel):
     def _get_line_data(self, line, custom_qty=False):
         data_dict = {
             'default_code': line.product_id.default_code,
-            'name': line.name,
+            'name_report': line.name_report,
             'price_unit': line.price_unit,
             'discount': line.discount,
         }

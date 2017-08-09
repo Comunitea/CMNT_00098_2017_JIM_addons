@@ -97,3 +97,16 @@ class StockPicking(models.Model):
                     'amount_total': amount_untaxed + amount_tax,
                 })
         return res
+
+class StockMove(models.Model):
+    _inherit = 'stock.move'
+
+    name_report = fields.Char(compute='_compute_name_report')
+
+    @api.multi
+    def _compute_name_report(self):
+        for line in self:
+            name_report = line.name
+            if '[%s]' % line.product_id.default_code in line.name:
+                name_report = line.name.replace('[%s]' % line.product_id.default_code, '')
+            line.name_report = name_report

@@ -52,3 +52,18 @@ class SaleOrder(models.Model):
                 if order.partner_shipping_id:
                     order.partner_shipping_id.active = not vals['neutral_document']
         return True
+
+
+class SaleOrderLine(models.Model):
+
+    _inherit = 'sale.order.line'
+
+    name_report = fields.Char(compute='_compute_name_report')
+
+    @api.multi
+    def _compute_name_report(self):
+        for line in self:
+            name_report = line.name
+            if '[%s]' % line.product_id.default_code in line.name:
+                name_report = line.name.replace('[%s]' % line.product_id.default_code, '')
+            line.name_report = name_report
