@@ -26,13 +26,13 @@
                         <tbody>
                             <tr t-foreach="o.order_line" t-as="line">
                                 <td>
-                                    <span t-field="line.date_planned"/>
+                                    <span t-field="line.date_planned_date"/>
                                 </td>
                                 <td>
                                     <span t-field="line.product_id.default_code"/>
                                 </td>
                                 <td>
-                                    <span t-field="line.name"/>
+                                    <span t-field="line.name_report"/>
                                 </td>
                                 <td>
                                     <span t-field="line.product_qty"/>

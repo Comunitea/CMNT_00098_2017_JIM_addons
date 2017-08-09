@@ -14,7 +14,7 @@
                         <t t-if="doc.client_order_ref">
                             Customer order number <span t-field="doc.client_order_ref"/> <br/>
                         </t>
-                        <span t-field="doc.note"/>
+                        <span t-field="doc.observations"/>
                     </div>
                     <table class="custom_table" style="margin-top: 20px;">
                         <thead>
@@ -33,7 +33,7 @@
                                     <span t-field="line.product_id.default_code"/>
                                 </td>
                                 <td>
-                                    <span t-field="line.name"/>
+                                    <span t-field="line.name_report"/>
                                 </td>
                                 <td>
                                     <span t-field="line.product_uom_qty"/>

@@ -7,3 +7,4 @@ from . import sale_order
 from . import stock_picking
 from . import ir_qweb
 from . import product
+from . import purchase

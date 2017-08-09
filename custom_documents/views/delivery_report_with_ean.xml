@@ -14,6 +14,9 @@
                             <t t-if="o.sale_id.client_order_ref">
                                 Customer order number <span t-field="o.sale_id.client_order_ref"/> <br/>
                             </t>
+                            <t t-if="o.sale_id.observations">
+                                <span t-field="o.sale_id.observations"/> <br/>
+                            </t>
                             <span t-field="o.note"/>
                         </div>
 
@@ -41,7 +44,7 @@
                                             <span t-field="line.product_id.default_code"/>
                                         </td>
                                         <td>
-                                            <span t-field="line.linked_move_operation_ids[0].move_id.name"/>
+                                            <span t-field="line.linked_move_operation_ids[0].move_id.name_report"/>
                                         </td>
                                         <td>
                                             <span t-field="line.qty_done"/>
@@ -100,13 +103,13 @@
                                                 t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                                         </td>
                                     </tr>
-                                        <tr>
-                                            <td>Taxes</td>
-                                            <td class="text-right">
-                                                <span t-field="o.amount_tax"
-                                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
-                                            </td>
-                                        </tr>
+                                    <tr>
+                                        <td>Taxes</td>
+                                        <td class="text-right">
+                                            <span t-field="o.amount_tax"
+                                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
                                     <tr class="border-black">
                                         <td><strong>Total</strong></td>
                                         <td class="text-right">

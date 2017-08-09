@@ -10,13 +10,16 @@ from odoo.exceptions import ValidationError
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    # We have to overdrive, because of we need to set the states order here,
+    # so we can display it in widget statusbar_visible
     state = fields.Selection([
         ('draft', 'Quotation'),
         ('sent', 'Quotation Sent'),
         ('proforma', 'Proforma'),
         ('lqdr', 'Pending LQDR'),
         ('progress_lqdr', 'Progress LQDR'),
-        ('pending', 'Revision Pending '),
+        ('pending', 'Revision Pending'),
+        ('progress', 'Confirm in Progress'),
         ('sale', 'Sales Order'),
         ('done', 'Locked'),
         ('cancel', 'Cancelled'),

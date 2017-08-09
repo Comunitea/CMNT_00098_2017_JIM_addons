@@ -12,4 +12,15 @@
         </field>
     </record>
 
+     <record id="sale_order_add_separator_internal_notes" model="ir.ui.view">
+        <field name="name">sale_order_add_separator_internal_notes</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="telesale.sale_view_order_form_telesale"/>
+        <field name="arch" type="xml">
+            <field name="note" position="before">
+                <separator string="Internal notes"/>
+            </field>
+        </field>
+    </record>
+
 </odoo>

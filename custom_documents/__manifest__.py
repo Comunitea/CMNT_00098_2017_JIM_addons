@@ -23,7 +23,8 @@
         'partner_consolidate',
         'stock_valued_picking_report',
         'purchase',
-        'commercial_rules'
+        'commercial_rules',
+        'telesale'
     ],
     "data": [
         'views/layout_templates.xml',
