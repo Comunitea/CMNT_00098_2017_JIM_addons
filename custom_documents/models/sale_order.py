@@ -58,7 +58,7 @@ class SaleOrderLine(models.Model):
 
     _inherit = 'sale.order.line'
 
-    name_report = fields.Char(compute='_compute_name_report')
+    name_report = fields.Text(compute='_compute_name_report')
 
     @api.multi
     def _compute_name_report(self):
