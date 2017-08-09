@@ -18,11 +18,10 @@ class Contact(models.AbstractModel):
 
             opf = options and options.get('fields') or ["name", "address", "phone", "mobile", "fax", "email"]
             value = value.sudo().with_context(show_address=True)
-            name_get = value.name_get()[0][1]
-
+            name_get = value.name
             val = {
                 'name': name_get.split("\n")[0],
-                'address': escape("\n".join(name_get.split("\n")[1:])).strip(),
+                'address': escape("\n".join(value.name_get()[0][1].split("\n")[1:])).strip(),
                 'phone': value.phone,
                 'mobile': value.mobile,
                 'fax': value.fax,
