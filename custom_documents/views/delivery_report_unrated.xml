@@ -13,6 +13,9 @@
                     <t t-if="o.sale_id.client_order_ref">
                         Customer order number <span t-field="o.sale_id.client_order_ref"/> <br/>
                     </t>
+                    <t t-if="o.sale_id.observations">
+                        <span t-field="o.sale_id.observations"/> <br/>
+                    </t>
                     <span t-field="o.note"/>
                 </div>
 
