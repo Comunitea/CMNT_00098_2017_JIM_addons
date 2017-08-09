@@ -5,7 +5,7 @@ from odoo import api, fields, models
 import time
 from odoo.addons import decimal_precision as dp
 from odoo.tools import float_compare
-
+from odoo.exceptions import ValidationError
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
@@ -34,6 +34,8 @@ class SaleOrder(models.Model):
     @api.multi
     def action_lqdr_option(self):
         for order in self:
+            self.confirm_checks()
+
             if order.order_line.filtered('product_id.lqdr'):
                 order.state = 'lqdr'
             else:
@@ -90,6 +92,11 @@ class SaleOrder(models.Model):
             action['domain'].append(('picking_type_id.name', 'not like', '%Inter%'))
 
         return action
+
+    def confirm_checks(self):
+        if self.partner_shipping_id.country_id and self.partner_shipping_id.country_id.name.encode('UTF-8') == "%s"%"España":
+            if not self.partner_shipping_id.state_id:
+                raise ValidationError("No puedes confirmar sin provincia de envío")
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
