@@ -62,9 +62,11 @@ class SaleOrderLineTemplate(models.Model):
             # Nos aseguramos que el name de sale.order.line sea el correcto
             # (con referencia y atributos de variante)
             line_vals = vals.copy()
-            product_vals = self.env['product.product'].browse(
-                line_vals['product_id'])
-            line_vals['name'] = product_vals.display_name
+            template_product = self.env['product.template'].browse(vals['product_template'])
+            if template_product.display_name == line_vals['name']:
+                product_vals = self.env['product.product'].browse(
+                    line_vals['product_id'])
+                line_vals['name'] = product_vals.display_name
             new_line = self.env['sale.order.line'].with_context(
                 no_create_template_line=True).create(line_vals)
             vals['order_lines'] = [(6, 0, [new_line.id])]
