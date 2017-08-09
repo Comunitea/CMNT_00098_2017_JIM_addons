@@ -8,7 +8,7 @@
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
                 <field name="state" position="attributes">
-                    <attribute name="statusbar_visible">draft,sent,lqdr,pending,sale</attribute>
+                    <attribute name="statusbar_visible">draft,sent,lqdr,pending,progress,sale</attribute>
                 </field>
 
                 <!-- Add button to pass to lqdr or pending state -->
@@ -32,7 +32,7 @@
 
                 <!-- Cancel button to pass to lqdr or pending state -->
                 <button name="action_cancel"  position="attributes">
-                    <attribute name="states">draft,sent,proforma,sale,lqdr,pending,progress_lqdr</attribute>
+                    <attribute name="states">draft,sent,proforma,sale,lqdr,pending,progress_lqdr,progress</attribute>
                 </button>
                 <xpath expr="//page[1]" position="inside">
                     <group>

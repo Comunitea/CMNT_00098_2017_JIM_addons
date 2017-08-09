@@ -15,6 +15,7 @@
         'delivery',
         'custom_sale_order_variant_mgmt',
         'jim_stock',
+        'sale_order_batch_confirm'
     ],
     'contributors': [
         "Comunitea ",
