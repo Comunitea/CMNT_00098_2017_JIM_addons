@@ -63,21 +63,25 @@
                     <table class="custom_table" style="margin-top: 20px;  page-break-inside:avoid">
                         <thead>
                             <tr>
-                                <th style= "border-bottom: 0px;"></th>
-                                <th><strong>Packages JIM</strong></th>
-                                <th><strong>Packages EME</strong></th>
+                                <th></th>
+                                <th><strong>Bultos JIM</strong></th>
+                                <th><strong>Bultos EME</strong></th>
                                 <th><strong>Total</strong></th>
+                                <th><strong>TRANSPORTE</strong></th>
+                                <th><strong>OPERARIO</strong></th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td>Packages</td>
+                                <td>Bultos</td>
                                 <td class="empty"></td>
                                 <td class="empty"></td>
                                 <td class="empty"></td>
+                                <td rowspan="2"></td>
+                                <td rowspan="2"></td>
                             </tr>
 
-                            <tr>
+                            <tr style="border-top: 1px solid black;">
                                 <td>Peso</td>
                                 <td class="empty"></td>
                                 <td class="empty"></td>
@@ -90,31 +94,11 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
+                                <td></td>
+                                <td></td>
                             </tr>
                         </tfoot>
 
-                    </table>
-
-                    <table class="custom_table" style="margin-top:5px;">
-                        <thead>
-                            <tr>
-                                <th><strong>Operator</strong></th>
-                                <th><strong>carrier</strong></th>
-                            </tr>
-                        </thead>
-                        <tbpdy>
-                            <tr>
-                                <td class="empty"></td>
-                                <td class="empty"></td>
-
-                            </tr>
-                        </tbpdy>
-                        <tfooter>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tfooter>
                     </table>
 
                     <div class="oe_structure"/>
