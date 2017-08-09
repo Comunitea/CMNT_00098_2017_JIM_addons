@@ -48,7 +48,7 @@ class SaleOrder(models.Model):
                         [('auto_purchase_order_id', '=',
                           purchase.id)])
                     if ic_sale:
-                        procurements += ic_sale.procurement_group_id
+                        procurements |= ic_sale.mapped('procurement_group_id')
             order.procurement_groups = procurements
 
     @api.depends('procurement_group_id')

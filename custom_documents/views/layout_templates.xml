@@ -103,6 +103,16 @@
                                 <td><span t-field="o.user_id.name"/> </td>
                             </tr>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -135,14 +145,14 @@
             <div class="row">
                 <t>
                     <div class="col-xs-6 col-xs-offset-6">
-                         <strong>Shipping address:</strong>
+                        <strong>Shipping address:</strong>
                         <t t-if="o.location_id.usage == 'supplier'">
                             <div t-field="o.sale_id.partner_shipping_id"
-                                    t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true, "min_name": True}' />
+                                    t-field-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": true, "phone_icons": True, "min_name": True}' />
                         </t>
                         <t t-if="o.location_id.usage != 'supplier'">
                             <div t-field="o.partner_id"
-                                    t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true, "min_name": True}' />
+                                    t-field-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": true, "phone_icons": True, "min_name": True}' />
                         </t>
 
                     </div>
@@ -165,8 +175,8 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><span t-field="o.partner_id.ref"/></td>
-                                <td><span t-field="o.partner_id.vat"/></td>
+                                <td><span t-field="o.sale_id.partner_id.ref"/></td>
+                                <td><span t-field="o.sale_id.partner_id.vat"/></td>
                                 <td>
                                     Page: <span class="page"/> of <span class="topage"/>
                                 </td>
@@ -175,6 +185,16 @@
                                 <td><span/> </td>
                             </tr>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -248,6 +268,16 @@
                                 <td><span t-field="o.user_id"/></td>
                             </tr>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -302,6 +332,15 @@
                                 <td><span t-field="o.name"/></td>
                             </tr>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>

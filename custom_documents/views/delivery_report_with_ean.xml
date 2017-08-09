@@ -40,10 +40,10 @@
                                         <td>
                                             <span t-field="line.product_id.default_code"/>
                                         </td>
-                                         <td>
+                                        <td>
                                             <span t-field="line.linked_move_operation_ids[0].move_id.name"/>
                                         </td>
-                                         <td>
+                                        <td>
                                             <span t-field="line.qty_done"/>
                                         </td>
                                         <td>
@@ -65,13 +65,34 @@
                                         <td></td>
                                     </tr>
                                 </t>
-
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
                         </table>
                         <!--prueba precio-->
                         <div class="row" name="total">
                             <div class="col-xs-4 pull-right">
                                 <table class="table table-condensed">
+                                    <tr>
+                                        <td>Shipping costs</td>
+                                        <td class="text-right">
+                                            <span t-field="o.delivery_amount"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="o.global_discount_amount">
+                                        <td>Global discount</td>
+                                        <td class="text-right">
+                                            <span t-field="o.global_discount_amount"/>
+                                        </td>
+                                    </tr>
                                     <tr class="border-black">
                                         <td><strong>Total Without Taxes</strong></td>
                                         <td class="text-right">

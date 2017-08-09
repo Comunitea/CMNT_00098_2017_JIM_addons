@@ -57,6 +57,16 @@
                                 </tr>
                             </t>
                         </tbody>
+                        <tfoot>
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tfoot>
                     </table>
                     <div class="row" name="total">
                         <div class="col-xs-4 pull-right">

@@ -79,6 +79,15 @@
                 <field name="partner_id" position="attributes">
                     <attribute name="attrs"></attribute>
                 </field>
+                <field name="origin" position="replace">
+                    <label for="origin"/>
+                    <div>
+                        <field name="origin" class="oe_inline"/>
+
+                        <field name="sale_id" class="oe_inline" attrs="{'invisible': [('sale_id', '=', False)]}"/>
+                        <field name="purchase_id"  class="oe_inline" attrs="{'invisible': [('purchase_id', '=', False)]}"/>
+                    </div>
+                </field>
 
             </field>
         </record>

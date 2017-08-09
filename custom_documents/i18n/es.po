@@ -16,6 +16,30 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: custom_documents
+#: model:ir.model.fields,field_description:custom_documents.field_delivery_carrier_delivery_cost
+#: model:ir.model.fields,field_description:custom_documents.field_product_product_delivery_cost
+#: model:ir.model.fields,field_description:custom_documents.field_product_template_delivery_cost
+msgid "Delivery cost"
+msgstr "Gasto de envío"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+msgid "Global discount"
+msgstr "Descuento global"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
+msgid "PURCHASE ORDER"
+msgstr "PEDIDO DE COMPRA"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+msgid "Shipping costs"
+msgstr "Portes"
+
+#. module: custom_documents
 #: model:mail.template,body_html:custom_documents.email_template_sale_confirmation
 msgid "\n"
 "<div id=\"content\" style=\"font-family:Arial, sans-serif;font-size:14px;\">\n"
@@ -269,9 +293,15 @@ msgstr "<strong>Packages JIM</strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "<strong>Shipping address:</strong>"
 msgstr "<strong>Dirección de Envío</strong>"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
+msgid "Supplier Nª"
+msgstr "Nª de proveedor"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
@@ -399,14 +429,32 @@ msgstr "Nº de cliente"
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "Date"
 msgstr "Fecha"
 
 #. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
+msgid "Purchase order Nº"
+msgstr "Nº de compra"
+
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
+msgid "Payment term"
+msgstr "Condiciones de pago"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
+msgid "Sale employee"
+msgstr "Empleado de ventas"
+
+#. module: custom_documents
 #: model:ir.model.fields,field_description:custom_documents.field_stock_picking_delivery_date
+#: model:ir.ui.view,arch_db:custom_documents.custom_purchase_order_report
 msgid "Delivery date"
-msgstr "Delivery date"
+msgstr "F. entrega"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
