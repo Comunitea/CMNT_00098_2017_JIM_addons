@@ -22,6 +22,12 @@ msgstr ""
 msgid "Delivery cost"
 msgstr "Gasto de envío"
 
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
+msgid "Picking Nº"
+msgstr "Nº albarán"
+
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
