@@ -25,6 +25,7 @@
         'views/procurement_rule_view.xml',
         'views/sale_order_view.xml',
         'views/stock_picking.xml',
+        'views/company_view.xml',
     ],
     "installable": True
 }
