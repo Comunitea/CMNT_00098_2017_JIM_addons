@@ -21,6 +21,7 @@ class ProductAttributeValue(models.Model):
                        required=True)
     is_color = fields.Boolean("Represents a color",
                               related="attribute_id.is_color")
+    sequence = fields.Integer('Sequence', help="Determine the display order", readonly=True)
 
     _sql_constraints = [
         ('attribute_code_unique', 'unique(code, attribute_id)',
@@ -62,13 +63,19 @@ class ProductTemplate(models.Model):
         for tmpl_id in self.with_context(active_test=False).\
                 filtered(lambda x: x.attribute_line_ids):
             for product_id in tmpl_id.product_variant_ids:
-                default_code = tmpl_id.template_code
-                for att in product_id.attribute_line_ids.\
-                        sorted(key=lambda r: r.attribute_id.sequence):
-                    seq = product_id.attribute_value_ids.\
-                        filtered(lambda r: r.attribute_id == att.attribute_id)
-                    default_code += '.%s' % seq.code
-                product_id.default_code = default_code
+                if not product_id.default_code:
+                    default_code = tmpl_id.template_code
+                    for att in product_id.attribute_line_ids.\
+                            sorted(key=lambda r: r.attribute_id.sequence):
+                        seq = product_id.attribute_value_ids.\
+                            filtered(lambda r: r.attribute_id == att.attribute_id)
+                        if seq.attribute_id.is_color:
+                            seq_code = seq.code
+                        else:
+                            seq_code = seq.sequence
+                        default_code += '.%s' %seq_code
+
+                    product_id.default_code = default_code
 
         for tmpl_id in self.with_context(active_test=False). \
                 filtered(lambda x: len(x.product_variant_ids) == 1 and not
