@@ -42,16 +42,17 @@ class ResPartnerSGA(models.Model):
 
     @api.multi
     def write(self, values):
-        res = super(ResPartnerSGA, self).write(values)
 
         fields_to_check = ('ref', 'name')
         fields = sorted(list(set(values).intersection(set(fields_to_check))))
-        if fields and self.check_mecalux_ok():
-            self.sga_state = 'PA'
+        if fields:
+            values.update({'state': 'PA'})
+        res = super(ResPartnerSGA, self).write(values)
+        if fields:
             icp = self.env['ir.config_parameter']
             if icp.get_param('product_auto'):
                 self.new_mecalux_file(operation="F")
-                self.sga_state = 'AC'
+                res = super(ResPartnerSGA, self).write({'sga_state': 'AC'})
         return res
 
 
@@ -59,10 +60,10 @@ class ResPartnerSGA(models.Model):
     @api.model
     def create(self, values):
         res = super(ResPartnerSGA, self).create(values)
-        if self.check_mecalux_ok():
-            icp = self.env['ir.config_parameter']
-            if icp.get_param('product_auto'):
-                res.new_mecalux_file(operation="A")
+        #if self.check_mecalux_ok():
+        icp = self.env['ir.config_parameter']
+        if icp.get_param('product_auto'):
+            res.new_mecalux_file(operation="A")
         return res
 
     @api.multi
