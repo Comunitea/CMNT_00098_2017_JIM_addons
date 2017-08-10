@@ -641,7 +641,7 @@ class MecaluxFileHeader(models.Model):
                 file_str = get_line(sgavar, model_pool)
                 f.write(file_str.encode("latin_1"))
                 f.close()
-                
+
                 path = self.get_global_path()
 
                 sga_path = u'%s/%s' % (path, ODOO_WRITE_FOLDER)
