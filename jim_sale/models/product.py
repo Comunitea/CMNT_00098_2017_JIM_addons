@@ -41,10 +41,13 @@ class ProductProduct(models.Model):
 
     def get_price_from_web(self, partner_id):
         ctx = dict(self.env.context)
+        pricelist_id = self.env['res.partner'].browse(
+            partner_id).property_product_pricelist
         ctx.update({
-            'partner_id': partner_id
+            'partner': partner_id,
+            'pricelist': pricelist_id.id
         })
-        return self.wit_context(ctx)._compute_product_price()
+        return self.with_context(ctx).price
 
     def _compute_product_price(self):
         """
