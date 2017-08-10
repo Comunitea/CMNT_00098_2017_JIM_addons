@@ -8,24 +8,44 @@
             <div class="page">
                 <div name="payment_term"/>
 
-                <div class="radius_border_min">
-                    Obs:
-                    <t t-if="o.sale_id.client_order_ref">
-                        Customer order number <span t-field="o.sale_id.client_order_ref"/> <br/>
-                    </t>
-                    <t t-if="o.sale_id.observations">
-                        <span t-field="o.sale_id.observations"/> <br/>
-                    </t>
-                    <span t-field="o.note"/>
-                </div>
+                <table class="custom_table table_left" style="border-top: 1px solid black">
+                    <tbody>
+                        <tr>
+                            <td rowspan="3" class="col-xs-8">
+                                Obs:
+                                <t t-if="o.sale_id.client_order_ref">
+                                    Customer order number <span t-field="o.sale_id.client_order_ref"/> <br/>
+                                </t>
+                                <t t-if="o.sale_id.observations">
+                                    <span t-field="o.sale_id.observations"/> <br/>
+                                </t>
+                                <span t-field="o.note"/>
+                            </td>
+                            <td>
+                                <strong>Carrier: </strong><span t-field="o.carrier_id"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
 
+                                <strong>Packages: </strong><span t-field="o.number_of_packages"/>
+                                <strong>kilos: </strong><span t-field="o.pick_weight"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Operator: </strong><span t-field="o.operator"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
 
-                <div class="radius_border_min">
-                    <strong>Operator: </strong><span t-field="o.operator"/>
-                    <strong>Carrier: </strong><span t-field="o.carrier_id"/>
-                    <strong>Packages: </strong><span t-field="o.number_of_packages"/>
-                    <strong>kilos: </strong><span t-field="o.pick_weight"/>
-                </div>
                 <table class="custom_table" style="margin-top: 20px;">
                     <thead>
                         <tr>
@@ -79,7 +99,7 @@
         file="custom_documents.custom_delivery_report_unrated"
         report_type="qweb-pdf"
         model="stock.picking"
-        string="albará sin valorar"/>
+        string="Albarán sin valorar"/>
 
     <record id="custom_documents.report_delivery_report_unrated" model="ir.actions.report.xml">
         <field name="paperformat_id" ref="picking_paperformat_euro" />

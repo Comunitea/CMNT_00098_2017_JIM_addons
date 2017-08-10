@@ -20,6 +20,12 @@
             <field name="note" position="before">
                 <separator string="Internal notes"/>
             </field>
+            <field name="observations" position="attributes">
+                <attribute name="placeholder">Se imprimirán en pedido y albarán</attribute>
+            </field>
+            <field name="note" position="attributes">
+                <attribute name="placeholder">No se imprimen</attribute>
+            </field>
         </field>
     </record>
 

@@ -43,6 +43,7 @@
         'views/delivery_report.xml',
         'views/delivery_report_with_ean.xml',
         'views/delivery_report_unrated.xml',
+        'views/delivery_report_unrated_with_ean.xml',
         'views/purchase_order_report.xml',
         'views/purchase_quotation_report.xml',
         'data/stock_mail_template.xml',

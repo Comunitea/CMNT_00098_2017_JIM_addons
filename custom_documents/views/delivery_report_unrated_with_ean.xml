@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <template id="custom_delivery_report_unrated_with_ean_document">
+        <t t-call="custom_documents.custom_layout">
+            <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
+            <div class="page">
+                <div name="payment_term"/>
+
+                <table class="custom_table table_left" style="border-top: 1px solid black">
+                    <tbody>
+                        <tr>
+                            <td rowspan="3" class="col-xs-8">
+                                Obs:
+                                <t t-if="o.sale_id.client_order_ref">
+                                    Customer order number <span t-field="o.sale_id.client_order_ref"/> <br/>
+                                </t>
+                                <t t-if="o.sale_id.observations">
+                                    <span t-field="o.sale_id.observations"/> <br/>
+                                </t>
+                                <span t-field="o.note"/>
+                            </td>
+                            <td>
+                                <strong>Carrier: </strong><span t-field="o.carrier_id"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+
+                                <strong>Packages: </strong><span t-field="o.number_of_packages"/>
+                                <strong>kilos: </strong><span t-field="o.pick_weight"/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Operator: </strong><span t-field="o.operator"/>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+                <table class="custom_table" style="margin-top: 20px;">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="o.pack_operation_product_ids" t-as="line">
+                            <tr>
+                                <td>
+                                    <span t-field="line.product_id.default_code"/>
+                                </td>
+                                 <td>
+                                    <span t-field="line.linked_move_operation_ids[0].move_id.name_report"/>
+                                </td>
+                                 <td>
+                                    <span t-field="line.qty_done"/>
+                                </td>
+                            </tr>
+                            <tr t-if="line.product_id.barcode">
+                                <td></td>
+                                <td>EAN <span t-field="line.product_id.barcode"/></td>
+                                <td></td>
+                            </tr>
+                        </t>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+
+            </div>
+
+        </t>
+    </template>
+
+    <template id="custom_delivery_report_unrated_with_ean">
+        <t t-call="report.html_container">
+            <t t-foreach="docs" t-as="o">
+                <t t-call="custom_documents.custom_delivery_report_unrated_with_ean_document" t-lang="o.partner_id.lang"/>
+            </t>
+        </t>
+
+    </template>
+
+    <report
+        id="report_delivery_report_unrated_with_ean"
+        name="custom_documents.custom_delivery_report_unrated_with_ean"
+        file="custom_documents.custom_delivery_report_unrated_with_ean"
+        report_type="qweb-pdf"
+        model="stock.picking"
+        string="Albarán sin valorar EAN"/>
+
+    <record id="custom_documents.report_delivery_report_unrated_with_ean" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="picking_paperformat_euro" />
+    </record>
+
+</odoo>
