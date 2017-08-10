@@ -217,6 +217,7 @@ msgstr "<span class=\"blue_text\">Picking date:</span>"
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
 msgid "<strong>Operator: </strong>"
 msgstr "<strong>Operario: </strong>"
 
@@ -266,6 +267,7 @@ msgstr "Trabajo a realizar"
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
 msgid "<strong>Carrier: </strong>"
 msgstr "<strong>Transportista: </strong>"
 
@@ -353,7 +355,9 @@ msgstr "<strong>transportista</strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
-#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
 msgid "<strong>kilos: </strong>"
 msgstr "<strong>kilos: </strong>"
 
@@ -466,6 +470,7 @@ msgstr "F. entrega"
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_purchase_order_report
@@ -536,6 +541,7 @@ msgstr "Factura agrupada por albarán"
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
@@ -600,7 +606,9 @@ msgstr "Obs.:"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
-#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
 msgid "Obs:"
 msgstr "Obs:"
 
@@ -640,6 +648,7 @@ msgstr "Paquetes"
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
 msgid "<strong>Packages: </strong>"
 msgstr "<strong>Paquetes: </strong>"
 
@@ -692,6 +701,7 @@ msgstr "Precio/unidad"
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_purchase_order_report
@@ -722,6 +732,7 @@ msgstr "Qweb invoice footer"
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_purchase_order_report
@@ -783,8 +794,8 @@ msgstr "Almacén"
 
 #. module: custom_documents
 #: model:ir.actions.report.xml,name:custom_documents.report_delivery_report_unrated
-msgid "albará sin valorar"
-msgstr "albará sin valorar"
+msgid "Albarán sin valorar"
+msgstr "Albarán sin valorar"
 
 #. module: custom_documents
 #: model:ir.model,name:custom_documents.model_report_custom_documents_report_picking_grouped_invoice
