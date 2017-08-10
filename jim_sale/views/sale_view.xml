@@ -36,7 +36,7 @@
                 </button>
                 <xpath expr="//page[1]" position="inside">
                     <group>
-                        <field name="work_to_do"/>
+                        <field name="work_to_do" placeholder="Sólo se imprimirá en el pedido"/>
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='partner_shipping_id']" position="after">
