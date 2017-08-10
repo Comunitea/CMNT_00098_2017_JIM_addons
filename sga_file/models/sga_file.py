@@ -9,7 +9,7 @@ from odoo import fields, models, tools, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 from datetime import datetime, timedelta
 
-import os
+import os, stat
 import re
 
 #El sistema puede funcionar con ficheros, sin embargo,
@@ -21,7 +21,9 @@ import re
 DELETE_FILE = False
 ERRORS = 3
 ODOO_READ_FOLDER = 'Send'
-ODOO_WRITE_FOLDER = 'Receive'
+ODOO_END_FOLDER = 'Receive'
+ODOO_WRITE_FOLDER = 'temp'
+
 
 class ConfigPathFiles(models.TransientModel):
 
@@ -639,6 +641,20 @@ class MecaluxFileHeader(models.Model):
                 file_str = get_line(sgavar, model_pool)
                 f.write(file_str.encode("latin_1"))
                 f.close()
+                
+                path = self.get_global_path()
+
+                sga_path = u'%s/%s' % (path, ODOO_WRITE_FOLDER)
+                old_name = f.name # os.path.join(sga_path, f.name)
+
+                sga_path = u'%s/%s' % (path, ODOO_END_FOLDER)
+                new_name = old_name.replace(ODOO_WRITE_FOLDER, ODOO_END_FOLDER)
+
+                #cambio permisos
+                #os.chmod(old_name, stat.S_IXUSR)
+                os.rename(old_name, new_name)
+                #os.chmod(new_name, stat.S_IXOTH)
+
             else:
                 raise ValidationError("Error al escribir los datos en %s" % new_sga_file.sga_file)
 
