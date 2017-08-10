@@ -136,6 +136,8 @@ class ProductProduct(models.Model):
         order_line_obj = self.env["sale.order.line"]
         deposit_ids = \
             self.env['stock.location'].search([('deposit', '=', True)]).ids
+        company_ids = \
+            self.env['res.company'].search([('no_stock', '=', True)]).ids
         ctx = self._context.copy()
         for product in self:
             deposit_real_stock = 0
@@ -153,15 +155,28 @@ class ProductProduct(models.Model):
                 deposit_available_stock = \
                     product.with_context(ctx).sudo().qty_available - \
                     product.with_context(ctx).sudo().outgoing_qty
+            company_real_stock = 0
+            company_available_stock = 0
+            if company_ids:
+                for company in company_ids:
+                    ctx = self._context.copy()
+                    ctx.update({'force_company': company})
+                    company_real_stock += \
+                        product.with_context(ctx).sudo().qty_available
+                    company_available_stock += \
+                        product.with_context(ctx).sudo().qty_available - \
+                        product.with_context(ctx).sudo().outgoing_qty
+
 
             slines = order_line_obj.search([('product_id', '=', product.id),
                                             ('order_id.state', 'in',
                                              ['lqdr', 'pending',
-                                              'progress_lqdr'])])
+                                              'progress_lqdr', 'progress'])])
             for sline in slines:
                 sale_lines_stock += sline.product_uom_qty
 
-            product.global_real_stock = global_real_stock - deposit_real_stock
+            product.global_real_stock = global_real_stock - \
+                                        deposit_real_stock -company_real_stock
             product.global_available_stock = \
                 global_available_stock - deposit_available_stock - \
-                sale_lines_stock
+                sale_lines_stock - company_available_stock
