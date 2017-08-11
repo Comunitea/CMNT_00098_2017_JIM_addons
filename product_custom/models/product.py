@@ -29,7 +29,11 @@ class ProductProduct(models.Model):
     volume = fields.Float('Volume', help="The volume in m3.", digits=(10, 6))
 
     # def apply_package_dimensions(self):
-
+    _sql_constraints = [
+        ('uniq_default_code',
+         'unique(default_code)',
+         'The reference must be unique'),
+    ]
 
 class ProductPackaging(models.Model):
 

@@ -144,6 +144,28 @@
             </field>
         </record>
 
+        <record id="send_mecalux_validation_confirm" model="ir.ui.view">
+        <field name="name">send.mecalux.validation.confirm</field>
+        <field name="model">send.mecalux.validation.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Confirmación de envío a Mecalux">
+                <group>
+                    <p>
+                        Vas a enviar a Mecalux una orden sin stock.
+                    </p><p class="text-muted">
+                        Si la envías así solo enviarás las operaciones en las que Odoo tenga stock, si quieres enviar todo debes forzar disponiblidad
+                    </p>
+                </group>
+                <footer>
+                    <button name="process_validate_and_send" string="Forzar y enviar" type="object" class="oe_highlight"/>
+                    <button name="process_send" string="Enviar" type="object" class="btn-primary"/>
+                    <button name="process_validate" string="Forzar" type="object" class="btn-primary"/>
+                    <button string="_Cancel" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
 
 
 
