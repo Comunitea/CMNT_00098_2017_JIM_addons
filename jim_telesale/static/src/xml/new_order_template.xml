@@ -49,8 +49,14 @@
         <t t-jquery=".cell-product" t-operation="after">
             <!-- Description column -->
             <td class="cell-description">
-                  <!-- <span t-esc="widget.model.get('description')"/> -->
+                <t t-if="widget.model.mode == 'template_variants'">
+                    <div style="text-align:right;padding-right:9px">
+                        <span t-esc="widget.model.get('description')"/>
+                    </div>
+                </t>
+                <t t-if="widget.model.mode != 'template_variants'">
                    <textarea onclick="this.select()" class="col-description notes mandatory"  name="description" ><t t-esc="widget.model.get('description')"/></textarea>
+                </t>
             </td>
             <!-- LQDR column -->
             <td class="cell-lqdr">
