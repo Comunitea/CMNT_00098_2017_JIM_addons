@@ -2,8 +2,6 @@
 <odoo>
 <data noupdate="0">
 
-
-
     <record id="group_stock_lqdr" model="res.groups">
         <field name="name">Review LQDR</field>
         <field name="category_id" ref="base.module_category_hidden"/>

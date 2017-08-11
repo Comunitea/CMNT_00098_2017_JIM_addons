@@ -25,6 +25,7 @@ class SaleOrder(models.Model):
         ('cancel', 'Cancelled'),
     ])
 
+    chanel = fields.Selection(selection_add=[('web', 'WEB')])
     work_to_do = fields.Text('Trabajo a realizar')
     route_id = fields.Many2one('stock.location.route', string='Force Route', domain=[('sale_selectable', '=', True)])
 
