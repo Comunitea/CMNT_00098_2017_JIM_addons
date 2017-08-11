@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+            string="Albaran de Mar"
+            id="action_report_picking_mar"
+            model="stock.picking"
+            report_type="qweb-pdf"
+            name="sga_file.report_picking_mar"
+            file="stock.report_picking_operations"
+        />
+
+        <template id="report_picking_mar">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="stock.external_layout_barcode_right">
+                        <div class="page">
+                            <br/>
+
+
+                            <br/>
+                            <h1 t-field="o.name" class="mt0"/>
+                            <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th t-if="o.origin"><strong>Order (Origin)</strong></th>
+                                    <th><strong>State</strong></th>
+                                    <th><strong>Commitment Date</strong></th>
+                                    <th name="td_sched_date_h"><strong>Scheduled Date</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td t-if="o.origin">
+                                        <span t-field="o.origin"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.state"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.date"/>
+                                    </td>
+                                    <td name="td_sched_date">
+                                        <span t-field="o.min_date"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            </table>
+                            <br/>
+                            <br/>
+                            <table class="table table-condensed" t-if="o.pack_operation_ids">
+                              <thead>
+                                <tr>
+                                    <th><strong>Product</strong></th>
+                                    <th class="text-right"><strong>Quantity</strong></th>
+                                </tr>
+                              </thead>
+                            <tbody>
+                    <t t-set="pack_operation_ids" t-value="o.pack_operation_ids"/>
+                    <t groups="base.group_portal" t-set="pack_operation_ids" t-value="o.pack_operation_ids.sudo()"/>
+                    <tr t-foreach="pack_operation_ids" t-as="pack_operation">
+
+
+                                <td>
+                                    <span t-field="pack_operation.product_id"/>
+                                </td>
+                                <td class="text-left">
+                                    <span t-field="pack_operation.product_qty"/>
+                                </td>
+
+
+                    </tr>
+                  </tbody>
+                </table>
+                            <p t-if="o.state in ['draft', 'waiting', 'confirmed']">
+                                You do not have any products reserved for this picking.  Please click the 'Reserve' button
+                                to check if products are available.
+                            </p>
+                            <p t-field="o.note"/>
+                        </div>
+                    </t>
+                 </t>
+             </t>
+        </template>
+    </data>
+</odoo>

@@ -32,7 +32,7 @@
 
                 <!-- Cancel button to pass to lqdr or pending state -->
                 <button name="action_cancel"  position="attributes">
-                    <attribute name="states">draft,sent,proforma,sale,lqdr,pending,progress_lqdr,progress</attribute>
+                    <attribute name="states">draft,sent,proforma,lqdr,pending,progress_lqdr</attribute>
                 </button>
                 <xpath expr="//page[1]" position="inside">
                     <group>

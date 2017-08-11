@@ -26,7 +26,7 @@ class ProductPricelist(models.Model):
     legacy_code = fields.Char(size=5)
 
 
-class ProductPorduct(models.Model):
+class ProductProduct(models.Model):
     _inherit = "product.product"
 
     @api.multi
@@ -38,6 +38,16 @@ class ProductPorduct(models.Model):
                                               'Customer Prices')
     customer_prices_count = fields.\
         Integer(compute='_get_customer_prices_count', string='#Prices')
+
+    def get_price_from_web(self, partner_id):
+        ctx = dict(self.env.context)
+        pricelist_id = self.env['res.partner'].browse(
+            partner_id).property_product_pricelist
+        ctx.update({
+            'partner': partner_id,
+            'pricelist': pricelist_id.id
+        })
+        return self.with_context(ctx).price
 
     def _compute_product_price(self):
         """
@@ -54,4 +64,4 @@ class ProductPorduct(models.Model):
                     product.price = customer_price
                 else:
                     self_super += product
-        return super(ProductPorduct, self_super)._compute_product_price()
+        return super(ProductProduct, self_super)._compute_product_price()
