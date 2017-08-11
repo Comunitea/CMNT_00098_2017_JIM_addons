@@ -20,6 +20,9 @@ class StockPicking(models.Model):
     global_discount_amount = fields.Monetary(
         compute='_compute_global_discount_amount')
     min_date_date = fields.Date(compute='_compute_min_date_date')
+    sale_services = fields.Many2many(
+        'sale.order.line', 'stock_picking_sale_order_line_services_rel',
+        'picking_id', 'sale_id', compute='_compute_sale_services')
 
     @api.depends('min_date')
     def _compute_min_date_date(self):
@@ -93,16 +96,25 @@ class StockPicking(models.Model):
                 amount_untaxed = sum(pick.pack_operation_ids.mapped(
                     'sale_price_subtotal')) + \
                     delivery_line[0].price_subtotal + \
-                    sum(global_discount_lines.mapped('price_subtotal'))
+                    sum(global_discount_lines.mapped('price_subtotal')) + \
+                    sum(pick.sale_services.mapped('price_subtotal'))
                 amount_tax = sum(pick.pack_operation_ids.mapped(
                     'sale_price_tax')) + delivery_line[0].price_tax + \
-                    sum(global_discount_lines.mapped('price_tax'))
+                    sum(global_discount_lines.mapped('price_tax')) + \
+                    sum(pick.sale_services.mapped('price_tax'))
                 pick.update({
                     'amount_untaxed': amount_untaxed,
                     'amount_tax': amount_tax,
                     'amount_total': amount_untaxed + amount_tax,
                 })
         return res
+
+    @api.depends('sale_id')
+    def _compute_sale_services(self):
+        for picking in self:
+            picking.sale_services = self.sale_id.order_line.filtered(
+                lambda x: x.product_id.type == 'service' and not
+                x.product_id.delivery_cost)
 
 
 class StockMove(models.Model):
