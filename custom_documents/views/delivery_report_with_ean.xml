@@ -89,6 +89,36 @@
                                         <td></td>
                                     </tr>
                                 </t>
+                                <t t-foreach="o.sale_services" t-as="service_line">
+                                    <tr>
+                                        <td>
+                                            <span t-field="service_line.product_id.default_code"/>
+                                        </td>
+                                         <td>
+                                            <span t-field="service_line.name_report"/>
+                                        </td>
+                                         <td>
+                                            <span t-field="service_line.product_uom_qty"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="service_line.price_unit"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="service_line.discount"/>
+                                        </td>
+                                        <td>
+                                           <span t-field="service_line.price_subtotal"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-if="service_line.product_id.barcode">
+                                        <td></td>
+                                        <td>EAN <span t-field="service_line.product_id.barcode"/></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </t>
                             </tbody>
                             <tfoot>
                                 <tr>
