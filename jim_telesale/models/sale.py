@@ -49,7 +49,7 @@ class SaleOrder(models.Model):
         product_obj = t_product.browse(line['product_id'])
         if product_obj.route_ids:
             vals.update({'route_id': product_obj.route_ids[0].id})
-        vals.update({'name': line.get('description', ''),
+        vals.update({
                      'chained_discount': line.get('chained_discount', '0.00')})
         return vals
 

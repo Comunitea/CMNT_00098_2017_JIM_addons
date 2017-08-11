@@ -88,7 +88,22 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         if (key == 'pvp'){
             this.refresh('chained_discount');
         }
+
         this._super(key);
+
+        if (key == 'template'){
+            var value = this.$('.col-'+key).val();
+            // Case name not valid
+            var template_obj = this.get_template();
+          
+            // Get product from model
+            if (template_obj){
+                var description = template_obj.display_name;
+                this.model.set('description', description);
+            }
+            
+        }
+
     },
 
     // OVERWRITED Get global stock available in product_id change
@@ -106,7 +121,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         .then(function(result){
             var product_obj = self.ts_model.db.get_product_by_id(product_id);
             var uom_obj = self.ts_model.db.get_unit_by_id(product_obj.uom_id)
-            var description = product_obj.name;
+            var description = product_obj.display_name;
             if (product_obj.description_sale){
                 description = description + '\n' + product.description_sale
             }
