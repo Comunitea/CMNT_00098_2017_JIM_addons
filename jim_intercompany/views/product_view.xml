@@ -8,6 +8,7 @@
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
             <field name="company_id" position="before">
+                <field name="no_ic"/>
                 <field name="intercompany_price"/>
             </field>
         </field>
