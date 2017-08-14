@@ -41,7 +41,7 @@
                                     <span t-field="line.product_uom_qty"/>
                                 </td>
                                 <td>
-                                    <span t-field="line.order_id.warehouse_id.code"/>
+                                    <span t-field="line.route_id.name"/>
                                 </td>
                             </tr>
                         </tbody>
