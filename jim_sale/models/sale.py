@@ -29,6 +29,29 @@ class SaleOrder(models.Model):
     work_to_do = fields.Text('Trabajo a realizar')
     route_id = fields.Many2one('stock.location.route', string='Force Route', domain=[('sale_selectable', '=', True)])
 
+    @api.onchange('partner_id')
+    def onchange_partner_id_warning(self):
+        if not self.partner_id:
+            return
+        dict_warning = super(SaleOrder, self).onchange_partner_id_warning()
+        partner = self.partner_id
+        if partner.property_payment_term_id.prepayment:
+
+            if not dict_warning:
+                title = ("Warning for %s") % partner.name
+                message = "PAGO POR ANTICIPADO"
+                warning = {
+                    'title': title,
+                    'message': message,
+                }
+                return {'warning': warning}
+            else:
+                dict_warning['warning']['message'] = "PAGO POR ANTICIPADO " \
+                                                     "\n\n" + \
+                                                     dict_warning['warning'][
+                                                         'message']
+        return dict_warning
+
     @api.multi
     def action_proforma(self):
         for order in self:
@@ -165,3 +188,23 @@ class SaleOrderLineTemplate(models.Model):
         for line in self.order_lines:
             line.action_procurement_create()
         return True
+
+    @api.depends('invoice_lines.invoice_id.state', 'invoice_lines.quantity')
+    def _get_invoice_qty(self):
+        """
+        Compute the quantity invoiced. If case of a refund, the quantity invoiced is decreased. Note
+        that this is the case only if the refund is generated from the SO and that is intentional: if
+        a refund made would automatically decrease the invoiced quantity, then there is a risk of reinvoicing
+        it automatically, which may not be wanted at all. That's why the refund has to be created from the SO
+        """
+        return False
+
+    @api.depends('qty_invoiced', 'qty_delivered', 'product_uom_qty',
+                 'order_id.state')
+    def _get_to_invoice_qty(self):
+        return False
+
+    @api.depends('state', 'product_uom_qty', 'qty_delivered', 'qty_to_invoice',
+                 'qty_invoiced')
+    def _compute_invoice_status(self):
+        return False

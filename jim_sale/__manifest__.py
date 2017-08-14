@@ -29,6 +29,7 @@
         'views/sale_view.xml',
         'views/stock_picking.xml',
         'views/res_partner_view.xml',
+        'views/payment_term_view.xml',
         'report/report_stock_forecast.xml',
         'security/jim_sale_security.xml'
     ],
