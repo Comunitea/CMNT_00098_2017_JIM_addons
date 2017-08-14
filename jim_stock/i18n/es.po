@@ -23,7 +23,7 @@ msgstr "<span class=\"o_stat_text\">Previsto</span>"
 #. module: jim_stock
 #: model:ir.model.fields,field_description:jim_stock.field_stock_location_deposit
 msgid "Deposit"
-msgstr "Deposito"
+msgstr "No cuenta stock"
 
 #. module: jim_stock
 #: model:ir.model.fields,field_description:jim_stock.field_product_product_global_available_stock
