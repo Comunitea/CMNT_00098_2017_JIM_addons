@@ -35,6 +35,8 @@ class AccountInvoice(models.Model):
                     else:
                         inv.commercial_partner_id = \
                             inv.partner_id.commercial_partner_id
+            inv.fiscal_position_id = \
+                inv.commercial_partner_id.property_account_position_id
 
 
     commercial_partner_id = fields.Many2one('res.partner',

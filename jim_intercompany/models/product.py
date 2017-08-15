@@ -11,6 +11,7 @@ class ProductTemplate(models.Model):
 
     intercompany_price = fields.Float('Intercompany Price',
                                       digits=dp.get_precision('Product Price'))
+    no_ic = fields.Boolean('No Intercompany Actions', default=False)
 
 class ProductProduc(models.Model):
     _inherit = 'product.product'

@@ -6,3 +6,4 @@ import product
 import customer_price
 import sale
 import stock_picking
+import payment_term

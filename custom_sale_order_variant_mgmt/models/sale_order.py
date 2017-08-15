@@ -43,7 +43,7 @@ class SaleOrderLineTemplate(models.Model):
             line_vals = vals.copy()
             if template.lines_qty > 1:
                 line_vals.pop('product_id', False)
-                line_vals.pop('price_unit', False)
+                #line_vals.pop('price_unit', False)
                 line_vals.pop('product_uom_qty', False)
                 line_vals.pop('purchase_price', False)
                 line_vals.pop('name', False)
