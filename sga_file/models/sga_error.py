@@ -6,6 +6,7 @@
 from odoo import fields, models, tools, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 import codecs
+IGNORED_CODES = ('20992')
 
 class SGAfileerror(models.Model):
 
@@ -79,7 +80,9 @@ class SGAfileerror(models.Model):
                 st = en
                 en = st + 5
                 val['error_code'] = line[st:en].strip()
-
+                if val['error_code'] in IGNORED_CODES:
+                    continue
+                self.refresh_sga_state(val['object_type'], val['object_id'])
                 st = en
                 en = st + 255
                 val['error_message'] = line[st:en].strip()
@@ -93,6 +96,7 @@ class SGAfileerror(models.Model):
                     error_file.unlink()
 
                 error_obj.create(val)
+
                 res = True
             except:
 
@@ -102,3 +106,9 @@ class SGAfileerror(models.Model):
         sga_file.close()
         return res
 
+    def refresh_sga_state(self, object_type, object_name):
+        if object_type == 'SOR':
+            domain = [('sga_state', '=', 'PM'), ('name', '=', object_name)]
+            object = self.env['stock.picking'].search(domain)
+            if object:
+                object.sga_state = 'EI'

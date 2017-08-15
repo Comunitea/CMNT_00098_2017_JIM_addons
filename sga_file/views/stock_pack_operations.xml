@@ -2,7 +2,7 @@
 <odoo>
     <data>
         <report
-            string="Albaran de Mar"
+            string="Albaran de Paz"
             id="action_report_picking_mar"
             model="stock.picking"
             report_type="qweb-pdf"

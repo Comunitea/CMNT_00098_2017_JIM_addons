@@ -83,17 +83,30 @@
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
-                <field name ="state" position = "after">
-                    <div>
-                    <field name="sga_state" widget="statusbar" statusbar_visible="NE,PM,MT"
+
+                <xpath expr="//header" position="after" >
+                    <header attrs="{'invisible': ['|', ('sga_state', '=', 'NI'), ('state', 'in', ('draft','cancel','done'))]}">
+                        <button name="button_new_mecalux_file" string="Mover a Mecalux" type="object"
+                            class="oe_stat_button" icon="fa-shopping-cart"
+                            attrs="{'invisible': [('sga_state','in',('MT','NI','PM','EE','EI'))]}"/>
+                        <button name="move_to_NE" string="Mover a 'No enviado'" type="object"
+                            class="oe_stat_button" icon="fa-reply-all"
+                            attrs="{'invisible': [('sga_state','in',('NE','NI', 'MT','EE','EI'))]}"/>
+                        <button name="move_to_done" string="Mover a 'Realizado'" type="object"
+                            class="oe_stat_button" icon="fa-check-square"
+                            attrs="{'invisible': [('sga_state','in',('MT','NI'))]}"/>
+                        <field name="sga_state" widget="statusbar" statusbar_visible="NE,PM,MT"
                            attrs="{'invisible': [('sga_state', '=', 'NI')], 'readonly': 1}"
                     statusbar_colors='{"EE":"red", "EI":"red", "PM":"red", "MT":"green"}'/>
-                    </div>
-                </field>
+
+                    </header>
+                </xpath>
+
                 <field name="picking_type_id" position="after">
                     <field name="sga_integrated" invisible="1"/>
                     <field name="stock_picking_sgatype_id" invisible="1"/>
                     <field name="action_done_bool" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
+                    <field name="do_backorder" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
                     <field name="shipping_city" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
                     <field name="shipping_partner_name" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
                     <!--<field name="sga_state" attrs="{'invisib1le': [('sga_state', '=', 'NI')], 'readonly': '1'}"/>-->
@@ -141,33 +154,13 @@
                 <xpath expr="//group/filter[1]" position="after">
                     <filter string="Mecalux status" domain="[]" context="{'group_by':'sga_state'}"/>
                 </xpath>
+                <xpath expr="//filter[@name='late']" position="after">
+                    <filter name="next_24h" string="Next 24h" domain="[('min_date','&lt;', (context_today() + datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d') )]"/>
+                    <filter name="next_week" string="Next Week" domain="[('min_date','&lt;', (context_today() + datetime.timedelta(weeks=1)).strftime('%%Y-%%m-%%d') )]"/>
+                    <filter name="next_two_week" string="Next 15 days" domain="[('min_date','&lt;', (context_today() + datetime.timedelta(days=15)).strftime('%%Y-%%m-%%d') )]"/>
+                </xpath>
             </field>
         </record>
-
-        <record id="send_mecalux_validation_confirm" model="ir.ui.view">
-        <field name="name">send.mecalux.validation.confirm</field>
-        <field name="model">send.mecalux.validation.wizard</field>
-        <field name="arch" type="xml">
-            <form string="Confirmación de envío a Mecalux">
-                <group>
-                    <p>
-                        Vas a enviar a Mecalux una orden sin stock.
-                    </p><p class="text-muted">
-                        Si la envías así solo enviarás las operaciones en las que Odoo tenga stock, si quieres enviar todo debes forzar disponiblidad
-                    </p>
-                </group>
-                <footer>
-                    <button name="process_validate_and_send" string="Forzar y enviar" type="object" class="oe_highlight"/>
-                    <button name="process_send" string="Enviar" type="object" class="btn-primary"/>
-                    <button name="process_validate" string="Forzar" type="object" class="btn-primary"/>
-                    <button string="_Cancel" class="btn-default" special="cancel" />
-                </footer>
-            </form>
-        </field>
-    </record>
-
-
-
 
     </data>
 </openerp>

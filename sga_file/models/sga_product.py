@@ -162,7 +162,7 @@ class SGAProductProduct(models.Model):
     _inherit = "product.product"
 
     @api.multi
-    def get_variant_name(self):
+    def get_sga_name_get(self):
         for prod in self:
             sga_name_get = prod.name_get()[0][1]
             if sga_name_get and ']' in sga_name_get:
@@ -170,7 +170,7 @@ class SGAProductProduct(models.Model):
             prod.sga_name_get = sga_name_get
 
 
-    sga_name_get = fields.Char("Mecalux name", compute='get_variant_name')
+    sga_name_get = fields.Char("Mecalux name", compute='get_sga_name_get')
     sga_prod_shortdesc = fields.Char("Nombre Radiofrecuencia", size=50)
     sga_stock = fields.Float('Stock (SGA)', help="Last PST from Mecalux")
     sga_change_material_abc = fields.Selection ([('0', "NO"), ('1', "SI")],

@@ -69,7 +69,7 @@ class StockPickingSGA(models.Model):
                 ref = pick.account_code
             else:
                 partner = pick.partner_id
-                while not ref:
+                if not ref and partner.parent_id:
                     partner = partner.parent_id
                     if partner:
                         ref = partner.ref
@@ -123,6 +123,7 @@ class StockPickingSGA(models.Model):
     shipping_partner_name = fields.Char(compute=get_shipping_city, string="Entregar a")
     account_code = fields.Char("Account code", compute=_get_account_code)
     action_done_bool = fields.Boolean("Validación automática", default=_get_action_done_bool)
+    do_backorder = fields.Selection([('default', 'Por defecto'), ('yes', 'Si'), ('no', 'No')], "Crea entrega parcial", default='default')
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")
 
     @api.onchange('picking_type_id', 'partner_id')
@@ -151,10 +152,18 @@ class StockPickingSGA(models.Model):
         self.env['sga.file'].process_sga_files(file_type='ZCS')
         self.env['sga.file'].process_sga_files(file_type='CRP')
 
+
+    def button_move_to_done(self):
+        return self.move_to_done
+
     @api.multi
     def move_to_done(self):
         picks = self.filtered(lambda x: x.sga_state != 'NI')
         picks.write({'sga_state': 'MT'})
+
+
+    def button_move_to_NE(self):
+        return self.move_to_NE
 
     @api.multi
     def move_to_NE(self):
@@ -162,19 +171,43 @@ class StockPickingSGA(models.Model):
         picks = self.filtered(lambda x: x.sga_state in sga_states_to_NE)
         picks.write({'sga_state': 'NE'})
 
-    @api.multi
+    def button_new_mecalux_file(self, ctx):
+        return self.with_context(ctx).new_mecalux_file()
+
     def new_mecalux_file(self, operation=False):
+        import ipdb; ipdb.set_trace()
         ctx = dict(self.env.context)
         if operation:
             ctx['operation'] = operation
         if 'operation' not in ctx:
             ctx['operation'] = 'A'
 
-        picks=[]
-        for pick in self:
+        self = self.filtered(lambda x: x.sga_state == 'NE')
+        states_to_check = ('confirmed', 'partially_available')
+        states_to_send = 'assigned'
+        picks = []
+        pick_to_check = self.filtered(lambda x: x.state in states_to_check)
+        if pick_to_check and pick_to_check[0]:
 
-            if pick.sga_state != 'NE':
-                raise UserError("Solo puedes enviar en estado 'No enviado'")
+            view = self.env.ref('sga_file.stock_mecalux_confirm_wizard')
+            wiz = self.env['stock.mecalux.confirm'].create({'pick_id': pick_to_check.id})
+            return {
+                'name': 'Confirmación de envio a Mecalux',
+                'type': 'ir.actions.act_window',
+                'view_type': 'form',
+                'view_mode': 'form',
+                'res_model': 'stock.mecalux.confirm',
+                'views': [(view.id, 'form')],
+                'view_id': view.id,
+                'res_id': wiz.id,
+                'target': 'new',
+                'context': self.env.context,
+            }
+
+        for pick in self.filtered(lambda x: x.state in states_to_send):
+
+            if not pick.partner_id:
+                raise UserError("No puedes enviar un albarán sin asociarlo a una empresa")
 
             new_sga_file = self.env['sga.file'].with_context(ctx).\
                 check_sga_file('stock.picking', pick.id, pick.picking_type_id.sgavar_file_id.code)
