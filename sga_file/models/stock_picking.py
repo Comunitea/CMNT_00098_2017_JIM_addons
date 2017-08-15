@@ -175,7 +175,7 @@ class StockPickingSGA(models.Model):
         return self.with_context(ctx).new_mecalux_file()
 
     def new_mecalux_file(self, operation=False):
-        import ipdb; ipdb.set_trace()
+        
         ctx = dict(self.env.context)
         if operation:
             ctx['operation'] = operation
