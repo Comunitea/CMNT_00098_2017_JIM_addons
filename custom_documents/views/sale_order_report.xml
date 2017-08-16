@@ -28,26 +28,36 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr t-foreach="doc.order_line" t-as="line">
-                                <td>
-                                    <span t-field="line.product_id.default_code"/>
-                                </td>
-                                <td>
-                                    <span t-field="line.name_report"/>
-                                </td>
-                                <td>
-                                    <span t-field="line.product_uom_qty"/>
-                                </td>
-                                <td>
-                                    <span t-field="line.price_unit"/>
-                                </td>
-                                <td>
-                                    <span t-field="line.discount"/>
-                                </td>
-                                <td>
-                                    <span t-field="line.price_subtotal"/>
-                                </td>
-                            </tr>
+                            <t t-foreach="doc.order_line" t-as="line">
+                                <tr>
+                                    <td>
+                                        <span t-field="line.product_id.default_code"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.name_report"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.product_uom_qty"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.price_unit"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.discount"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="line.price_subtotal"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td><span t-field="line.note"/></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </t>
                         </tbody>
                         <tfoot>
                             <tr>
