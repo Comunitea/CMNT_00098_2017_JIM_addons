@@ -55,6 +55,14 @@
                                     <td></td>
                                     <td></td>
                                 </tr>
+                                <tr t-if="line.note">
+                                    <td></td>
+                                    <td><span t-field="line.note"/></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
                             </t>
                         </tbody>
                         <tfoot>
