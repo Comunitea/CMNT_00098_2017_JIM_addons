@@ -14,11 +14,14 @@ class StockMove(models.Model):
     def move_recheck_availability(self):
 
         move = self[0]
-        if move.state in ('cancel', 'waiting'):
-            move.state='waiting'
 
-        if move.state=='waiting':
+        if move.picking_id.state not in ('waiting', 'confirmed','partially_available'):
+            raise ValidationError (_('Pick state incorrect'))
+        if move.state in ('cancel', 'waiting'):
+            move.state = 'waiting'
+
+        if move.state == 'waiting':
             move.action_assign()
-        elif move.state=='confirmed':
+        elif move.state == 'confirmed':
             move.force_assign()
 
