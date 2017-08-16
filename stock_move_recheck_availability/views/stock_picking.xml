@@ -1,21 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="stock_move_tree_recheck_availabitliy" model="ir.ui.view">
-            <field name="name">stock.move.tree.recheck.availability</field>
+
+        <record id="view_move_picking_tree_recheck_availability" model="ir.ui.view">
+            <field name="name">view_move_picking_tree_recheck_availability</field>
             <field name="model">stock.move</field>
-            <field eval="10" name="priority"/>
+            <field name="inherit_id" ref="stock.view_move_picking_tree"/>
             <field name="arch" type="xml">
-                <tree string="Moves">
-                    <field name="product_id"/>
-                    <field name="product_uom_qty"/>
-                    <field name="product_uom" options="{'no_open': True, 'no_create': True}" string="Unit of Measure" groups="product.group_uom"/>
-                    <field name="state"/>
-                    <button name="move_recheck_availability" string="Force recheck availability" type="object" icon="fa-refresh"
+
+            <field name="state" position="after">
+              <button name="move_recheck_availability" string="Force recheck availability" type="object" icon="fa-refresh"
                             groups="stock_disable_force_availability_button.group_stock_force_availability"
-                            states="confirmed,assigned,waiting,partially_available"/>
-                </tree>
+                            states="waiting,confirmed,partially_available,"/>
+            </field>
+
             </field>
         </record>
+        <!--view_stock_return_picking_form-->
     </data>
 </odoo>
