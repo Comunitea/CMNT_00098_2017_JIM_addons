@@ -95,7 +95,7 @@ class StockPickingSGA(models.Model):
         return True if self.env['ir.config_parameter'].get_param('picking_auto') == u'True' else False
 
     sga_operation = fields.Selection([('A', 'Alta'), ('M', 'Modificacion'),
-                                      ('B', 'Baja'), ('F', 'Modificacion + Alta')], default='A')
+                                      ('B', 'Baja'), ('F', 'Modificacion + Alta')], default='A', copy=False)
     warehouse_id = fields.Many2one(related="picking_type_id.warehouse_id")
     warehouse_code = fields.Char(related="picking_type_id.warehouse_id.code")
 
@@ -117,7 +117,7 @@ class StockPickingSGA(models.Model):
                                    ('EE', 'Error en exportacion'),
                                    ('EI', 'Error en importacion'),
                                    ('MT', 'Realizado'),
-                                   ('MC', 'Cancelado')], 'Estado Mecalux', default="NI", track_visibility='onchange')
+                                   ('MC', 'Cancelado')], 'Estado Mecalux', default="NI", track_visibility='onchange', copy=False)
 
     shipping_city = fields.Char(compute=get_shipping_city, string ="Provincia de entrega")
     shipping_partner_name = fields.Char(compute=get_shipping_city, string="Entregar a")
@@ -141,6 +141,8 @@ class StockPickingSGA(models.Model):
             if picking_type:
                 if picking_type.sga_integrated:
                     vals['sga_state'] = "NE"
+                else:
+                    vals['sga_state'] = "NI"
         pick = super(StockPickingSGA, self).create(vals)
         return pick
 
@@ -175,7 +177,7 @@ class StockPickingSGA(models.Model):
         return self.with_context(ctx).new_mecalux_file()
 
     def new_mecalux_file(self, operation=False):
-        
+
         ctx = dict(self.env.context)
         if operation:
             ctx['operation'] = operation
