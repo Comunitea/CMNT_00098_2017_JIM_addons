@@ -31,6 +31,9 @@ msgstr "Nº albarán"
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Global discount"
 msgstr "Descuento global"
 

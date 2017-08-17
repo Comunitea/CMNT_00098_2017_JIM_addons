@@ -29,6 +29,25 @@ class SaleOrder(models.Model):
     work_to_do = fields.Text('Trabajo a realizar')
     route_id = fields.Many2one('stock.location.route', string='Force Route', domain=[('sale_selectable', '=', True)])
 
+    @api.model
+    def create_web(self, vals):
+        partner = self.env['res.partner'].browse(vals['partner_id'])
+        vals.update({'payment_term_id': partner.property_payment_term_id.id})
+        vals.update({'payment_mode_id': partner.customer_payment_mode_id.id})
+        vals.update({'pricelist_id': partner.property_product_pricelist.id})
+        vals.update({'fiscal_position_id':
+                    partner.property_account_position_id.id})
+        for line in vals['order_line']:
+            dict_line = line[2]
+            product = self.env['product.product'].\
+                browse(dict_line['product_id'])
+            route_id = product.route_ids and product.route_ids[0]
+            lqdr = product.lqdr
+            dict_line.update({'route_id': route_id.id})
+            dict_line.update({'lqdr': lqdr})
+        res = super(SaleOrder, self).create(vals)
+        return res.id
+
     @api.onchange('partner_id')
     def onchange_partner_id_warning(self):
         if not self.partner_id:

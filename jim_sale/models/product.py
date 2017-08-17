@@ -39,13 +39,14 @@ class ProductProduct(models.Model):
     customer_prices_count = fields.\
         Integer(compute='_get_customer_prices_count', string='#Prices')
 
-    def get_price_from_web(self, partner_id):
+    def get_price_from_web(self, partner_id, quantity=1):
         ctx = dict(self.env.context)
         pricelist_id = self.env['res.partner'].browse(
             partner_id).property_product_pricelist
         ctx.update({
             'partner': partner_id,
-            'pricelist': pricelist_id.id
+            'pricelist': pricelist_id.id,
+            'quantity': quantity
         })
         return self.with_context(ctx).price
 

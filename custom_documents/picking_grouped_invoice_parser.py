@@ -28,7 +28,8 @@ class PickingGroupedInvoiceParser(models.AbstractModel):
         invoice_lines = {}
         for invoice in self.env['account.invoice'].browse(docids):
             invoice_lines[invoice.id] = {}
-            for line in invoice.invoice_line_ids:
+            for line in invoice.invoice_line_ids.filtered(
+                    lambda x: not x.promotion_line):
                 if len(line.mapped('move_line_ids.picking_id')) > 1:
                     moves_picking_dict = self.env['stock.move'].read_group([
                         ('invoice_line_id', '=', line.id)],

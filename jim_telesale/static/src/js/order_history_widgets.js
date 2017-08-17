@@ -8,7 +8,7 @@ var OrderWidget = NewOrderWidgets.OrderWidget.include({
     // Get chained_discount and description to the line
     get_line_fields: function(){
         var res = this._super();
-        res.push('chained_discount', 'name')
+        res.push('chained_discount', 'name', 'note')
         return res
     },
     // Get chained_discount and description to the line

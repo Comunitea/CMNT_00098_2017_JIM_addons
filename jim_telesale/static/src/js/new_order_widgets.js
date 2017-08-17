@@ -40,6 +40,9 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
 
         this.$('.col-description').blur(_.bind(this.set_value, this, 'description'));
         this.$('.col-description').focus(_.bind(this.click_handler, this, 'description'));
+
+        this.$('.col-note').blur(_.bind(this.set_value, this, 'note'));
+        this.$('.col-note').focus(_.bind(this.click_handler, this, 'note'));
     },
 
 
@@ -167,14 +170,9 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         // Always set lqdr route name and description.
         if (product_obj){
             var lqdr = (product_obj.lqdr)  ? _t("Yes") : _t("No")
-            // var description = product_obj.name;
-            // if (product_obj.description_sale){
-            //     description = description + '\n' + product.description_sale
-            // }
 
             this.model.set('lqdr', lqdr);
             this.model.set('route_name', product_obj.route_name);
-            // this.model.set('description', description);
         }
 
         //set handler for fiscount plus field.

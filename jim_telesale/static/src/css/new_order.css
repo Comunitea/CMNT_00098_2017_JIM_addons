@@ -59,7 +59,11 @@
 }
 
 .telesale  #leftpart .order-container .order-line-table th.header-description{
-    width: 30% !important;;
+    width: 20% !important;;
+}
+
+.telesale  #leftpart .order-container .order-line-table th.header-note{
+    width: 19% !important;;
 }
 
 .telesale  #leftpart .order-container .order-line-table th.header-lqdr{
@@ -72,16 +76,16 @@
 
 
 .telesale  #leftpart .order-container .order-line-table th.header-qty{
-    width: 7% !important;;
+    width: 5% !important;;
 }
 .telesale  #leftpart .order-container .order-line-table th.header-unit{
-    width: 7% !important;;
+    width: 5% !important;;
 }
 .telesale  #leftpart .order-container .order-line-table th.header-pvp{
-    width: 7% !important;;
+    width: 5% !important;;
 }
 .telesale  #leftpart .order-container .order-line-table th.header-plus-discount{
-    width: 10% !important;;
+    width: 7% !important;;
 }
 
 /* Header and cell LQDR field*/

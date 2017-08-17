@@ -35,6 +35,7 @@
     <t t-extend="Order-Widget">
         <t t-jquery=".header-product" t-operation="after">
             <th class="header-description">Description</th>
+            <th class="header-note">Notes</th>
             <th class="header-lqdr">LQDR</th>
             <th class="header-route">Wareouse</th>
             <th class="header-global-stock">Available</th>
@@ -56,6 +57,17 @@
                 </t>
                 <t t-if="widget.model.mode != 'template_variants'">
                    <textarea onclick="this.select()" class="col-description notes mandatory"  name="description" ><t t-esc="widget.model.get('description')"/></textarea>
+                </t>
+            </td>
+            <!-- Note column -->
+            <td class="cell-note">
+                <t t-if="widget.model.mode == 'template_variants'">
+                    <div style="text-align:right;padding-right:9px">
+                        <span t-esc="widget.model.get('note')"/>
+                    </div>
+                </t>
+                <t t-if="widget.model.mode != 'template_variants'">
+                   <textarea onclick="this.select()" class="col-note notes mandatory"  name="note" ><t t-esc="widget.model.get('note')"/></textarea>
                 </t>
             </td>
             <!-- LQDR column -->

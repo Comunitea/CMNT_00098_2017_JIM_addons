@@ -54,7 +54,7 @@
                                 <td><span t-esc="invoice_line['default_code']"/></td>
                                 <td><span t-esc="invoice_line['name_report']"/></td>
                                 <td><span t-esc="invoice_line['quantity']"/></td>
-                                <td><span t-esc="invoice_line['price_unit']"/></td>
+                                <td><span t-esc="'{0:.2f}'.format(invoice_line['price_unit'])"/></td>
                                 <td t-if="o.company_id.show_discount"><span t-esc="invoice_line['discount']"/></td>
                                 <td><span t-esc="invoice_line['price_subtotal']"/></td>
                             </tr>
@@ -74,7 +74,7 @@
                                     <td><span t-esc="invoice_line['default_code']"/></td>
                                     <td><span t-esc="invoice_line['name_report']"/></td>
                                     <td><span t-esc="invoice_line['quantity']"/></td>
-                                    <td><span t-esc="invoice_line['price_unit']"/></td>
+                                    <td><span t-esc="'{0:.2f}'.format(invoice_line['price_unit'])"/></td>
                                     <td t-if="o.company_id.show_discount"><span t-esc="invoice_line['discount']"/></td>
                                     <td><span t-esc="invoice_line['price_subtotal']"/></td>
                                 </tr>
@@ -115,12 +115,18 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="col-xs-4 pull-right">
+                    <div class="col-xs-4 pull-right"  style="page-break-inside:avoid">
                         <table class="table table-condensed">
                             <tr class="border-black">
                                 <td><strong>Subtotal</strong></td>
                                 <td class="text-right">
                                     <span t-field="o.amount_untaxed" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                </td>
+                            </tr>
+                            <tr t-if="o.global_discount_amount and o.company_id.show_discount">
+                                <td>Global discount</td>
+                                <td class="text-right">
+                                    <span t-field="o.global_discount_amount"/>
                                 </td>
                             </tr>
                             <t t-foreach="o._get_tax_amount_by_group()" t-as="amount_by_group">
