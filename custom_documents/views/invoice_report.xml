@@ -152,7 +152,7 @@
                     </div>
 
 
-                    <div class="radius_border row">
+                    <div class="radius_border row" style="page-break-inside:avoid">
                         <p t-if="o.payment_mode_id">Payment mode: <span t-field="o.payment_mode_id.name"/></p>
                         <p t-if="o.payment_mode_id">Bank account: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number"/></p>
                         <p>Maturity:
