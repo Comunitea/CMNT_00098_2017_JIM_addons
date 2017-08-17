@@ -88,6 +88,11 @@
                         <field name="purchase_id"  class="oe_inline" attrs="{'invisible': [('purchase_id', '=', False)]}"/>
                     </div>
                 </field>
+                <field name="pack_operation_product_ids" position="after">
+                    <group string="Observations" attrs="{'invisible': [('sale_id', '=', False)]}">
+                        <field name="observations" nolabel="1"/>
+                    </group>
+                </field>
 
             </field>
         </record>

@@ -11,7 +11,8 @@
     'depends': [
         'stock',
         'delivery',
-        'mrp'
+        'mrp',
+        'telesale'
     ],
     'contributors': [
         "Comunitea ",
@@ -21,7 +22,8 @@
         'views/product_view.xml',
         'views/stock_view.xml',
         'views/company_view.xml',
-        'security/stock_security.xml'
+        'security/stock_security.xml',
+        'wizard/stock_picking_return.xml'
     ],
     "installable": True
 }
