@@ -11,4 +11,5 @@ class ResCompany(models.Model):
 
     qweb_footer = fields.Html(translate=True)
     qweb_invoice_footer = fields.Html(translate=True)
+    show_discount = fields.Boolean(default=True)
     iso_logo = fields.Binary()

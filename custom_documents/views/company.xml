@@ -11,6 +11,9 @@
         <field name="arch" type="xml">
             <notebook position="inside">
                 <page string="Qweb">
+                    <group>
+                        <field name="show_discount"/>
+                    </group>
                     <separator string="ISO logo"/>
                     <field name="iso_logo" widget="image"/>
                     <separator string="Generic footer"/>
