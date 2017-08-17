@@ -33,7 +33,7 @@ class ProductProduc(models.Model):
         #Compra realizada desde Jim o SE a EME
         if company_id in (1, 8) and \
                         partner_id == 11:
-            pricelist_id = 75  # tarifa de produccion
+            pricelist_id = 39  # tarifa de produccion
             pricelist = self.env['product.pricelist'].browse(pricelist_id)
             price = pricelist.get_product_price(self, 1.0,
                                     self.env['res.partner'].browse(partner_id))
