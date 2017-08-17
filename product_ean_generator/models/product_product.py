@@ -4,7 +4,7 @@
 
 from odoo import models, fields, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
-
+#import barcode#
 
 DEFAULT_PRE = "843540%"
 
@@ -34,24 +34,49 @@ class ProductProduct(models.Model):
         return super(ProductProduct, self).write(vals)
 
     def next_barcode(self):
-        sequence = self.env.ref('product_ean_generator.seq_product_ean_auto')
-        EAN = sequence.next_by_id()
-        #
-        # sql_last_barcode = "select MAX(left(barcode,12)) from product_product " \
-        #                   "where length(barcode)=13 and barcode like '%s'" % DEFAULT_PRE
-        #
-        # self.env.cr.execute(sql_last_barcode)
-        # EAN = self.env.cr.fetchall()[0][0]
-        EAN = str(int(EAN) + 1)
-        iSum = 0
-        for i in range(len(EAN) - 1, 0, -1):
-            if i % 2 == 0:
-                iSum += int(EAN[i])
-            else:
-                iSum += int(EAN[i]) * 3
 
-        iCheckSum = (10 - (iSum % 10)) % 10
-        return EAN + str(iCheckSum)
+        def __sumdigits(chk, start=0, end=1, step=2, mult=1):
+            return reduce(lambda x, y: int(x) + int(y), list(chk[start:end:step])) * mult
+
+        def eanCheckDigit(chk):
+            """Returns the checksum digit of an EAN-13/8 code"""
+            if chk.isdigit() and len(chk) == 12:
+                m0 = 1
+                m1 = 3
+                _len = 12
+                t = 10 - ((__sumdigits(chk, start=0, end=_len, mult=m0) + __sumdigits(chk, start=1, end=_len, mult=m1)) % 10) % 10
+
+                if t == 10:
+                    return 0
+                else:
+                    return t
+            return None
+        sequence = self.env.ref('product_ean_generator.seq_product_ean_auto')
+        ean12 = sequence.next_by_id()
+        return '%s%s'%(ean12, eanCheckDigit(str(ean12)))
+
+
+    def next_barcode2(self):
+
+        def ean_checksum(ean):
+            code = list(ean)
+            if len(code) != 12:
+                return -1
+            oddsum = evensum = total = 0
+            code = code[:-1]  # Remove checksum
+            for i in range(len(code)):
+                if i % 2 == 0:
+                    evensum += int(code[i])
+                else:
+                    oddsum += int(code[i])
+            total = oddsum * 3 + evensum
+            return int((10 - total % 10) % 10)
+
+        sequence = self.env.ref('product_ean_generator.seq_product_ean_auto')
+
+        ean12 = sequence.next_by_id()
+        return '%s%s'%(ean12, ean_checksum(str(ean12)))
+
 
     @api.model
     def create(self, vals):
