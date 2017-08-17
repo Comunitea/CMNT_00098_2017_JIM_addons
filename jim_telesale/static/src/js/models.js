@@ -20,7 +20,8 @@ TsModels.TsModel = TsModels.TsModel.extend({
     get_line_vals: function(line, order_model){
         var res = TsModelSuper.prototype.get_line_vals.call(this, line, order_model);
         res.chained_discount = line.chained_discount || '0.00';
-        res.description = line.name || '0.00';
+        res.description = line.name || '';
+        res.note = line.note || '';
         return res
     },
 
@@ -39,6 +40,7 @@ TsModels.Orderline.prototype.initialize = function(options){
         global_available_stock:  options.global_available_stock ||0.0,
         lqdr:  options.lqdr ||'',
         description:  options.description ||'',
+        note:  options.note ||'',
         route:  options.route ||'',
         chained_discount:  options.chained_discount || 0.0
     });
@@ -55,7 +57,8 @@ var _exportJSON_ = TsModels.Orderline.prototype.export_as_JSON;
 TsModels.Orderline.prototype.export_as_JSON = function(){
     var res = _exportJSON_.call(this, {});
     var to_add = {chained_discount: this.get('chained_discount') || '0.0',
-                  description: this.get('description')}
+                  description: this.get('description'),
+                  note: this.get('note')}
     res = $.extend(res, to_add)
     return res
 }

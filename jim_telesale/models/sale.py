@@ -26,7 +26,8 @@ class SaleOrder(models.Model):
         if product_obj.route_ids:
             vals.update({'route_id': product_obj.route_ids[0].id})
         vals.update({'chained_discount': line.get('chained_discount', '0.00'),
-                     'name': line.get('description', '')})
+                     'name': line.get('description', ''),
+                     'note': line.get('note', '')})
         return vals
 
     @api.model
@@ -38,6 +39,7 @@ class SaleOrder(models.Model):
         if product_obj.route_ids:
             vals.update({'route_id': product_obj.route_ids[0].id})
         vals.update({'name': line.get('description', ''),
+                     'note': line.get('note', ''),
                      'chained_discount': line.get('chained_discount', '0.00')})
         return vals
 
