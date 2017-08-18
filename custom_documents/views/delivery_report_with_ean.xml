@@ -54,7 +54,7 @@
                                     <th>Description</th>
                                     <th>Quantity</th>
                                     <th>Price/unit</th>
-                                    <th>Disc.</th>
+                                    <th t-if="o.company_id.show_discount">Disc.</th>
                                     <th>Amount</th>
                                 </tr>
                             </thead>
@@ -73,7 +73,7 @@
                                         <td>
                                             <span t-field="line.sale_price_unit"/>
                                         </td>
-                                        <td>
+                                        <td t-if="o.company_id.show_discount">
                                             <span t-field="line.sale_discount"/>
                                         </td>
                                         <td>
@@ -85,7 +85,7 @@
                                         <td>EAN <span t-field="line.product_id.barcode"/></td>
                                         <td></td>
                                         <td></td>
-                                        <td></td>
+                                        <td t-if="o.company_id.show_discount"></td>
                                         <td></td>
                                     </tr>
                                 </t>
@@ -103,7 +103,7 @@
                                         <td>
                                             <span t-field="service_line.price_unit"/>
                                         </td>
-                                        <td>
+                                        <td t-if="o.company_id.show_discount">
                                             <span t-field="service_line.discount"/>
                                         </td>
                                         <td>
@@ -115,7 +115,7 @@
                                         <td>EAN <span t-field="service_line.product_id.barcode"/></td>
                                         <td></td>
                                         <td></td>
-                                        <td></td>
+                                        <td> t-if="o.company_id.show_discount"</td>
                                         <td></td>
                                     </tr>
                                 </t>
@@ -141,7 +141,7 @@
                                             <span t-field="o.delivery_amount"/>
                                         </td>
                                     </tr>
-                                    <tr t-if="o.global_discount_amount">
+                                    <tr t-if="o.global_discount_amount and o.company_id.show_discount">
                                         <td>Global discount</td>
                                         <td class="text-right">
                                             <span t-field="o.global_discount_amount"/>

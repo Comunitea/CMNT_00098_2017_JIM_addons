@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_stock_return_picking_form_qties" model="ir.ui.view" >
+            <field name="name">view_stock_return_picking_form_qties</field>
+            <field name="model">stock.return.picking</field>
+            <field name="inherit_id" ref="stock.view_stock_return_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="colors">
+                        red:(qty_done - quantity + ordered_qty - quantity) != 0;
+                        green:(qty_done - quantity + ordered_qty - quantity) == 0
+                    </attribute>
+                </xpath>
+                <xpath expr="//tree/field[@name='quantity']" position="after">
+                    <field name="qty_done"/>
+                    <field name="ordered_qty"/>
+                </xpath>
+                <field name="location_id" position="before">
+                    <field name="picking_id" invisible="1"/>
+                    <field name="picking_type_id"/>
+                    <field name="only_return_location"/>
+                </field>
+                <xpath expr="//button[@name='create_returns']" position="after">
+                    <button name="create_returns_from_qty_done" string="Return qty done" type="object" class="btn-primary"/>
+                    <button name="create_returns_from_ordered_qty" string="Return ordered_qty" type="object" class="btn-primary"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>

@@ -42,7 +42,7 @@
                 <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
             </field>
             <field name="city" position="attributes">
-                <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
+                <attribute name="attrs">{'required': True}</attribute>
             </field>
             <field name="zip" position="attributes">
                 <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>

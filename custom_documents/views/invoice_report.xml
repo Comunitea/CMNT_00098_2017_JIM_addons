@@ -58,7 +58,7 @@
                                 <th>Description</th>
                                 <th>Quantity</th>
                                 <th>Price/unit</th>
-                                <th>Disc.</th>
+                                <th t-if="o.company_id.show_discount">Disc.</th>
                                 <th>Amount</th>
                             </tr>
                         </thead>
@@ -74,9 +74,10 @@
                                     <span t-field="line.quantity"/>
                                 </td>
                                  <td>
-                                    <span t-field="line.price_unit"/>
+                                     <span t-esc="'{0:.2f}'.format(line.price_unit)"/>
+                                    <!--span t-field="line.price_unit"/-->
                                 </td>
-                                <td>
+                                <td t-if="o.company_id.show_discount">
                                     <span t-field="line.discount"/>
                                 </td>
                                 <td>
@@ -90,7 +91,7 @@
                                 <td></td>
                                 <td></td>
                                 <td></td>
-                                <td></td>
+                                <td t-if="o.company_id.show_discount"></td>
                                 <td></td>
                             </tr>
                         </tfoot>
@@ -152,7 +153,7 @@
                     </div>
 
 
-                    <div class="radius_border row">
+                    <div class="radius_border row" style="page-break-inside:avoid">
                         <p t-if="o.payment_mode_id">Payment mode: <span t-field="o.payment_mode_id.name"/></p>
                         <p t-if="o.payment_mode_id">Bank account: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number"/></p>
                         <p>Maturity:

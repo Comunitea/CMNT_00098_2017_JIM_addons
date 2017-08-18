@@ -43,7 +43,7 @@
                             <th>Description</th>
                             <th>Quantity</th>
                             <th>Price/unit</th>
-                            <th>Discount</th>
+                            <th t-if="o.company_id.show_discount">Discount</th>
                             <th>Amount</th>
                         </tr>
                     </thead>
@@ -54,7 +54,12 @@
                                 <td><span t-esc="invoice_line['default_code']"/></td>
                                 <td><span t-esc="invoice_line['name_report']"/></td>
                                 <td><span t-esc="invoice_line['quantity']"/></td>
-                                <td><span t-esc="invoice_line['price_unit']"/></td>
+                                <td><span t-esc="'{0:.2f}'.format(invoice_line['price_unit'])"/></td>
+                                <td t-if="o.company_id.show_discount"><span t-esc="invoice_line['discount']"/></td>
+                                <td>
+                                    <!--span t-esc="invoice_line['price_unit']"/-->
+                                    <span t-esc="'{0:.2f}'.format(invoice_line['price_unit'])"/>
+                                </td>
                                 <td><span t-esc="invoice_line['discount']"/></td>
                                 <td><span t-esc="invoice_line['price_subtotal']"/></td>
                             </tr>
@@ -74,8 +79,8 @@
                                     <td><span t-esc="invoice_line['default_code']"/></td>
                                     <td><span t-esc="invoice_line['name_report']"/></td>
                                     <td><span t-esc="invoice_line['quantity']"/></td>
-                                    <td><span t-esc="invoice_line['price_unit']"/></td>
-                                    <td><span t-esc="invoice_line['discount']"/></td>
+                                    <td><span t-esc="'{0:.2f}'.format(invoice_line['price_unit'])"/></td>
+                                    <td t-if="o.company_id.show_discount"><span t-esc="invoice_line['discount']"/></td>
                                     <td><span t-esc="invoice_line['price_subtotal']"/></td>
                                 </tr>
                             </t>
@@ -87,7 +92,7 @@
                             <td></td>
                             <td></td>
                             <td></td>
-                            <td></td>
+                            <td t-if="o.company_id.show_discount"></td>
                             <td></td>
                         </tr>
                     </tfoot>
@@ -146,7 +151,7 @@
                     </div>
                 </div>
 
-                <div class="radius_border row">
+                <div class="radius_border row"  style="page-break-inside:avoid">
                     <p t-if="o.payment_mode_id">Payment mode: <span t-field="o.payment_mode_id.name"/></p>
                     <p t-if="o.payment_mode_id">Bank account: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number"/></p>
                     <p>Maturity:
