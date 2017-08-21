@@ -37,7 +37,7 @@ class SaleOrder(models.Model):
         vals.update({'pricelist_id': partner.property_product_pricelist.id})
         vals.update({'fiscal_position_id':
                     partner.property_account_position_id.id})
-        for line in vals['order_line']:
+        for line in vals['order.line']:
             dict_line = line[2]
             product = self.env['product.product'].\
                 browse(dict_line['product_id'])
@@ -45,7 +45,8 @@ class SaleOrder(models.Model):
             lqdr = product.lqdr
             dict_line.update({'route_id': route_id.id})
             dict_line.update({'lqdr': lqdr})
-        return super(SaleOrder, self).create(vals)
+        res = super(SaleOrder, self).create(vals)
+        return res.id
 
     @api.onchange('partner_id')
     def onchange_partner_id_warning(self):
