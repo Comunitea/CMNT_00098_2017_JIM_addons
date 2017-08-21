@@ -63,7 +63,7 @@ class BaseExtClass(models.Model):
 
     @api.multi
     def write(self, vals):
-        res = super(BaseExtClass, item).write(vals)
+        res = super(BaseExtClass, self).write(vals)
         for item in self:
             if item.must_notify(vals):
                 item.set_props()
