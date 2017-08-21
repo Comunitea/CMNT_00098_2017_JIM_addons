@@ -14,7 +14,8 @@
         'jim_sale',
         'product_tags',
         'purchase',
-        'jesie'
+        'jesie',
+        'sga_file'
     ],
     'contributors': [
         "Miguel Ángel García ",
