@@ -35,11 +35,13 @@ class StockInventoryLineSGA(models.Model):
     @api.depends('location_id', 'product_id', 'package_id', 'product_uom_id', 'company_id', 'prod_lot_id', 'partner_id')
     def _compute_global_qty(self):
 
-        ctx = dict(self._context)
-        ctx.update({'force_company': self.company_id.id, 'location_id': [self.location_id.id]})
-        total_qties = self.product_id.sudo()._product_available()
-        if total_qties:
-            self.global_qty = total_qties[self.product_id.id]['qty_available']
+
+        domain = ([('product_id', '=', self.product_id.id), ('location_id', '=', self.location_id.id)])
+        quants_res = dict((item['product_id'][0], item['qty']) for item in
+                          self.env['stock.quant'].sudo().read_group(domain, ['product_id', 'qty'], ['product_id']))
+
+        print quants_res
+        self.global_qty = quants_res.get(self.product_id.id, 0.0)
 
         # if not self.product_id:
         #     self.global_qty = 0
