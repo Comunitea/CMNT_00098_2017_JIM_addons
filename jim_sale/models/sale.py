@@ -37,7 +37,7 @@ class SaleOrder(models.Model):
         vals.update({'pricelist_id': partner.property_product_pricelist.id})
         vals.update({'fiscal_position_id':
                     partner.property_account_position_id.id})
-        for line in vals['order.line']:
+        for line in vals['order_line']:
             dict_line = line[2]
             product = self.env['product.product'].\
                 browse(dict_line['product_id'])
