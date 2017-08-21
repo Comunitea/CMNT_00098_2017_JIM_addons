@@ -63,11 +63,8 @@ class BaseExtClass(models.Model):
 
     @api.multi
     def write(self, vals):
-        res = True
-
+        res = super(BaseExtClass, item).write(vals)
         for item in self:
-            res = super(BaseExtClass, item).write(vals)
-
             if item.must_notify(vals):
                 item.set_props()
                 item.sanitize_xml()
@@ -91,7 +88,7 @@ class BaseExtClass(models.Model):
         for item in self:
             if item.must_notify(None):
                 item.set_props(unlink=True)
-                item.item.sanitize_xml()
+                item.sanitize_xml()
 
                 Jesie.write('D', item.obj_type, item.id, item.xml)
 
