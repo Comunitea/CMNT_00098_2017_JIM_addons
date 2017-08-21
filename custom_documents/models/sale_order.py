@@ -67,3 +67,9 @@ class SaleOrderLine(models.Model):
             if '[%s]' % line.product_id.default_code in line.name:
                 name_report = line.name.replace('[%s]' % line.product_id.default_code, '')
             line.name_report = name_report
+
+    @api.multi
+    def _prepare_invoice_line(self, qty):
+        res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
+        res['promotion_line'] = self.promotion_line
+        return res

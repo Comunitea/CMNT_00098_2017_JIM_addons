@@ -5,11 +5,30 @@
 from openerp import models, api, fields
 
 
+class AccountInvoice(models.Model):
+
+    _inherit = 'account.invoice'
+
+    global_discount_amount = fields.Monetary(
+        compute='_compute_global_discount_amount')
+
+    @api.multi
+    def _compute_global_discount_amount(self):
+        for invoice in self:
+            global_discount_lines = invoice.invoice_line_ids.filtered(
+                lambda x: x.promotion_line)
+            if global_discount_lines:
+                invoice.global_discount_amount = sum(
+                    global_discount_lines.mapped('price_subtotal'))
+            else:
+                invoice.global_discount_amount = 0.0
+
 class AccountInvoiceLine(models.Model):
 
     _inherit = 'account.invoice.line'
 
     name_report = fields.Char(compute='_compute_name_report')
+    promotion_line = fields.Boolean("Rule Line")
 
     @api.multi
     def _compute_name_report(self):
