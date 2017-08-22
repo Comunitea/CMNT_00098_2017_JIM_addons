@@ -308,11 +308,11 @@
                     <strong>Shipping address:</strong>
                     <t t-if="o.dest_address_id">
                         <div t-field="o.dest_address_id"
-                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                            t-field-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": true, "phone_icons": True, "min_name": True}' />
                     </t>
                     <t t-if="not o.dest_address_id">
                         <div t-field="o.company_id.partner_id"
-                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}' />
+                                t-field-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": true, "phone_icons": True, "min_name": True}' />
                     </t>
                 </div>
                 <div class="col-xs-6">
