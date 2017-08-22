@@ -51,8 +51,8 @@ class ProductPricelistItem(models.Model):
                 SELECT 
                     'L' as "type",
                     CASE
-                        WHEN (pp.legacy_code IS NULL or pp.legacy_code = '') THEN CAST(pp.id AS VARCHAR(5))
-                        ELSE 'L' || pp.legacy_code
+                        WHEN (pp.legacy_code IS NULL or pp.legacy_code = '') THEN CAST((1000 + pp.id) AS VARCHAR(5))
+                        ELSE pp.legacy_code
                     END as "code",
                     COALESCE(pr.default_code, pt.template_code) as "item_code",
                     ppi.fixed_price as "price"
@@ -63,15 +63,15 @@ class ProductPricelistItem(models.Model):
                                                                                       and (date_end is null 
                                                                                             or date_end > now())
                     LEFT JOIN product_product pr on ppi.product_id = pr.id
-                                                and	pr.active = true
+                                                and	pr.active = True
                                                 and (pr.default_code is not null or pr.default_code <> '')
                     INNER JOIN product_template prt on pr.product_tmpl_id = prt.id
-                                                and prt.active = true
-                                                and prt.sale_ok = true
+                                                and prt.active = True
+                                                and prt.sale_ok = True
                                                 and prt."type" = 'product'
                                                 and prt.company_id = 1
                     LEFT JOIN product_template pt on ppi.product_tmpl_id = pt.id
-                                                and	pt.active = true
+                                                and	pt.active = True
                                                 and pt."type" = 'product'
                                                 and pt.company_id = 1
                 WHERE pp.company_id is null or pp.company_id = 1
@@ -98,26 +98,26 @@ class ProductPricelistItem(models.Model):
                     cp.price as "price"
                 FROM customer_price cp
                     INNER JOIN res_partner c on cp.partner_id = c.id
+                                            and c.active = True
                                             and c.is_company = True
                                             and c.customer = True
                                             and (c.email is not null and c.email <> '')
                                             and (c.web_password is not null and c.web_password <> '')
                                             and c.id = c.commercial_partner_id 
-                                            and c.ref in {}
                     LEFT JOIN product_product pr on cp.product_id = pr.id
-                                                and	pr.active = true
+                                                and	pr.active = True
                                                 and (pr.default_code is not null or pr.default_code <> '')
                     INNER JOIN product_template prt on pr.product_tmpl_id = prt.id
-                                                and prt.active = true
-                                                and prt.sale_ok = true
+                                                and prt.active = True
+                                                and prt.sale_ok = True
                                                 and prt."type" = 'product'
                                                 and prt.company_id = 1
                     LEFT JOIN product_template pt on cp.product_tmpl_id = pt.id
-                                                and	pt.active = true
+                                                and	pt.active = True
                                                 and pt."type" = 'product'
                                                 and pt.company_id = 1
                 WHERE cp.company_id = 1
-        """.format(Jesie.get_jesie_consumers_cardcode('PRICELIST'))
+        """
 
         self.env.cr.execute(sql_query)
         prices = self.env.cr.fetchall()

@@ -5,8 +5,8 @@ from .pd_base import BaseExtClass
 class Partner(BaseExtClass):
     _inherit = "res.partner"
 
-    fields_to_watch = ('id', 'name', 'vat', 'email', 'web_password', 'active', 'type', 'parent_id', 'street', 'zip',
-                       'city', 'country_id')
+    fields_to_watch = ('id', 'name', 'vat', 'email', 'web_password', 'property_product_pricelist', 'active', 'type',
+                       'parent_id', 'street', 'zip', 'city', 'country_id')
 
     def is_notifiable(self):
         # En res.partner se almacenan tanto las empresas, como empresas "hijas" (del mismo grupo), como contactos y
@@ -28,8 +28,11 @@ class Partner(BaseExtClass):
                 and self.commercial_partner_id.web_password:
 
             if self.commercial_partner_id.id == self.id:
+                self.fields_to_watch = ('id', 'name', 'vat', 'email', 'web_password', 'property_product_pricelist',
+                                        'active', 'type', 'parent_id')
                 return True
             else:
+                self.fields_to_watch = ('active', 'type', 'parent_id', 'street', 'zip', 'city', 'country_id')
                 return self.type == 'delivery'
 
         return False
@@ -69,25 +72,28 @@ class Partner(BaseExtClass):
         # El filtro de notificaciones viene hecho ya en "is_notifiable", de forma que aquí llegarán IC's o
         # direcciones de entrega
         if self.commercial_partner_id.id == self.id:
-            self.xml = pocustomer.format(self.ref or self.id,                   # CardCode
-                                         self.name,                             # CardName
-                                         self.default_contact_person or '',     # CntctPrsn
-                                         self.vat or '',                        # LicTradNum
-                                         self.email,                            # E_Mail
-                                         self.web_password,                     # Password
-                                         valid,                                 # validFor
-                                         self.property_product_pricelist.id)    # ListNum
+            self.xml = pocustomer.format(
+                    self.ref or self.id,                   # CardCode
+                    self.name,                             # CardName
+                    self.default_contact_person or '',     # CntctPrsn
+                    self.vat or '',                        # LicTradNum
+                    self.email,                            # E_Mail
+                    self.web_password,                     # Password
+                    valid,                                 # validFor
+                    self.property_product_pricelist.legacy_code or 1000 + self.property_product_pricelist.id)  # ListNum
+
             self.obj_type = '2'
 
         else:
-            self.xml = pocustomeraddress.format(self.parent_id.ref or self.parent_id.id,    # CardCode
-                                                self.legacy_code or '#' + str(self.id),     # LineNum
-                                                self.name,                      # Address
-                                                '1' if self.active else '-1',   # DefaultAddress
-                                                self.street or '',              # Street
-                                                self.street2 or '',             # Block
-                                                self.zip or '',                 # ZipCode
-                                                self.city or '',                # City
-                                                self.country_id.code or '')     # Country
+            self.xml = pocustomeraddress.format(
+                    self.parent_id.ref or self.parent_id.id,    # CardCode
+                    self.legacy_code or '#' + str(self.id),     # LineNum
+                    self.name,                                  # Address
+                    '1' if self.active else '-1',               # DefaultAddress
+                    self.street or '',                          # Street
+                    self.street2 or '',                         # Block
+                    self.zip or '',                             # ZipCode
+                    self.city or '',                            # City
+                    self.country_id.code or '')                 # Country
 
             self.obj_type = 'ADDRESS'
