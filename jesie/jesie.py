@@ -32,39 +32,6 @@ class Jesie(object):
             raise
 
     @staticmethod
-    def get_jesie_consumers_cardcode(obj_type=None, include_premium=False):
-        statement = """        
-                    SELECT 
-                        C.SBOCardCode
-                    FROM Consumer C WITH(NOLOCK)
-                        Inner Join Consumer_Lines CL WITH(NOLOCK) On C.Id = CL.ConsumerId And CL.Enabled = 1
-                        {}
-                    WHERE C.Enabled = 1
-                """
-
-        if obj_type:
-            statement = statement.format(" Inner Join ServiceType ST WITH(NOLOCK) On CL.ServiceTypeId = ST.Id "
-                                         "And ST.Name = '{}'".format(obj_type))
-        else:
-            statement = statement.format("")
-
-        if not include_premium:
-            statement += " AND IsNull(C.SBOCardCode, '') <> ''"
-
-        cnxn = pyodbc.connect(Jesie.__connection_string, autocommit=True)
-        cnxn.setdecoding(pyodbc.SQL_CHAR, encoding='cp850', to=str)
-        cnxn.setencoding(str, encoding='cp850')
-        cursor = cnxn.cursor()
-
-        cursor.execute(statement, ())
-        result = cursor.fetchall()
-
-        cursor.close()
-        cnxn.close()
-
-        return tuple([el for tupl in result for el in tupl])
-
-    @staticmethod
     def insert_jesie_prices(list_of_tuples, version, row_insert_limit=1000):
         # Tenemos que hacer inserciones en bloques de 1000 ya que es el máximo permitido.
         # The number of row value expressions in the INSERT statement exceeds the maximum allowed number of 1000 row
