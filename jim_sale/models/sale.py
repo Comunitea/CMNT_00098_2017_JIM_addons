@@ -128,15 +128,9 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_view_delivery(self):
-        '''
-        TODO HARDCODEADO
-        Añado para filtrar intercompañia
-
-        '''
         action = super(SaleOrder, self).action_view_delivery()
-        if 'domain' in action and action['domain']:
-            action['domain'].append(('picking_type_id.name', 'not like', '%Inter%'))
-
+        #if 'domain' in action and action['domain']:
+        #    action['domain'].append(('picking_type_id.name', 'not like', '%Inter%'))
         return action
 
     def confirm_checks(self):
