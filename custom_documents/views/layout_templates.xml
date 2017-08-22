@@ -251,11 +251,11 @@
                     <table class="custom_table">
                         <thead>
                             <tr>
-                                <th>Customer Nª</th>
+                                <th>Customer nª</th>
                                 <th>CIF/NIF</th>
                                 <th>Page nº</th>
                                 <th>Date</th>
-                                <th>Order Nº</th>
+                                <th>Invoice Nº</th>
                                 <th>Agent</th>
                             </tr>
                         </thead>

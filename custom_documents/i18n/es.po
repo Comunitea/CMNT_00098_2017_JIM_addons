@@ -442,6 +442,11 @@ msgid "Customer Nª"
 msgstr "Cliente Nª"
 
 #. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+msgid "Customer nª"
+msgstr "Cliente nª"
+
+#. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
 msgid "Customer Nº"
 msgstr "Nº de cliente"
@@ -638,6 +643,11 @@ msgstr "Operario"
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "Order Nº"
 msgstr "Nº pedido"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+msgid "Invoice Nº"
+msgstr "Nº factura"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
