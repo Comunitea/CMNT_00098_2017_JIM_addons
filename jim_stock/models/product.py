@@ -138,8 +138,9 @@ class ProductProduct(models.Model):
             self.env['stock.location'].search([('deposit', '=', True)]).ids
         company_ids = \
             self.env['res.company'].search([('no_stock', '=', True)]).ids
-        ctx = self._context.copy()
+
         for product in self:
+            ctx = self._context.copy()
             deposit_real_stock = 0
             deposit_available_stock = 0
             sale_lines_stock = 0
