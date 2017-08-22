@@ -43,6 +43,7 @@
             <field name="arch" type="xml">
                 <field name="theoretical_qty" position="before">
                     <field name="global_qty"/>
+                    <field name="stock_mecalux"/>
                 </field>
             </field>
         </record>
