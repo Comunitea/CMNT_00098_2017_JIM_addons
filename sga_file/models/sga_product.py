@@ -164,7 +164,8 @@ class SGAProductProduct(models.Model):
     @api.multi
     def get_sga_name_get(self):
         for prod in self:
-            sga_name_get = prod.name_get()[0][1]
+            #nombre sin la referencia
+            sga_name_get = prod.display_name
             if sga_name_get and ']' in sga_name_get:
                 sga_name_get = sga_name_get.split(']')[1].strip()
             prod.sga_name_get = sga_name_get
@@ -242,8 +243,7 @@ class SGAProductProduct(models.Model):
 
     @api.model
     def create(self, values):
-        if not values.get('product_short_desc', False):
-            values['product_short_desc'] = values['name']
+
         return super(SGAProductProduct, self).create(values)
 
 

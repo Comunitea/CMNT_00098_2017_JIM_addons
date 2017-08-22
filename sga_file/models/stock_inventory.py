@@ -108,6 +108,7 @@ class StockInventorySGA(models.Model):
         warehouse_code = "PLS"
         warehouse_id = self.env['stock.warehouse'].search([('code', '=', warehouse_code)])
         location_id = warehouse_id.lot_stock_id
+        line_number=0
         for line in sga_file_lines:
 
             if len(line) != 423:
@@ -146,12 +147,21 @@ class StockInventorySGA(models.Model):
             quantity = quantity_int + quantity_dec
 
             product_id = self.env['product.product'].search([('default_code', '=', product_code)])
+            line_number+=1
             if not product_id:
                 issue_vals = {'note': 'No existe el código: %s'%product_code,
-                              'file_name': sga_file.id}
+                              'file_name': sga_file_name}
                 self.env['stock.inventory.issue'].create(issue_vals)
+                print "%s: %s No está en ODOO"%(product_code, quantity)
+                continue
+            if len(product_id)>1:
+                issue_vals = {'note': 'Código duplicado: %s'%product_code,
+                              'file_name': sga_file_name}
+                self.env['stock.inventory.issue'].create(issue_vals)
+                print "%s: %s Codigo duplicado en ODOO"%(product_code, quantity)
                 continue
 
+            #print "%s %s: %s" % (line_number, product_code, quantity)
             product_company_id = product_id.company_id
 
             first = True
