@@ -2,7 +2,7 @@
 # © 2017 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 
 class SaleOrder(models.Model):
@@ -40,7 +40,9 @@ class SaleOrder(models.Model):
     def create(self, vals):
         order = super(SaleOrder, self).create(vals)
         if 'neutral_document' in vals:
-            if order.partner_shipping_id:
+            if order.partner_shipping_id and \
+                    not order.partner_shipping_id.is_company and \
+                            not order.partner_shipping_id.parent_id:
                 order.partner_shipping_id.active = not vals['neutral_document']
         return order
 
@@ -48,9 +50,14 @@ class SaleOrder(models.Model):
     def write(self, vals):
         super(SaleOrder, self).write(vals)
         if 'neutral_document' in vals:
-            for order in self:
-                if order.partner_shipping_id:
-                    order.partner_shipping_id.active = not vals['neutral_document']
+            message = _("The Neutral Document field of this sale order has "
+                        "been modified")
+            self.message_post(body=message)
+        for order in self:
+            if order.neutral_document and order.partner_shipping_id:
+                if not order.partner_shipping_id.is_company and \
+                        not order.partner_shipping_id.parent_id:
+                    order.partner_shipping_id.active = False
         return True
 
 
