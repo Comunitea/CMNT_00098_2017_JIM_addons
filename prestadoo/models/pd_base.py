@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from odoo import api, models
-from odoo.exceptions import AccessError
 from odoo.addons.jesie.jesie import Jesie
 from output_helper import OutputHelper, MsgTypes
 
@@ -47,74 +46,58 @@ class BaseExtClass(models.Model):
 
     @api.model
     def create(self, vals):
-        try:
-            res = super(BaseExtClass, self).create(vals)
+        res = super(BaseExtClass, self).create(vals)
 
-            if self.must_notify(vals):
-                res.set_props()
-                res.sanitize_xml()
+        if res.must_notify(vals):
+            res.set_props()
+            res.sanitize_xml()
 
-                Jesie.write('A', res.obj_type, res.id, res.xml)
+            Jesie.write('A', res.obj_type, res.id, res.xml)
+
+            OutputHelper.print_text("- oper_type: {}"
+                                    "\n\t- obj_type: {}"
+                                    "\n\t- obj_key: {}"
+                                    "\n\t- xml: {}"
+                                    .format('A', res.obj_type, res.id, res.xml), MsgTypes.OK)
+        return res
+
+    @api.multi
+    def write(self, vals):
+        res = super(BaseExtClass, self).write(vals)
+        for item in self:
+            if item.must_notify(vals):
+                item.set_props()
+                item.sanitize_xml()
+
+                Jesie.write('U', item.obj_type, item.id, item.xml)
 
                 OutputHelper.print_text("- oper_type: {}"
                                         "\n\t- obj_type: {}"
                                         "\n\t- obj_key: {}"
                                         "\n\t- xml: {}"
-                                        .format('A', res.obj_type, res.id, res.xml), MsgTypes.OK)
+                                        .format('U', item.obj_type, item.id, item.xml), MsgTypes.OK)
 
-        except Exception as ex:
-            raise AccessError("Error capturing 'create' event.\nTry again later.\n\nError: {}".format(ex))
-
-        return res
-
-    @api.multi
-    def write(self, vals):
-        res = True
-
-        try:
-            for item in self:
-                res = super(BaseExtClass, item).write(vals)
-
-                if item.must_notify(vals):
-                    item.set_props()
-                    item.sanitize_xml()
-
-                    Jesie.write('U', item.obj_type, item.id, item.xml)
-
-                    OutputHelper.print_text("- oper_type: {}"
-                                            "\n\t- obj_type: {}"
-                                            "\n\t- obj_key: {}"
-                                            "\n\t- xml: {}"
-                                            .format('U', item.obj_type, item.id, item.xml), MsgTypes.OK)
-
-                    post_write = getattr(item, "post_write", None)
-                    if callable(post_write):
-                        post_write()
-
-        except Exception as ex:
-            raise AccessError("Error capturing 'write' event.\nTry again later.\n\nError: {}".format(ex))
+                post_write = getattr(item, "post_write", None)
+                if callable(post_write):
+                    post_write()
 
         return res
 
     @api.multi
     def unlink(self):
-        try:
-            for item in self:
-                if item.must_notify(None):
-                    item.set_props(unlink=True)
-                    item.item.sanitize_xml()
+        for item in self:
+            if item.must_notify(None):
+                item.set_props(unlink=True)
+                item.sanitize_xml()
 
-                    Jesie.write('D', item.obj_type, item.id, item.xml)
+                Jesie.write('D', item.obj_type, item.id, item.xml)
 
-                    OutputHelper.print_text("- oper_type: {}"
-                                            "\n\t- obj_type: {}"
-                                            "\n\t- obj_key: {}"
-                                            "\n\t- xml: {}"
-                                            .format('D', item.obj_type, item.id, item.xml), MsgTypes.OK)
+                OutputHelper.print_text("- oper_type: {}"
+                                        "\n\t- obj_type: {}"
+                                        "\n\t- obj_key: {}"
+                                        "\n\t- xml: {}"
+                                        .format('D', item.obj_type, item.id, item.xml), MsgTypes.OK)
 
-            res = super(BaseExtClass, self).unlink()
-
-        except Exception as ex:
-            raise AccessError("Error capturing 'unlink' event.\nTry again later.\n\nError: {}".format(ex))
+        res = super(BaseExtClass, self).unlink()
 
         return res
