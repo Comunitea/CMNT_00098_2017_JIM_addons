@@ -1,6 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+
+        <record id="view_sale_order_form_no_edit_ship" model="ir.ui.view">
+            <field name="name">sale.order.form.no_edit_ship</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <field name="partner_id" position="attributes">
+                    <attribute name="context">{'no_edit': partner_id}</attribute>
+                </field>
+                <field name="partner_invoice_id" position="attributes">
+                    <attribute name="context">{'no_edit': partner_invoice_id}</attribute>
+                </field>
+                <field name="partner_shipping_id" position="attributes">
+                    <attribute name="context">{'no_edit': partner_shipping_id}</attribute>
+                </field>
+
+            </field>
+        </record>
+
         <!-- Ads lqdr and pending approval states -->
         <record id="view_order_form_add_states" model="ir.ui.view">
             <field name="name">sale.order.form.add.states</field>
