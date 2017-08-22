@@ -47,6 +47,7 @@
         'views/stock_transfer_report.xml',
         'views/purchase_order_report.xml',
         'views/purchase_quotation_report.xml',
+        'views/account.xml',
         'data/stock_mail_template.xml',
         'data/sale_mail_template.xml'
     ],

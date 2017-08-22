@@ -164,7 +164,8 @@ class SGAProductProduct(models.Model):
     @api.multi
     def get_sga_name_get(self):
         for prod in self:
-            sga_name_get = prod.name_get()[0][1]
+            #nombre sin la referencia
+            sga_name_get = prod.display_name
             if sga_name_get and ']' in sga_name_get:
                 sga_name_get = sga_name_get.split(']')[1].strip()
             prod.sga_name_get = sga_name_get
@@ -204,9 +205,7 @@ class SGAProductProduct(models.Model):
     def write(self, values):
 
         create_product_product = False
-        if not self.sga_prod_shortdesc and not \
-            values.get('sga_prod_shortdesc', False) and self.sga_name_get:
-            values['sga_prod_shortdesc'] = self.sga_name_get[0:80]
+
         fields_to_check = ('default_code', 'barcode', 'categ_id',
                            'sga_material_abc_code', 'sga_change_material_abc',
                            'name', 'packaging_ids', 'sga_prod_shortdesc')
@@ -228,7 +227,6 @@ class SGAProductProduct(models.Model):
                     if product[field]:
                         create = True
                     continue
-
                 if create or create_product_product:
                     new_mecalux_file = product.new_mecalux_file("F")
                     product.sga_state = "AC"
@@ -245,6 +243,7 @@ class SGAProductProduct(models.Model):
 
     @api.model
     def create(self, values):
+
         return super(SGAProductProduct, self).create(values)
 
 

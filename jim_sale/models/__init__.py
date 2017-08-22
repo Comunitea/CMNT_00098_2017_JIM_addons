@@ -7,3 +7,4 @@ import customer_price
 import sale
 import stock_picking
 import payment_term
+import sale_manage_variant
