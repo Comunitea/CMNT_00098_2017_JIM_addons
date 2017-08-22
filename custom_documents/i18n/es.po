@@ -22,6 +22,10 @@ msgstr ""
 msgid "Delivery cost"
 msgstr "Gasto de envío"
 
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_documents_account_invoice_view
+msgid "Apply global discount"
+msgstr "Aplicar descuento global"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
@@ -29,11 +33,14 @@ msgid "Picking Nº"
 msgstr "Nº albarán"
 
 #. module: custom_documents
+#: code:addons/custom_documents/models/account.py:24
+#: model:ir.model.fields,field_description:custom_documents.field_account_invoice_global_discount_percentage
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+#, python-format
 msgid "Global discount"
 msgstr "Descuento global"
 
@@ -435,6 +442,11 @@ msgid "Customer Nª"
 msgstr "Cliente Nª"
 
 #. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+msgid "Customer nª"
+msgstr "Cliente nª"
+
+#. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
 msgid "Customer Nº"
 msgstr "Nº de cliente"
@@ -631,6 +643,11 @@ msgstr "Operario"
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_sale
 msgid "Order Nº"
 msgstr "Nº pedido"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
+msgid "Invoice Nº"
+msgstr "Nº factura"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
