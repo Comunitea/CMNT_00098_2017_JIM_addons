@@ -81,12 +81,18 @@ class StockPickingSGA(models.Model):
     @api.multi
     def get_shipping_city(self):
         for pick in self:
-            if pick.sale_id.partner_shipping_id and pick.sale_id.partner_shipping_id.ref:
-                res = pick.sale_id.partner_shipping_id.state_id.name
-                name = pick.sale_id.partner_id.name
+            if pick.move_lines and pick.move_lines[0].move_dest_IC_id and pick.move_lines[0].move_dest_IC_id.picking_id:
+                pick_dest = pick.move_lines[0].move_dest_IC_id.picking_id
             else:
-                res = pick.partner_id.state_id.name
-                name = pick.partner_id.name
+                pick_dest = pick
+
+            if pick_dest.sale_id.partner_shipping_id and pick_dest.sale_id.partner_shipping_id.ref:
+                res = pick_dest.sale_id.partner_shipping_id.state_id.name
+                name = pick_dest.sale_id.partner_id.name
+            else:
+                res = pick_dest.partner_id.state_id.name
+                name = pick_dest.partner_id.name
+
             pick.shipping_city = res
             pick.shipping_partner_name = name
         return res

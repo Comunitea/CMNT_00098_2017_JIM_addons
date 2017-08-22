@@ -226,7 +226,6 @@ class SGAProductProduct(models.Model):
                     if product[field]:
                         create = True
                     continue
-
                 if create or create_product_product:
                     new_mecalux_file = product.new_mecalux_file("F")
                     product.sga_state = "AC"
@@ -243,6 +242,8 @@ class SGAProductProduct(models.Model):
 
     @api.model
     def create(self, values):
+        if not values.get('product_short_desc', False):
+            values['product_short_desc'] = values['name']
         return super(SGAProductProduct, self).create(values)
 
 
