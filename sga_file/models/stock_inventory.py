@@ -301,8 +301,14 @@ class StockInventorySGA(models.Model):
                 return mecalux_qty, inventory_id.id, new_inv_line.theoretical_qty
 
 
+    def global_stock_mecalux(self):
+        if self.location_id.barcode != 'PLS':
+            raise ValidationError ("Solo para almacén de Palas")
 
-
+        if not self.line_ids:
+            self.env['sga.file'].create_global_PST()
+        else:
+            raise ValidationError("Si quieres selccionar productos, debes hacerlo desde la vista tree de productos")
 
 
 
