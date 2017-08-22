@@ -204,9 +204,7 @@ class SGAProductProduct(models.Model):
     def write(self, values):
 
         create_product_product = False
-        if not self.sga_prod_shortdesc and not \
-            values.get('sga_prod_shortdesc', False) and self.sga_name_get:
-            values['sga_prod_shortdesc'] = self.sga_name_get[0:80]
+
         fields_to_check = ('default_code', 'barcode', 'categ_id',
                            'sga_material_abc_code', 'sga_change_material_abc',
                            'name', 'packaging_ids', 'sga_prod_shortdesc')

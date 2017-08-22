@@ -259,10 +259,9 @@ class StockInventorySGA(models.Model):
         #caso 1. Evidente ...
         if mecalux_qty == odoo_qty:
             return 0.00, False, 0.00
-        #caso 2. Menos en Odoo: Se regulariza a mayores la compañia del producto
 
+        #caso 2. Menos en Odoo: Se regulariza a mayores la compañia del producto
         elif mecalux_qty > odoo_qty:
-            #Creo un inventario para la compañia del producto
             company_id = product_id.company_id
             inventory_id = self.get_inventory_for(product_id, location_id, company_id)
             new_inv_line = self.new_inv_line(product_id, 0.0, inventory_id, mecalux_qty)
@@ -280,14 +279,13 @@ class StockInventorySGA(models.Model):
 
                 if force_company_qty > 0.00:
                     company_id = force_company
-            #creo un invetario (pallatium si tiene stock)
+
             inventory_id = self.get_inventory_for(product_id, location_id, company_id)
             new_inv_line = self.new_inv_line(product_id, 0.0, inventory_id, mecalux_qty)
             #si la cantidad en la compañia es mayor que lo que necesito ...
             if new_inv_line.theoretical_qty >= qty_to_reg:
                 new_inv_line.product_qty = new_inv_line.theoretical_qty - qty_to_reg
                 return 0.00, inventory_id.id, 0.00
-            # no me llega con esa cantidad, pongo a cero.
             else:
                 new_inv_line.product_qty = 0
                 qty_to_reg = mecalux_qty - new_inv_line.theoretical_qty
