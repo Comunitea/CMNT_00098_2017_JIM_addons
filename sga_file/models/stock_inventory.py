@@ -19,7 +19,7 @@ class StockInventoryIssue(models.Model):
     product_id = fields.Many2one('product.product')
     active = fields.Boolean('ACK', default="True")
     notes = fields.Char('Notas')
-    file = fields.Many2one('sga.file')
+
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
@@ -149,14 +149,14 @@ class StockInventorySGA(models.Model):
             product_id = self.env['product.product'].search([('default_code', '=', product_code)])
             line_number+=1
             if not product_id:
-                issue_vals = {'note': 'No existe el código: %s'%product_code,
-                              'file_name': sga_file_name}
+                issue_vals = {'notes': 'No existe el código: %s'%product_code,
+                              }
                 self.env['stock.inventory.issue'].create(issue_vals)
                 print "%s: %s No está en ODOO"%(product_code, quantity)
                 continue
             if len(product_id)>1:
-                issue_vals = {'note': 'Código duplicado: %s'%product_code,
-                              'file_name': sga_file_name}
+                issue_vals = {'notes': 'Código duplicado: %s'%product_code,
+                              }
                 self.env['stock.inventory.issue'].create(issue_vals)
                 print "%s: %s Codigo duplicado en ODOO"%(product_code, quantity)
                 continue
@@ -185,8 +185,7 @@ class StockInventorySGA(models.Model):
                     issue_vals = {
                           'pending_qty': original_qty - reg_qty_done,
                           'product_id': product_id.id,
-                          'note': 'Incidencia',
-                          'file_name': sga_file_name}
+                          'notes': 'Incidencia',}
                     self.env['stock.inventory.issue'].create(issue_vals)
                     quantity = 0.00
                 first = False
