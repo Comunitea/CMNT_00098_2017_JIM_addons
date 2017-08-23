@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import api, models
-from odoo.addons.jesie.jesie import Jesie
-from output_helper import OutputHelper, MsgTypes
+from ..output_helper import OutputHelper, MsgTypes
+from ..jesie import Jesie
 
 
 class BaseExtClass(models.Model):

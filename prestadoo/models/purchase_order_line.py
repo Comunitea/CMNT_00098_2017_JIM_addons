@@ -33,9 +33,6 @@ class PurchaseOrderLine(BaseExtClass):
             tools.format_date(self.date_planned)                    # ShipDate
         )
 
-        from output_helper import OutputHelper
-        OutputHelper.print_text("purchase.order.line.state: {}".format(self.state))
-
         # PurchaseOrder = 22
         # PurchaseDeliveryNote = 20
 

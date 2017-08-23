@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from odoo import api, models
-from odoo.addons.jesie.jesie import Jesie
+from ..jesie import Jesie
+from ..output_helper import OutputHelper as Console
 from .. import tools
-from output_helper import OutputHelper as Console
 
 
 class ProductPricelistItem(models.Model):
