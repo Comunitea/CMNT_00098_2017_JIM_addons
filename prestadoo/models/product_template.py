@@ -6,7 +6,7 @@ class ProductTemplate(BaseExtClass):
     _inherit = "product.template"
 
     fields_to_watch = ('id', 'default_code', 'template_code', 'name', 'barcode', 'description', 'web_global_stock',
-                       'product_brand_id', 'attribute_line_ids', 'tag_ids', 'active', 'type')
+                       'product_brand_id', 'attribute_line_ids', 'tag_ids', 'active', 'type', 'company_id')
 
     def is_notifiable(self):
         return self.type == "product"

@@ -34,9 +34,9 @@ class ProductAttributeValue(BaseExtClass):
                   """
 
             self.xml = xml.format(
-                self.code,                                              # Code
-                self.name,                                              # Name
-                self.sequence,                                          # Position
-                self.attribute_id.legacy_code or '#' + str(self.attribute_id.id)   # TallajeCode
+                self.code,                                                          # Code
+                self.name,                                                          # Name
+                self.sequence,                                                      # Position
+                self.attribute_id.legacy_code or '#' + str(self.attribute_id.id)    # TallajeCode
             )
             self.obj_type = 'TALLA'

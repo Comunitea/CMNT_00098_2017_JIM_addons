@@ -11,7 +11,7 @@ class ProductProduct(BaseExtClass):
         return self.product_tmpl_id.type == "product"
 
     fields_to_watch = ('id', 'default_code', 'name', 'barcode', 'description', 'web_global_stock',
-                       'product_brand_id', 'attribute_line_ids', 'tag_ids', 'active', 'type')
+                       'product_brand_id', 'attribute_line_ids', 'tag_ids', 'active', 'type', 'company_id')
 
     def set_props(self, unlink=False):
         poitem = """
