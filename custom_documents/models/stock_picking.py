@@ -20,6 +20,7 @@ class StockPicking(models.Model):
     global_discount_amount = fields.Monetary(
         compute='_compute_global_discount_amount')
     min_date_date = fields.Date(compute='_compute_min_date_date')
+    date_done_date = fields.Date(compute='_compute_min_date_date')
     sale_services = fields.Many2many(
         'sale.order.line', 'stock_picking_sale_order_line_services_rel',
         'picking_id', 'sale_id', compute='_compute_sale_services')
@@ -28,6 +29,10 @@ class StockPicking(models.Model):
     def _compute_min_date_date(self):
         for pick in self:
             pick.min_date_date = pick.min_date.split(' ')[0]
+            if pick.date_done:
+                pick.date_done_date = pick.date_done.split(' ')[0]
+            else:
+                pick.date_done_date = pick.min_date.split(' ')[0]
 
     # Si el albaran  se finalizó antes de las 17:30 entre semana se envía el
     # mismo día.

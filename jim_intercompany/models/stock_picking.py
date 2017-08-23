@@ -234,7 +234,7 @@ class StockMove(models.Model):
                                            "chaining them")
     move_purchase_IC_id = fields.Many2one('stock.move', 'Purchase Move IC',
                                       copy=False, index=True,
-                                      help="Optional: Rlated purchase IC "
+                                      help="Optional: Related purchase IC "
                                            "stock move when "
                                            "chaining them")
     extra_move = fields.Boolean('Extra move')

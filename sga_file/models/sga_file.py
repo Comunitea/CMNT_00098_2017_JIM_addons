@@ -533,6 +533,34 @@ class MecaluxFileHeader(models.Model):
         except:
             self.write_log("-- Error al mover >> %s a %s" %(self.name, new_path))
 
+
+    def create_global_PST(self):
+        data_file = datetime.now()
+        sga_file_name = self.set_file_name("PST", 3, data_file)
+        new_sga_file = self.create_new_sga_file(sga_file_name, ODOO_WRITE_FOLDER, create=True)
+        if new_sga_file:
+            f = open(new_sga_file.sga_file, 'a')
+            if f:
+                file_str = "PLS".ljust(265, " ") + "T"
+                f.write(file_str.encode("latin_1"))
+                f.close()
+                path = self.get_global_path()
+
+                sga_path = u'%s/%s' % (path, ODOO_WRITE_FOLDER)
+                old_name = f.name  # os.path.join(sga_path, f.name)
+
+                sga_path = u'%s/%s' % (path, ODOO_END_FOLDER)
+                new_name = old_name.replace(ODOO_WRITE_FOLDER, ODOO_END_FOLDER)
+
+                # cambio permisos
+                # os.chmod(old_name, stat.S_IXUSR)
+                os.rename(old_name, new_name)
+                # os.chmod(new_name, stat.S_IXOTH)
+
+            else:
+                raise ValidationError("Error al escribir los datos en %s" % new_sga_file.sga_file)
+
+
     @api.multi
     def check_sga_file(self, model, ids=[], code=False, create=True):
         # code = False,  version = False, field_list = False, field_ids = False, field_list_ids = False):

@@ -2,7 +2,8 @@
 # © 2017 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from openerp import models, api
+from openerp import models, api, _
+from odoo.exceptions import ValidationError
 
 
 class SaleManageVariant(models.TransientModel):
@@ -51,6 +52,7 @@ class SaleManageVariant(models.TransientModel):
     @api.multi
     @api.onchange('product_tmpl_id')
     def _onchange_product_tmpl_id(self):
+
         self.variant_line_ids = [(6, 0, [])]
         template = self.product_tmpl_id
         context = self.env.context
@@ -62,6 +64,11 @@ class SaleManageVariant(models.TransientModel):
             sale_order = record.order_id
         else:
             sale_order = record
+            if sale_order.template_lines:
+                if self.product_tmpl_id.id in [x.product_template.id for x in sale_order.template_lines]:
+                    self.product_tmpl_id = False
+                    raise ValidationError(
+                        _('You must modify this template from template lines in sale order.'))
         num_attrs = len(template.attribute_line_ids)
         if not template or not num_attrs:
             return
