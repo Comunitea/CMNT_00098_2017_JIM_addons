@@ -29,10 +29,11 @@ class Partner(BaseExtClass):
 
             if self.commercial_partner_id.id == self.id:
                 self.fields_to_watch = ('id', 'name', 'vat', 'email', 'web_password', 'property_product_pricelist',
-                                        'active', 'type', 'parent_id')
+                                        'active', 'type', 'parent_id', 'company_id')
                 return True
             else:
-                self.fields_to_watch = ('active', 'type', 'parent_id', 'street', 'zip', 'city', 'country_id')
+                self.fields_to_watch = ('active', 'type', 'parent_id', 'street', 'zip', 'city', 'country_id',
+                                        'company_id')
                 return self.type == 'delivery'
 
         return False

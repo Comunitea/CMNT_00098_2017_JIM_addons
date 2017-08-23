@@ -9,7 +9,10 @@ class StockMove(BaseExtClass):
     fields_to_watch = ('id', 'partner_id', 'name', 'date_done', 'amount_total', 'state')
 
     def is_notifiable(self):
-        return self.picking_type_id.code == "outgoing" and self.state == "done" and self.partner_id.is_notifiable()
+        return self.picking_type_id.code == "outgoing" \
+           and self.company_id.id == 1 \
+           and self.state == "done" \
+           and self.partner_id.is_notifiable()
 
     def set_props(self, unlink=False):
         podocuments = """

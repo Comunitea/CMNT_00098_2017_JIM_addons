@@ -69,12 +69,9 @@ class ProductPricelistItem(models.Model):
                                                 and prt.active = True
                                                 and prt.sale_ok = True
                                                 and prt."type" = 'product'
-                                                and prt.company_id = 1
                     LEFT JOIN product_template pt on ppi.product_tmpl_id = pt.id
                                                 and	pt.active = True
                                                 and pt."type" = 'product'
-                                                and pt.company_id = 1
-                WHERE pp.company_id is null or pp.company_id = 1
         """
 
         self.env.cr.execute(sql_query)
@@ -111,11 +108,9 @@ class ProductPricelistItem(models.Model):
                                                 and prt.active = True
                                                 and prt.sale_ok = True
                                                 and prt."type" = 'product'
-                                                and prt.company_id = 1
                     LEFT JOIN product_template pt on cp.product_tmpl_id = pt.id
                                                 and	pt.active = True
                                                 and pt."type" = 'product'
-                                                and pt.company_id = 1
                 WHERE cp.company_id = 1
         """
 

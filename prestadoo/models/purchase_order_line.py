@@ -9,10 +9,10 @@ class PurchaseOrderLine(BaseExtClass):
     fields_to_watch = ('order_id', 'id', 'product_id', 'product_qty', 'qty_received', 'date_planned', 'state')
 
     def is_notifiable(self):
-        return self.state == "purchase"
+        return self.state == "purchase" \
+           and self.company_id.id == 1
 
     def set_props(self, unlink=False):
-
         posupplyplan = """
                 <posupplyplan>
                   <DocEntry>{}</DocEntry>

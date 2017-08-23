@@ -14,19 +14,6 @@ class BaseExtClass(models.Model):
     fields_to_watch = None
 
     def must_notify(self, vals):
-        # Solamente debemos notificar las operaciones que se produzcan si el usuario está logado en JIM SPORTS
-        # if self.env.user.company_id.id != 1:
-        #     return False
-
-        # Según lo hablado con Miguel (y parece que lo acordado en Jim con Óscar), debemos utilizar el company_id del
-        #  objeto, no del contexto, porque parece ser que van a modificar y/o crear maestros (incluso documentos)
-        # desde una empresa para otras empresas.
-
-        # No todos los objetos tienen company_id (product.tag, product.attribute, ... no tienen)
-        if hasattr(self, 'company_id'):
-            if self.company_id and self.company_id.id != 1:
-                return False
-
         # Comprobamos si existe alguna función que nos indique si debemos modificar o no. Si no existe, continuamos.
         is_notifiable = getattr(self, "is_notifiable", None)
         if callable(is_notifiable):
