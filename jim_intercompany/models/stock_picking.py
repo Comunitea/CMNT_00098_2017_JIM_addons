@@ -166,7 +166,8 @@ class StockPicking(models.Model):
         # Si es de una compra intercompañía llamamos al do_transfer de la venta relacionada anterior
         if self.purchase_id.intercompany:
             ic_sale = self.env['sale.order'].sudo().search([('auto_purchase_order_id', '=', self.purchase_id.id)])
-            for picking in ic_sale.picking_ids.filtered(lambda x: x.sale_id.auto_generated):
+            for picking in ic_sale.picking_ids.filtered(lambda x:
+                                                        x.sale_id.auto_generated and x.state not in ['done', 'cancel']):
                 #self.intercompany_picking_process(picking)
                 picking.do_transfer()
 
@@ -177,7 +178,7 @@ class StockPicking(models.Model):
             if ic_purchases:
                 picking_in_ids = ic_purchases.mapped('picking_ids').filtered(
                     lambda x: x.picking_type_id.code == 'internal'
-                    and x.location_id.usage == 'supplier')
+                    and x.location_id.usage == 'supplier' and x.state not in ['done', 'cancel'])
                 for ic_purchase_picking in picking_in_ids:
                     #self.intercompany_picking_process(ic_purchase_picking)
                     ic_purchase_picking.do_transfer()
