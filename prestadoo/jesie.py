@@ -3,7 +3,7 @@ import pyodbc
 
 
 class Jesie(object):
-    __connection_string = "DSN=test;DATABASE=PrestaOne;MARS_Connection=yes;UID=sa;PWD=SAPB1Admin"
+    __connection_string = "DSN=prestadoo;DATABASE=PrestaOne;MARS_Connection=yes;UID=sa;PWD=SAPB1Admin"
 
     @staticmethod
     def __execute_query(query_string, params):
