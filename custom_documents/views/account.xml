@@ -4,7 +4,7 @@
 
 <odoo>
 
-    <record id="custom_documents_account_invoice_view" model="ir.ui.view">
+    <!--record id="custom_documents_account_invoice_view" model="ir.ui.view">
         <field name="name">account.invoice.form</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_form"/>
@@ -20,6 +20,6 @@
                 <button name="apply_global_discount_percentage" type="object" string="Apply global discount" states="draft"/>
             </button>
         </field>
-    </record>
+    </record-->
 
 </odoo>
