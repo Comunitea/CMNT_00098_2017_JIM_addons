@@ -11,8 +11,7 @@ from datetime import datetime, timedelta
 import os
 import re
 
-SGA_STATE = [('NI', 'No Integrado'), ('AC', 'Actualizado'), ('PA', 'Pendiente actualizar'), ('BA', 'Baja'), ('ER', 'Error')]
-SGA_PRODUCT_TYPES = ('product', 'consu')
+SGA_STATE = [('AC', 'Actualizado'), ('PA', 'Pendiente actualizar'), ('BA', 'Baja'), ('ER', 'Error')]
 
 class SGADestination(models.Model):
 
@@ -74,6 +73,7 @@ class SGAProductCategory(models.Model):
     def export_category_to_mecalux(self, operation=False):
 
         def get_ids(cat):
+
             res = []
             while cat:
                 if cat.sga_state != 'AC':
@@ -204,76 +204,65 @@ class SGAProductProduct(models.Model):
     @api.multi
     def write(self, values):
 
-        if values.get('type') in SGA_PRODUCT_TYPES and values.get('type', False):
-            values.update({'sga_state': 'PA'})
-        else:
-            values.update({'sga_state': 'NI'})
+        create_product_product = False
 
         fields_to_check = ('default_code', 'barcode', 'categ_id',
                            'sga_material_abc_code', 'sga_change_material_abc',
                            'name', 'packaging_ids', 'sga_prod_shortdesc')
 
         fields = sorted(list(set(values).intersection(set(fields_to_check))))
-        if not fields:
-            return super(SGAProductProduct, self).write(values)
-
-        create_product_product = False
+        if fields and values.get('sga_state') != 'AC':
+            values['sga_state'] = 'PA'
 
         res = super(SGAProductProduct, self).write(values)
 
-        create_product_product = self._context.get('create_product_product', False)
-        if create_product_product:
-            self.export_product_to_mecalux()
+        #si viene de un create directo no hay write de fields distinto
+        if self._context.get('create_product_product', False):
+            create_product_product = True
+
+        for product in self.filtered(lambda x: x.type == 'product'):
+            create = False
+            if product.sga_state != 'AC':
+                for field in fields:
+                    if product[field]:
+                        create = True
+                    continue
+                if create or create_product_product:
+                    new_mecalux_file = product.new_mecalux_file("F")
+                    product.sga_state = "AC"
 
         return res
 
     @api.multi
     def export_product_to_mecalux(self, operation="F"):
-        res = self.new_mecalux_file(operation)
+        res = False
+        for product in self:
+            if product.type == "product":
+                res = product.new_mecalux_file(operation)
         return res
 
     @api.model
     def create(self, values):
+
         return super(SGAProductProduct, self).create(values)
 
 
     @api.multi
     def new_mecalux_file(self, operation=False):
-        ids = self.check_mecalux_ok()
         try:
+            ids = [x.id for x in self]
             ctx = self._context.copy()
             if operation:
                 ctx['operation'] = operation
             if 'operation' not in ctx:
                 ctx['operation'] = 'F'
-            print "Enviando a Mecalux los id %s"%ids
+
             new_sga_file = self.env['sga.file'].with_context(ctx).check_sga_file('product.product', ids, code='PRO')
-            if new_sga_file:
-                self.filtered(lambda x:x.id in ids).write({'sga_state': 'AC'})
             return new_sga_file
         except:
-            self.filtered(lambda x: x.id in ids).write({'sga_state': 'ER'})
+            self.sga_state = 'ER'
+            #self.write({'sga_state': 'NE'})
             return False
-
-    @api.multi
-    def check_mecalux_ok(self):
-        ids = []
-        for product in self:
-            print "Comprobando id=%s"%product.id
-            ok = True
-
-            if not product.barcode or \
-                            product.type not in SGA_PRODUCT_TYPES:
-                ok = False
-
-            if not product.sga_prod_shortdesc:
-                product.sga_prod_shortdesc = product.sga_name_get[0:50]
-
-            if ok:
-                ids.append(product.id)
-            else:
-                product.sga_state = "PA"
-        return ids
 
     @api.multi
     def check_mecalux_stock(self):
@@ -327,12 +316,14 @@ class SGAProductTemplate(models.Model):
     @api.multi
     def new_mecalux_file(self, operation=False):
         for template in self:
-            for product in template.product_variant_ids:
-                product.export_product_to_mecalux(operation)
+            if template.type == "product":
+                for product in template.product_variant_ids:
+                    product.export_product_to_mecalux(operation)
         return True
 
     @api.model
     def create(self, vals):
+        #Necesito un packaging para para cada template, si no se crea al vuelo.
         if vals.get('type', False) == "product":
             create_sga_packaging = True
             if not vals.get('packaging_ids', False):
