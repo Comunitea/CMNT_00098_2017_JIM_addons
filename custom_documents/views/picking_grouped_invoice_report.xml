@@ -93,7 +93,7 @@
                     </tfoot>
                 </table>
                 <div class="row">
-                    <div class="col-xs-6"  t-if="len(o.tax_line_ids) > 0">
+                    <div class="col-xs-6"  t-if="len(o.tax_line_ids) > 0"  style="page-break-inside:avoid">
                         <table class="table table-condensed">
                             <thead>
                                 <tr>
@@ -152,22 +152,27 @@
                     </div>
                 </div>
 
-                <div class="radius_border row"  style="page-break-inside:avoid">
-                    <p t-if="o.payment_mode_id">Payment mode: <span t-field="o.payment_mode_id.name"/></p>
-                    <p t-if="o.payment_mode_id">Bank account: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number"/></p>
-                    <p>Maturity:
-                        <span t-foreach="o.move_id.line_ids.sorted(key=lambda b: b.date_maturity)" t-as="ml">
-                            <span t-if="ml.account_id == o.account_id">
-                                - <span t-field="ml.date_maturity"/>:
-                                <t t-if="ml.debit">
-                                    <span t-field="ml.debit"/>
-                                </t>
-                                <t t-if="ml.credit">
-                                    <span t-field="ml.credit"/>
-                                </t>
+                <div class="row" style="page-break-inside:avoid">
+                    <div class="col-xs-7 radius_border">
+                        <p t-if="o.payment_mode_id">Payment mode: <span t-field="o.payment_mode_id.name"/></p>
+                        <p t-if="o.payment_mode_id">Bank account: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number"/></p>
+                        <p>Maturity:
+                            <span t-foreach="o.move_id.line_ids.sorted(key=lambda b: b.date_maturity)" t-as="ml">
+                                <span t-if="ml.account_id == o.account_id">
+                                    - <span t-field="ml.date_maturity"/>:
+                                    <t t-if="ml.debit">
+                                        <span t-field="ml.debit"/>
+                                    </t>
+                                    <t t-if="ml.credit">
+                                        <span t-field="ml.credit"/>
+                                    </t>
+                                </span>
                             </span>
-                        </span>
-                    </p>
+                        </p>
+                    </div>
+                    <div class="col-xs-5">
+                        <span>En caso de devolución del recibo generado para el cobro de esta factura, <span t-field="o.company_id.name"/> aplicará un recargo del 6%</span>
+                    </div>
                 </div>
             </div>
         </t>
