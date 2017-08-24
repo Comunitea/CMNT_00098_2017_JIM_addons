@@ -103,6 +103,22 @@
                                             t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
                                     </td>
                                 </tr>
+                                <tr class="border-black">
+                                    <td>
+                                        <strong>E.P. Disc. :</strong>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="doc.early_payment_discount"/> %
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <strong>With E.P. :</strong>
+                                    </td>
+                                    <td class="text-right">
+                                        <span t-field="doc.early_payment_disc_total"/> <span t-field="doc.pricelist_id.currency_id.symbol"/>
+                                    </td>
+                                 </tr>
                             </table>
                         </div>
                     </div>

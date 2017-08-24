@@ -81,9 +81,10 @@ class StockPicking(models.Model):
         for picking in self:
             global_discount_lines = picking.sale_id.order_line.filtered(
                 lambda x: x.promotion_line)
-            if global_discount_lines:
+            ep_disc = picking.sale_id.total_early_discount
+            if global_discount_lines or ep_disc:
                 picking.global_discount_amount = sum(
-                    global_discount_lines.mapped('price_subtotal'))
+                    global_discount_lines.mapped('price_subtotal')) + ep_disc
             else:
                 picking.global_discount_amount = 0.0
 
