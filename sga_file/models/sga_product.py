@@ -74,7 +74,6 @@ class SGAProductCategory(models.Model):
     def export_category_to_mecalux(self, operation=False):
 
         def get_ids(cat):
-
             res = []
             while cat:
                 if cat.sga_state != 'AC':
@@ -263,7 +262,7 @@ class SGAProductProduct(models.Model):
             ok = True
 
             if not product.barcode or \
-                            type not in SGA_PRODUCT_TYPES:
+                            product.type not in SGA_PRODUCT_TYPES:
                 ok = False
 
             if not product.sga_prod_shortdesc:
