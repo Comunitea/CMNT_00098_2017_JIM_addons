@@ -37,6 +37,13 @@ class StockPicking(models.Model):
 
             pick.number_of_packages = len(list(set(number_of_packages)))
 
+    def _add_delivery_cost_to_so(self):
+        #Eliminamos la funcioanalidad de ñadir el producto al pedido
+        pass
+        # self.ensure_one()
+        # sale_order = self.sale_id
+        # if sale_order.invoice_shipping_on_delivery:
+        #     sale_order._create_delivery_line(self.carrier_id, self.carrier_price)
 
     def ordered_qty_to_qty_done(self):
         for op in self.pack_operation_product_ids:
