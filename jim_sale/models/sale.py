@@ -27,7 +27,8 @@ class SaleOrder(models.Model):
 
     chanel = fields.Selection(selection_add=[('web', 'WEB')])
     work_to_do = fields.Text('Trabajo a realizar')
-    route_id = fields.Many2one('stock.location.route', string='Force Route', domain=[('sale_selectable', '=', True)])
+    route_id = fields.Many2one('stock.location.route', string='Force Route',
+                               domain=[('sale_selectable', '=', True)])
 
     @api.model
     def create_web(self, vals):
@@ -47,6 +48,13 @@ class SaleOrder(models.Model):
             dict_line.update({'lqdr': lqdr})
         res = super(SaleOrder, self).create(vals)
         return res.id
+
+    @api.multi
+    def action_invoice_create(self, grouped=False, final=False):
+        invs = super(SaleOrder, self).action_invoice_create(grouped, final)
+        self.env['account.invoice'].browse(invs)\
+            .button_compute_early_payment_disc()
+        return invs
 
     @api.onchange('partner_id')
     def onchange_partner_id_warning(self):

@@ -25,7 +25,7 @@ msgstr "Gasto de envío"
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_documents_account_invoice_view
 msgid "Apply global discount"
-msgstr "Aplicar descuento global"
+msgstr "Aplicar descuento financiero"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
@@ -42,7 +42,7 @@ msgstr "Nº albarán"
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 #, python-format
 msgid "Global discount"
-msgstr "Descuento global"
+msgstr "Descuento financiero"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
