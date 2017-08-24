@@ -204,8 +204,8 @@ class SGAProductProduct(models.Model):
     @api.multi
     def write(self, values):
 
-        if values.get('type') in SGA_PRODUCT_TYPES:
-            values.update ({'sga_state':'PA'})
+        if values.get('type') in SGA_PRODUCT_TYPES and values.get('type', False):
+            values.update({'sga_state': 'PA'})
         else:
             values.update({'sga_state': 'NI'})
 
@@ -259,6 +259,7 @@ class SGAProductProduct(models.Model):
     def check_mecalux_ok(self):
         ids = []
         for product in self:
+            print "Comprobando id=%s"%product.id
             ok = True
 
             if not product.barcode or \
