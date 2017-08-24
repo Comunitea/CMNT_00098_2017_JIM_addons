@@ -13,6 +13,9 @@
                 <form string="Update notes in sale order line" create="false">
                     <group>
                         <group>
+                            <field name="order_id" readonly="True"/>
+                        </group>
+                        <group>
                             <field name="product_id" readonly="True"/>
                             <field name="name"/>
                         </group>

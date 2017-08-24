@@ -30,6 +30,23 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
 
     @api.multi
+    def _sales_count(self):
+        r = {}
+        domain = [
+            ('state', 'in', ['sale', 'done', 'proforma', 'lqdr',
+                             'progress_lqdr', 'pending', 'progress']),
+            ('product_id', 'in', self.ids),
+        ]
+        for group in self.env['sale.report'].read_group(domain, ['product_id',
+                                                                 'product_uom_qty'],
+                                                        ['product_id']):
+            r[group['product_id'][0]] = group['product_uom_qty']
+        for product in self:
+            product.sales_count = r.get(product.id, 0)
+        return r
+
+
+    @api.multi
     def _get_customer_prices_count(self):
         for prod in self:
             prod.customer_prices_count = len(prod.customer_product_prices)
