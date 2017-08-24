@@ -64,7 +64,7 @@
                             <t t-if="picking">
                                 <tr>
                                     <td></td>
-                                    <td><span t-field="picking.partner_id.name"/> <span class="blue_text"> Picking:</span> <span t-field="picking.name"/> <span class="blue_text">Picking date:</span> <span t-field="picking.date"/></td>
+                                    <td><span t-field="picking.partner_id.name"/> <span class="blue_text"> Picking:</span> <span t-field="picking.name"/> <span class="blue_text">Picking date:</span> <span t-field="picking.date_done_date"/></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>
