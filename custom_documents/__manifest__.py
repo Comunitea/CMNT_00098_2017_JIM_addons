@@ -24,7 +24,8 @@
         'stock_valued_picking_report',
         'purchase',
         'commercial_rules',
-        'telesale'
+        'telesale',
+        'sale_early_payment_discount'
     ],
     "data": [
         'views/layout_templates.xml',

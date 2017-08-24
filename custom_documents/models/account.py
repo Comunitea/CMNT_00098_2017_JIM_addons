@@ -14,6 +14,11 @@ class AccountInvoice(models.Model):
     global_discount_percentage = fields.Float('Global discount')
 
     @api.multi
+    def compute_early_payment_lines(self):
+        res = super(AccountInvoice, self).compute_early_payment_lines()
+        res.write({'promotion_line': True})
+
+    @api.multi
     def apply_global_discount_percentage(self):
         self.ensure_one()
         self.invoice_line_ids.filtered(lambda x: x.global_disc_line).unlink()
