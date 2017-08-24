@@ -15,7 +15,7 @@
                         <button name="asign_barcode" string="EAN Code"
                                   class="oe_inline oe_stat_button"
                                   icon="fa-barcode" type="object"
-                        attrs="{'invisible': [('barcode','!=','ASIGNAR'), ('barcode','!=', False)]}"/>
+                        />
                     </div>
 
                 </field>
