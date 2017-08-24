@@ -172,7 +172,8 @@ class ProductProduct(models.Model):
             slines = order_line_obj.search([('product_id', '=', product.id),
                                             ('order_id.state', 'in',
                                              ['lqdr', 'pending',
-                                              'progress_lqdr', 'progress'])])
+                                              'progress_lqdr', 'progress',
+                                              'proforma'])])
             for sline in slines:
                 sale_lines_stock += sline.product_uom_qty
 

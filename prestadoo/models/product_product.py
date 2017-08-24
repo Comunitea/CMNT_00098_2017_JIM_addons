@@ -119,8 +119,7 @@ class ProductProduct(BaseExtClass):
                                     ('sale_ok', '=', True),
                                     ('default_code', '!=', False),
                                     ('default_code', 'not ilike', 'ñ'),
-                                    ('type', '=', 'product'),
-                                    ('company_id', '=', 1)],
+                                    ('type', '=', 'product')],
                                    order='id')
 
         msg_count = 0

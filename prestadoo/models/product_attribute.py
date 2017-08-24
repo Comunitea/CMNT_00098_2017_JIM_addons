@@ -17,7 +17,7 @@ class ProductAttribute(BaseExtClass):
               """
 
         self.xml = xml.format(
-            self.legacy_code or '#' + str(self.id),    # Code
-            self.name                       # Name
+            self.legacy_code or '#' + str(self.id),     # Code
+            self.name                                   # Name
         )
         self.obj_type = 'TALLAJE'

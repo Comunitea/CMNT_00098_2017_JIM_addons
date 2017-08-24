@@ -4,7 +4,7 @@
 # 'depends': ['base', 'product', 'connector', 'stock'],
 {
     'name': 'Prestadoo',
-    'version': '1.1',
+    'version': '2.0',
     'author': 'Miguel Ángel García ',
     'category': 'Connector',
     'description': 'Conexión con PrestaOne',
@@ -14,7 +14,6 @@
         'jim_sale',
         'product_tags',
         'purchase',
-        'jesie',
         'sga_file'
     ],
     'contributors': [

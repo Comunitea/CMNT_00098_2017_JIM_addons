@@ -10,7 +10,9 @@ class StockMove(BaseExtClass):
 
     def is_notifiable(self):
         return (self.state == "assigned" or self.state == "done" or self.state == "cancel") \
-               and self.picking_type_id.code == "incoming" and self.purchase_line_id
+            and self.company_id.id == 1 \
+            and self.picking_type_id.code == "incoming" \
+            and self.purchase_line_id
 
     def set_props(self, unlink=False):
         posupplyplan = """
