@@ -10,12 +10,13 @@
                 <xpath expr="//header" position = "inside">
                     <div>
                         <field name="sga_state" widget="statusbar"
-                        attrs="{'invisible': [('type','!=','product')]}"/>
+                        attrs="{'invisible': [('type','not in', ('product', 'consu'))]}"
+                        statusbar_visible="PA,BA,ER" statusbar_colors='{"ER":"red","BA":"blue","PA":"red"}'/>
                     </div>
                 </xpath>
                 <field name="categ_id" position="after">
                     <field name="sga_prod_shortdesc"
-                        attrs="{'invisible': [('type','!=','product')]}"/>/>
+                        attrs="{'invisible': [('type','not in', ('product', 'consu'))], 'required': [('type','not in', ('product', 'consu'))]}"/>
                 </field>
             </field>
         </record>
@@ -29,12 +30,13 @@
                     <xpath expr="//header" position = "inside">
                         <div>
                             <field name="sga_state" widget="statusbar"
-                                   attrs="{'invisible': [('type','!=','product')]}"/>
+                                   attrs="{'invisible': [('type','not in',('product', 'consu'))]}"
+                                   statusbar_visible="PA,BA,ER" statusbar_colors='{"ER":"red","BA":"blue","PA":"red"}'/>
                         </div>
                     </xpath>
                     <field name="categ_id" position="after">
                         <field name="sga_dst"
-                               attrs="{'invisible': [('type','!=','product')],'required': [('type', '=', 'product')]}"/>
+                               attrs="{'invisible': [('type','not in', ('product', 'consu'))], 'required': [('type','not in', ('product', 'consu'))]}"/>
                     </field>
             </field>
         </record>
