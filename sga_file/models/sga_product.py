@@ -364,7 +364,7 @@ class SGAProductTemplate(models.Model):
                 values.update ({'sga_state':'PA'})
             else:
                 values.update({'sga_state': 'NI'})
-        res = super(SGAProductTemplate, self).write(values)
+        return super(SGAProductTemplate, self).write(values)
 
 
 
