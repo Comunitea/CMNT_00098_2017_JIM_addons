@@ -29,6 +29,7 @@ class SaleOrder(models.Model):
     work_to_do = fields.Text('Trabajo a realizar')
     route_id = fields.Many2one('stock.location.route', string='Force Route',
                                domain=[('sale_selectable', '=', True)])
+    lqdr_state = fields.Selection([('lqdr_no','LQDR No tramitado'), ('lqdr_si','LQDR Tramitado')], string="Estado LQDR", default='lqdr_no')
 
     @api.model
     def create_web(self, vals):

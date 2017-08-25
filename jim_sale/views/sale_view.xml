@@ -18,6 +18,7 @@
                 </field>
 
             </field>
+
         </record>
 
         <!-- Ads lqdr and pending approval states -->
@@ -29,7 +30,9 @@
                 <field name="state" position="attributes">
                     <attribute name="statusbar_visible">draft,sent,lqdr,pending,progress,sale</attribute>
                 </field>
-
+                <field name="date_order" position="before">
+                    <field name="lqdr_state" attrs="{'invisible': [('state', '=', 'lqdr')]}"/>
+                </field>
                 <!-- Add button to pass to lqdr or pending state -->
                 <button name="print_quotation" position="after">
                     <button name="action_proforma" states="draft,sent" string="Proforma" class="o_sale_confirm" type="object" />
@@ -101,6 +104,9 @@
             <field name="arch" type="xml">
                 <field name="state" position="replace">
                     <field name="state" />
+                </field>
+                <field name="state" position="after">
+                    <field name="lqdr_state"/>
                 </field>
             </field>
         </record>
