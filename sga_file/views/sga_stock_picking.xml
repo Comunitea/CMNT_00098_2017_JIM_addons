@@ -99,6 +99,9 @@
                     statusbar_colors='{"EE":"red", "EI":"red", "PM":"red", "MT":"green"}'/>
 
                     </header>
+                <xpath expr="//field[@name='location_dest_id'" position="replace">
+                    <field name="location_dest_id" groups="stock.group_stock_multi_locations"/>
+                </xpath>
                 </xpath>
 
                 <field name="picking_type_id" position="after">
