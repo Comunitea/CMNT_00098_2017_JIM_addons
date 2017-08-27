@@ -135,9 +135,9 @@ class ProductProduct(models.Model):
     def _compute_global_stock(self):
         order_line_obj = self.env["sale.order.line"]
         deposit_ids = \
-            self.env['stock.location'].search([('deposit', '=', True)]).ids
+            self.env['stock.location'].sudo().search([('deposit', '=', True)]).ids
         company_ids = \
-            self.env['res.company'].search([('no_stock', '=', True)]).ids
+            self.env['res.company'].sudo().search([('no_stock', '=', True)]).ids
 
         for product in self:
             ctx = self._context.copy()
@@ -169,7 +169,7 @@ class ProductProduct(models.Model):
                         product.with_context(ctx).sudo().outgoing_qty
 
 
-            slines = order_line_obj.search([('product_id', '=', product.id),
+            slines = order_line_obj.sudo().search([('product_id', '=', product.id),
                                             ('order_id.state', 'in',
                                              ['lqdr', 'pending',
                                               'progress_lqdr', 'progress',
