@@ -9,7 +9,7 @@ class ReportSaleLineJim(models.Model):
     _name = "report.web.product.jim"
     _description = "Productos web"
     _auto = False
-    _rec_name = 'display_name'
+    _rec_name = 'product_id'
     _order = 'product_code'
 
     product_id = fields.Many2one('product.product', string="Artículo", readonly=True)

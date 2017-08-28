@@ -147,6 +147,28 @@ class SaleOrder(models.Model):
             if not self.partner_shipping_id.state_id:
                 raise ValidationError("No puedes confirmar sin provincia de envío")
 
+
+    def action_cancel_wzd(self):
+
+        view = self.env.ref('jim_sale.wzd_sale_order_cancel_view')
+        wiz = self.env['wzd.sale.order.cancel'].create({'sale_id': self.id})
+        ctx = dict(self._context)
+        ctx.update({'default_sale_id': self.id})
+
+        return {
+            'name': 'Confirmación de cancelación',
+            'type': 'ir.actions.act_window',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'wzd.sale.order.cancel',
+            'views': [(view.id, 'form')],
+            'view_id': view.id,
+            'res_id': wiz.id,
+            'target': 'new',
+            'context': ctx}
+
+
+
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 

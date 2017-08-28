@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="wzd_sale_order_cancel_view" model="ir.ui.view">
+        <field name="name">wzd.sale.order.cancel.view</field>
+        <field name="model">wzd.sale.order.cancel</field>
+        <field name="arch" type="xml">
+            <form string="Confirmación de cancelación de pedidos con albaranes asociados">
+                <group>
+                    <group>
+                        <field name="sale_id"/>
+                    </group>
+                    <group>
+                        <field name="state"/>
+                    </group>
+                </group>
+                <group>
+                    <p>Los albaranes en rojo NO SE CANCELAN. Deberán devolverse posteriormente a mano</p>
+                    <field name="picking_ids" nolabel="1">
+                        <tree decoration-danger="state == 'done'"
+                              decoration-muted="state == 'cancel'">
+                            <field name="name"/>
+                            <field name="state"/>
+                        </tree>
+                    </field>
+                </group>
+                <footer>
+                    <button name="cancel_all" string="Cancelar" type="object" class="oe_highlight"/>
+                    <button string="_Cancel" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+        </record>
+        <act_window name="Cancel venta (Super)"
+            res_model="wzd.sale.order.cancel"
+            view_mode="form"
+            view_type="form"
+            id="action_wzd_sale_order_cancel"
+            groups="purchase.group_purchase_user"/>
+    </data>
+</odoo>

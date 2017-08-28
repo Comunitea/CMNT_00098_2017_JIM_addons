@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_customer_price,customer.price,model_customer_price,base.group_user,1,1,1,1
+access_sale_order_line_repor,report.sale.line.jim,model_report_sale_line_jim,base.group_user,1,1,1,1
 access_product_web_line_repor,report.product.web.jim,model_report_web_product_jim,base.group_user,1,1,1,1
