@@ -573,6 +573,7 @@ msgstr "Factura agrupada por albarán"
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_sale_order_report_warehouse
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Customer order number"
 msgstr "Número de pedido de cliente"
 
