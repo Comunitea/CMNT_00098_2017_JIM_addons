@@ -6,3 +6,4 @@ from . import company
 from . import product
 from . import stock
 from . import stock_inventory
+from . import route

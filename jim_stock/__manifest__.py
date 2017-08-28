@@ -22,6 +22,7 @@
         'views/product_view.xml',
         'views/stock_view.xml',
         'views/company_view.xml',
+        'views/route_view.xml',
         'security/stock_security.xml',
         'wizard/stock_picking_return.xml'
     ],
