@@ -48,17 +48,6 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Se recorre las lineas que no tengan albarán relacionado para que aparezcan primero-->
-                        <t t-if="False in invoice_lines_dict[o.id].keys()">
-                            <tr t-foreach="invoice_lines_dict[o.id][False]" t-as="invoice_line">
-                                <td><span t-esc="invoice_line['default_code']"/></td>
-                                <td><span t-esc="invoice_line['name_report']"/></td>
-                                <td><span t-esc="invoice_line['quantity']"/></td>
-                                <td><span t-esc="'{0:.2f}'.format(invoice_line['price_unit'])"/></td>
-                                <td t-if="o.company_id.show_discount"><span t-esc="invoice_line['discount']"/></td>
-                                <td><span t-esc="invoice_line['price_subtotal']"/></td>
-                            </tr>
-                        </t>
                         <t t-foreach="invoice_lines_dict[o.id].keys()" t-as="picking">
                             <!-- Evitamos que se impriman los tr para las lineas sin albarán relacionado -->
                             <t t-if="picking">
@@ -79,6 +68,17 @@
                                     <td><span t-esc="invoice_line['price_subtotal']"/></td>
                                 </tr>
                             </t>
+                        </t>
+                        <!-- Se recorre las lineas que no tengan albarán relacionado para que aparezcan primero-->
+                        <t t-if="False in invoice_lines_dict[o.id].keys()">
+                            <tr t-foreach="invoice_lines_dict[o.id][False]" t-as="invoice_line">
+                                <td><span t-esc="invoice_line['default_code']"/></td>
+                                <td><span t-esc="invoice_line['name_report']"/></td>
+                                <td><span t-esc="invoice_line['quantity']"/></td>
+                                <td><span t-esc="'{0:.2f}'.format(invoice_line['price_unit'])"/></td>
+                                <td t-if="o.company_id.show_discount"><span t-esc="invoice_line['discount']"/></td>
+                                <td><span t-esc="invoice_line['price_subtotal']"/></td>
+                            </tr>
                         </t>
                     </tbody>
                     <tfoot>
@@ -154,7 +154,9 @@
 
                 <div class="row" style="page-break-inside:avoid">
                     <div class="col-xs-7 radius_border">
+                        <p t-if="len(o.picking_ids) == 1 and o.picking_ids.carrier_id">Carrier: <span t-field="o.picking_ids.carrier_id.name"/></p>
                         <p t-if="o.payment_mode_id">Payment mode: <span t-field="o.payment_mode_id.name"/></p>
+                        <p t-if="o.payment_term_id">Payment term: <span t-field="o.payment_term_id.note"/></p>
                         <p t-if="o.payment_mode_id">Bank account: <span t-field="o.payment_mode_id.fixed_journal_id.bank_account_id.acc_number"/></p>
                         <p>Maturity:
                             <span t-foreach="o.move_id.line_ids.sorted(key=lambda b: b.date_maturity)" t-as="ml">
