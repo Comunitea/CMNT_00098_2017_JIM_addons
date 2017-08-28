@@ -67,7 +67,10 @@ class SaleOrder(models.Model):
         order = order_t.new({'partner_id': partner_id,
                              'date_order': time.strftime("%Y-%m-%d"),
                              'pricelist_id':
-                             partner.property_product_pricelist.id})
+                             partner.property_product_pricelist.id,
+                             'early_payment_discount':
+                                 res['early_payment_discount']
+                            })
         res2 = order.onchange_partner_id_warning()
         warning = False
 
@@ -92,6 +95,7 @@ class SaleOrder(models.Model):
     def get_head_order_vals(self, order):
         res = super(SaleOrder, self).get_head_order_vals(order)
         res.update(neutral_document=order.get('neutral', False))
+        res.update(early_payment_discount=order.get('epd', False))
         return res
 
 
