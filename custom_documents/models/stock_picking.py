@@ -116,7 +116,7 @@ class StockPicking(models.Model):
     @api.depends('sale_id')
     def _compute_sale_services(self):
         for picking in self:
-            picking.sale_services = self.sale_id.order_line.filtered(
+            picking.sale_services = picking.sale_id.order_line.filtered(
                 lambda x: x.product_id.type == 'service' and not
                 x.product_id.delivery_cost)
 
