@@ -33,8 +33,9 @@
         'views/payment_term_view.xml',
         'report/report_stock_forecast.xml',
         'security/jim_sale_security.xml',
-        #'report/report_sale_line.xml',
+        'report/report_sale_line.xml',
         'report/report_web_product.xml',
+        'wizard/wzd_sale_order_cancel.xml',
     ],
     "installable": True
 }

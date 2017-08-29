@@ -9,7 +9,7 @@ class ReportSaleLineJim(models.Model):
     _name = "report.web.product.jim"
     _description = "Productos web"
     _auto = False
-    _rec_name = 'display_name'
+    _rec_name = 'product_id'
     _order = 'product_code'
 
     product_id = fields.Many2one('product.product', string="Artículo", readonly=True)
@@ -17,6 +17,7 @@ class ReportSaleLineJim(models.Model):
     product_code = fields.Char(related='product_id.default_code', string="Ref. artículo", readonly=True)
     tag_id = fields.Many2one('product.tag', string="Etiqueta", readonly=True)
     web = fields.Boolean(related='tag_id.web')
+    web_global_stock = fields.Float(related="product_id.web_global_stock")
 
     def _select(self):
         select_str = """

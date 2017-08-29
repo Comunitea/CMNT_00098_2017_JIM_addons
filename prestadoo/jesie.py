@@ -1,18 +1,39 @@
 # -*- coding: utf-8 -*-
 import pyodbc
+from datetime import datetime
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class Jesie(object):
-    __connection_string = "DSN=prestadoo;DATABASE=PrestaOne;MARS_Connection=yes;UID=sa;PWD=SAPB1Admin"
+    __connection_string = "DSN=test;DATABASE=PrestaOne;MARS_Connection=yes;UID=sa;PWD=SAPB1Admin"
 
     @staticmethod
     def __execute_query(query_string, params):
+        parameters = []
+
+        for param in params:
+            parameter = param
+
+            if type(parameter) is str or type(parameter) is unicode:
+                parameter = "".join((c if ord(c) < 255 else '' for c in unicode(param)))
+
+            parameters.append(parameter)
+
         cnxn = pyodbc.connect(Jesie.__connection_string, autocommit=True)
-        cnxn.setdecoding(pyodbc.SQL_CHAR, encoding='cp850', to=str)
+
+        cnxn.setdecoding(pyodbc.SQL_CHAR, encoding='cp850')
+        cnxn.setdecoding(pyodbc.SQL_WCHAR, encoding='cp850')
         cnxn.setencoding(str, encoding='cp850')
+        cnxn.setencoding(unicode, encoding='cp850', ctype=pyodbc.SQL_CHAR)
+
         cursor = cnxn.cursor()
 
-        cursor.execute(query_string, params)
+        try:
+            cursor.execute(query_string, parameters)
+        except Exception as ex:
+            Jesie.__write_log__('{}: {}'.format(type(ex).__name__, ex))
 
         cursor.close()
         cnxn.close()
@@ -69,3 +90,10 @@ class Jesie(object):
     @staticmethod
     def jesie_enqueue_prices():
         Jesie.__execute_query('EXEC OdooEnqueuePrices', ())
+
+    @staticmethod
+    def __write_log__(msg):
+        with open("prestadoo.log", "a+") as f:
+            f.write("\n[{}] {}".format(datetime.now(), msg))
+
+        _logger.info("[PRESTADOO] Error notificando el mensaje. Consulte prestadoo.log")

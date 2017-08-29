@@ -139,6 +139,18 @@ class ProductProduct(models.Model):
         company_ids = \
             self.env['res.company'].sudo().search([('no_stock', '=', True)]).ids
 
+        self._cr.execute(
+            "SELECT SOL.product_id, sum(SOL.product_uom_qty) as qty FROM "
+            "sale_order_line SOL " 
+            "INNER JOIN sale_order  SO ON SO.id = SOL.order_id "
+            "INNER JOIN stock_location_route SLR  ON SLR.id = SOL.route_id "
+            "WHERE SOL.product_id in %s "
+            "AND SO.state in ('lqdr', 'pending', 'progress_lqdr', 'progress',"
+            " 'proforma') "
+            "AND not SLR.no_stock group BY SOL.product_id",
+                                   [tuple(self.ids)])
+        sale_line_data = dict(self._cr.fetchall())
+
         for product in self:
             ctx = self._context.copy()
             deposit_real_stock = 0
@@ -168,15 +180,15 @@ class ProductProduct(models.Model):
                         product.with_context(ctx).sudo().qty_available - \
                         product.with_context(ctx).sudo().outgoing_qty
 
-
-            slines = order_line_obj.sudo().search([('product_id', '=', product.id),
-                                            ('order_id.state', 'in',
-                                             ['lqdr', 'pending',
-                                              'progress_lqdr', 'progress',
-                                              'proforma'])])
-            for sline in slines:
-                sale_lines_stock += sline.product_uom_qty
-
+            # slines = order_line_obj.sudo().search([('product_id', '=', product.id),
+            #                                 ('order_id.state', 'in',
+            #                                  ['lqdr', 'pending',
+            #                                   'progress_lqdr', 'progress',
+            #                                   'proforma'])])
+            # for sline in slines:
+            #     if sline.route_id.no_stock == False:
+            #         sale_lines_stock += sline.product_uom_qty
+            sale_lines_stock = sale_line_data.get(product.id, 0)
             product.global_real_stock = global_real_stock - \
                                         deposit_real_stock -company_real_stock
             product.global_available_stock = \

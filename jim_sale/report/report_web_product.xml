@@ -8,12 +8,10 @@
             <tree string="Productos en web">
                 <field name="tag_id"/>
                 <field name="template_id"/>
-
                 <field name="product_id"/>
                 <field name="product_code"/>
-
                 <field name="web" />
-
+                <field name="web_global_stock" />
             </tree>
 
         </field>

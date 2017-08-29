@@ -15,6 +15,7 @@ var OrderWidget = NewOrderWidgets.OrderWidget.include({
     get_order_fields: function(){
         var res = this._super();
         res.push('neutral_document')
+        res.push('early_payment_discount')
         return res
     },
 });

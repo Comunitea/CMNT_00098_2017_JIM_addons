@@ -66,7 +66,10 @@ class Partner(BaseExtClass):
             """
 
         if not unlink and self.active:
-            valid = 'Y'
+            if self.property_product_pricelist.name == 'SIN PRECIO':
+                valid = 'P'
+            else:
+                valid = 'Y'
         else:
             valid = 'N'
 

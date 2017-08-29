@@ -209,11 +209,18 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
         if (neutral_document) {
             this.$('#neutral').prop('checked', true);
         }
+        this.$('#epd').blur(_.bind(this.set_epd_value, this, 'epd'))
+        var early_payment_discount = current_order.get('epd');
     },
     set_neutral_value: function(key) {
         var value = this.$('#' + key).is(':checked');
         this.order_model.set(key, value);
     },
+    set_epd_value: function(key) {
+        var value = this.$('#' + key).val();
+        this.order_model.set(key, value);
+    },
+
     perform_onchange: function(key, value) {
         var self=this;
         if (!value) {return;}
@@ -250,6 +257,7 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
                     if (pricelist_obj){
                         self.order_model.set('pricelist', pricelist_obj.name);
                     }
+                    self.order_model.set('epd', result.early_payment_discount);
                     // Get alert if warning is not false
                     if (result.warning){
                         alert(result.warning);

@@ -14,6 +14,8 @@ class StockMove(models.Model):
     def move_recheck_availability(self):
 
         move = self[0]
+        if move.picking_id.state == 'cancel':
+            move.picking_id.state = 'confirmed'
 
         if move.picking_id.state not in ('waiting', 'confirmed','partially_available'):
             raise ValidationError (_('Pick state incorrect'))
