@@ -3,24 +3,16 @@ import pyodbc
 
 
 class Jesie(object):
-    __connection_string = "DSN=test;DATABASE=PrestaOne;MARS_Connection=yes;UID=sa;PWD=SAPB1Admin"
+    __connection_string = "DSN=prestadoo;DATABASE=PrestaOne;MARS_Connection=yes;UID=sa;PWD=SAPB1Admin"
 
     @staticmethod
     def __execute_query(query_string, params):
-        parameters = []
-
-        for param in params:
-            parameter = param
-
-            if type(parameter) is str or type(parameter) is unicode:
-                parameter = param.decode('cp850', 'ignore').encode('cp850')
-
-            parameters.append(parameter)
-
         cnxn = pyodbc.connect(Jesie.__connection_string, autocommit=True)
+        cnxn.setdecoding(pyodbc.SQL_CHAR, encoding='cp850', to=str)
+        cnxn.setencoding(str, encoding='cp850')
         cursor = cnxn.cursor()
 
-        cursor.execute(query_string, parameters)
+        cursor.execute(query_string, params)
 
         cursor.close()
         cnxn.close()
