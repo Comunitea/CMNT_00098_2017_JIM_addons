@@ -30,8 +30,8 @@
                 <field name="state" position="attributes">
                     <attribute name="statusbar_visible">draft,sent,lqdr,pending,progress,sale</attribute>
                 </field>
-                <field name="date_order" position="before">
-                    <field name="lqdr_state" attrs="{'invisible': [('state', '!=', 'lqdr')]}"/>
+                <field name="date_order" position="before" >
+                    <field name="lqdr_state" attrs="{'invisible': [('state', '!=', 'lqdr')]}" groups="jim_stock.group_stock_lqdr"/>
                 </field>
                 <!-- Add button to pass to lqdr or pending state -->
                 <button name="print_quotation" position="after">
@@ -107,7 +107,7 @@
                     <field name="state" />
                 </field>
                 <field name="state" position="after">
-                    <field name="lqdr_state"/>
+                    <field name="lqdr_state" groups="jim_stock.group_stock_lqdr"/>
                 </field>
             </field>
         </record>
