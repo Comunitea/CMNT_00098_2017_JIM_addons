@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 import pyodbc
+from datetime import datetime
+import logging
+
+_logger = logging.getLogger(__name__)
 
 
 class Jesie(object):
@@ -12,8 +16,8 @@ class Jesie(object):
         for param in params:
             parameter = param
 
-            if type(parameter) is str or type(parameter) is unicode:
-                parameter = "".join((c if ord(c) < 255 else '' for c in unicode(param)))
+            # if type(parameter) is str or type(parameter) is unicode:
+            #     parameter = "".join((c if ord(c) < 255 else '' for c in unicode(param)))
 
             parameters.append(parameter)
 
@@ -26,7 +30,10 @@ class Jesie(object):
 
         cursor = cnxn.cursor()
 
-        cursor.execute(query_string, parameters)
+        try:
+            cursor.execute(query_string, parameters)
+        except Exception as ex:
+            Jesie.__write_log__('{}: {}'.format(type(ex).__name__, ex))
 
         cursor.close()
         cnxn.close()
@@ -83,3 +90,10 @@ class Jesie(object):
     @staticmethod
     def jesie_enqueue_prices():
         Jesie.__execute_query('EXEC OdooEnqueuePrices', ())
+
+    @staticmethod
+    def __write_log__(msg):
+        with open("prestadoo.log", "a+") as f:
+            f.write("\n[{}] {}".format(datetime.now(), msg))
+
+        _logger.info("[PRESTADOO] Error notificando el mensaje. Consulte prestadoo.log")
