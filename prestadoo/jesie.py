@@ -16,8 +16,8 @@ class Jesie(object):
         for param in params:
             parameter = param
 
-            # if type(parameter) is str or type(parameter) is unicode:
-            #     parameter = "".join((c if ord(c) < 255 else '' for c in unicode(param)))
+            if type(parameter) is str or type(parameter) is unicode:
+                parameter = "".join((c if ord(c) < 255 else '' for c in unicode(param)))
 
             parameters.append(parameter)
 
