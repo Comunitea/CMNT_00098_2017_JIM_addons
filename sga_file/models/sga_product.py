@@ -163,13 +163,16 @@ class SGAProductProduct(models.Model):
     _inherit = "product.product"
 
     @api.multi
+    @api.depends('display_name')
     def get_sga_name_get(self):
         for prod in self:
+            print prod.name_get()
             #nombre sin la referencia
             sga_name_get = prod.display_name
             if sga_name_get and ']' in sga_name_get:
                 sga_name_get = sga_name_get.split(']')[1].strip()
             prod.sga_name_get = sga_name_get
+            self.sga_prod_shortdesc = self.sga_name_get[0:50]
 
 
     sga_name_get = fields.Char("Mecalux name", compute='get_sga_name_get')
@@ -192,10 +195,9 @@ class SGAProductProduct(models.Model):
     sga_desc_uom_base_code = fields.Char(related='uom_id.name')
     sga_warehouse_code = fields.Char(related="warehouse_id.code")
 
-
     @api.onchange('name')
     def on_change(self):
-        if self.name and self.sga_name_get:
+        if self.name:
             self.sga_prod_shortdesc = self.sga_name_get[0:50]
 
     @api.multi

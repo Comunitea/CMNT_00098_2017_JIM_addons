@@ -29,7 +29,7 @@ class SaleOrder(models.Model):
     work_to_do = fields.Text('Trabajo a realizar')
     route_id = fields.Many2one('stock.location.route', string='Force Route',
                                domain=[('sale_selectable', '=', True)])
-    lqdr_state = fields.Selection([('lqdr_no','LQDR No tramitado'), ('lqdr_si','LQDR Tramitado'), ('lqdr_issue', 'LQDR Incidencia')], string="Estado LQDR", default='lqdr_no')
+    lqdr_state = fields.Selection([('no_lqdr',''), ('lqdr_no','LQDR No tramitado'), ('lqdr_si','LQDR Tramitado'), ('lqdr_issue', 'LQDR Incidencia')], string="Estado LQDR", default='no_lqdr')
 
     @api.model
     def create_web(self, vals):
@@ -39,6 +39,32 @@ class SaleOrder(models.Model):
         vals.update({'pricelist_id': partner.property_product_pricelist.id})
         vals.update({'fiscal_position_id':
                     partner.property_account_position_id.id})
+        # Descuento financiero
+        commercial_partner = partner.commercial_partner_id
+        early_payment_discount = 0
+        if not partner.property_payment_term_id:
+            early_discs = commercial_partner.early_payment_discount_ids
+            if early_discs:
+                early_payment_discount = early_discs[0].early_payment_discount
+
+        else:
+            early_discs = commercial_partner.early_payment_discount_ids.\
+                filtered(lambda x: x.payment_term_id == self.payment_term_id)
+            if early_discs:
+                early_payment_discount = early_discs[0].early_payment_discount
+            else:
+                early_discs = commercial_partner.early_payment_discount_ids
+                if early_discs:
+                    early_payment_discount = early_discs[0].early_payment_discount
+                else:
+                    early_discs = self.env['account.early.payment.discount'].\
+                        search([('partner_id', '=', False),
+                                ('payment_term_id', '=', self.payment_term_id.id)])
+                    if early_discs:
+                        early_payment_discount = early_discs[
+                            0].early_payment_discount
+        vals.update({'early_payment_discount': early_payment_discount})
+
         for line in vals['order_line']:
             dict_line = line[2]
             product = self.env['product.product'].\
@@ -93,6 +119,7 @@ class SaleOrder(models.Model):
 
             if order.order_line.filtered('product_id.lqdr'):
                 order.state = 'lqdr'
+                order.lqdr_state = 'lqdr_no'
             else:
                order.state = 'pending'
         return True
@@ -101,6 +128,7 @@ class SaleOrder(models.Model):
     def action_lqdr_ok(self):
         for order in self:
             order.state = 'pending'
+            order.lqdr_state = 'lqdr_si'
         return True
 
     @api.multi
