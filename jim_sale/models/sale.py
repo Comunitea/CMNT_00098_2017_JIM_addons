@@ -39,6 +39,32 @@ class SaleOrder(models.Model):
         vals.update({'pricelist_id': partner.property_product_pricelist.id})
         vals.update({'fiscal_position_id':
                     partner.property_account_position_id.id})
+        # Descuento financiero
+        commercial_partner = partner.commercial_partner_id
+        early_payment_discount = 0
+        if not partner.property_payment_term_id:
+            early_discs = commercial_partner.early_payment_discount_ids
+            if early_discs:
+                early_payment_discount = early_discs[0].early_payment_discount
+
+        else:
+            early_discs = commercial_partner.early_payment_discount_ids.\
+                filtered(lambda x: x.payment_term_id == self.payment_term_id)
+            if early_discs:
+                early_payment_discount = early_discs[0].early_payment_discount
+            else:
+                early_discs = commercial_partner.early_payment_discount_ids
+                if early_discs:
+                    early_payment_discount = early_discs[0].early_payment_discount
+                else:
+                    early_discs = self.env['account.early.payment.discount'].\
+                        search([('partner_id', '=', False),
+                                ('payment_term_id', '=', self.payment_term_id.id)])
+                    if early_discs:
+                        early_payment_discount = early_discs[
+                            0].early_payment_discount
+        vals.update({'early_payment_discount': early_payment_discount})
+
         for line in vals['order_line']:
             dict_line = line[2]
             product = self.env['product.product'].\
