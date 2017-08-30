@@ -73,7 +73,7 @@
             <field name="arch" type="xml">
                  <field name="barcode" position="after">
                     <field name="company_id"/>
-                    <field name="tag_ids" widget="many2many_tags"/>
+                    <field name="tag_names"/>
                 </field>
             </field>
         </record>
