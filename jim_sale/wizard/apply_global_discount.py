@@ -20,5 +20,7 @@ class ApplyGlobalDiscount(models.TransientModel):
             lines = obj.template_lines
         elif self._context['active_model'] == 'account.invoice':
             lines = obj.invoice_line_ids
-        lines.write({'chained_discount': self.discount})
+        for line in lines:
+            if (not line.product_id or not line.product_id.without_early_payment) and not line.promotion_line:
+                line.chained_discount = line.chained_discount + ('+' if line.chained_discount else '') + str(self.discount)
         return {'type': 'ir.actions.act_window_close'}

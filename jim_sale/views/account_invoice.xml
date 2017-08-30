@@ -9,7 +9,7 @@
         <field name="inherit_id" ref="account.invoice_form"/>
         <field name="arch" type="xml">
             <button name="action_invoice_draft" position="after">
-                <button name="%(jim_sale.apply_global_discount_action)d" states="draft,sent" string="Apply global" type="action" />
+                <button name="%(jim_sale.apply_global_discount_action)d" states="draft,sent" string="Apply discount to all lines" type="action" />
             </button>
         </field>
     </record>
