@@ -12,6 +12,7 @@ class AccountInvoice(models.Model):
     global_discount_amount = fields.Monetary(
         compute='_compute_global_discount_amount')
     global_discount_percentage = fields.Float('Global discount')
+    notes = fields.Text()
 
     @api.multi
     def compute_early_payment_lines(self):

@@ -1,14 +1,14 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* jim_sale
+#   * jim_sale
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-06 18:14+0000\n"
-"PO-Revision-Date: 2017-08-06 18:14+0000\n"
-"Last-Translator: <>\n"
+"PO-Revision-Date: 2017-08-30 18:00+0200\n"
+"Last-Translator: Jesús Ventosinos Mayor <jesus@comunitea.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -16,11 +16,42 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_apply_global_discount_discount
+msgid "Discount(%)"
+msgstr "Descuento(%)"
+
+#. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_delivery_carrier_customer_prices_count
 #: model:ir.model.fields,field_description:jim_sale.field_product_product_customer_prices_count
 #: model:ir.model.fields,field_description:jim_sale.field_product_template_customer_prices_count
 msgid "#Prices"
 msgstr "#Precios"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.invoice_form_add_apply_discount
+#: model:ir.ui.view,arch_db:jim_sale.view_order_form_add_states
+msgid "Apply discount to all lines"
+msgstr "Aplicar descuento en todas las lineas"
+
+#. module: jim_sale
+#: model:ir.actions.act_window,name:jim_sale.apply_global_discount_action
+msgid "Apply global discount"
+msgstr "Aplicar descuento global"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.apply_global_discount_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.apply_global_discount_form
+msgid "or"
+msgstr "o"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.apply_global_discount_form
+msgid "Apply discount"
+msgstr "Aplicar descuento"
 
 #. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.view_order_form_add_states
@@ -324,4 +355,3 @@ msgstr "↳Rellenar cantidad"
 #: model:ir.ui.view,arch_db:jim_sale.view_picking_form_jim_packs
 msgid "📋Tree packs"
 msgstr "📋Lista paquetes"
-

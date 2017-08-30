@@ -24,10 +24,12 @@
         "Javier Colmenero <javier@comunitea.com>"
     ],
     "data": [
+        'wizard/apply_global_discount.xml',
         'security/ir.model.access.csv',
         'views/customer_price.xml',
         'views/product_view.xml',
         'views/sale_view.xml',
+        'views/account_invoice.xml',
         'views/stock_picking.xml',
         'views/res_partner_view.xml',
         'views/payment_term_view.xml',
