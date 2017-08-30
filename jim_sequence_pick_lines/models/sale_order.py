@@ -6,64 +6,35 @@ from odoo import models, fields, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 #import barcode#
 
-DEFAULT_PRE = "843540%"
+ORDER_LINE_INC = 1000
 
 
-
-class ProductTemplate(models.Model):
-
-    _inherit = 'product.template'
-
-    @api.multi
-    def asign_barcode(self):
-        for template in self:
-            template.product_variant_ids.asign_barcode()
+class SaleOrderLineTemplate(models.Model):
+    _inherit = 'sale.order.line.template'
+    _order = 'order_id, layout_category_id, sequence, id'
 
 
-class ProductProduct(models.Model):
+class SaleOrderLine(models.Model):
 
-    _inherit = 'product.product'
+    _inherit = 'sale.order.line'
+    _order = 'order_id, layout_category_id, template_sequence, sequence, id'
 
-    @api.multi
-    def write(self, vals):
-        # Comprobamos si hay movimientos. No podemos por el tema de Mecalux
-        if vals.get('barcode', False):
-            for product in self:
-                if product.stock_move_ids and False:
-                    raise ValidationError(_("You can change barcode because this product has moves"))
-        return super(ProductProduct, self).write(vals)
-
-    def next_barcode(self):
-
-        def ean_checksum(ean):
-            code = list(ean)
-            if len(code) != 12:
-                return -1
-            oddsum = evensum = total = 0
-            code = code[:-1]  # Remove checksum
-            for i in range(len(code)):
-                if i % 2 == 0:
-                    evensum += int(code[i])
-                else:
-                    oddsum += int(code[i])
-            total = oddsum * 3 + evensum
-            return int((10 - total % 10) % 10)
-
-        sequence = self.env.ref('product_ean_generator.seq_product_ean_auto')
-        EAN = str(int(sequence.next_by_id()))
-        return ean_checksum(EAN)
-
+    template_sequence = fields.Integer(related='template_line.sequence', store=True)
 
     @api.model
     def create(self, vals):
-        barcode = vals.get('barcode', False)
-        if barcode == 'ASIGNAR':
-            vals['barcode'] = self.next_barcode()
-        return super(ProductProduct, self).create(vals)
-
-
-    @api.multi
-    def asign_barcode(self):
-        for product in self.filtered(lambda s: s.barcode == "ASIGNAR" or not s.barcode):
-            product.barcode = product.next_barcode()
-
+        line = super(SaleOrderLine, self).create(vals)
+        if not line.product_id.attribute_value_ids:
+            line.sequence = line.template_sequence
+            #line.sequence = max(line.template_line.mapped('order_lines.sequence'))
+        else:
+            new_sequence = 0
+            cent = 100
+            for value in line.product_id.attribute_value_ids:
+                if value.attribute_id.is_color:
+                    new_sequence += value.id * ORDER_LINE_INC
+                else:
+                    new_sequence += value.sequence * cent
+                cent = 1
+            line.sequence = new_sequence
+        return line

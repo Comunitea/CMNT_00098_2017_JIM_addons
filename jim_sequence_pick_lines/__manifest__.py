@@ -3,17 +3,17 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'Product ean generator ',
+    'name': 'Sequence en lineas de ventas',
     'version': '10.0.1.0.0',
     'depends': [
-        'product',
+        'jim_sale',
     ],
     'author': "Comunitea",
     'license': "AGPL-3",
-    'summary': '''Set ean code from last''',
+    'summary': '''Sequencias en plantillas y reorden''',
     'website': 'http://www.comunitea.com',
-    'data': ['views/product_template.xml',
-             'data/ean_sequence.xml'],
+    'data': ['security/ir.model.access.csv'
+    ],
     'installable': True,
     'auto_install': False,
 }
