@@ -3,6 +3,11 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
 
+    <template id="remove_early_payment" inherit_id="sale_early_payment_discount.sale_order_add_early_payment">
+        <xpath expr="//tr[@class='border-black ep_disc']" position="replace"></xpath>
+        <xpath expr="//tr[@class='ep_disc']" position="replace"></xpath>
+    </template>
+
     <template id="custom_sale_order_report" inherit_id="sale.report_saleorder_document">
         <xpath expr="//t[@t-call='report.external_layout']" position="replace">
             <t t-call="custom_documents.custom_layout">

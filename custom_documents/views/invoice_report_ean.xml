@@ -117,7 +117,7 @@
                         <tr t-if="o.global_discount_amount and o.company_id.show_discount">
                             <td>Global discount</td>
                             <td class="text-right">
-                                <span t-field="o.global_discount_amount"/>
+                                (<span t-field="o.early_payment_discount"/>) <span t-field="o.global_discount_amount"/>
                             </td>
                         </tr>
                         <t t-foreach="o._get_tax_amount_by_group()" t-as="amount_by_group">
