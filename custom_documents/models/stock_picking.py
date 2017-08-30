@@ -42,7 +42,7 @@ class StockPicking(models.Model):
                 same_day_delivery = True
                 date_done = fields.Datetime.from_string(pick.date_done)\
                     .replace(tzinfo=timezone('Etc/UTC'))\
-                    .astimezone(timezone(pick._context['tz']))
+                    .astimezone(timezone(pick._context.get('tz', 'Etc/UTC'))
                 if date_done.hour > 17 or \
                         (date_done.hour == 17 and date_done.minute > 30) or \
                         date_done.isoweekday() in (6, 7):
