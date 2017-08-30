@@ -71,39 +71,6 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    @api.multi
-    def _get_web_stock(self):
-        bom_obj = self.env["mrp.bom"]
-        bom_line_obj = self.env["mrp.bom.line"]
-        for product in self:
-            stock = product.global_available_stock
-            if product.bom_count:
-                boms = \
-                    bom_obj.search(['|', '&',
-                                    ('product_tmpl_id', '=',
-                                     product.product_tmpl_id.id),
-                                    ('product_id', '=', False),
-                                    ('product_id', '=', product.id)])
-                for bom in boms:
-                    min_qty = 0
-                    for line in bom.bom_line_ids:
-                        qty = line.product_id.global_available_stock / \
-                            line.product_qty
-                        if not min_qty or qty < min_qty:
-                            min_qty = qty
-                    if min_qty < 0:
-                        min_qty = 0
-                    stock += (min_qty * bom.product_qty)
-            else:
-                bom_lines = bom_line_obj.\
-                    search([('product_id', '=', product.id)])
-                for line in bom_lines:
-                    if line.product_qty:
-                        stock += \
-                            line.bom_id.product_tmpl_id.\
-                            global_available_stock * line.product_qty
-            product.web_global_stock = int(stock)
-
     def _search_global_product_quantity(self, operator, value, field):
         if field not in ('global_available_stock', 'global_real_stock', 'web_global_stock'):
             raise UserError(_('Invalid domain left operand %s') % field)
@@ -122,12 +89,6 @@ class ProductProduct(models.Model):
         if value == 0.0 and operator in ('=', '>=', '<='):
             return self._search_global_product_quantity(operator, value,
                                                         'global_real_stock')
-        product_ids = self.sudo().\
-            _search_qty_available_new(operator, value,
-                                      self._context.get('lot_id'),
-                                      self._context.get('owner_id'),
-                                      self._context.get('package_id'))
-        return [('id', 'in', product_ids)]
 
     def _search_global_avail_stock(self, operator, value):
         return self.\
@@ -154,14 +115,13 @@ class ProductProduct(models.Model):
     web_global_stock = fields.Float('Web stock', readonly=True,
                                     digits=dp.get_precision
                                     ('Product Unit of Measure'),
-                                    compute="_get_web_stock",
-                                    search='_search_web_global_stock')
-    force_web = fields.Selection([('yes', 'Visible'), ('no', 'No visible'), ('tags', 'Según etiquetas')], default='tags', string="Forzar web")
+                                    compute="_compute_global_stock")
+    tag_names = fields.Char('Tags', compute='_compute_tag_names', store=True)
     web = fields.Boolean('Web', compute="_compute_web_state", store=True)
 
     @api.depends('force_web')
     def _compute_web_state(self):
-       for product in self:
+        for product in self:
             if product.force_web == 'yes':
                 product.web = True
             elif product.force_web == 'no':
@@ -169,66 +129,126 @@ class ProductProduct(models.Model):
             elif product.force_web == 'tags':
                 product.web = product.product_tmpl_id.web
 
+    @api.depends('tag_ids')
+    def _compute_tag_names(self):
+        for product in self:
+            product.tag_names = ', '.join(x.name for x in product.tag_ids)
+
     @api.multi
-    def _compute_global_stock(self):
-        order_line_obj = self.env["sale.order.line"]
-        deposit_ids = \
-            self.env['stock.location'].sudo().search([('deposit', '=', True)]).ids
+    def _calculate_globals(self):
+        not_deposit_ids = \
+            self.env['stock.location'].sudo().search(
+                [('deposit', '!=', True)]).ids
         company_ids = \
-            self.env['res.company'].sudo().search([('no_stock', '=', True)]).ids
+            self.env['res.company'].sudo().search(
+                [('no_stock', '=', True)]).ids
 
         self._cr.execute(
             "SELECT SOL.product_id, sum(SOL.product_uom_qty) as qty FROM "
-            "sale_order_line SOL " 
+            "sale_order_line SOL "
             "INNER JOIN sale_order  SO ON SO.id = SOL.order_id "
             "INNER JOIN stock_location_route SLR  ON SLR.id = SOL.route_id "
             "WHERE SOL.product_id in %s "
             "AND SO.state in ('lqdr', 'pending', 'progress_lqdr', 'progress',"
             " 'proforma') "
-            "AND not SLR.no_stock group BY SOL.product_id",
-                                   [tuple(self.ids)])
+            "AND not SLR.no_stock group BY SOL.product_id", [tuple(self.ids)])
         sale_line_data = dict(self._cr.fetchall())
 
+        ctx = self._context.copy()
+        ctx.update({'location': not_deposit_ids})
+        qty_available_d = dict(
+            [(p['id'], p['qty_available'])
+             for p in self.sudo().read(['qty_available'])])
+        outgoing_qty_d = dict(
+            [(p['id'], p['outgoing_qty'])
+             for p in self.sudo().read(['outgoing_qty'])])
+
+        global_real_stock = qty_available_d
+        global_available_stock = dict(
+            [(p, qty_available_d[p] - outgoing_qty_d[p])
+             for p in qty_available_d.keys()])
+
+        company_real_stock = dict([(x.id, 0) for x in self])
+        company_available_stock = dict([(x.id, 0) for x in self])
+        if company_ids:
+            for company in company_ids:
+                ctx = self._context.copy()
+                ctx.update({'force_company': company})
+                company_available = dict(
+                    [(p['id'], p['qty_available']) for p in
+                     self.with_context(ctx).sudo().read(['qty_available'])])
+                company_outgoing = dict(
+                    [(p['id'], p['outgoing_qty']) for p in
+                     self.with_context(ctx).sudo().read(['outgoing_qty'])])
+
+                company_real_stock = {
+                    k: company_real_stock.get(k, 0) +
+                    company_available.get(k, 0)
+                    for k in set(company_real_stock) | set(company_available)}
+
+                company_available_stock_ = dict(
+                    [(p, company_available[p] - company_outgoing[p])
+                     for p in company_available.keys()])
+                company_available_stock = {
+                    k: company_available_stock.get(k, 0) +
+                    company_available_stock_.get(k, 0)
+                    for k in set(company_available_stock) |
+                    set(company_available_stock_)}
+
+        a = dict([(p, global_real_stock[p] -
+                   company_real_stock[p])for p in self.ids])
+        b = dict([
+            (p, global_available_stock[p] - sale_line_data.get(p, 0) -
+             company_available_stock[p])for p in self.ids])
+        return dict(
+            [(p, {'global_real_stock': a[p],
+                  'global_available_stock': b[p]}) for p in self.ids])
+
+    def _compute_global_stock(self):
+        res = self._calculate_globals()
+
+        bom_obj = self.env["mrp.bom"]
+        bom_line_obj = self.env["mrp.bom.line"]
         for product in self:
-            ctx = self._context.copy()
-            deposit_real_stock = 0
-            deposit_available_stock = 0
-            sale_lines_stock = 0
-            global_real_stock = product.sudo().qty_available
-            global_available_stock = product.sudo().qty_available - \
-                product.sudo().outgoing_qty
-
-            # Get stock global in deposit location to discount it
-            if deposit_ids:
-                ctx.update({'location': deposit_ids})
-                deposit_real_stock = \
-                    product.with_context(ctx).sudo().qty_available
-                deposit_available_stock = \
-                    product.with_context(ctx).sudo().qty_available - \
-                    product.with_context(ctx).sudo().outgoing_qty
-            company_real_stock = 0
-            company_available_stock = 0
-            if company_ids:
-                for company in company_ids:
-                    ctx = self._context.copy()
-                    ctx.update({'force_company': company})
-                    company_real_stock += \
-                        product.with_context(ctx).sudo().qty_available
-                    company_available_stock += \
-                        product.with_context(ctx).sudo().qty_available - \
-                        product.with_context(ctx).sudo().outgoing_qty
-
-            # slines = order_line_obj.sudo().search([('product_id', '=', product.id),
-            #                                 ('order_id.state', 'in',
-            #                                  ['lqdr', 'pending',
-            #                                   'progress_lqdr', 'progress',
-            #                                   'proforma'])])
-            # for sline in slines:
-            #     if sline.route_id.no_stock == False:
-            #         sale_lines_stock += sline.product_uom_qty
-            sale_lines_stock = sale_line_data.get(product.id, 0)
-            product.global_real_stock = global_real_stock - \
-                                        deposit_real_stock -company_real_stock
+            product.global_real_stock = res[product.id]['global_real_stock']
             product.global_available_stock = \
-                global_available_stock - deposit_available_stock - \
-                sale_lines_stock - company_available_stock
+                res[product.id]['global_available_stock']
+            stock = res[product.id]['global_available_stock']
+            if product.bom_count:
+                boms = \
+                    bom_obj.search(['|', '&',
+                                    ('product_tmpl_id', '=',
+                                     product.product_tmpl_id.id),
+                                    ('product_id', '=', False),
+                                    ('product_id', '=', product.id)])
+                for bom in boms:
+                    min_qty = 0
+                    for line in bom.bom_line_ids:
+                        if line.product_id.id in res:
+                            global_available_stock = \
+                                res[line.product_id.id][
+                                  'global_available_stock']
+                        else:
+                            global_available_stock = \
+                                line.product_id._calculate_globals()[
+                                 line.product_id.id]['global_available_stock']
+                        qty = global_available_stock / line.product_qty
+                        if not min_qty or qty < min_qty:
+                            min_qty = qty
+                    if min_qty < 0:
+                        min_qty = 0
+                    stock += (min_qty * bom.product_qty)
+            else:
+                bom_lines = bom_line_obj.\
+                    search([('product_id', '=', product.id)])
+                for line in bom_lines:
+                    if line.product_qty:
+                        global_available_stock = sum(
+                            [res[x.id]['global_available_stock']
+                             if x in res
+                             else x._calculate_globals()[x.id]
+                             ['global_available_stock']
+                             for x in
+                             line.bom_id.product_tmpl_id.product_variant_ids])
+                        stock += global_available_stock * line.product_qty
+            product.web_global_stock = int(stock)
