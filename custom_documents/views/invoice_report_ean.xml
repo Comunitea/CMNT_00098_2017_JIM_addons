@@ -131,7 +131,7 @@
                         <tr class="border-black">
                             <td><strong>Total</strong></td>
                             <td class="text-right">
-                                 <span t-field="o.amount_total" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                 <span t-esc="o.amount_untaxed - o.global_discount_amount" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
                             </td>
                         </tr>
                     </table>
