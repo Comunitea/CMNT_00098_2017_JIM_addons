@@ -75,6 +75,9 @@
                     <field name="company_id"/>
                     <field name="tag_names"/>
                 </field>
+                <field name="attribute_value_ids" position="replace">
+                    <field name="attribute_names"/>
+                </field>
             </field>
         </record>
 
