@@ -117,6 +117,7 @@ class ProductProduct(models.Model):
                                     ('Product Unit of Measure'),
                                     compute="_compute_global_stock")
     tag_names = fields.Char('Tags', compute='_compute_tag_names', store=True)
+    attribute_names = fields.Char('Attributes', compute='_compute_attribute_names', store=True)
     web = fields.Boolean('Web', compute="_compute_web_state", store=True)
 
     @api.depends('force_web')
@@ -133,6 +134,11 @@ class ProductProduct(models.Model):
     def _compute_tag_names(self):
         for product in self:
             product.tag_names = ', '.join(x.name for x in product.tag_ids)
+
+    @api.depends('attribute_value_ids')
+    def _compute_attribute_names(self):
+        for product in self:
+            product.attribute_names = ', '.join(x.name_get()[0][1] for x in product.attribute_value_ids)
 
     @api.multi
     def _calculate_globals(self):
