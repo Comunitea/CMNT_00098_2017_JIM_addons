@@ -66,6 +66,7 @@
                 </field>
             </field>
         </record>
+
          <record id="view_stock_product_product_with_company" model="ir.ui.view">
             <field name="name">product.stock.tree.with_company</field>
             <field name="model">product.product</field>
@@ -73,7 +74,7 @@
             <field name="arch" type="xml">
                  <field name="barcode" position="after">
                     <field name="company_id"/>
-                    <field name="tag_ids" widget="many2many_tags"/>
+                    <field name="tag_names"/>
                 </field>
             </field>
         </record>
