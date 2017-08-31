@@ -22,5 +22,11 @@ class ApplyGlobalDiscount(models.TransientModel):
             lines = obj.invoice_line_ids
         for line in lines:
             if (not line.product_id or not line.product_id.without_early_payment) and not line.promotion_line:
-                line.chained_discount = line.chained_discount + ('+' if line.chained_discount else '') + str(self.discount)
+                if self.discount != 0:
+                    if float(line.chained_discount) != 0:
+                        line.chained_discount = line.chained_discount + ('+' if line.chained_discount else '') + str(self.discount)
+                    else:
+                        line.chained_discount = str(self.discount)
+                else:
+                    line.chained_discount = 0
         return {'type': 'ir.actions.act_window_close'}
