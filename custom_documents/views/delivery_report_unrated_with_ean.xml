@@ -74,6 +74,17 @@
                                 <td></td>
                             </tr>
                         </t>
+                        <tr t-foreach="o.sale_services" t-as="service_line">
+                            <td>
+                                <span t-field="service_line.product_id.default_code"/>
+                            </td>
+                            <td>
+                                <span t-field="service_line.name_report"/>
+                            </td>
+                            <td>
+                                <span t-field="service_line.product_uom_qty"/>
+                            </td>
+                        </tr>
                     </tbody>
                     <tfoot>
                         <tr>
