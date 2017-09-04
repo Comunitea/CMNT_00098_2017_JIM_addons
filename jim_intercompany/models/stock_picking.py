@@ -320,23 +320,31 @@ class StockMove(models.Model):
             move_dests.write({'move_dest_id': False})
 
         res = super(StockMove, self).action_done()
-        move_dest_IC_ids = set()
-        move_purchase_IC_ids = set()
+        move_dest_IC_ids = self.env['stock.move']
+        move_purchase_IC_ids = self.env['stock.move']
         for move in self.sudo():
             if move.move_dest_IC_id and move.move_dest_IC_id.state in (
                     'waiting', 'confirmed'):
                 if move.move_dest_id.picking_id.sale_id.auto_generated:
-                    move_dest_IC_ids.add(move.move_dest_IC_id.id)
+                    multiple_dest = self.search(
+                        [('picking_id', '=',
+                          move.move_dest_IC_id.picking_id.id),
+                         ('product_id', '=', move.product_id.id),
+                         ])
+                    move_dest_IC_ids |= multiple_dest
                 # move.process_intercompany_chain()
             if move.move_dest_id.move_purchase_IC_id:
-                move_purchase_IC_ids.add(
-                    move.move_dest_id.move_purchase_IC_id.id)
+                multiple_IC = self.search(
+                [('picking_id', '=', move.move_dest_id.move_purchase_IC_id.picking_id.id),
+                 ('product_id', '=', move.product_id.id),
+                 ])
+                move_purchase_IC_ids |= multiple_IC
 
         if move_dest_IC_ids:
-            self.sudo().browse(list(move_dest_IC_ids)).force_assign()
+            move_dest_IC_ids.sudo().force_assign()
         if move_purchase_IC_ids:
-            self.sudo().browse(list(move_purchase_IC_ids)).do_unreserve()
-            self.sudo().browse(list(move_purchase_IC_ids)).action_assign()
+            move_purchase_IC_ids.sudo().do_unreserve()
+            move_purchase_IC_ids.sudo().action_assign()
 
         return res
 

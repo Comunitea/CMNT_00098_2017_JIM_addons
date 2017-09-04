@@ -1,0 +1,19 @@
+diff --git a/addons/stock/models/stock_quant.py b/addons/stock/models/stock_quant.py
+index 1c11ad0..6a40029 100644
+--- a/addons/stock/models/stock_quant.py
++++ b/addons/stock/models/stock_quant.py
+@@ -202,8 +202,12 @@ class Quant(models.Model):
+             # Do manual search for quant to avoid full table scan (order by id)
+             self._cr.execute("""
+                 SELECT 0 FROM stock_quant, stock_location WHERE product_id = %s AND stock_location.id = stock_quant.location_id AND
+-                ((stock_location.parent_left >= %s AND stock_location.parent_left < %s) OR stock_location.id = %s) AND qty < 0.0 LIMIT 1
+-            """, (move.product_id.id, location_to.parent_left, location_to.parent_right, location_to.id))
++                ((stock_location.parent_left >= %s AND 
++                stock_location.parent_left < %s) OR stock_location.id = %s) 
++                AND qty < 0.0 AND stock_quant.company_id = %s LIMIT 1
++            """, (move.product_id.id, location_to.parent_left,
++                  location_to.parent_right, location_to.id,
++                  move.company_id.id))
+             if self._cr.fetchone():
+                 quants_reconcile_sudo._quant_reconcile_negative(move)
+ 
