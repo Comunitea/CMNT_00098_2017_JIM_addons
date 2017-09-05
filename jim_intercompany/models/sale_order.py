@@ -97,7 +97,10 @@ class SaleOrder(models.Model):
     def action_confirm(self):
         res = super(SaleOrder, self).action_confirm()
         if self.mapped('purchase_ids'):
-            ic_purchases = self.purchase_ids.filtered(lambda x: x.intercompany)
+            ic_purchases = self.purchase_ids.filtered(lambda x:
+                                                      x.intercompany and
+                                                      x.state in
+                                                      ['draft', 'sent'])
             ic_purchases.button_confirm()
 
         return res
