@@ -65,9 +65,9 @@ class ProductProduct(BaseExtClass):
             return tallajecode, tallacode, colorcode
 
         if unlink:
-            active = 'N'
+            is_active = 'N'
         else:
-            active = 'Y' if self.active else 'N'
+            is_active = 'Y' if self.active else 'N'
 
         tallaje, talla, color = get_tallaje_talla_color()
 
@@ -85,7 +85,7 @@ class ProductProduct(BaseExtClass):
             self.product_brand_id.name or '',                               # FirmName
             self.price or '0.0',                                            # Price
             ";".join(tag.legacy_code or '#' + str(tag.id) for tag in self.tag_ids),  # ItmsGrpCod
-            active                                                          # validFor
+            is_active                                                       # validFor
         )
 
         self.obj_type = '4'
