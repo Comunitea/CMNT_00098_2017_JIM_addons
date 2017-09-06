@@ -7,6 +7,7 @@ from odoo import api, fields, models, _
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
+
     def show_packs_in_pick(self):
         ids = []
         for op in self.pack_operation_ids:
@@ -49,3 +50,18 @@ class StockPicking(models.Model):
         for op in self.pack_operation_product_ids:
             if op.qty_done == 0:
                 op.qty_done = op.ordered_qty
+
+    @api.one
+    @api.depends('move_lines.procurement_id.sale_line_id.order_id', 'move_lines.move_dest_id')
+    def _compute_sale_id(self):
+        for move in self.move_lines:
+            if move.procurement_id.sale_line_id:
+                self.sale_id = move.procurement_id.sale_line_id.order_id
+                return
+            else:
+                move_dest_id = move.move_dest_id
+                while move_dest_id:
+                    if move_dest_id.procurement_id.sale_line_id:
+                        self.sale_id = move_dest_id.procurement_id.sale_line_id.order_id
+                        return
+                    move_dest_id = move_dest_id

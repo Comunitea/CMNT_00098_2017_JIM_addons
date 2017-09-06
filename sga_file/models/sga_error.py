@@ -24,6 +24,7 @@ class SGAfileerror(models.Model):
     error_message = fields.Char("Mensaje de error")
     date_error = fields.Char('Fecha')
     ack = fields.Boolean("Ack", default=False)
+    note = fields.Text("File line")
 
     def confirm_ack(self):
         self.write({'ack': True})
@@ -34,7 +35,7 @@ class SGAfileerror(models.Model):
         sga_file_obj = self.env['sga.file'].browse(file_id)
 
         sga_file = open(sga_file_obj.sga_file, 'r')
-        no_error = True
+
 
         line_number = 0
         val = {}
@@ -90,7 +91,9 @@ class SGAfileerror(models.Model):
                 st = en
                 en = st + 14
                 val['date_error'] = line[st:en].strip()
+                val['note'] = line
                 error_file = error_obj.search([('file_name', '=', val['file_name']), ('error_code', '=', val['error_code'])])
+
 
                 if error_file:
                     error_file.unlink()

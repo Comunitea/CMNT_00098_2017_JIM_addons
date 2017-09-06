@@ -32,9 +32,12 @@ class PurchaseOrderLine(models.Model):
 
     @api.multi
     def write(self, vals):
-        res = super(PurchaseOrderLine, self).write(vals)
-        if vals.get('sequence'):
-            self.order_id.reorder_sequence_lines()
+        #print self.display_name, vals
+        #if vals.get('template_sequence') and self._context.get("update_sequence", False):
+        #    print self.display_name, vals
+        #    self.order_id.reorder_sequence_lines()
+        #else:
+        return super(PurchaseOrderLine, self).write(vals)
 
     @api.multi
     def _prepare_stock_moves(self, picking):
@@ -46,6 +49,11 @@ class PurchaseOrderLine(models.Model):
             })
         return res
 
+    @api.multi
+    @api.onchange('template_sequence')
+    def onchange_template_sequence(self):
+        print "OKOKOKOKOKO"
+
 
 class PurchaseOrder(models.Model):
 
@@ -54,10 +62,25 @@ class PurchaseOrder(models.Model):
     @api.model
     def reorder_sequence_lines(self):
         lines = self.order_line
+        ctx = dict(self._context.copy())
+        ctx.update({'update_sequence': True})
         while lines:
             line_0 = lines[0]
             product_template = line_0.product_id.product_tmpl_id.id
             template_lines = lines.filtered(lambda x: x.product_id.product_tmpl_id.id == product_template)
-            for line in template_lines:
-                line.template_sequence = line_0.template_sequence
+            template_lines.with_context(ctx).write({'template_sequence': line_0.template_sequence})
             lines = lines - template_lines
+
+        for line in self.order_line:
+            product_id = line.product_id
+
+            print "%s %s [%s] " % (product_id.display_name, line.template_sequence, line.sequence)
+        print "\n\n-------------------------\n\n"
+
+    @api.multi
+    @api.onchange('order_line')
+    def onchange_template_sequence(self):
+
+        for order in self:
+            order.reorder_sequence_lines()
+

@@ -13,7 +13,7 @@ import stock_inventory
 import sga_error
 import sga_container
 
-
+import sale_order
 
 #from . import wizard
 

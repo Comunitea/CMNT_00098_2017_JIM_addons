@@ -83,16 +83,58 @@
                     <label for="origin"/>
                     <div>
                         <field name="origin" class="oe_inline"/>
-
+                        <label class="oe_inline" string="  >>  " attrs="{'invisible': [('sale_id', '=', False), ('purchase_id', '=', False)]}"/>
                         <field name="sale_id" class="oe_inline" attrs="{'invisible': [('sale_id', '=', False)]}"/>
                         <field name="purchase_id"  class="oe_inline" attrs="{'invisible': [('purchase_id', '=', False)]}"/>
                     </div>
+                    <field name="purchase_date_order" attrs="{'invisible': [('purchase_id', '=', False)]}"/>
+                    <field name="confirmation_date" attrs="{'invisible': [('sale_id', '=', False)]}"/>
                 </field>
                 <field name="pack_operation_product_ids" position="after">
                     <group string="Observations" attrs="{'invisible': [('sale_id', '=', False)]}">
                         <field name="observations" nolabel="1"/>
                     </group>
                 </field>
+
+
+
+            </field>
+        </record>
+         <record id="view_picking_form_partner_colors" model="ir.ui.view">
+            <field name="name">stock.picking.form.partner_colors</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='pack_operation_product_ids']/tree" position="attributes">
+                    <attribute name="decoration-danger">ordered_qty &gt; qty_done or qty_done == 0</attribute>
+                    <attribute name="decoration-info">qty_done > ordered_qty</attribute>
+                    <attribute name="decoration-success">qty_done == ordered_qty</attribute>
+                    <attribute name="decoration-bf">qty_done &lt; ordered_qty or qty_done == 0</attribute>
+                </xpath>
+
+            </field>
+        </record>
+        <record id="view_move_picking_tree_colors" model="ir.ui.view">
+            <field name="name">view.move.picking.tree.colors</field>
+            <field name="model">stock.move</field>
+            <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+            <field name="arch" type="xml">
+                <xpath expr="//tree" position="attributes">
+                    <attribute name="decoration-success">reserved_availability == product_uom_qty</attribute>
+                    <attribute name="decoration-bf">reserved_availability &lt; product_uom_qty</attribute>
+                    <attribute name="decoration-danger">(reserved_availability &lt; product_uom_qty) and state != 'assigned'</attribute>
+                    <attribute name="decoration-info">(reserved_availability &lt; product_uom_qty) and state == 'assigned'</attribute>
+                </xpath>
+
+                <xpath expr="//field[@name='remaining_qty']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='availability']" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+                <xpath expr="//field[@name='reserved_availability']" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </xpath>
 
             </field>
         </record>

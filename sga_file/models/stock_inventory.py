@@ -108,7 +108,7 @@ class StockInventorySGA(models.Model):
         warehouse_code = "PLS"
         warehouse_id = self.env['stock.warehouse'].search([('code', '=', warehouse_code)])
         location_id = warehouse_id.lot_stock_id
-        line_number=0
+        line_number = 0
         for line in sga_file_lines:
 
             if len(line) != 423:

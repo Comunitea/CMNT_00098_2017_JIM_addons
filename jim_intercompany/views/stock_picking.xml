@@ -81,10 +81,11 @@
             <field name="product_qty" position="before">
                 <field name="ordered_qty" readonly="1" />
             </field>
-            <xpath expr="//field[@name='pack_operation_product_ids']/tree" position="attributes">
+            <!--<xpath expr="//field[@name='pack_operation_product_ids']/tree" position="attributes">
                 <attribute name="colors">green:ordered_qty&lt;product_qty;red:ordered_qty&gt;product_qty
                 </attribute>
             </xpath>
+            !-->
         </field>
     </record>
 

@@ -11,7 +11,8 @@
             <field name="state" position="after">
               <button name="move_recheck_availability" string="Force recheck availability" type="object" icon="fa-refresh"
                             groups="stock_disable_force_availability_button.group_stock_force_availability"
-                            states="waiting,confirmed,partially_available,cancel"/>
+                            states="waiting,confirmed,partially_available,cancel"
+                            help ="Change move state\n cancel >> confirmed\n waiting >> confirmed\nconfirmed >> Force availability "/>
             </field>
 
             </field>

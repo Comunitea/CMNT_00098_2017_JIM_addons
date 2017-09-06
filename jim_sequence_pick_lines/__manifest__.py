@@ -12,7 +12,8 @@
     'license': "AGPL-3",
     'summary': '''Sequencias en plantillas y reorden''',
     'website': 'http://www.comunitea.com',
-    'data': ['security/ir.model.access.csv'
+    'data': ['security/ir.model.access.csv',
+             'views/product_template.xml'
     ],
     'installable': True,
     'auto_install': False,
