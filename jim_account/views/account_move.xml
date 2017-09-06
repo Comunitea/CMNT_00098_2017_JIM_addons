@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+    <record id="view_move_line_scheme_tree" model="ir.ui.view">
+        <field name="name">view.move.line.scheme.tree</field>
+        <field name="model">account.move.line</field>
+        <field name="inherit_id" ref="account.view_move_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="account_id" position="after">
+                <field name="scheme" />
+            </field>
+        </field>
+    </record>
+
+    <record id="view_move_line_scheme_search" model="ir.ui.view">
+            <field name="name">view.move.line.scheme.search</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account.view_account_move_line_filter"/>
+            <field name="arch" type="xml">
+                <filter name="receivable" position="after">
+                    <filter string="Mandate B2B" name="B2B" domain="[('scheme','=','B2B')]"/>
+                    <filter string="Mandate CORE" name="core" domain="[('scheme','=','CORE')]"/>
+                </filter>
+            </field>
+        </record>
+
+</odoo>
