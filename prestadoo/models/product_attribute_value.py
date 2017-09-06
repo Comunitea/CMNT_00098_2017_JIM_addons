@@ -18,8 +18,8 @@ class ProductAttributeValue(BaseExtClass):
                   """
 
             self.xml = xml.format(
-                self.code or '#' + str(self.id),    # Code
-                self.name                           # Name
+                self.legacy_code or '#' + str(self.id),     # Code
+                self.name                                   # Name
             )
             self.obj_type = 'COLOR'
 
@@ -34,7 +34,7 @@ class ProductAttributeValue(BaseExtClass):
                   """
 
             self.xml = xml.format(
-                self.code or '#' + str(self.id),                                    # Code
+                self.legacy_code or '#' + str(self.id),                             # Code
                 self.name,                                                          # Name
                 self.sequence,                                                      # Position
                 self.attribute_id.legacy_code or '#' + str(self.attribute_id.id)    # TallajeCode

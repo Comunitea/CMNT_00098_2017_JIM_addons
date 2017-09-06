@@ -44,8 +44,8 @@ class ProductProduct(BaseExtClass):
 
             tallajeid = None
             tallajecode = None
-            tallaid = None
-            colorid = None
+            tallacode = None
+            colorcode = None
 
             for attr in self.product_tmpl_id.attribute_line_ids:
                 if not attr.attribute_id.is_color:
@@ -55,14 +55,14 @@ class ProductProduct(BaseExtClass):
 
             for val in self.attribute_value_ids:
                 if val.attribute_id.id == tallajeid:
-                    tallaid = val.code or '#' + str(val.id)
+                    tallacode = val.legacy_code or '#' + str(val.id)
                 elif val.attribute_id.is_color:
-                    colorid = val.code or '#' + str(val.id)
+                    colorcode = val.legacy_code or '#' + str(val.id)
 
-                if tallaid and colorid:
+                if tallacode and colorcode:
                     break
 
-            return tallajecode, tallaid, colorid
+            return tallajecode, tallacode, colorcode
 
         if unlink:
             active = 'N'
