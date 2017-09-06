@@ -37,8 +37,12 @@
                             <field name="error_message"/>
                         </group>
                     </group>
+
                     <group>
                         <field name="sga_file_id"/>
+                    </group>
+                    <group>
+                        <field name="note"/>
                     </group>
                 </form>
             </field>

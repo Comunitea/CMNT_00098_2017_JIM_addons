@@ -15,6 +15,8 @@ class StockPicking (models.Model):
         states={})
 
     observations = fields.Text(related='sale_id.observations')
+    purchase_date_order = fields.Datetime(related="purchase_id.date_order")
+    confirmation_date = fields.Datetime(related="sale_id.confirmation_date")
 
 class StockLocation(models.Model):
     _inherit = "stock.location"
@@ -49,4 +51,3 @@ class StockQuantPackage(models.Model):
     shipping_volume = fields.Float(string='Shipping Volume',
                                    compute="_compute_package_volume",
                                    digits=(10, 6))
-

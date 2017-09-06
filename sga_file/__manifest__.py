@@ -35,6 +35,7 @@
         'views/sga_stock_inventory.xml',
         'views/sga_res_partner.xml',
         'views/sga_error.xml',
+        'views/sale_order.xml',
         'data/sga_containertype.xml',
         #'data/sga_product_uom.xml',
         'security/ir.model.access.csv',

@@ -173,6 +173,7 @@ class SGAProductProduct(models.Model):
 
     _inherit = "product.product"
 
+    @api.depends('display_name')
     @api.multi
     def _get_sga_names(self):
         for product in self:
@@ -200,10 +201,6 @@ class SGAProductProduct(models.Model):
     sga_desc_uom_base_code = fields.Char(related='uom_id.name')
     sga_warehouse_code = fields.Char(related="warehouse_id.code")
 
-    @api.onchange('name')
-    def on_change_name(self):
-        res = super(SGAProductProduct, self).on_change_name()
-        self._get_sga_names()
 
     @api.multi
     def toggle_active(self):
@@ -367,8 +364,6 @@ class SGAProductTemplate(models.Model):
                     product.export_product_to_mecalux()
 
         return res
-
-
 
 
 class SGAProductUOM(models.Model):

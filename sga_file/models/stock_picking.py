@@ -35,6 +35,7 @@ class StockPickingSGAType(models.Model):
     code = fields.Char("Tipo de venta (SGA)", size=30, default="CORDER")
     description = fields.Char("Descripcion (SGA)", size=100)
 
+
 class StockPackOperationSGA(models.Model):
 
     _inherit = "stock.pack.operation"
@@ -262,35 +263,55 @@ class StockPickingSGA(models.Model):
         return val
 
     def do_pick(self, sga_ops_exists, bool_error):
-
         # si aqui viene sin op entonces es que mecalux, viene vacio. Obligo a validar automaticamente y lo marco con errores
+        if not self.picking_type_id.sga_integrated:
+            raise ValidationError("Solo albaranes integrados con Mecalux")
         if not sga_ops_exists:
             self.action_done_bool = False
             self.sga_state = 'EI'
         # Confimo cantidaddes en servicios y consumibles
-        pick_ops_product = self.pack_operation_product_ids.filtered(lambda x: x.product_id.type != 'product')
+        pick_ops_product = self.pack_operation_product_ids.filtered(lambda x: x.product_id.type == 'consu')
         for op in pick_ops_product:
             op.qty_done = op.product_qty
 
-        if bool_error:
+        if not bool_error:
             self.sga_state = 'EI'
-            res = False
 
         if self.action_done_bool:
+            #print "Auto validación de Mecalux: True"
             all_done = True
-            for op in self.pack_operation_product_ids:
-                if op.qty_done != op.product_qty:
-                    all_done = False
-                    break
+            do_transfer = True
+            if self.pack_operation_product_ids.filtered(lambda x: x.qty_done != x.product_qty):
+                all_done = False
+
             if all_done:
                 self.action_done()
+                #print "Todas las cantidades OK"
+            else:
+                if self.do_backorder == 'default':
+                    do_transfer = False
+                elif self.do_backorder == 'yes':
+                    create_partial = True
+                elif self.do_backorder == 'no':
+                    create_partial = False
+
+                #print "NO TODAS las cantidades OK con do_backorder = %s y do_transfer a %s" % (self.do_backorder, do_transfer)
+                if do_transfer:
+                    res = self.do_new_transfer()
+                    wiz_id = res.get('res_id', False)
+                    wiz = self.env['stock.backorder.confirmation'].browse(wiz_id)
+                    #print "Creo y encuentro asistente %s"%wiz.id
+                    if wiz:
+                        if create_partial:
+                            wiz.process()
+                        else:
+                            wiz.process_cancel_backorder()
         self.sga_state = 'MT'
 
         return bool_error
 
     def import_mecalux_CSO(self, file_id):
         return False
-
     def import_mecalux_CRP(self, file_id):
 
         pick_obj = self.env['stock.picking']
@@ -298,7 +319,7 @@ class StockPickingSGA(models.Model):
         sga_file = open(sga_file_obj.sga_file, 'r')
         sga_file_lines = sga_file.readlines()
         sga_file.close()
-        bool_error = False
+        bool_error = True
         LEN_HEADER = 460
         LEN_LINE = 362
         LEN_DETAIL_LINE = 88
@@ -353,6 +374,7 @@ class StockPickingSGA(models.Model):
                     pick.carrier_id = carrier
 
                 else:
+                    bool_error = False
                     str_error = "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (rec_order_code, n_line)
                     sga_file_obj.write_log(str_error)
 
@@ -367,7 +389,7 @@ class StockPickingSGA(models.Model):
                 op_id = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
                 op = self.env['stock.pack.operation'].search([('id', '=', op_id)])
                 if op_id and not op:
-                    bool_error=True
+                    bool_error = False
                 # Si op existe, escribo qty_done, si no creo una linea de operacion con lo recibido
                 if op:
                     op.qty_done = qty_done
@@ -430,7 +452,7 @@ class StockPickingSGA(models.Model):
         sga_file_lines = sga_file.readlines()
         sga_file.close()
         str_error = ''
-        bool_error = False
+        bool_error = True
         pool_ids = []
         n_line = 0
         sgavar = self.env['sgavar.file'].search([('code', '=', 'CSO')])
@@ -442,9 +464,9 @@ class StockPickingSGA(models.Model):
         LEN_LINE = 344
         LEN_DETAIL_LINE = 436
         sga_ops_exists = False
-
         for line in sga_file_lines:
             n_line += 1
+
             if len(line) == LEN_HEADER:
 
                 if pick:
@@ -460,7 +482,7 @@ class StockPickingSGA(models.Model):
                 if not pick:
                     str_error += "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (sorder_code, n_line)
                     sga_file_obj.write_log(str_error)
-                    bool_error = True
+                    bool_error = False
 
                     continue
                 st = 378
@@ -493,7 +515,7 @@ class StockPickingSGA(models.Model):
                 op_id = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
                 op = self.env['stock.pack.operation'].search([('id', '=', op_id), ('picking_id', '=', pick.id)])
                 if op_id and not op:
-                    bool_error=True
+                    bool_error = False
                     continue
                 # cantidad a realizar
                 st = 284
@@ -505,7 +527,6 @@ class StockPickingSGA(models.Model):
                     op.qty_done = qty_done
                     op.sga_changed = True
                     sga_ops_exists = True
-                    bool_error = True
 
                 elif create:
                     st = 186
@@ -537,9 +558,12 @@ class StockPickingSGA(models.Model):
                     self.env['stock.pack.operation'].create(values)
 
             else:
-                len(line) == LEN_DETAIL_LINE
                 continue
 
         if pick:
             bool_error = pick.do_pick(sga_ops_exists, bool_error)
         return bool_error
+
+
+
+

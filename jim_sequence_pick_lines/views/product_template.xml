@@ -3,21 +3,16 @@
     <data>
 
 
-        <record model="ir.ui.view" id="product_template_assign_ean_code">
-            <field name="name">product.template.form.ean_code</field>
-            <field name="model">product.template</field>
-            <field name="inherit_id" ref="product.product_template_only_form_view"/>
+          <record model="ir.ui.view" id="purchase_order_form_template_sequence">
+            <field name="name">purchase_purchase_order_form_template_sequence</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
             <field name="arch" type="xml">
-                <field name="barcode" position="replace">
-                    <label for="barcode"/>
-                    <div>
-                        <field name="barcode" class="oe_inline"/>
-                        <button name="asign_barcode" string="EAN Code"
-                                  class="oe_inline oe_stat_button"
-                                  icon="fa-barcode" type="object"
-                        attrs="{'invisible': [('barcode','!=','ASIGNAR'), ('barcode','!=', False)]}"/>
-                    </div>
-
+                <field name="sequence" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+                <field name="sequence" position="before">
+                    <field name="template_sequence" widget="handle"/>
                 </field>
             </field>
         </record>
