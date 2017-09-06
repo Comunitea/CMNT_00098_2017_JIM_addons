@@ -39,9 +39,9 @@ class ProductTemplate(BaseExtClass):
                     return attr.attribute_id.legacy_code or '#' + str(attr.attribute_id.id)
 
         if unlink:
-            active = 'N'
+            is_active = 'N'
         else:
-            active = 'Y' if self.active else 'N'
+            is_active = 'Y' if self.active else 'N'
 
         tallaje = get_tallaje_attribute_id()
 
@@ -59,7 +59,7 @@ class ProductTemplate(BaseExtClass):
             self.product_brand_id.name or '',                       # FirmName
             '0.0',                                                  # Price
             ";".join(tag.legacy_code or '#' + str(tag.id) for tag in self.tag_ids),  # ItmsGrpCod
-            active                                                  # validFor
+            is_active                                               # validFor
         )
 
         self.obj_type = '4'
