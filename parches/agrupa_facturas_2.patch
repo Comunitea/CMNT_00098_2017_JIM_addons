@@ -1,8 +1,18 @@
 diff --git a/addons/sale/models/sale.py b/addons/sale/models/sale.py
-index 38a4036..af3d8e6 100644
+index 38a4036..166f780 100644
 --- a/addons/sale/models/sale.py
 +++ b/addons/sale/models/sale.py
-@@ -335,7 +335,9 @@ class SaleOrder(models.Model):
+@@ -157,6 +157,9 @@ class SaleOrder(models.Model):
+     procurement_group_id = fields.Many2one('procurement.group', 'Procurement Group', copy=False)
+ 
+     product_id = fields.Many2one('product.product', related='order_line.product_id', string='Product')
++    commercial_partner_id = fields.Many2one(
++        related='partner_id.commercial_partner_id', string='Commercial Entity',
++        store=True, readonly=True)
+ 
+     @api.model
+     def _get_customer_lead(self, product_tmpl_id):
+@@ -335,7 +338,9 @@ class SaleOrder(models.Model):
          invoices = {}
          references = {}
          for order in self:
