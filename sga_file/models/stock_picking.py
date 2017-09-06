@@ -155,6 +155,9 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def write(self, vals):
+        if ('pack_operation_product_ids' in vals or 'move_lines' in vals) and self.filtered(lambda x:x.sga_state == 'PM'):
+            raise ValidationError("No puedes modificar operaciones si está enviado a Mecalux")
+
         return super(StockPickingSGA, self).write(vals)
 
     def get_outputs_from_mecalux(self):
@@ -239,7 +242,6 @@ class StockPickingSGA(models.Model):
                     cont += 1
 
     def return_val_line(self, line, code):
-
         sgavar = self.env['sgavar.file'].search([('code', '=', code)])
         if not sgavar:
             raise ValidationError("Modelo no encontrado")
@@ -306,8 +308,7 @@ class StockPickingSGA(models.Model):
                             wiz.process()
                         else:
                             wiz.process_cancel_backorder()
-        self.sga_state = 'MT'
-
+            self.sga_state = 'MT'
         return bool_error
 
     def import_mecalux_CSO(self, file_id):
@@ -444,7 +445,6 @@ class StockPickingSGA(models.Model):
         return bool_error
 
     def import_mecalux_ZCS(self, file_id):
-
         res = False
         pick_obj = self.env['stock.picking']
         sga_file_obj = self.env['sga.file'].browse(file_id)
