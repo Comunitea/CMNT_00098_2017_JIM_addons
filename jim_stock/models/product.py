@@ -34,6 +34,19 @@ class ProductTemplate(models.Model):
                                           " in all companies.",
                                           search='_search_global_avail_stock')
 
+    tag_names = fields.Char('Tags', compute='_compute_tag_names', store=True)
+    web = fields.Boolean('Web', compute="_compute_web_state", store=True)
+
+    @api.depends('tag_ids')
+    def _compute_web_state(self):
+        for product in self:
+            product.web = True in [x.web for x in product.tag_ids]
+
+    @api.depends('tag_ids')
+    def _compute_tag_names(self):
+        for product in self:
+            product.tag_names = ', '.join(x.name for x in product.tag_ids)
+
     @api.multi
     def _compute_global_stock(self):
 
@@ -84,7 +97,7 @@ class ProductProduct(models.Model):
             product.web_global_stock = int(stock)
 
     def _search_global_product_quantity(self, operator, value, field):
-        if field not in ('global_available_stock', 'global_real_stock'):
+        if field not in ('global_available_stock', 'global_real_stock', 'web_global_stock'):
             raise UserError(_('Invalid domain left operand %s') % field)
         if operator not in ('<', '>', '=', '!=', '<=', '>='):
             raise UserError(_('Invalid domain operator %s') % operator)
@@ -113,6 +126,10 @@ class ProductProduct(models.Model):
             _search_global_product_quantity(operator, value,
                                             'global_available_stock')
 
+    def _search_web_global_stock(self, operator, value):
+        return self._search_global_product_quantity(operator, value,
+                                                        'web_global_stock')
+
     global_real_stock = fields.Float('Global Real Stock',
                                      compute='_compute_global_stock',
                                      digits=dp.get_precision
@@ -129,7 +146,9 @@ class ProductProduct(models.Model):
     web_global_stock = fields.Float('Web stock', readonly=True,
                                     digits=dp.get_precision
                                     ('Product Unit of Measure'),
-                                    compute="_get_web_stock")
+                                    compute="_get_web_stock",
+                                    search='_search_web_global_stock')
+
 
     @api.multi
     def _compute_global_stock(self):

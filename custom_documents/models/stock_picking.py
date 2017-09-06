@@ -42,7 +42,7 @@ class StockPicking(models.Model):
                 same_day_delivery = True
                 date_done = fields.Datetime.from_string(pick.date_done)\
                     .replace(tzinfo=timezone('Etc/UTC'))\
-                    .astimezone(timezone(pick._context['tz']))
+                    .astimezone(timezone(pick._context.get('tz', 'Etc/UTC')))
                 if date_done.hour > 17 or \
                         (date_done.hour == 17 and date_done.minute > 30) or \
                         date_done.isoweekday() in (6, 7):
@@ -116,7 +116,7 @@ class StockPicking(models.Model):
     @api.depends('sale_id')
     def _compute_sale_services(self):
         for picking in self:
-            picking.sale_services = self.sale_id.order_line.filtered(
+            picking.sale_services = picking.sale_id.order_line.filtered(
                 lambda x: x.product_id.type == 'service' and not
                 x.product_id.delivery_cost)
 

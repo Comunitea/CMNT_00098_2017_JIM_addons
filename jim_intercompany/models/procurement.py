@@ -54,7 +54,16 @@ class ProcurementOrder(models.Model):
             ml_IC = self.env['stock.move'].search([('purchase_line_id', '=',
                                             self.purchase_line_IC.id)])
             if ml_IC:
-                vals['move_purchase_IC_id'] = ml_IC.id
+                if len(ml_IC) > 1:
+                    for m in ml_IC:
+                        res = self.env['stock.move'].search(
+                            [('move_purchase_IC_id', '=', m.id)])
+                        if not res:
+                            def_ml_IC = m
+                            break
+                else:
+                    def_ml_IC = ml_IC
+                vals['move_purchase_IC_id'] = def_ml_IC.id
         return vals
 
     @api.multi

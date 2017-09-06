@@ -12,7 +12,7 @@ class AccountInvoice(models.Model):
     @api.depends('partner_id', 'partner_id.consolidate')
     def _get_commercial_partner(self):
         for inv in self:
-            if inv.state != 'draft':
+            if inv.state and inv.state != 'draft':
                 self._cr.execute("""SELECT commercial_partner_id
                                     FROM account_invoice
                                     WHERE id = %s""" % str(inv.id))

@@ -18,7 +18,8 @@
         'delivery',
         'product_custom',
         'product_code_generator',
-        'commercial_rules'
+        'commercial_rules',
+        'custom_documents'
     ],
     'contributors': [
         "Comunitea",

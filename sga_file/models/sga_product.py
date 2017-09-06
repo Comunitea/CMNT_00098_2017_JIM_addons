@@ -36,35 +36,42 @@ class SGAProductCategory(models.Model):
     ]
 
     @api.onchange('name', 'parent_id', 'code')
-    def onchange_picking_type(self):
+    def onchange_name(self):
         for categ in self:
             categ.sga_state = 'PA'
 
     @api.multi
     def write(self, values):
-        to_mecalux = False
-        fields_to_check = ('name', 'parent_id', 'code')
-        fields = sorted(list(set(values).intersection(set(fields_to_check))))
-        if fields:
+
+        if values.get ('code', False):
+            if self.product_count:
+                raise ValidationError ("No puedes cambiar el código a una categoría con articulos asociados")
+
+
+        fields_to_check = ('name', 'code')
+        fields_list = sorted(list(set(values).intersection(set(fields_to_check))))
+        if fields_list:
             values['sga_state'] = 'PA'
-            to_mecalux = True
+
         res = super(SGAProductCategory, self).write(values)
 
-        if to_mecalux:
+        if fields_list:
             icp = self.env['ir.config_parameter']
             if icp.get_param('product_auto'):
                 self.export_category_to_mecalux(operation="F")
-
         return res
 
     @api.model
     def create(self, values):
         icp = self.env['ir.config_parameter']
+
+        if not values.get('code', False):
+            new_code = self.env['ir.sequence'].sudo().next_by_code('product.category')
+            values.update({'code': new_code})
+
         res = super(SGAProductCategory, self).create(values)
         if icp.get_param('product_auto'):
-            #Siempre F (modificacion + alta)
             res.export_category_to_mecalux(operation="F")
-            res.sga_state = 'AC'
         return res
 
     def new_mecalux_file(self, operation='F'):
@@ -73,24 +80,28 @@ class SGAProductCategory(models.Model):
     @api.multi
     def export_category_to_mecalux(self, operation=False):
 
-        def get_ids(cat):
-
-            res = []
-            while cat:
-                if cat.sga_state != 'AC':
-                    if not res:
-                        res.append(cat.id)
-                    elif not cat.sga_state:
-                        res.append(cat.id)
-                cat = cat.parent_id
-            return res
-
-        ids = [self.id]
+        # No se exporta arbold e categorías a MEcalux
+        # def get_ids(cat):
+        #     res = []
+        #     while cat:
+        #         if cat.sga_state != 'AC':
+        #             if not res:
+        #                 res.append(cat.id)
+        #             elif not cat.sga_state:
+        #                 res.append(cat.id)
+        #         cat = cat.parent_id
+        #     return res
+        #
+        # ids = [self.id]
         ctx = self._context.copy()
-        force = ctx.get('force', True)
-        for x in self:
-            ids += get_ids(x)
-        ids = sorted(list(set(ids)))
+        # force = ctx.get('force', True)
+        # for x in self:
+        #     ids += get_ids(x)
+        #
+        # ids = sorted(list(set(ids)))
+        if self.filtered(lambda x:x.code == False):
+            raise ValidationError("Hay categorías sin código de categoria")
+        ids = [x.id for x in self.filtered(lambda x:x.sga_state != 'AC')]
         if not ids:
             raise ValidationError("No hay registros modificados para actualizar")
         if operation:
@@ -163,20 +174,14 @@ class SGAProductProduct(models.Model):
     _inherit = "product.product"
 
     @api.multi
-    @api.depends('display_name')
-    def get_sga_name_get(self):
-        for prod in self:
-            print prod.name_get()
-            #nombre sin la referencia
-            sga_name_get = prod.display_name
-            if sga_name_get and ']' in sga_name_get:
-                sga_name_get = sga_name_get.split(']')[1].strip()
-            prod.sga_name_get = sga_name_get
-            self.sga_prod_shortdesc = self.sga_name_get[0:50]
+    def _get_sga_names(self):
+        for product in self:
+            display_name = (product.display_name.lstrip("[%s]"%product.default_code)).strip()
+            product.sga_name_get = display_name
+            product.sga_prod_shortdesc = display_name[0:50]
 
-
-    sga_name_get = fields.Char("Mecalux name", compute='get_sga_name_get')
-    sga_prod_shortdesc = fields.Char("Nombre Radiofrecuencia", size=50)
+    sga_name_get = fields.Char("Mecalux name", compute='_get_sga_names')
+    sga_prod_shortdesc = fields.Char("Nombre Radiofrecuencia", compute='_get_sga_names')
     sga_stock = fields.Float('Stock (SGA)', help="Last PST from Mecalux")
     sga_change_material_abc = fields.Selection ([('0', "NO"), ('1', "SI")],
                                                 default='1',
@@ -196,9 +201,9 @@ class SGAProductProduct(models.Model):
     sga_warehouse_code = fields.Char(related="warehouse_id.code")
 
     @api.onchange('name')
-    def on_change(self):
-        if self.name:
-            self.sga_prod_shortdesc = self.sga_name_get[0:50]
+    def on_change_name(self):
+        res = super(SGAProductProduct, self).on_change_name()
+        self._get_sga_names()
 
     @api.multi
     def toggle_active(self):
@@ -209,26 +214,21 @@ class SGAProductProduct(models.Model):
 
         if values.get('type', False):
             if values.get('type') in SGA_PRODUCT_TYPES:
-                values.update ({'sga_state':'PA'})
+                values.update({'sga_state': 'PA'})
             else:
                 values.update({'sga_state': 'NI'})
 
         fields_to_check = ('default_code', 'barcode', 'categ_id',
-                           'sga_material_abc_code', 'sga_change_material_abc',
-                           'name', 'packaging_ids', 'sga_prod_shortdesc')
+                           'display_name', 'sga_prod_shortdesc')
 
-        fields = sorted(list(set(values).intersection(set(fields_to_check))))
-        if not fields:
-            return super(SGAProductProduct, self).write(values)
-
-        create_product_product = False
-
+        fields_list = sorted(list(set(values).intersection(set(fields_to_check))))
         res = super(SGAProductProduct, self).write(values)
-
+        if not fields_list:
+            return res
+        icp = self.env['ir.config_parameter']
         create_product_product = self._context.get('create_product_product', False)
-        if create_product_product:
+        if create_product_product or icp.get_param('product_auto'):
             self.export_product_to_mecalux()
-
         return res
 
     @api.multi
@@ -251,7 +251,6 @@ class SGAProductProduct(models.Model):
                 ctx['operation'] = operation
             if 'operation' not in ctx:
                 ctx['operation'] = 'F'
-            print "Enviando a Mecalux los id %s"%ids
             new_sga_file = self.env['sga.file'].with_context(ctx).check_sga_file('product.product', ids, code='PRO')
             if new_sga_file:
                 self.filtered(lambda x:x.id in ids).write({'sga_state': 'AC'})
@@ -265,18 +264,15 @@ class SGAProductProduct(models.Model):
         ids = []
         for product in self:
             ok = True
-
-            if not product.barcode or \
-                            product.type not in SGA_PRODUCT_TYPES:
+            if product.type not in SGA_PRODUCT_TYPES \
+                    or not product.categ_id \
+                    or (product.categ_id and not product.categ_id.code) \
+                    or not product.sga_prod_shortdesc:
                 ok = False
-
-            if not product.sga_prod_shortdesc:
-                product.sga_prod_shortdesc = product.sga_name_get[0:50]
-
-            if ok:
-                ids.append(product.id)
-            else:
                 product.sga_state = "PA"
+                product.message_post(body=u"Error en envío a Mecalux <em>%s</em> <b>%s</b>." % (product.display_name, "Comprueba categoria asociada y el tipo de producto"))
+            else:
+                ids.append(product.id)
         return ids
 
     @api.multi
@@ -360,14 +356,17 @@ class SGAProductTemplate(models.Model):
 
     @api.multi
     def write(self, values):
+        res = super(SGAProductTemplate, self).write(values)
+        fields_to_check = ('categ_id', 'display_name', 'name',
+                           'sga_material_abc_code', 'sga_change_material_abc',
+                           'packaging_ids', 'product_variant_ids')
+        fields_list = sorted(list(set(values).intersection(set(fields_to_check))))
+        if fields_list:
+            for template in self:
+                for product in template.product_variant_ids:
+                    product.export_product_to_mecalux()
 
-        if values.get('type', False):
-            if values.get('type') in SGA_PRODUCT_TYPES:
-                values.update ({'sga_state':'PA'})
-            else:
-                values.update({'sga_state': 'NI'})
-        return super(SGAProductTemplate, self).write(values)
-
+        return res
 
 
 

@@ -22,7 +22,7 @@ class ProductProduct(models.Model):
             en productos con 1 unico atributo
         '''
         # TDE: this could be cleaned a bit I think
-        res = super(ProductProduct, self).name_get()
+        #res = super(ProductProduct, self).name_get()
         def _name_get(d):
             name = d.get('name', '')
             code = self._context.get('display_default_code', True) and d.get('default_code', False) or False
@@ -40,13 +40,11 @@ class ProductProduct(models.Model):
         # check access and use superuser
         self.check_access_rights("read")
         self.check_access_rule("read")
-
         result = []
         for product in self.sudo():
             # display only the attributes with multiple possible values on the template
             variable_attributes = product.attribute_line_ids.mapped('attribute_id')
             variant = product.attribute_value_ids._variant_name(variable_attributes)
-
             name = variant and "%s (%s)" % (product.name, variant) or product.name
             sellers = []
             if partner_ids:

@@ -1,15 +1,32 @@
 <?xml version="1.0"?>
 <odoo>
 
+    <record id="view_web_product_tree" model="ir.ui.view">
+        <field name="name">web.product.jim.tree</field>
+        <field name="model">product.product</field>
+        <field name="arch" type="xml">
+            <tree string="Productos en web">
+
+                <field name="display_name"/>
+                <field name="default_code"/>
+                <field name="tag_names"/>
+                <field name="web"/>
+                <field name="qty_available" />
+            </tree>
+
+        </field>
+    </record>
+
     <record id="view_web_product_report_tree" model="ir.ui.view">
         <field name="name">report.web.product.jim.tree</field>
         <field name="model">report.web.product.jim</field>
         <field name="arch" type="xml">
             <tree string="Productos en web">
-                <field name="tag_id"/>
-                <field name="template_id"/>
+
+
                 <field name="product_id"/>
                 <field name="product_code"/>
+                <field name="tag_names"/>
                 <field name="web" />
                 <field name="web_global_stock" />
             </tree>
@@ -22,9 +39,34 @@
         <field name="view_type">form</field>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="view_web_product_report_tree"/>
+        </record>-->
+      <record id="action_web_product_report_jim_02" model="ir.actions.act_window">
+        <field name="name">Análisis productos en web</field>
+        <field name="res_model">product.product</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_web_product_tree"/>
         </record>
 
-    <menuitem name="Productos en web" action="action_web_product_report_jim_01"
+    <menuitem name="Productos en web" action="action_web_product_report_jim_02"
               id="menu_report_product_web_id"
               parent="sales_team.menu_sale_report" />
+
+    <!--
+     <record id="action_export_excell" model="ir.actions.server">
+            <field name="name">Excell</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="jim_sale.model_report_web_product_jim" />
+            <field name="code">record.get_excell_web_stock2()</field>
+        </record>
+
+        <record id="action_purge_data_line_value" model="ir.values">
+            <field name="name">Export</field>
+            <field name="key">action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="model">report.web.product.jim</field>
+            <field name="value" eval="'ir.actions.server,%d' % ref('jim_sale.action_export_excell')" />
+        </record>
+    -->
 </odoo>

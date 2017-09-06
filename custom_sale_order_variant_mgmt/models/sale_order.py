@@ -47,6 +47,7 @@ class SaleOrderLineTemplate(models.Model):
                 line_vals.pop('product_uom_qty', False)
                 line_vals.pop('purchase_price', False)
                 line_vals.pop('name', False)
+                line_vals.pop('sequence', False)
             template.order_lines.write(line_vals)
         return super(models.Model, self).write(vals)
 
