@@ -11,6 +11,9 @@
                 <field name="line_weight"/>
                 <!--<button name="show_line_info" string="Info" type="object" icon="fa-pencil" />-->
             </xpath>
+            <xpath expr="//field[@name='order_line']/tree/field[@name='date_planned']" position="after">
+                <field name="web_global_stock"/>
+            </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='company_id']" position="replace">
                 <field name="company_id" invisible="1"/>
             </xpath>

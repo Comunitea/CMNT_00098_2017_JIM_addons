@@ -11,6 +11,7 @@
     'depends': [
         'purchase',
         'purchase_advance_payment',
+        'jim_stock'
 
     ],
     'contributors': [

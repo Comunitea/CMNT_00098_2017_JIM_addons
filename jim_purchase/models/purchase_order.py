@@ -21,6 +21,7 @@ class PurchaseOrderLine(models.Model):
     line_volume = fields.Float("Volume", compute="_get_line_dimension")
     line_weight = fields.Float("Weight", compute="_get_line_dimension")
     line_info = fields.Char("Line info")
+    web_global_stock = fields.Float(related="product_id.web_global_stock")
 
     @api.multi
     def show_line_info(self):
