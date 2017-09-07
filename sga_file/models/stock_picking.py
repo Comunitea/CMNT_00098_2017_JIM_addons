@@ -64,8 +64,16 @@ class StockPickingSGA(models.Model):
     @api.multi
     def _get_account_code(self):
         for pick in self:
-            partner_id = pick.partner_id.comercial_partner_id
-            ref = partner_id and partner_id.ref
+            ref = False
+            partner_id = pick.partner_id
+            if partner_id.ref:
+                ref = pick.account_code
+            else:
+                partner = pick.partner_id
+                if not ref and partner.parent_id:
+                    partner = partner.parent_id
+                    if partner:
+                        ref = partner.ref
             if not ref:
                 ref = self.env.user.company_id.partner_id.ref
             pick.account_code = ref
