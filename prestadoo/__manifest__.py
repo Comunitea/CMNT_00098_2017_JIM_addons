@@ -14,7 +14,8 @@
         'jim_sale',
         'product_tags',
         'purchase',
-        'sga_file'
+        'sga_file',
+        'product_code_generator'
     ],
     'contributors': [
         "Miguel Ángel García ",
