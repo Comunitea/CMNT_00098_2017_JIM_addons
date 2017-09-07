@@ -28,7 +28,7 @@
                         <tr>
                             <td>
 
-                                <strong>Packages: </strong><span t-field="o.number_of_packages"/>
+                                <strong>Packages: </strong><span t-field="o.pick_packages"/>
                                 <strong>kilos: </strong><span t-field="o.pick_weight"/>
                             </td>
                         </tr>

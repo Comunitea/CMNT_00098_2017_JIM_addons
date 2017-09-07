@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-06-19 11:21+0000\n"
-"PO-Revision-Date: 2017-06-19 11:21+0000\n"
+"POT-Creation-Date: 2017-09-07 17:12+0000\n"
+"PO-Revision-Date: 2017-09-07 17:12+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -21,31 +21,143 @@ msgid "<span class=\"o_stat_text\">Forecasted</span>"
 msgstr "<span class=\"o_stat_text\">Previsto</span>"
 
 #. module: jim_stock
-#: model:ir.model.fields,field_description:jim_stock.field_stock_location_deposit
-msgid "Deposit"
-msgstr "No cuenta stock"
+#: model:ir.model,name:jim_stock.model_res_company
+msgid "Companies"
+msgstr "Compañías"
 
 #. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_picking_confirmation_date
+msgid "Confirmation Date"
+msgstr "Fecha confirmación"
+
+#. module: jim_stock
+#: model:ir.model.fields,help:jim_stock.field_stock_picking_confirmation_date
+msgid "Date on which the sale order is confirmed."
+msgstr "Fecha en que se confirma el pedido de venta."
+
+#. module: jim_stock
+#: model:ir.model.fields,help:jim_stock.field_stock_picking_purchase_date_order
+msgid "Depicts the date where the Quotation should be validated and converted into a purchase order."
+msgstr "Representa la fecha en que el presupuesto debe ser validado y se convierte en una orden de compra."
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_location_deposit
+msgid "Deposit"
+msgstr "Deposito"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_delivery_carrier_global_available_stock
 #: model:ir.model.fields,field_description:jim_stock.field_product_product_global_available_stock
 #: model:ir.model.fields,field_description:jim_stock.field_product_template_global_available_stock
 msgid "Global Available Stock"
 msgstr "Stock global disponible"
 
 #. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_delivery_carrier_global_real_stock
 #: model:ir.model.fields,field_description:jim_stock.field_product_product_global_real_stock
 #: model:ir.model.fields,field_description:jim_stock.field_product_template_global_real_stock
 msgid "Global Real Stock"
 msgstr "Stock global real"
 
 #. module: jim_stock
-#: model:ir.model.fields,field_description:jim_stock.field_product_product_intercompany_price
-msgid "Intercompany Price"
-msgstr "Precio intercompañía"
+#: model:ir.model.fields,field_description:jim_stock.field_stock_quant_package_height
+msgid "Height"
+msgstr "Altura"
+
+#. module: jim_stock
+#: code:addons/jim_stock/models/product.py:101
+#, python-format
+msgid "Invalid domain left operand %s"
+msgstr "Invalid domain left operand %s"
+
+#. module: jim_stock
+#: code:addons/jim_stock/models/product.py:103
+#, python-format
+msgid "Invalid domain operator %s"
+msgstr "Invalid domain operator %s"
+
+#. module: jim_stock
+#: code:addons/jim_stock/models/product.py:105
+#, python-format
+msgid "Invalid domain right operand %s"
+msgstr "Invalid domain right operand %s"
+
+#. module: jim_stock
+#: model:ir.model,name:jim_stock.model_stock_inventory_line
+msgid "Inventory Line"
+msgstr "Línea inventario"
 
 #. module: jim_stock
 #: model:ir.model,name:jim_stock.model_stock_location
 msgid "Inventory Locations"
 msgstr "Ubicaciones de inventario"
+
+#. module: jim_stock
+#: model:ir.model,name:jim_stock.model_stock_location_route
+msgid "Inventory Routes"
+msgstr "Rutas de inventario"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_quant_package_length
+msgid "Length"
+msgstr "Longitud"
+
+#. module: jim_stock
+#: model:ir.model.fields,help:jim_stock.field_stock_picking_pick_weight
+msgid "Manual weight in pick. Propagate to next asociated pick."
+msgstr "Peso del albarán. Se suma al peso del albarán siguiente."
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_res_company_no_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_location_route_no_stock
+msgid "No Stock"
+msgstr "No Stock"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_picking_pick_packages
+msgid "Número de paquetes"
+msgstr "Número de paquetes"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_picking_observations
+#: model:ir.ui.view,arch_db:jim_stock.view_picking_form_partner_always_visible
+msgid "Observations"
+msgstr "Observaciones Internas"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_return_picking_only_return_location
+msgid "Only return location"
+msgstr "Solo ubicaciones de devolución"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_picking_purchase_date_order
+msgid "Order Date"
+msgstr "Fecha de pedido"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_return_picking_line_ordered_qty
+msgid "Ordered quantity"
+msgstr "Cantidad ordenada"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_quant_package_packaging_id_code
+msgid "Package Code"
+msgstr "Código del paquete"
+
+#. module: jim_stock
+#: model:ir.model,name:jim_stock.model_stock_quant_package
+msgid "Physical Packages"
+msgstr "Paquetes físicos"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_return_picking_picking_type_id
+msgid "Picking Type"
+msgstr "Tipo de albarán"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_return_picking_picking_id
+msgid "Picking id"
+msgstr "Albarán"
 
 #. module: jim_stock
 #: model:ir.model,name:jim_stock.model_product_product
@@ -58,14 +170,106 @@ msgid "Product Template"
 msgstr "Plantilla de producto"
 
 #. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_return_picking_line_qty_done
+msgid "Quantity done"
+msgstr "Cantidad hecha"
+
+#. module: jim_stock
+#: model:ir.model.fields,help:jim_stock.field_delivery_carrier_global_real_stock
 #: model:ir.model.fields,help:jim_stock.field_product_product_global_real_stock
 #: model:ir.model.fields,help:jim_stock.field_product_template_global_real_stock
 msgid "Real stock in all companies."
 msgstr "Stock real en todas las compañías."
 
 #. module: jim_stock
+#: model:ir.model.fields,help:jim_stock.field_delivery_carrier_global_available_stock
 #: model:ir.model.fields,help:jim_stock.field_product_product_global_available_stock
 #: model:ir.model.fields,help:jim_stock.field_product_template_global_available_stock
 msgid "Real stock minus outgoing  in all companies."
 msgstr "Stock real menos el saliente en todas las compañías."
+
+#. module: jim_stock
+#: model:ir.model,name:jim_stock.model_stock_return_picking
+msgid "Return Picking"
+msgstr "Devolver albarán"
+
+#. module: jim_stock
+#: model:ir.ui.view,arch_db:jim_stock.view_stock_return_picking_form_qties
+msgid "Return ordered_qty"
+msgstr "Devolver cantidad de la orden"
+
+#. module: jim_stock
+#: model:ir.ui.view,arch_db:jim_stock.view_stock_return_picking_form_qties
+msgid "Return qty done"
+msgstr "Devolver cantidad enviada"
+
+#. module: jim_stock
+#: model:res.groups,name:jim_stock.group_stock_lqdr
+msgid "Review LQDR"
+msgstr "Revisión LQDR"
+
+#. module: jim_stock
+#: model:res.groups,name:jim_stock.group_stock_review
+msgid "Review Sale for confirm"
+msgstr "Venta a revisar"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_quant_package_shipping_volume
+msgid "Shipping Volume"
+msgstr "Volumen del envío"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_picking_pick_weight
+msgid "Shipping Weight"
+msgstr "Peso del envío"
+
+#. module: jim_stock
+#: model:ir.model,name:jim_stock.model_stock_move
+msgid "Stock Move"
+msgstr "Movimiento de existencias"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_delivery_carrier_tag_names
+#: model:ir.model.fields,field_description:jim_stock.field_product_product_tag_names
+#: model:ir.model.fields,field_description:jim_stock.field_product_template_tag_names
+msgid "Tags"
+msgstr "Etiquetas"
+
+#. module: jim_stock
+#: model:ir.model,name:jim_stock.model_stock_picking
+msgid "Transfer"
+msgstr "Transfer"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_quant_package_volume
+msgid "Volume"
+msgstr "Volumen"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_delivery_carrier_web
+#: model:ir.model.fields,field_description:jim_stock.field_product_product_web
+#: model:ir.model.fields,field_description:jim_stock.field_product_template_web
+msgid "Web"
+msgstr "Web"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_delivery_carrier_web_global_stock
+#: model:ir.model.fields,field_description:jim_stock.field_product_product_web_global_stock
+msgid "Web stock"
+msgstr "Web stock"
+
+#. module: jim_stock
+#: model:ir.ui.view,arch_db:jim_stock.view_quant_package_volume_form
+msgid "Weight and volume"
+msgstr "Peso y volumen"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_quant_package_width
+msgid "Width"
+msgstr "Ancho"
+
+#. module: jim_stock
+#: model:ir.model,name:jim_stock.model_stock_return_picking_line
+msgid "stock.return.picking.line"
+msgstr "stock.return.picking.line"
 

@@ -10,6 +10,8 @@ class StockPicking (models.Model):
     _inherit = "stock.picking"
     pick_weight = fields.Float(string='Shipping Weight',
                  help="Manual weight in pick. Propagate to next asociated pick.")
+
+    pick_packages = fields.Integer("Número de paquetes")
     partner_id = fields.Many2one(
         'res.partner', 'Partner', required=1, default=lambda self: self.env.user.company_id.partner_id.id,
         states={})

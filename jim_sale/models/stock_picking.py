@@ -30,13 +30,13 @@ class StockPicking(models.Model):
     def do_transfer(self):
         res = super(StockPicking, self).do_transfer()
         for pick in self.filtered(lambda picking: picking.pack_operation_ids):
-            number_of_packages = []
+            pick_packages = []
             for op in pick.pack_operation_ids.filtered(lambda op_id: op_id.result_package_id):
-                number_of_packages.append(op.result_package_id.id)
+                pick_packages.append(op.result_package_id.id)
             for op in pick.pack_operation_ids.filtered(lambda op_id: (not op_id.result_package_id and op_id.package_id)):
-                number_of_packages.append(op.package_id.id)
+                pick_packages.append(op.package_id.id)
 
-            pick.number_of_packages = len(list(set(number_of_packages)))
+            pick.pick_packages = len(list(set(pick_packages)))
 
     def _add_delivery_cost_to_so(self):
         #Eliminamos la funcioanalidad de ñadir el producto al pedido

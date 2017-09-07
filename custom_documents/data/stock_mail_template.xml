@@ -30,7 +30,7 @@ Hola, <b> ${object.sale_id.partner_id.name} </b>,<br><br>
         <td style="color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 10px;">
             Fecha de salida:<br><b>${format_date(object.delivery_date, context={'lang': object.sale_id.partner_id.lang})}</b><br><br>
             Agencia de transportes: <b>${object.carrier_id.name}</b><br>
-            Bultos: <b>${object.number_of_packages}</b>
+            Bultos: <b>${object.pick_packages}</b>
         </td>
         <td style="color:#669;background-color:#e8edff;border-color:#aabcfe;border-style:solid;border-width:1px;padding:10px 10px;">
             % if object.same_day_delivery

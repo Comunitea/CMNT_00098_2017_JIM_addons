@@ -9,7 +9,7 @@
             <field name="arch" type="xml">
                 <!--<xpath expr="//button[@name='put_in_pack']" position="after">
                     <button class="oe_link oe_right" name="show_packs_in_pick" type="object"
-                        string="&#128203;Tree packs" attrs="{'invisible': [('number_of_packages', '=',0)]}"
+                        string="&#128203;Tree packs" attrs="{'invisible': [('pick_packages', '=',0)]}"
                         groups="stock.group_tracking_lot"/>
                 </xpath>
                 <xpath expr="//field[@name='pack_operation_product_ids']/tree/field[@name='result_package_id']" position="attributes">
