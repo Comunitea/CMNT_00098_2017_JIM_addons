@@ -14,7 +14,7 @@ class SaleOrder(models.Model):
     _inherit = "sale.order"
 
     do_backorder = fields.Selection([('default', 'Por defecto'), ('yes', 'Si'), ('no', 'No')], "Entrega parcial",
-                                    default='default')
+                                    default='no')
 
     @api.multi
     def action_confirm(self):
