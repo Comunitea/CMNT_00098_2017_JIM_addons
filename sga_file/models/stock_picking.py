@@ -64,16 +64,8 @@ class StockPickingSGA(models.Model):
     @api.multi
     def _get_account_code(self):
         for pick in self:
-            ref = False
-            partner_id = pick.partner_id
-            if partner_id.ref:
-                ref = pick.account_code
-            else:
-                partner = pick.partner_id
-                if not ref and partner.parent_id:
-                    partner = partner.parent_id
-                    if partner:
-                        ref = partner.ref
+            partner_id = pick.partner_id.comercial_partner_id
+            ref = partner_id and partner_id.ref
             if not ref:
                 ref = self.env.user.company_id.partner_id.ref
             pick.account_code = ref
@@ -180,7 +172,7 @@ class StockPickingSGA(models.Model):
     @api.multi
     def move_to_NE(self):
         sga_states_to_NE = ('PM', 'EI', 'EE', 'MT', False)
-        picks = self.filtered(lambda x: x.sga_state in sga_states_to_NE)
+        picks = self.filtered(lambda x: x.sga_integrated and x.sga_state in sga_states_to_NE)
         picks.write({'sga_state': 'NE'})
 
     def button_new_mecalux_file(self, ctx):
@@ -365,7 +357,7 @@ class StockPickingSGA(models.Model):
                     st = 388
                     en = st + 10
                     bultos = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
-                    pick.number_of_packages = bultos
+                    pick.pick_packages = bultos
 
                     st = 398
                     en = st + 50
@@ -493,7 +485,7 @@ class StockPickingSGA(models.Model):
                 st = 388
                 en = st + 10
                 bultos = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
-                pick.number_of_packages = bultos
+                pick.pick_packages = bultos
 
                 st = 398
                 en = st + 50
