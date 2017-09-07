@@ -25,6 +25,9 @@ class SaleOrder(models.Model):
         ('cancel', 'Cancelled'),
     ])
 
+    partner_id = fields.Many2one('res.partner', string='Customer', readonly=True,
+                                 states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}, required=True,
+                                 change_default=True, index=True, track_visibility='always', domain=[('is_company','=',True)])
     chanel = fields.Selection(selection_add=[('web', 'WEB')])
     work_to_do = fields.Text('Trabajo a realizar')
     route_id = fields.Many2one('stock.location.route', string='Force Route',

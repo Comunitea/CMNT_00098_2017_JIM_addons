@@ -11,7 +11,7 @@
                 <field name="default_code"/>
                 <field name="tag_names"/>
                 <field name="web"/>
-                <field name="qty_available" />
+                <field name="global_real_stock" />
             </tree>
 
         </field>
