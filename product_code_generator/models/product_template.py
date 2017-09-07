@@ -19,6 +19,7 @@ class ProductAttributeValue(models.Model):
 
     code = fields.Char("Code", help="Code number for this variant",
                        required=True)
+    legacy_code = fields.Char("Legacy Code")
     is_color = fields.Boolean("Represents a color",
                               related="attribute_id.is_color")
     sequence = fields.Integer('Sequence', help="Determine the display order", readonly=True, default = 0)
@@ -37,9 +38,9 @@ class ProductProduct(models.Model):
     @api.multi
     def write(self, vals):
         # Comprobamos si hay movimientos.
-        if vals.get('default_code', False) and False:
+        if vals.get('default_code', False):
             for product in self:
-                if product.stock_move_ids:
+                if product.stock_move_ids and product.default_code:
                     raise ValidationError(_("You can change code because this "
                                             "product has moves"))
         return super(ProductProduct, self).write(vals)
