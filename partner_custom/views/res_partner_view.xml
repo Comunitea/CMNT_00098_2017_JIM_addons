@@ -126,7 +126,9 @@
                     'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)],
                     'required': [('type', '=', 'delivery'), ('country_id', '=', %(base.es)d)]}</attribute>
             </field>
-           
+            <field name="ref" position="attributes">
+                <attribute name="attrs">{'readonly': [('is_company', '=', False), ('ref', '!=', False)]}</attribute>
+            </field>
         </field>
     </record>
 
