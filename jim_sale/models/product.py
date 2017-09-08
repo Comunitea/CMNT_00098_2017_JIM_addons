@@ -53,6 +53,9 @@ class ProductProduct(models.Model):
 
     customer_product_prices = fields.One2many('customer.price', 'product_id',
                                               'Customer Prices')
+    product_item_ids = fields.One2many('product.pricelist.item',
+                                    'product_id',
+                               'Pricelist Product Items')
     customer_prices_count = fields.\
         Integer(compute='_get_customer_prices_count', string='#Prices')
 

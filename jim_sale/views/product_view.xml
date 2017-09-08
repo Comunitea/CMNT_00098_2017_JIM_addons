@@ -64,6 +64,29 @@
         </record>
 
 
+        <record id="product_pricelist_items" model="ir.ui.view">
+            <field name="name">product.pricelist.items</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_normal_form_view"/>
+            <field name="arch" type="xml">
+                <field name="pricelist_item_ids" position="before">
+
+                    <separator string="Product Pricing"/>
+                    <field name="product_item_ids" nolabel="1" context="{'default_base':'list_price', 'default_applied_on' :'0_product_variant'}">
+                        <tree string="Pricelist Items" editable="bottom">
+                            <field name="pricelist_id" string="Pricelist" required='1'/>
+                            <field name="fixed_price" string="Price" required='1'/>
+                            <field name="min_quantity"/>
+                            <field name="date_start"/>
+                            <field name="date_end"/>
+                            <field name="applied_on" invisible="1"/>
+                        </tree>
+                    </field>
+
+                </field>
+            </field>
+        </record>
+
         <record id="sale.action_product_sale_list" model="ir.actions.act_window">
             <field name="name">Sale Order Lines</field>
             <field name="res_model">sale.order.line</field>

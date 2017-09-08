@@ -29,7 +29,7 @@ class StockMove(BaseExtClass):
         self.xml = posupplyplan.format(
             self.purchase_line_id.order_id.id,                          # DocEntry (del pedido de compras)
             tools.format_date(output_date_format='%Y%m%d%H%M%S'),       # Version
-            self.purchase_line_id.id,                                   # LineNum (de la línea del pedido de compras)
+            self.id,                                                    # LineNum (del stock.move o self)
             self.product_id.default_code or self.product_id.id,         # ItemCode
             self.product_uom_qty if self.state == "assigned" else 0,    # Quantity
             tools.format_date(self.purchase_line_id.date_planned)       # ShipDate (de la línea de pedido de compras)
