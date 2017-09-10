@@ -186,20 +186,22 @@ class StockPicking(models.Model):
         res = super(StockPicking, self).do_transfer()
         ##Propagamos peso y numero de bultos
         next_pick = False
-        move = self.move_lines[0]
-        if move.move_dest_id.picking_id.sale_id \
-                and not move.picking_id.purchase_id.intercompany \
-                and not move.move_dest_id.picking_id.sale_id.auto_generated:
-            next_pick = move.move_dest_id.picking_id
-        elif move.move_dest_IC_id.id \
-                and not move.move_dest_IC_id.picking_id.sale_id.auto_generated:
-            next_pick = move.move_dest_IC_id.picking_id
-        if next_pick:
-            next_pick.pick_packages += self.pick_packages
-            next_pick.pick_weight += self.pick_weight
-            if self.carrier_id:
-                next_pick.carrier_id = self.carrier_id
-
+        move = self.move_lines and self.move_lines[0]
+        if move:
+            if move.move_dest_id.picking_id.sale_id \
+                    and not move.picking_id.purchase_id.intercompany \
+                    and not move.move_dest_id.picking_id.sale_id.auto_generated:
+                next_pick = move.move_dest_id.picking_id
+            elif move.move_dest_IC_id.id \
+                    and not move.move_dest_IC_id.picking_id.sale_id.auto_generated:
+                next_pick = move.move_dest_IC_id.picking_id
+            if next_pick:
+                next_pick.pick_packages += self.pick_packages
+                next_pick.pick_weight += self.pick_weight
+                if self.carrier_id:
+                    next_pick.carrier_id = next_pick.carrier_id or self.carrier_id
+                if self.operator:
+                    next_pick.operator = next_pick.operator or self.operator
         return res
 
     def _create_extra_moves(self):
