@@ -480,17 +480,14 @@ class MecaluxFileHeader(models.Model):
             if process:
                 self.move_file('archive', self.name)
                 self.write_log("-- OK >> %s" % self.sga_file)
-
             else:
                 proc_error = True
-                print "error al mover el fichero"
-
+                self.write_log("-- ERROR >> %s\n--------------\n%s\n----------------------\n" %(self.sga_file, process))
         except:
             proc_error = True
-            print "error en el try al mover el fichero"
+            self.write_log("-- ERROR >> %s\n--------------\n%s\n----------------------\n" % (self.sga_file, "Error de archivo. No se puede mover"))
+
         if proc_error:
-            self.errors += 1
-            self.write_log("-- ERROR >> %s" % self.sga_file)
             self.move_file('error', self.name)
         return process
 
@@ -503,23 +500,20 @@ class MecaluxFileHeader(models.Model):
         res_file = False
         global_path = u'%s/%s' %(self.get_global_path(), folder)
         self.write_log("Buscando ficheros en >> %s" % global_path)
-        pool_id = False
+        pool_ids = []
         for path, directories, files in os.walk(global_path, topdown=False):
             for name in files:
+                file_code = name[0:3]
                 if file_type:
-                    if name[0:3] != file_type:
+                    if file_code != file_type:
                         continue
                 sga_file = self.check_sga_name(name, path)
                 if sga_file:
-                    # lo proceso
-                    pool_id = sga_file.import_file_from_mecalux()
+                    pool_id = sga_file.import_file_from_mecalux(file_code=file_code)
+                if file_type:
+                    pool_ids.append(pool_id)
 
-
-        #Si solo hay un tipo de fichero , devuelvo los ids, si no True
-        #if pool_ids:
-        #    pool_ids = pool_ids if file_type else True
-
-        return pool_id
+        return pool_ids
 
     def move_file(self, folder, file_name=False):
         new_path = False

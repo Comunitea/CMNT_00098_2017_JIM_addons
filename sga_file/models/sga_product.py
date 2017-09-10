@@ -244,10 +244,7 @@ class SGAProductProduct(models.Model):
         ids = self.check_mecalux_ok()
         try:
             ctx = self._context.copy()
-            if operation:
-                ctx['operation'] = operation
-            if 'operation' not in ctx:
-                ctx['operation'] = 'F'
+            ctx['operation'] = 'F'
             new_sga_file = self.env['sga.file'].with_context(ctx).check_sga_file('product.product', ids, code='PRO')
             if new_sga_file:
                 self.filtered(lambda x:x.id in ids).write({'sga_state': 'AC'})
@@ -275,7 +272,7 @@ class SGAProductProduct(models.Model):
     @api.multi
     def check_mecalux_stock(self):
         try:
-            ids = [x.id for x in self if x.type == 'product']
+            ids = [x.id for x in self]# if x.type == 'product']
             if not ids:
                 return
             new_sga_file = self.env['sga.file'].check_sga_file('product.product', ids, code='PST')
@@ -314,8 +311,7 @@ class SGAProductTemplate(models.Model):
 
     @api.one
     def _set_sga_state(self):
-        for product in self.product_variant_ids:
-            product.sga_state = self.sga_state
+        self.product_variant_ids.write({'sga_state': self.sga_state})
 
     @api.multi
     def export_template_to_mecalux(self):
@@ -324,8 +320,7 @@ class SGAProductTemplate(models.Model):
     @api.multi
     def new_mecalux_file(self, operation=False):
         for template in self:
-            for product in template.product_variant_ids:
-                product.export_product_to_mecalux(operation)
+            template.product_variant_ids.new_mecalux_file()
         return True
 
     @api.model
@@ -359,10 +354,7 @@ class SGAProductTemplate(models.Model):
                            'packaging_ids', 'product_variant_ids')
         fields_list = sorted(list(set(values).intersection(set(fields_to_check))))
         if fields_list:
-            for template in self:
-                for product in template.product_variant_ids:
-                    product.export_product_to_mecalux()
-
+            self.new_mecalux_file()
         return res
 
 

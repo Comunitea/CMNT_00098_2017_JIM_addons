@@ -87,16 +87,16 @@ class StockPickingSGA(models.Model):
             else:
                 pick_dest = pick
 
-            if pick_dest.sale_id.partner_shipping_id and pick_dest.sale_id.partner_shipping_id.ref:
-                res = pick_dest.sale_id.partner_shipping_id.state_id.name
-                name = pick_dest.sale_id.partner_id.name
+            if pick_dest.sale_id and pick_dest.sale_id.partner_shipping_id:
+                city = pick_dest.sale_id.partner_shipping_id.state_id.name
+                name = pick_dest.sale_id.partner_shipping_id.name
             else:
-                res = pick_dest.partner_id.state_id.name
+                city = pick_dest.partner_id.state_id.name
                 name = pick_dest.partner_id.name
 
-            pick.shipping_city = res
+            pick.shipping_city = city
             pick.shipping_partner_name = name
-        return res
+
 
     def _get_action_done_bool(self):
         return True if self.env['ir.config_parameter'].get_param('picking_auto') == u'True' else False
@@ -186,21 +186,19 @@ class StockPickingSGA(models.Model):
     def button_new_mecalux_file(self, ctx):
         return self.with_context(ctx).new_mecalux_file()
 
-    def new_mecalux_file(self, operation=False):
+    def new_mecalux_file(self, operation=False, force=False):
 
         ctx = dict(self.env.context)
         if operation:
             ctx['operation'] = operation
         if 'operation' not in ctx:
             ctx['operation'] = 'A'
-
         self = self.filtered(lambda x: x.sga_state == 'NE')
         states_to_check = ('confirmed', 'partially_available')
         states_to_send = 'assigned'
         picks = []
-        pick_to_check = self.filtered(lambda x: x.state in states_to_check)
+        pick_to_check = self.filtered(lambda x: x.state in states_to_check and not force)
         if pick_to_check and pick_to_check[0]:
-
             view = self.env.ref('sga_file.stock_mecalux_confirm_wizard')
             wiz = self.env['stock.mecalux.confirm'].create({'pick_id': pick_to_check.id})
             return {
@@ -216,8 +214,7 @@ class StockPickingSGA(models.Model):
                 'context': self.env.context,
             }
 
-        for pick in self.filtered(lambda x: x.state in states_to_send):
-
+        for pick in self.filtered(lambda x: x.state in states_to_send or force):
             if not pick.partner_id:
                 raise UserError("No puedes enviar un albarán sin asociarlo a una empresa")
 
@@ -264,22 +261,26 @@ class StockPickingSGA(models.Model):
                 st = en
         return val
 
-    def do_pick(self, sga_ops_exists, bool_error):
-        # si aqui viene sin op entonces es que mecalux, viene vacio. Obligo a validar automaticamente y lo marco con errores
+    def do_pick(self, sga_ops_exists, bool_error=True):
+        partial = ''
         if not self.picking_type_id.sga_integrated:
             raise ValidationError("Solo albaranes integrados con Mecalux")
+        action_done_bool = self.action_done_bool
+        ctx = self._context.copy()
+        if self.pack_operation_product_ids.filtered(lambda x: x.qty_done != 0):
+            all_zero = False
+        else:
+            all_zero = True
+
         if not sga_ops_exists:
-            self.action_done_bool = False
-            self.sga_state = 'EI'
+            action_done_bool = False
+            sga_state = 'EI'
         # Confimo cantidaddes en servicios y consumibles
         pick_ops_product = self.pack_operation_product_ids.filtered(lambda x: x.product_id.type == 'consu')
         for op in pick_ops_product:
             op.qty_done = op.product_qty
 
-        if not bool_error:
-            self.sga_state = 'EI'
-
-        if self.action_done_bool:
+        if action_done_bool:
             #print "Auto validación de Mecalux: True"
             all_done = True
             do_transfer = True
@@ -288,7 +289,10 @@ class StockPickingSGA(models.Model):
 
             if all_done:
                 self.action_done()
+                self.message_post(body="Pick <em>%s</em> <b>ha sido validado por Mecalux</b>." % (self.name))
                 #print "Todas las cantidades OK"
+                sga_state = 'MT'
+
             else:
                 if self.do_backorder == 'default':
                     do_transfer = False
@@ -299,20 +303,38 @@ class StockPickingSGA(models.Model):
 
                 #print "NO TODAS las cantidades OK con do_backorder = %s y do_transfer a %s" % (self.do_backorder, do_transfer)
                 if do_transfer:
-                    res = self.do_new_transfer()
-                    wiz_id = res.get('res_id', False)
-                    wiz = self.env['stock.backorder.confirmation'].browse(wiz_id)
-                    #print "Creo y encuentro asistente %s"%wiz.id
-                    if wiz:
-                        if create_partial:
-                            wiz.process()
-                        else:
-                            wiz.process_cancel_backorder()
-            self.sga_state = 'MT'
+                    if all_zero:
+                        # no hay nada hecho >> Solo le cambio el nombre y lo muevo a no enviado
+                        # Necesito cambiarle el nombre por Mecalux
+                        old_name = self.name
+                        self.name = self.env['stock.picking.type'].browse(self.picking_type_id.id).sequence_id.next_by_id()
+                        self.do_unreserve()
+                        sga_state = 'NI'
+
+                        self.message_post(
+                                    body=("La orden <em>%s</em> la orden ha sido cerrada sin realizar nada</br>Nuevo nombre <b>%s</b>") % (old_name, self.name))
+                        return bool_error
+
+                    else:
+                        res = self.with_context(ctx).do_new_transfer()
+                        wiz_id = res.get('res_id', False)
+                        wiz = self.env['stock.backorder.confirmation'].browse(wiz_id)
+                        sga_state = 'MT'
+                        #print "Creo y encuentro asistente %s"%wiz.id
+                        if wiz:
+                            if create_partial:
+                                wiz.process()
+                                partial = "(con parcial)"
+                            else:
+                                wiz.process_cancel_backorder()
+                                partial = "(sin parcial)"
+                            self.message_post(body="Pick <em>%s</em> <b>ha sido validado en Mecalux %s</b>." % (self.name, partial))
+        self.sga_state = sga_state
         return bool_error
 
     def import_mecalux_CSO(self, file_id):
         return False
+
     def import_mecalux_CRP(self, file_id):
 
         pick_obj = self.env['stock.picking']
@@ -356,24 +378,13 @@ class StockPickingSGA(models.Model):
                     en = st + 14
                     date_done = line[st:en].strip()
                     pick.date_done = sga_file_obj.format_from_mecalux_date(date_done)
+                    if sga_state == 'CLOSE':
+                        pick.sga_state = "MC"
+                        pick.message_post(body="Pick <em>%s</em> <b>ha sido cancelado en Mecalux</b>." % (pick.name))
+                        pick = False
+                        continue
 
-                    st = 378
-                    en = st + 10
-                    weight = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
-                    pick.pick_weight = weight
-
-                    st = 388
-                    en = st + 10
-                    bultos = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
-                    pick.pick_packages = bultos
-
-                    st = 398
-                    en = st + 50
-                    carrier_code = line[st:en].strip()
-                    domain = [('carrier_code', '=', carrier_code)]
-                    carrier = self.env['delivery.carrier'].search(domain)
-                    pick.carrier_id = carrier
-
+                    pick.sga_state = "MT"
                 else:
                     bool_error = False
                     str_error = "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (rec_order_code, n_line)
@@ -393,6 +404,7 @@ class StockPickingSGA(models.Model):
                     bool_error = False
                 # Si op existe, escribo qty_done, si no creo una linea de operacion con lo recibido
                 if op:
+
                     op.qty_done = qty_done
                     op.sga_changed = True
                     sga_ops_exists = True
@@ -442,7 +454,7 @@ class StockPickingSGA(models.Model):
         if pick:
             bool_error = pick.do_pick(sga_ops_exists, bool_error)
 
-        return bool_error
+        return pool_ids
 
     def import_mecalux_ZCS(self, file_id):
         res = False
@@ -452,8 +464,6 @@ class StockPickingSGA(models.Model):
         sga_file_lines = sga_file.readlines()
         sga_file.close()
         str_error = ''
-        bool_error = True
-        pool_ids = []
         n_line = 0
         sgavar = self.env['sgavar.file'].search([('code', '=', 'CSO')])
         pick = False
@@ -464,16 +474,15 @@ class StockPickingSGA(models.Model):
         LEN_LINE = 344
         LEN_DETAIL_LINE = 436
         sga_ops_exists = False
+        do_pick = False
+        pool_ids = []
         for line in sga_file_lines:
             n_line += 1
 
             if len(line) == LEN_HEADER:
-
                 if pick:
-                    bool_error = pick.do_pick(sga_ops_exists, bool_error)
+                    do_pick = pick.do_pick(sga_ops_exists)
                 sga_ops_exists = False
-                pick = False
-                #Buscamos el pick asociado. (sorder_code)
                 st = 10
                 en = st + 50
                 sorder_code = line[st:en].strip()
@@ -482,9 +491,19 @@ class StockPickingSGA(models.Model):
                 if not pick:
                     str_error += "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (sorder_code, n_line)
                     sga_file_obj.write_log(str_error)
-                    bool_error = False
-
+                    do_pick = True
                     continue
+                pool_ids.append(pick.id)
+                st = 60
+                en = st + 10
+                pick_status = line[st:en].strip()
+                if pick and pick_status == "CANCELED":
+                    pick.sga_state = 'NE'
+                    pick.message_post(body="Pick <em>%s</em> <b>ha sido cancelado en Mecalux</b>." % (pick.name))
+                    pick = False
+                    continue
+
+                print "###############\nde mecalux %s\n##############"%pick.name
                 st = 378
                 en = st + 10
                 weight = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
@@ -497,10 +516,25 @@ class StockPickingSGA(models.Model):
 
                 st = 398
                 en = st + 50
-                carrier_code = line[st:en].strip()
+
+                carrier_operario = line[st:en].strip()
+                if ',' in carrier_operario:
+                    carrier_code, oper_code = carrier_operario.split(',')
+                elif '.' in carrier_operario:
+                    carrier_code, oper_code = carrier_operario.split('.')
+                else:
+                    carrier_code = carrier_operario
+                    oper_code = False
+
                 domain = [('carrier_code', '=', carrier_code)]
                 carrier = self.env['delivery.carrier'].search(domain)
                 pick.carrier_id = carrier
+                if oper_code:
+                    domain = [('ref', '=', oper_code)]
+                    user_id = self.env['res.users'].search(domain)
+                    pick.operator = user_id.display_name or oper_code
+                else:
+                    pick.operator ="No encontrado"
 
                 st = 90
                 en = st+14
@@ -524,6 +558,7 @@ class StockPickingSGA(models.Model):
 
                 # Si op existe, escribo qty_done, si no creo una linea de operacion con lo recibido
                 if op:# and op.product_id.id == product.id:
+                    print "###############\nde mecalux %s op: %s de %s\n##############" % (pick.name, op.id, op.product_id.default_code)
                     op.qty_done = qty_done
                     op.sga_changed = True
                     sga_ops_exists = True
@@ -561,9 +596,5 @@ class StockPickingSGA(models.Model):
                 continue
 
         if pick:
-            bool_error = pick.do_pick(sga_ops_exists, bool_error)
-        return bool_error
-
-
-
-
+            do_pick = pick.do_pick(sga_ops_exists)
+        return pool_ids
