@@ -26,3 +26,8 @@ class AccountMoveLine(models.Model):
                               string='Scheme',
                               compute='get_mandate_scheme',
                               search='_mandate_scheme_search')
+    payment_order_line_ids = fields.One2many(
+        'account.payment.line', 'move_line_id', string='Payment Line',
+        readonly=True)
+
+
