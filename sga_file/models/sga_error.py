@@ -48,7 +48,6 @@ class SGAfileerror(models.Model):
                     line = line_d.decode("latin_1").encode("latin_1")
                 else:
                     line = line_d
-
                 line_number += 1
                 val['sga_file_id'] = sga_file_obj.id
                 inc = 1 if line_number == 1 else 0
@@ -83,7 +82,7 @@ class SGAfileerror(models.Model):
                 val['error_code'] = line[st:en].strip()
                 if val['error_code'] in IGNORED_CODES:
                     continue
-                self.refresh_sga_state(val['object_type'], val['object_id'])
+                #self.refresh_sga_state(val['object_type'], val['object_id'])
                 st = en
                 en = st + 255
                 val['error_message'] = line[st:en].strip()
