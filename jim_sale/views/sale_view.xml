@@ -82,6 +82,7 @@
                 <xpath expr="//field[@name='validity_date']" position="attributes">
                     <attribute name="attrs">{'invisible': [('validity_date', '!=', ''), ('state','not in ',('draft','sent'))]}</attribute>
                 </xpath>
+               
             </field>
         </record>
 

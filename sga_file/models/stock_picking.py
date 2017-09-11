@@ -153,9 +153,20 @@ class StockPickingSGA(models.Model):
         pick = super(StockPickingSGA, self).create(vals)
         return pick
 
+    def check_write_in_pm(self, vals):
+
+        fields_to_check = ('launch_pack_operations', 'pack_operation_product_ids', 'move_lines',
+                           'recompute_pack_op')
+
+        fields_list = sorted(list(set(vals).intersection(set(fields_to_check))))
+        if len(self.filtered(lambda x: x.sga_state == 'PM')) and fields_list:
+            return True
+        return False
+
     @api.multi
     def write(self, vals):
-        if ('pack_operation_product_ids' in vals or 'move_lines' in vals) and self.filtered(lambda x:x.sga_state == 'PM'):
+        print "----------------\nWrite stock picking %s\n--------------------" % vals
+        if self.check_write_in_pm(vals):
             raise ValidationError("No puedes modificar operaciones si está enviado a Mecalux")
 
         return super(StockPickingSGA, self).write(vals)
@@ -262,9 +273,10 @@ class StockPickingSGA(models.Model):
         return val
 
     def do_pick(self, sga_ops_exists, bool_error=True):
-        partial = ''
         if not self.picking_type_id.sga_integrated:
             raise ValidationError("Solo albaranes integrados con Mecalux")
+        partial = ''
+        sga_state = 'MT'
         action_done_bool = self.action_done_bool
         ctx = self._context.copy()
         if self.pack_operation_product_ids.filtered(lambda x: x.qty_done != 0):
@@ -273,6 +285,7 @@ class StockPickingSGA(models.Model):
             all_zero = True
 
         if not sga_ops_exists:
+            self.message_post(body="Pick <em>%s</em> ha sido realizado en Mecalux pero los <b>ids no se encuentran en ODOO</b>." % (self.name))
             action_done_bool = False
             sga_state = 'EI'
         # Confimo cantidaddes en servicios y consumibles
@@ -378,7 +391,7 @@ class StockPickingSGA(models.Model):
                     en = st + 14
                     date_done = line[st:en].strip()
                     pick.date_done = sga_file_obj.format_from_mecalux_date(date_done)
-                    if sga_state == 'CLOSE':
+                    if sga_state == 'CANCEL':
                         pick.sga_state = "MC"
                         pick.message_post(body="Pick <em>%s</em> <b>ha sido cancelado en Mecalux</b>." % (pick.name))
                         pick = False
@@ -404,51 +417,10 @@ class StockPickingSGA(models.Model):
                     bool_error = False
                 # Si op existe, escribo qty_done, si no creo una linea de operacion con lo recibido
                 if op:
-
                     op.qty_done = qty_done
                     op.sga_changed = True
                     sga_ops_exists = True
 
-                elif create:
-                    st = 62
-                    en = st + 10
-                    uom_code = line[st:en].strip()
-                    uom = self.env['product.uom'].search([('sga_uom_base_code', '=', uom_code)])
-                    if not uom:
-                        uom = self.env['product.uom'].create({'name': uom_code,
-                                                              'sga_uom_base_code': uom_code,
-                                                              'category_id': 1})
-                        str_error = "Unidad %s creada en linea ...%s " % (uom_code, n_line)
-                        sga_file_obj.write_log(str_error)
-                    # Producto asociado al codigo product_code
-                    st = 0
-                    en = st + 50
-                    product_code = line[st:en].strip()
-                    product = self.env['product.product'].search([('default_code', '=', product_code)])
-                    if not product:
-                        product = self.env['product.product'].create({'name': product_code,
-                                                                      'default_code': product_code,
-                                                                      'uom_id': uom.id})
-                    str_error = "Producto %s creado en linea ...%s " % (product_code, n_line)
-                    sga_file_obj.write_log(str_error)
-                    values = {'picking_id': pick.id,
-                              'product_id': product.id,
-                              'sga_changed': True,
-                              'qty_done': qty_done,
-                              'product_uom_id': uom.id,
-                              'location_id': pick.location_id.id or pick.picking_type_id.default_location_src_id.id,
-                              'location_dest_id': pick.location_dest_id.id or pick.picking_type_id.default_location_dest_id.id}
-                    new_op = self.env['stock.pack.operation'].create(values)
-                    if new_op:
-                        str_error = "Operacion [%s] creada para %s [%s %s]en linea ...%s " \
-                                %(new_op.id, product.name, qty_done, uom_code, n_line)
-                        sga_file_obj.write_log(str_error)
-
-
-                    else:
-                        str_error = "Error al crear operacion para para %s [%s %s]en linea ...%s " \
-                                    % (new_op.id, product.name, qty_done, uom_code, n_line)
-                        sga_file_obj.write_log(str_error)
             else:
                 continue
         if pick:
@@ -486,38 +458,40 @@ class StockPickingSGA(models.Model):
                 st = 10
                 en = st + 50
                 sorder_code = line[st:en].strip()
-                pick = pick_obj.search([('name', '=', sorder_code), ('sga_state', '=', 'PM')])
+                pick = pick_obj.search([('name', '=', sorder_code)])
 
                 if not pick:
                     str_error += "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (sorder_code, n_line)
                     sga_file_obj.write_log(str_error)
-                    do_pick = True
                     continue
+
                 pool_ids.append(pick.id)
                 st = 60
                 en = st + 10
                 pick_status = line[st:en].strip()
-                if pick and pick_status == "CANCELED":
+                if pick_status == "CANCELED":
                     pick.sga_state = 'NE'
                     pick.message_post(body="Pick <em>%s</em> <b>ha sido cancelado en Mecalux</b>." % (pick.name))
                     pick = False
                     continue
-
+                if pick.sga_state != "PM":
+                    pick.message_post(body="Pick <em>%s</em> <b>ha sido realizado en Odoo antes que en Mecalux</b>." % (pick.name))
+                    pick = False
+                    continue
                 print "###############\nde mecalux %s\n##############"%pick.name
+
                 st = 378
                 en = st + 10
-                weight = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
-                pick.pick_weight = weight
+                pick_weight = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
 
                 st = 388
                 en = st + 10
-                bultos = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
-                pick.pick_packages = bultos
+                pick_packages = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
 
                 st = 398
                 en = st + 50
-
                 carrier_operario = line[st:en].strip()
+
                 if ',' in carrier_operario:
                     carrier_code, oper_code = carrier_operario.split(',')
                 elif '.' in carrier_operario:
@@ -528,19 +502,26 @@ class StockPickingSGA(models.Model):
 
                 domain = [('carrier_code', '=', carrier_code)]
                 carrier = self.env['delivery.carrier'].search(domain)
-                pick.carrier_id = carrier
+
+                carrier_id = carrier.id if carrier else False
+
                 if oper_code:
                     domain = [('ref', '=', oper_code)]
                     user_id = self.env['res.users'].search(domain)
-                    pick.operator = user_id.display_name or oper_code
+                    operator = user_id.display_name or oper_code
                 else:
-                    pick.operator ="No encontrado"
+                    operator = ''
 
                 st = 90
-                en = st+14
+                en = st + 14
                 date_done = sga_file_obj.format_from_mecalux_date(line[st:en].strip())
-                pick.date_done = date_done
-
+                vals = {'sga_state': 'MT',
+                        'pick_weight': pick_weight,
+                        'pick_packages': pick_packages,
+                        'carrier_id': carrier_id,
+                        'operator': operator,
+                        'date_done': date_done}
+                pick.write(vals)
             elif len(line) == LEN_LINE and pick:
                 op = False
                 #Buscamos la operacion relacionada
@@ -556,42 +537,10 @@ class StockPickingSGA(models.Model):
                 en = st + 12
                 qty_done = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (12, 7, 5))
 
-                # Si op existe, escribo qty_done, si no creo una linea de operacion con lo recibido
                 if op:# and op.product_id.id == product.id:
                     print "###############\nde mecalux %s op: %s de %s\n##############" % (pick.name, op.id, op.product_id.default_code)
-                    op.qty_done = qty_done
-                    op.sga_changed = True
+                    op.write({'qty_done': qty_done, 'sga_changed': True})
                     sga_ops_exists = True
-
-                elif create:
-                    st = 186
-                    en = st + 10
-                    uom_code = line[st:en].strip()
-                    uom = self.env['product.uom'].search([('sga_uom_base_code', '=', uom_code)])
-                    if not uom:
-                        uom = self.env['product.uom'].create({'name': uom_code,
-                                                              'sga_uom_base_code': uom_code,
-                                                              'category_id': 1})
-                    # Producto asociado al codigo product_code
-                    st = 10
-                    en = st + 50
-                    product_code = line[st:en].strip()
-                    product = self.env['product.product'].search([('default_code', '=', product_code)])
-                    if not product:
-                        product = self.env['product.product'].create({'name': product_code,
-                                                                      'default_code': product_code,
-                                                                      'uom_id': uom.id})
-                    values = {'picking_id': pick.id,
-                            'product_id': product.id,
-                            'sga_changed': True,
-                            'qty_done': qty_done,
-                            'product_qty': qty_done,
-                            'product_uom_id': uom.id,
-                            'location_id': pick.location_id.id or pick.picking_type_id.default_location_src_id.id,
-                            'location_dest_id': pick.location_dest_id.id or pick.picking_type_id.default_location_dest_id.id}
-                    # NO CREO OPERACIONES NUEVAS PARA SALIDAS SIN OPS
-                    self.env['stock.pack.operation'].create(values)
-
             else:
                 continue
 

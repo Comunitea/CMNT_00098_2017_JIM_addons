@@ -184,10 +184,12 @@ class StockPicking(models.Model):
                     ic_purchase_picking.do_transfer()
 
         res = super(StockPicking, self).do_transfer()
+        print "########################\nPROPAGO PESO Y BULTOS\n######################"
         ##Propagamos peso y numero de bultos
         next_pick = False
         move = self.move_lines and self.move_lines[0]
         if move:
+            print "De movimiento move %s" %move
             if move.move_dest_id.picking_id.sale_id \
                     and not move.picking_id.purchase_id.intercompany \
                     and not move.move_dest_id.picking_id.sale_id.auto_generated:
@@ -196,12 +198,21 @@ class StockPicking(models.Model):
                     and not move.move_dest_IC_id.picking_id.sale_id.auto_generated:
                 next_pick = move.move_dest_IC_id.picking_id
             if next_pick:
-                next_pick.pick_packages += self.pick_packages
-                next_pick.pick_weight += self.pick_weight
+                print "De movimiento move %s saco %s" % (move.name, next_pick.name)
+                pick_packages = next_pick.pick_packages + self.pick_packages
+                print "Paquetes %s += %s" % (next_pick.pick_packages, self.pick_packages)
+                pick_weight = next_pick.pick_weight + self.pick_weight
+                next_pick_vals = {'pick_packages': pick_packages,
+                                  'pick_weight': pick_weight}
                 if self.carrier_id:
-                    next_pick.carrier_id = next_pick.carrier_id or self.carrier_id
+                    carrier_id = next_pick.carrier_id and next_pick.carrier_id.id or self.carrier_id.id
+                    next_pick_vals['carrier_id'] = carrier_id
+
+                    print "Transportista %s = %s" % (next_pick.carrier_id.name, self.carrier_id.name)
                 if self.operator:
-                    next_pick.operator = next_pick.operator or self.operator
+                    operator = next_pick.operator or self.operator
+                    next_pick_vals['operator'] = operator
+                next_pick.write(next_pick_vals)
         return res
 
     def _create_extra_moves(self):
