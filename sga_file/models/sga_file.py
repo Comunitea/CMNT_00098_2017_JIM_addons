@@ -453,7 +453,7 @@ class MecaluxFileHeader(models.Model):
 
         return sga_file
 
-    def import_file_from_mecalux(self):
+    def import_file_from_mecalux(self, file_code = False):
 
         process = []
         proc_error = False
