@@ -221,7 +221,13 @@
                 </div>
                 <div class="col-xs-5 col-xs-offset-1">
                     <t t-if="o.type in ('in_invoice', 'out_invoice')">
-                        <h1>INVOICE</h1>
+                        <t t-if="o.company_id.id == 17">
+                            <h1>NOTA</h1>
+                        </t>
+                        <t t-if="o.company_id.id != 17">
+                            <h1>INVOICE</h1>
+                        </t>
+
                     </t>
                     <t t-if="o.type in ('in_refund', 'out_refund')">
                         <h1>CREDIT NOTE</h1>

@@ -42,7 +42,7 @@ msgstr "Nº albarán"
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 #, python-format
 msgid "Global discount"
-msgstr "Descuento financiero"
+msgstr "Descuento"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_purchase
