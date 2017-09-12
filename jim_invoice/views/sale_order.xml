@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+       <record id="view_sale_order_form_force_invoiced" model="ir.ui.view">
+            <field name="name">sale.order.form.force_invoiced</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_order_form"/>
+            <field name="arch" type="xml">
+                <group name="sale_pay" position="inside">
+                    <field name="force_invoiced_status"/>
+                </group>
+            </field>
+        </record>
+    </data>
+</odoo>
