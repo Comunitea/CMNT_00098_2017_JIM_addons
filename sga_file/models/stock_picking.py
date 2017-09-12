@@ -328,7 +328,6 @@ class StockPickingSGA(models.Model):
                         self.message_post(
                                     body=("La orden <em>%s</em> la orden ha sido cerrada en Mecalux sin realizar nada</br>Nuevo nombre en Odoo<b>%s</b>") % (old_name, new_name))
                         return bool_error
-
                     else:
                         res = self.with_context(ctx).do_new_transfer()
                         wiz_id = res.get('res_id', False)

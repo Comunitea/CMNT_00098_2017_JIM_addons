@@ -105,8 +105,7 @@ class SGAfileerror(models.Model):
 
     def refresh_sga_state(self, object_type, object_name, line):
         if object_type in ('PRE', 'SOR'):
-            domain = [('sga_state', '=', 'PM'), ('name', '=', object_name)]
+            domain = [('name', '=', object_name)]
             object = self.env['stock.picking'].search(domain)
             if object:
-                object.sga_state = 'EI'
                 object.message_post(body="Pick <em>%s</em> <b>Error en </b>.\n%s" % (object.name, line))
