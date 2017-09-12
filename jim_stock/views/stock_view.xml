@@ -126,8 +126,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="decoration-success">reserved_availability == product_uom_qty</attribute>
+                    <attribute name="decoration-info">product_uom_qty>0 and state=='done'</attribute>
                     <attribute name="decoration-bf">reserved_availability &lt; product_uom_qty</attribute>
-                    <attribute name="decoration-danger">(reserved_availability &lt; product_uom_qty) and state != 'assigned'</attribute>
+                    <attribute name="decoration-danger">(reserved_availability &lt; product_uom_qty) and state != 'done'</attribute>
                     <attribute name="decoration-info">(reserved_availability &lt; product_uom_qty) and state == 'assigned'</attribute>
                 </xpath>
 

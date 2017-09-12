@@ -10,15 +10,6 @@ from odoo.exceptions import ValidationError
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    @api.depends('state', 'order_line.invoice_status')
-    def _get_invoiced(self):
-        res = super(SaleOrder, self)._get_invoiced()
-        for order in self:
-            if order.force_invoiced_status:
-                order.update({
-                    'invoice_status': 'invoiced'
-                })
-        return res
     # We have to overdrive, because of we need to set the states order here,
     # so we can display it in widget statusbar_visible
     state = fields.Selection([
@@ -33,7 +24,6 @@ class SaleOrder(models.Model):
         ('done', 'Locked'),
         ('cancel', 'Cancelled'),
     ])
-
     partner_id = fields.Many2one('res.partner', string='Customer', readonly=True,
                                  states={'draft': [('readonly', False)], 'sent': [('readonly', False)]}, required=True,
                                  change_default=True, index=True, track_visibility='always', domain=[('is_company','=',True)])
@@ -42,8 +32,6 @@ class SaleOrder(models.Model):
     route_id = fields.Many2one('stock.location.route', string='Force Route',
                                domain=[('sale_selectable', '=', True)])
     lqdr_state = fields.Selection([('no_lqdr',''), ('lqdr_no','LQDR No tramitado'), ('lqdr_si','LQDR Tramitado'), ('lqdr_issue', 'LQDR Incidencia')], string="Estado LQDR", default='no_lqdr')
-    force_invoiced_status = fields.Boolean("Marcar como facturado", default=False)
-
 
     @api.model
     def create_web(self, vals):

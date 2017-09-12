@@ -18,8 +18,8 @@
                 </field>
 
             </field>
-
         </record>
+
 
         <!-- Ads lqdr and pending approval states -->
         <record id="view_order_form_add_states" model="ir.ui.view">
