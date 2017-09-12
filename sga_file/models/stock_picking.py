@@ -284,6 +284,7 @@ class StockPickingSGA(models.Model):
         else:
             all_zero = True
 
+
         if not sga_ops_exists:
             self.message_post(body="Pick <em>%s</em> ha sido realizado en Mecalux pero los <b>ids no se encuentran en ODOO</b>." % (self.name))
             action_done_bool = False
@@ -320,12 +321,12 @@ class StockPickingSGA(models.Model):
                         # no hay nada hecho >> Solo le cambio el nombre y lo muevo a no enviado
                         # Necesito cambiarle el nombre por Mecalux
                         old_name = self.name
-                        self.name = self.env['stock.picking.type'].browse(self.picking_type_id.id).sequence_id.next_by_id()
+                        new_name = self.env['stock.picking.type'].browse(self.picking_type_id.id).sequence_id.next_by_id()
                         self.do_unreserve()
-                        sga_state = 'NI'
-
+                        sga_state = 'NE'
+                        self.write({'name': new_name, 'sga_state': sga_state})
                         self.message_post(
-                                    body=("La orden <em>%s</em> la orden ha sido cerrada sin realizar nada</br>Nuevo nombre <b>%s</b>") % (old_name, self.name))
+                                    body=("La orden <em>%s</em> la orden ha sido cerrada en Mecalux sin realizar nada</br>Nuevo nombre en Odoo<b>%s</b>") % (old_name, new_name))
                         return bool_error
 
                     else:
@@ -343,6 +344,9 @@ class StockPickingSGA(models.Model):
                                 partial = "(sin parcial)"
                             self.message_post(body="Pick <em>%s</em> <b>ha sido validado en Mecalux %s</b>." % (self.name, partial))
         self.sga_state = sga_state
+        self.propagate_pick_values()
+        #print trasnapaso pesos/carrier....
+
         return bool_error
 
     def import_mecalux_CSO(self, file_id):
@@ -453,7 +457,7 @@ class StockPickingSGA(models.Model):
 
             if len(line) == LEN_HEADER:
                 if pick:
-                    do_pick = pick.do_pick(sga_ops_exists)
+                    pick.do_pick(sga_ops_exists)
                 sga_ops_exists = False
                 st = 10
                 en = st + 50
@@ -523,7 +527,6 @@ class StockPickingSGA(models.Model):
                         'date_done': date_done}
                 pick.write(vals)
             elif len(line) == LEN_LINE and pick:
-                op = False
                 #Buscamos la operacion relacionada
                 st = 0
                 en = st + 10
@@ -536,14 +539,12 @@ class StockPickingSGA(models.Model):
                 st = 284
                 en = st + 12
                 qty_done = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (12, 7, 5))
-
-                if op:# and op.product_id.id == product.id:
-                    print "###############\nde mecalux %s op: %s de %s\n##############" % (pick.name, op.id, op.product_id.default_code)
+                if op:
                     op.write({'qty_done': qty_done, 'sga_changed': True})
                     sga_ops_exists = True
             else:
                 continue
 
         if pick:
-            do_pick = pick.do_pick(sga_ops_exists)
+            pick.do_pick(sga_ops_exists)
         return pool_ids

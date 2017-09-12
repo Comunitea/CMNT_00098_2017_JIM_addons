@@ -159,10 +159,46 @@ class StockPicking(models.Model):
         res = super(StockPicking, self).action_cancel()
 
 
+    def get_next_pick(self):
+        next_pick = False
+        pick_id = self and self[0]
+        move = pick_id.move_lines and pick_id.move_lines[0]
+        if move:
+            if move.move_dest_id.picking_id.sale_id \
+                    and not move.picking_id.purchase_id.intercompany \
+                    and not move.move_dest_id.picking_id.sale_id.auto_generated:
+                next_pick = move.move_dest_id.picking_id
+            elif move.move_dest_IC_id.id \
+                    and not move.move_dest_IC_id.picking_id.sale_id.auto_generated:
+                next_pick = move.move_dest_IC_id.picking_id
+        return next_pick
+
+    def propagate_pick_values(self):
+        ##Propagamos peso y numero de bultos y lo que me haga falta
+        try:
+            pick_id = self and self[0]
+            if not pick_id:
+                return
+            next_pick = pick_id.get_next_pick()
+            if next_pick:
+                pick_packages = next_pick.pick_packages + pick_id.pick_packages
+                pick_weight = next_pick.pick_weight + pick_id.pick_weight
+                next_pick_vals = {'pick_packages': pick_packages,
+                                  'pick_weight': pick_weight}
+                if pick_id.carrier_id and not next_pick.carrier_id:
+                    carrier_id = pick_id.carrier_id.id
+                    next_pick_vals['carrier_id'] = carrier_id
+                if pick_id.operator and not next_pick.operator:
+                    operator = next_pick.operator or pick_id.operator
+                    next_pick_vals['operator'] = operator
+                next_pick.write(next_pick_vals)
+        except:
+            pass
+        return
+
     @api.multi
     def do_transfer(self):
         self.ensure_one()
-
         # Si es de una compra intercompañía llamamos al do_transfer de la venta relacionada anterior
         if self.purchase_id.intercompany:
             ic_sale = self.env['sale.order'].sudo().search([('auto_purchase_order_id', '=', self.purchase_id.id)])
@@ -170,7 +206,6 @@ class StockPicking(models.Model):
                                                         x.sale_id.auto_generated and x.state not in ['done', 'cancel']):
                 #self.intercompany_picking_process(picking)
                 picking.do_transfer()
-
         #Si es entrega a cliente buscar lineas en albaranes de compra intercompañia
         if self.picking_type_id.code == 'outgoing':
             ic_purchases = self.env['purchase.order'].search([('group_id', '=', self.group_id.id),
@@ -183,37 +218,7 @@ class StockPicking(models.Model):
                     #self.intercompany_picking_process(ic_purchase_picking)
                     ic_purchase_picking.do_transfer()
 
-        res = super(StockPicking, self).do_transfer()
-        print "########################\nPROPAGO PESO Y BULTOS\n######################"
-        ##Propagamos peso y numero de bultos
-        next_pick = False
-        move = self.move_lines and self.move_lines[0]
-        if move:
-            print "De movimiento move %s" %move
-            if move.move_dest_id.picking_id.sale_id \
-                    and not move.picking_id.purchase_id.intercompany \
-                    and not move.move_dest_id.picking_id.sale_id.auto_generated:
-                next_pick = move.move_dest_id.picking_id
-            elif move.move_dest_IC_id.id \
-                    and not move.move_dest_IC_id.picking_id.sale_id.auto_generated:
-                next_pick = move.move_dest_IC_id.picking_id
-            if next_pick:
-                print "De movimiento move %s saco %s" % (move.name, next_pick.name)
-                pick_packages = next_pick.pick_packages + self.pick_packages
-                print "Paquetes %s += %s" % (next_pick.pick_packages, self.pick_packages)
-                pick_weight = next_pick.pick_weight + self.pick_weight
-                next_pick_vals = {'pick_packages': pick_packages,
-                                  'pick_weight': pick_weight}
-                if self.carrier_id:
-                    carrier_id = next_pick.carrier_id and next_pick.carrier_id.id or self.carrier_id.id
-                    next_pick_vals['carrier_id'] = carrier_id
-
-                    print "Transportista %s = %s" % (next_pick.carrier_id.name, self.carrier_id.name)
-                if self.operator:
-                    operator = next_pick.operator or self.operator
-                    next_pick_vals['operator'] = operator
-                next_pick.write(next_pick_vals)
-        return res
+        return super(StockPicking, self).do_transfer()
 
     def _create_extra_moves(self):
         '''This function creates move lines on a picking, at the time of do_transfer, based on
