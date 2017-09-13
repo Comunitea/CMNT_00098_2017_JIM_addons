@@ -148,6 +148,8 @@
             <field name="arch" type="xml">
                 <field name="name" position="after">
                     <field name="client_order_ref"/>
+                    <field name="sale_origin"/>
+
                 </field>
                  <xpath expr="//field[@name='commitment_date']" position="replace">
 

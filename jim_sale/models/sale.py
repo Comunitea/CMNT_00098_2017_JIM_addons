@@ -10,6 +10,15 @@ from odoo.exceptions import ValidationError
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
+    @api.multi
+    def _get_origin_sale(self):
+        for order in self:
+            for line in order.sudo().order_line:
+                if line.move_dest_IC_id:
+                    order.sale_origin = line.move_dest_IC_id.origin
+                    continue
+
+
     # We have to overdrive, because of we need to set the states order here,
     # so we can display it in widget statusbar_visible
     state = fields.Selection([
@@ -32,6 +41,8 @@ class SaleOrder(models.Model):
     route_id = fields.Many2one('stock.location.route', string='Force Route',
                                domain=[('sale_selectable', '=', True)])
     lqdr_state = fields.Selection([('no_lqdr',''), ('lqdr_no','LQDR No tramitado'), ('lqdr_si','LQDR Tramitado'), ('lqdr_issue', 'LQDR Incidencia')], string="Estado LQDR", default='no_lqdr')
+    sale_origin = fields.Char("Venta a Cliente", compute= _get_origin_sale)
+
 
     @api.model
     def create_web(self, vals):
