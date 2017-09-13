@@ -12,6 +12,6 @@ class SaleOrder(models.Model):
     def _get_invoiced(self):
         res = super(SaleOrder, self)._get_invoiced()
         for order in self:
-            if order.state in ('sale', 'done') and order.invoice_status:
+            if order.state in ('sale', 'done') and order.force_invoiced_status:
                 order.update({'invoice_status': 'invoiced'})
         return res
