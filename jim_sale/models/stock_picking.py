@@ -28,15 +28,7 @@ class StockPicking(models.Model):
 
     @api.multi
     def do_transfer(self):
-        res = super(StockPicking, self).do_transfer()
-        for pick in self.filtered(lambda picking: picking.pack_operation_ids):
-            pick_packages = []
-            for op in pick.pack_operation_ids.filtered(lambda op_id: op_id.result_package_id):
-                pick_packages.append(op.result_package_id.id)
-            for op in pick.pack_operation_ids.filtered(lambda op_id: (not op_id.result_package_id and op_id.package_id)):
-                pick_packages.append(op.package_id.id)
-
-            pick.pick_packages = len(list(set(pick_packages)))
+        return super(StockPicking, self).do_transfer()
 
     def _add_delivery_cost_to_so(self):
         #Eliminamos la funcioanalidad de ñadir el producto al pedido

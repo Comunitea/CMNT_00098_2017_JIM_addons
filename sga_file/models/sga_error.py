@@ -35,7 +35,7 @@ class SGAfileerror(models.Model):
         sga_file_obj = self.env['sga.file'].browse(file_id)
 
         sga_file = open(sga_file_obj.sga_file, 'r')
-
+        pool_ids =[]
 
         line_number = 0
         val = {}
@@ -48,7 +48,6 @@ class SGAfileerror(models.Model):
                     line = line_d.decode("latin_1").encode("latin_1")
                 else:
                     line = line_d
-
                 line_number += 1
                 val['sga_file_id'] = sga_file_obj.id
                 inc = 1 if line_number == 1 else 0
@@ -83,7 +82,7 @@ class SGAfileerror(models.Model):
                 val['error_code'] = line[st:en].strip()
                 if val['error_code'] in IGNORED_CODES:
                     continue
-                self.refresh_sga_state(val['object_type'], val['object_id'])
+                #self.refresh_sga_state(val['object_type'], val['object_id'])
                 st = en
                 en = st + 255
                 val['error_message'] = line[st:en].strip()
@@ -93,25 +92,20 @@ class SGAfileerror(models.Model):
                 val['date_error'] = line[st:en].strip()
                 val['note'] = line
                 error_file = error_obj.search([('file_name', '=', val['file_name']), ('error_code', '=', val['error_code'])])
-
-
-                if error_file:
-                    error_file.unlink()
-
-                error_obj.create(val)
-
-                res = True
+                if not error_file:
+                    error_file = error_obj.create(val)
+                    self.refresh_sga_state(val['object_type'], val['object_id'], line)
+                pool_ids.append(error_file.id)
             except:
-
                 sga_file_obj.write_log("-- ERROR >> Error Al procesar el fichero:\n%s"
                                 "\nComprueba los valores de la linea %s"% (sga_file_obj.sga_file, line_number))
 
         sga_file.close()
-        return res
+        return pool_ids
 
-    def refresh_sga_state(self, object_type, object_name):
-        if object_type == 'SOR':
-            domain = [('sga_state', '=', 'PM'), ('name', '=', object_name)]
+    def refresh_sga_state(self, object_type, object_name, line):
+        if object_type in ('PRE', 'SOR'):
+            domain = [('name', '=', object_name)]
             object = self.env['stock.picking'].search(domain)
             if object:
-                object.sga_state = 'EI'
+                object.message_post(body="Pick <em>%s</em> <b>Error en </b>.\n%s" % (object.name, line))

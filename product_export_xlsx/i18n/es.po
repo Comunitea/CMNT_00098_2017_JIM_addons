@@ -1,0 +1,233 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* product_export_xlsx
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2017-09-15 10:12+0000\n"
+"PO-Revision-Date: 2017-09-15 10:12+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web_stock_available
+msgid "Available stock"
+msgstr "Stock web disponible"
+
+#. module: product_export_xlsx
+#: model:ir.ui.view,arch_db:product_export_xlsx.view_product_web_wzd
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: product_export_xlsx
+#: model:ir.ui.view,arch_db:product_export_xlsx.view_product_web_wzd
+msgid "Choose your filter"
+msgstr "Selecciona los filtros a aplicar"
+
+#. module: product_export_xlsx
+#: code:addons/product_export_xlsx/report/product_product_xlsx.py:27
+#, python-format
+msgid "Code"
+msgstr "Código"
+
+#. module: product_export_xlsx
+#: model:ir.ui.view,arch_db:product_export_xlsx.product_product_report_web_search
+msgid "Con stock"
+msgstr "Con stock"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: product_export_xlsx
+#: selection:wzd.product.web,stock_available:0
+msgid "Disponible"
+msgstr "Disponible"
+
+#. module: product_export_xlsx
+#: code:addons/product_export_xlsx/report/product_product_xlsx.py:64
+#, python-format
+msgid "Ending balance"
+msgstr "Ending balance"
+
+#. module: product_export_xlsx
+#: model:ir.ui.view,arch_db:product_export_xlsx.product_product_report_web_search
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web_id
+msgid "ID"
+msgstr "ID"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web_limit
+msgid "Limit"
+msgstr "Límite"
+
+#. module: product_export_xlsx
+#: model:ir.ui.view,arch_db:product_export_xlsx.product_product_report_web_search
+msgid "Mostrar en web"
+msgstr "Mostrar en web"
+
+#. module: product_export_xlsx
+#: code:addons/product_export_xlsx/report/product_product_xlsx.py:26
+#, python-format
+msgid "Name"
+msgstr "Nombre"
+
+#. module: product_export_xlsx
+#: selection:wzd.product.web,stock_available:0
+msgid "No disponible"
+msgstr "No disponible"
+
+#. module: product_export_xlsx
+#: selection:wzd.product.web,web_visible:0
+msgid "No visible"
+msgstr "No visible"
+
+#. module: product_export_xlsx
+#: model:ir.ui.view,arch_db:product_export_xlsx.product_product_report_web_search
+msgid "Ocultados en web"
+msgstr "Ocultados en web"
+
+#. module: product_export_xlsx
+#: code:addons/product_export_xlsx/report/product_product_xlsx.py:61
+#, python-format
+msgid "Partner ending balance"
+msgstr "Partner ending balance"
+
+#. module: product_export_xlsx
+#: model:ir.model,name:product_export_xlsx.model_product_product
+#: model:ir.ui.view,arch_db:product_export_xlsx.product_product_report_web
+msgid "Product"
+msgstr "Producto"
+
+#. module: product_export_xlsx
+#: model:ir.actions.act_window,name:product_export_xlsx.action_product_product_report_web
+msgid "Product report Lines"
+msgstr "Product lines"
+
+#. module: product_export_xlsx
+#: model:ir.actions.report.xml,name:product_export_xlsx.product_product_action_report_xlsx
+msgid "Product report xls"
+msgstr "Informe de producto XLS"
+
+#. module: product_export_xlsx
+#: code:addons/product_export_xlsx/report/product_product_xlsx.py:19
+#, python-format
+msgid "Product web"
+msgstr "Productos en web"
+
+#. module: product_export_xlsx
+#: model:ir.ui.menu,name:product_export_xlsx.menu_product_product_report_web
+msgid "Product web report"
+msgstr "Informe de productos en web"
+
+#. module: product_export_xlsx
+#: model:ir.actions.act_window,name:product_export_xlsx.action_wizard_menu_web
+#: model:ir.ui.menu,name:product_export_xlsx.menu_action_product_web
+msgid "Product web report (XLS)"
+msgstr "Product web report (XLS)"
+
+#. module: product_export_xlsx
+#: model:ir.ui.view,arch_db:product_export_xlsx.view_product_web_wzd
+msgid "Retrieve the product web xls"
+msgstr "Exportar a XLS"
+
+#. module: product_export_xlsx
+#: model:ir.ui.view,arch_db:product_export_xlsx.product_product_report_web_search
+msgid "Search Product"
+msgstr "Buscar productos"
+
+#. module: product_export_xlsx
+#: model:ir.ui.view,arch_db:product_export_xlsx.view_product_web_wzd
+msgid "Search fields"
+msgstr "Campos de búsqueda fields"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web_search_text
+msgid "Search text"
+msgstr "Texto a buscar"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web_offset
+msgid "Start"
+msgstr "Iniciar"
+
+#. module: product_export_xlsx
+#: code:addons/product_export_xlsx/report/product_product_xlsx.py:30
+#, python-format
+msgid "Stock"
+msgstr "Stock"
+
+#. module: product_export_xlsx
+#: model:ir.ui.view,arch_db:product_export_xlsx.product_product_report_web_search
+msgid "Tag"
+msgstr "Etiqueta"
+
+#. module: product_export_xlsx
+#: code:addons/product_export_xlsx/report/product_product_xlsx.py:28
+#, python-format
+msgid "Tags"
+msgstr "Etiquetas"
+
+#. module: product_export_xlsx
+#: selection:wzd.product.web,stock_available:0
+#: selection:wzd.product.web,web_visible:0
+msgid "Todos"
+msgstr "Todos"
+
+#. module: product_export_xlsx
+#: selection:wzd.product.web,web_visible:0
+msgid "Visible"
+msgstr "Visible"
+
+#. module: product_export_xlsx
+#: model:ir.model.fields,field_description:product_export_xlsx.field_wzd_product_web_web_visible
+msgid "Visible en web"
+msgstr "Visible en web"
+
+#. module: product_export_xlsx
+#: code:addons/product_export_xlsx/report/product_product_xlsx.py:29
+#, python-format
+msgid "Web"
+msgstr "Web"
+
+#. module: product_export_xlsx
+#: model:ir.model,name:product_export_xlsx.model_wzd_product_web
+msgid "wzd.product.web"
+msgstr "wzd.product.web"
+

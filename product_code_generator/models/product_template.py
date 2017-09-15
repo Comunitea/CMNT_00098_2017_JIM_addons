@@ -40,9 +40,10 @@ class ProductProduct(models.Model):
         # Comprobamos si hay movimientos.
         if vals.get('default_code', False):
             for product in self:
-                if product.stock_move_ids and product.default_code:
-                    raise ValidationError(_("You can change code because this "
-                                            "product has moves"))
+                if product.stock_move_ids and \
+                        product.default_code and \
+                                vals.get('default_code', False) != product.default_code:
+                    raise ValidationError("No puedes cambiar el código a un artículo con movimientos")
         return super(ProductProduct, self).write(vals)
 
     @api.model
@@ -71,12 +72,14 @@ class ProductTemplate(models.Model):
                         filtered(lambda r: r.attribute_id == att.attribute_id)
                     seq_code = seq.code
                     default_code += '.%s' %seq_code
-                product_id.default_code = default_code
+                if product_id.default_code != default_code:
+                    product_id.default_code = default_code
 
         for tmpl_id in self.with_context(active_test=False). \
                 filtered(lambda x: len(x.product_variant_ids) == 1 and not
                          x.attribute_line_ids):
-            tmpl_id.product_variant_ids[0].default_code = tmpl_id.template_code
+            if tmpl_id.product_variant_ids[0].default_code != tmpl_id.template_code:
+                tmpl_id.product_variant_ids[0].default_code = tmpl_id.template_code
 
     @api.multi
     def create_variant_ids(self):

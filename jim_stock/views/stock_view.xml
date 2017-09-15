@@ -96,7 +96,10 @@
                         <field name="observations" nolabel="1"/>
                     </group>
                 </field>
-
+                 <xpath expr="//field[@name='min_date']" position="replace">
+                    <field name="min_date" attrs="{'invisible': [('state', '==', 'done')]}"/>
+                    <field name="date_done" states="done"/>
+                </xpath>
 
 
             </field>
@@ -113,6 +116,7 @@
                     <attribute name="decoration-bf">qty_done &lt; ordered_qty or qty_done == 0</attribute>
                 </xpath>
 
+
             </field>
         </record>
         <record id="view_move_picking_tree_colors" model="ir.ui.view">
@@ -122,8 +126,9 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="decoration-success">reserved_availability == product_uom_qty</attribute>
+                    <attribute name="decoration-info">product_uom_qty>0 and state=='done'</attribute>
                     <attribute name="decoration-bf">reserved_availability &lt; product_uom_qty</attribute>
-                    <attribute name="decoration-danger">(reserved_availability &lt; product_uom_qty) and state != 'assigned'</attribute>
+                    <attribute name="decoration-danger">(reserved_availability &lt; product_uom_qty) and state != 'done'</attribute>
                     <attribute name="decoration-info">(reserved_availability &lt; product_uom_qty) and state == 'assigned'</attribute>
                 </xpath>
 

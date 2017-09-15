@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+  <data>
+
+    <record id="product_product_action_report_xlsx" model="ir.actions.report.xml">
+      <field name="name">Product report xls</field>
+      <field name="model">product.product</field>
+      <field name="type">ir.actions.report.xml</field>
+      <field name="report_name">product_web_xls</field>
+      <field name="report_type">xlsx</field>
+      <field name="auto" eval="False"/>
+    </record>
+
+    <record id="product_product_action_report_xls_values" model="ir.values">
+      <field name="name">Export Selected Products</field>
+      <field name="model">product.product</field>
+      <field name="key2">client_action_multi</field>
+      <field name="value" eval="'ir.actions.report.xml,' +str(ref('product_product_action_report_xlsx'))"/>
+    </record>
+
+  </data>
+</odoo>

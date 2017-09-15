@@ -39,7 +39,7 @@ class StockMecaluxConfirm(models.TransientModel):
     def process_send(self):
         self.ensure_one()
         self.pick_id.message_post(body=u"Envío a Mecalux<em>%s</em> <b>Envío</b>." % self.pick_id.name)
-        self.pick_id.new_mecalux_file()
+        self.pick_id.new_mecalux_file(force=True)
 
     @api.one
     def process_force(self):

@@ -76,7 +76,7 @@
         <field name="inherit_id" ref="stock.view_picking_form"/>
         <field name="arch" type="xml">
             <field name="has_scrap_move" position="before">
-                <field name="ready" />
+                <field name="ready" invisible="1" />
             </field>
             <field name="product_qty" position="before">
                 <field name="ordered_qty" readonly="1" />

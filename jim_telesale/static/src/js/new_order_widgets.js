@@ -304,38 +304,52 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
         this.$('.proforma-button').click(function (){ self.promoCurrentOrder() });
         this.$('.print-alm-button').click(function (){ self.printAlmOrder() });
     },
+     doPrintAlm: function(erp_id){
+            this.do_action({
+                model: 'sale.order',
+                context: {'active_ids': [erp_id]},
+                data: null,
+                name: 'Quotation / Order',
+                report_file: 'custom_documents.custom_sale_order_report_warehouse',
+                report_name: 'custom_documents.custom_sale_order_report_warehouse',
+                report_type: 'qweb-pdf',
+                type: 'ir.actions.report.xml'
+            });
+        },
     printAlmOrder: function() {
         var self = this;
+        self.print_id = false
         var current_order = this.ts_model.get('selectedOrder')
+        if (current_order.get('erp_id')){
+            if (current_order.get('state') != 'draft'){
+                self.doPrintAlm(current_order.get('erp_id'));
+                return;
+            }
+            else{
+                self.print_id = current_order.get('erp_id')
+            }
+        }
         this.ts_widget.new_order_screen.totals_order_widget.saveCurrentOrder()
         $.when( self.ts_model.ready2 )
         .done(function(){
-        var loaded = self.ts_model.fetch('sale.order',
-                                       ['id', 'name'],
-                                       [
-                                           ['chanel', '=', 'telesale']
-                                       ])
-           .then(function(orders){
-               if (orders[0]) {
-               var my_id = orders[0].id
-               $.when( self.ts_widget.new_order_screen.order_widget.load_order_from_server(my_id) )
-               .done(function(){
-                    var currentOrder = self.ts_model.get('selectedOrder')
-                    self.do_action({
-                         model: 'sale.order',
-                         context: {'active_ids': [currentOrder.get('erp_id')]},
-                         data: null,
-                         name: 'Quotation / Order',
-                         report_file: 'custom_documents.custom_sale_order_report_warehouse',
-                         report_name: 'custom_documents.custom_sale_order_report_warehouse',
-                         report_type: 'qweb-pdf',
-                         type: 'ir.actions.report.xml'
-                    });
-               });
+            var domain = [['chanel', '=', 'telesale']]
+            if (self.print_id){
+                domain = [['id', '=', self.print_id]]
+            }
+            var loaded = self.ts_model.fetch('sale.order', ['id', 'name'], domain)
+               .then(function(orders){
+                   if (orders[0]) {
+                   var my_id = orders[0].id
+                   $.when( self.ts_widget.new_order_screen.order_widget.load_order_from_server(my_id) )
+                   .done(function(){
+                        var currentOrder = self.ts_model.get('selectedOrder')
+                        self.doPrint(currentOrder.get('erp_id'));
+                   });
 
-             }
-           });
+                 }
+               });
         });
+
     },
     promoCurrentOrder: function() {
         var self = this;

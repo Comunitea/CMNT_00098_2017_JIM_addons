@@ -105,9 +105,6 @@ class StockInventorySGA(models.Model):
         inventories = []
         warehouse_id = False
 
-        warehouse_code = "PLS"
-        warehouse_id = self.env['stock.warehouse'].search([('code', '=', warehouse_code)])
-        location_id = warehouse_id.lot_stock_id
         line_number = 0
         for line in sga_file_lines:
 
@@ -117,12 +114,15 @@ class StockInventorySGA(models.Model):
             # Warehouse code
             st = 0
             en = 10
-            warehouse_code = line[st:en].strip()
             if not warehouse_id:
+                warehouse_code = line[st:en].strip()
                 warehouse_id = self.env['stock.warehouse'].search([('code', '=', warehouse_code)])
+                location_id = warehouse_id.lot_stock_id
                 # POR SEGURIDAD
                 if not warehouse_id.sga_integrated:
                     raise ValidationError("Solo almacenes con gestion SGA")
+
+
             #
             #     if not warehouse_id:
             #         raise ValidationError("Codigo de almacen no encontrado")
@@ -169,19 +169,14 @@ class StockInventorySGA(models.Model):
             reg_qty_done = 0.00
             original_qty = quantity
             while quantity > 0.00:
-
-
                 quantity, new_inventory, reg_qty = self.reg_stock(product_id,
                                                          location_id, product_company_id,
                                                          quantity, reg_qty, force_company=first)
-
                 reg_qty_done += reg_qty
-
                 if new_inventory:
                     inventories.append(new_inventory)
 
                 if not first and quantity > 0.00:
-
                     issue_vals = {
                           'pending_qty': original_qty - reg_qty_done,
                           'product_id': product_id.id,
@@ -195,7 +190,6 @@ class StockInventorySGA(models.Model):
             if action_done:
                 for stock_inv in inventories:
                     stock_inv.sudo().action_done()
-
         return inventories
 
     def new_inv_line(self, product_id, qty, inventory_id, mecalux_stock=0.00):

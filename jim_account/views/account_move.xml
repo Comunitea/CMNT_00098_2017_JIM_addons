@@ -26,4 +26,16 @@
             </field>
         </record>
 
+        <!--record id="view_move_due_scheme_search" model="ir.ui.view">
+            <field name="name">view.move-due.scheme.search</field>
+            <field name="model">account.move.line</field>
+            <field name="inherit_id" ref="account_due_list.view_payments_filter"/>
+            <field name="arch" type="xml">
+                <filter name="receivable" position="after">
+                    <filter string="Mandate B2B" name="B2B" domain="[('scheme','=','B2B')]"/>
+                    <filter string="Mandate CORE" name="core" domain="[('scheme','=','CORE')]"/>
+                </filter>
+            </field>
+        </record-->
+
 </odoo>
