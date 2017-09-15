@@ -24,7 +24,6 @@
       <field name="arch" type="xml">
         <search string="Search Product">
           <field name="web"/>
-          <field name="global_real_stock"/>
           <field name="tag_names"/>
           <field name="display_name"/>
           <separator/>
@@ -46,23 +45,19 @@
       <field name="search_view_id" ref="product_product_report_web_search"/>
     </record>
 
-    <!--<record id="account_invoice_line_view_action" model="ir.actions.act_window.view">
+    <record id="action_view_product_product_report_web" model="ir.actions.act_window.view">
       <field eval="1" name="sequence"/>
       <field name="view_mode">tree</field>
       <field name="view_id" ref="product_product_report_web"/>
       <field name="act_window_id" ref="action_product_product_report_web"/>
     </record>
-    -->
+
 
     <menuitem id="menu_product_product_report_web"
-              name="Product report web"
+              name="Product web report"
               parent="stock.menu_warehouse_report"
-              sequence="10"
+              sequence="999"
               action="action_product_product_report_web"
               groups="stock.group_stock_manager" />
-
-
-
-
   </data>
 </odoo>

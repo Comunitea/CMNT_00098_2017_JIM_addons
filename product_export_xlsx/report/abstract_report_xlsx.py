@@ -49,6 +49,7 @@ class AbstractReportXslx(ReportXlsx):
         self._set_column_width()
         #self._write_report_title(report_name)
         #self._write_filters(filters)
+
         self.write_array_header()
         self._generate_report_content(workbook, report)
 

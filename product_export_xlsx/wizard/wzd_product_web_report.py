@@ -17,7 +17,7 @@ class WizardValuationHistory(models.TransientModel):
     @api.multi
     def open_product_web_report(self):
         self.ensure_one()
-        domain = [('type', '=', 'product')]
+        domain = [('type', '!=', 'service')]
         offset = 0
         limit = 50000
         if self.web_visible == 'yes':
@@ -36,21 +36,22 @@ class WizardValuationHistory(models.TransientModel):
 
         if self.offset:
             offset = self.offset
-
         if self.limit:
             limit = self.limit
+        else:
+            limit = self.env['product.product'].search(domain, count=True)
 
         fields = ('display_name', 'default_code', 'tag_names', 'web', 'web_global_stock')
-        max = self.env['product.product'].search(domain, count=True, limit=limit, offset=offset)
         read = []
         inc = 250
-        while offset < limit:
-            print offset
-            read.extend(self.env['product.product'].search_read(domain, fields, offset=offset, limit=limit))
+        print "Numero de registros a exportar: %s\nBuscando ..."%limit
+        while offset <= limit:
+            print "Recuperando %s de %s"%(offset, limit)
+            read.extend(self.env['product.product'].search_read(domain, fields, offset=offset, limit=inc))
             offset += inc
-
+        print "Generando XLS ..."
         #product['ids'] = self.env['product.product'].search(domain).ids
 
         return {'type': 'ir.actions.report.xml',
-                'report_name': 'product_product_xls',
+                'report_name': 'product_web_xls',
                 'datas': {'form': read}}

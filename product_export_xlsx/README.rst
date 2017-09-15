@@ -1,14 +1,9 @@
-Excel export for account balance reporting engine
+Excel export for product web
 =================================================
 
-This module allows to export financial reports to XLS files from print dialog.
+This module allows to export product tree view to XLS files from search/filter dialog.
 
-**WARNING:** This module requires module *report_xls*, available on:
+**WARNING:** This module requires module *report_xlsx*, available on:
 
   https://github.com/OCA/reporting-engine/
 
-Contributors
-------------
-* Alejandro Santana <alejandrosantana@anubia.es>
-* Juan Formoso <jfv@anubia.es>
-* Pedro M. Baeza <pedro.baeza@serviciosbaeza.com
