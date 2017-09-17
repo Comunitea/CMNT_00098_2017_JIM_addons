@@ -1,18 +1,21 @@
 <?xml version="1.0" ?>
 <odoo>
-<data>
+  <data>
+
     <record id="product_product_report_web" model="ir.ui.view">
       <field name="name">product.product.web</field>
       <field name="model">product.product</field>
       <field name="priority">20</field>
       <field name="arch" type="xml">
-        <tree string="Product" create="false" delete="false" editable="bottom">
+        <tree string="Product" create="false" delete="false" edit="bottom">
           <field name="display_name" readonly="1"/>
           <field name="default_code" readonly="1"/>
+          <field name="tag_ids" />
           <field name="tag_names" readonly="1"/>
+
+          <field name="force_web"/>
           <field name="web"/>
-          <field name="force_web" invisible="1"/>
-          <field name="global_real_stock" readonly="1"/>
+          <field name="global_real_stock"/>
         </tree>
       </field>
     </record>
@@ -26,10 +29,12 @@
           <field name="web"/>
           <field name="tag_names"/>
           <field name="display_name"/>
+          <field name="force_web"/>
           <separator/>
           <filter name="with_stock" string="Con stock" domain="[('global_real_stock','>',0.00)]"/>
           <filter name="web_ok" string="Mostrar en web" domain="[('web','=',True)]"/>
           <filter name="web_no_ok" string="Ocultados en web" domain="[('web','=',False)]"/>
+          <filter name="force_web_true" string="Web forzado" domain="[('force_web','!=','tags')]"/>
           <group expand="0" string="Group By">
             <filter string="Tag" context="{'group_by':'tag_names'}"/>
           </group>
@@ -38,7 +43,7 @@
     </record>
 
     <record id="action_product_product_report_web" model="ir.actions.act_window">
-      <field name="name">Listado de productos en web</field>
+      <field name="name">Product report Lines</field>
       <field name="res_model">product.product</field>
       <field name="view_type">form</field>
       <field name="view_mode">tree</field>
@@ -51,11 +56,13 @@
       <field name="view_id" ref="product_product_report_web"/>
       <field name="act_window_id" ref="action_product_product_report_web"/>
     </record>
+
+
     <menuitem id="menu_product_product_report_web"
               name="Product web report"
               parent="stock.menu_warehouse_report"
               sequence="999"
               action="action_product_product_report_web"
               groups="stock.group_stock_manager" />
-</data>
+  </data>
 </odoo>
