@@ -322,7 +322,7 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
         var current_order = this.ts_model.get('selectedOrder')
         if (current_order.get('erp_id')){
             if (current_order.get('state') != 'draft'){
-                self.doPrint(current_order.get('erp_id'));
+                self.doPrintAlm(current_order.get('erp_id'));
                 return;
             }
             else{

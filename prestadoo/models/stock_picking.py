@@ -12,7 +12,7 @@ class StockMove(BaseExtClass):
         return self.picking_type_id.code == "outgoing" \
            and self.company_id.id == 1 \
            and self.state == "done" \
-           and self.partner_id.is_notifiable()
+           and self.sale_id.partner_id.commercial_partner_id.is_notifiable()
 
     def set_props(self, unlink=False):
         podocuments = """
@@ -28,12 +28,12 @@ class StockMove(BaseExtClass):
             """
 
         self.xml = podocuments.format(
-            "15#" + str(self.id),                               # IdDocs
-            self.partner_id.commercial_partner_id.ref or self.partner_id.commercial_partner_id.id,          # CardCode
+            "15#O#" + str(self.id),                             # IdDocs
+            self.sale_id.partner_id.commercial_partner_id.ref or self.sale_id.partner_id.commercial_partner_id.id, # CardCode
             "15",                                               # ObjType --> 15 = Albarán de ventas
             self.id,                                            # DocEntry
             self.name,                                          # DocNum
-            tools.format_date(self.date),                       # DocDate
+            tools.format_date(self.date_done),                  # DocDate
             self.amount_total                                   # DocTotal
         )
 
