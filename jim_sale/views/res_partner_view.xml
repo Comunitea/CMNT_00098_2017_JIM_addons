@@ -49,7 +49,7 @@
         <field name="arch" type="xml">
             <field name="name" position="after">
                 <field name="zip"/>
-                <field name="state_id" filter_domain="['|',('zip','ilike',self),('state_id','=',self)]"/>
+                <field name="state_id"/>
             </field>
             <xpath expr="//filter[@name='salesperson']">
                 <filter string="State" context="{'group_by': 'state_id'}"/>
