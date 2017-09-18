@@ -228,7 +228,7 @@ class ProductProduct(models.Model):
                                     ('product_id', '=', False),
                                     ('product_id', '=', product.id)])
                 for bom in boms:
-                    min_qty = 0
+                    min_qty = False
                     for line in bom.bom_line_ids:
                         if line.product_id.id in res:
                             global_available_stock = \
@@ -239,9 +239,9 @@ class ProductProduct(models.Model):
                                 line.product_id._calculate_globals()[
                                  line.product_id.id]['global_available_stock']
                         qty = global_available_stock / line.product_qty
-                        if not min_qty or qty < min_qty:
+                        if isinstance(min_qty, bool) or qty < min_qty:
                             min_qty = qty
-                    if min_qty < 0:
+                    if not min_qty or min_qty < 0:
                         min_qty = 0
                     stock += (min_qty * bom.product_qty)
             else:
