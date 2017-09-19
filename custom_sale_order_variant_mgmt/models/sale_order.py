@@ -13,7 +13,7 @@ class SaleOrderLineTemplate(models.Model):
 
     product_template = fields.Many2one(
         'product.template', string='Product',
-        domain=[('sale_ok', '=', True), ('product_variant_count', '=', 1)],
+        domain=[('sale_ok', '=', True), ('product_variant_count', '<=', 1)],
         change_default=True, ondelete='restrict', required=True)
 
     order_lines = fields.One2many('sale.order.line', 'template_line',
