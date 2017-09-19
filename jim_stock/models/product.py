@@ -39,8 +39,16 @@ class ProductTemplate(models.Model):
 
     @api.depends('tag_ids')
     def _compute_web_state(self):
-        for product in self:
-            product.web = True in [x.web for x in product.tag_ids]
+        for template in self:
+            template.web = True in [x.web for x in template.tag_ids]
+            for product in template.product_variant_ids:
+                if product.force_web == 'yes':
+                    product.web = True
+                elif product.force_web == 'no':
+                    product.web = False
+                elif product.force_web == 'tags':
+                    product.web = product.product_tmpl_id.web
+
 
     @api.depends('tag_ids')
     def _compute_tag_names(self):
@@ -148,7 +156,18 @@ class ProductProduct(models.Model):
                                     ('Product Unit of Measure'),
                                     compute="_get_web_stock",
                                     search='_search_web_global_stock')
+    force_web = fields.Selection([('yes', 'Visible'), ('no', 'No visible'), ('tags', 'Según etiquetas')], default='tags', string="Forzar web")
+    web = fields.Boolean('Web', compute="_compute_web_state", store=True)
 
+    @api.depends('force_web')
+    def _compute_web_state(self):
+       for product in self:
+            if product.force_web == 'yes':
+                product.web = True
+            elif product.force_web == 'no':
+                product.web = False
+            elif product.force_web == 'tags':
+                product.web = product.product_tmpl_id.web
 
     @api.multi
     def _compute_global_stock(self):

@@ -1,0 +1,42 @@
+<?xml version="1.0" ?>
+<odoo>
+  <data>
+    <record id="view_product_web_wzd" model="ir.ui.view">
+        <field name="name">Product web export to xlx</field>
+        <field name="model">wzd.product.web</field>
+        <field name="arch" type="xml">
+            <form string="Choose your filter">
+                <p>
+                    Search fields
+                </p>
+                <group>
+                    <group>
+                        <field name="search_text"/>
+                        <field name="web_visible"/>
+                        <field name="stock_available"/>
+                    </group>
+                    <group>
+                        <field name="offset"/>
+                        <field name="limit"/>
+                    </group>
+                </group>
+                <footer>
+                    <button name="open_product_web_report" string="Retrieve the product web xls" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+    <record id="action_wizard_menu_web" model="ir.actions.act_window">
+        <field name="name">Product web report (XLS)</field>
+        <field name="res_model">wzd.product.web</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_product_web_wzd"/>
+        <field name="target">new</field>
+    </record>
+    <menuitem id="menu_action_product_web" action="action_wizard_menu_web" parent="stock.menu_warehouse_report" sequence="999" groups="stock.group_stock_manager"/>
+
+
+  </data>
+</odoo>

@@ -12,7 +12,7 @@ class SaleOrder(BaseExtClass):
     def is_notifiable(self):
         return self.state == "pending" \
            and self.company_id.id == 1 \
-           and self.partner_id.is_notifiable()
+           and self.partner_id.commercial_partner_id.is_notifiable()
 
     def set_props(self, unlink=False):
         podocuments = """
@@ -28,8 +28,8 @@ class SaleOrder(BaseExtClass):
               """
 
         self.xml = podocuments.format(
-            "17#" + str(self.id),                       # IdDocs
-            self.partner_id.ref or self.partner_id.id,  # CardCode
+            "17#O#" + str(self.id),                     # IdDocs
+            self.partner_id.commercial_partner_id.ref or self.partner_id.commercial_partner_id.id,  # CardCode
             "17",                                       # ObjType
             self.id,                                    # DocEntry
             self.name,                                  # DocNum

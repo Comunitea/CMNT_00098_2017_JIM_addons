@@ -6,14 +6,14 @@ from .. import tools
 class AccountInvoice(BaseExtClass):
     _inherit = "account.invoice"
 
-    fields_to_watch = ('id', 'partner_id', 'name', 'date_invoice', 'amount_total', 'state')
+    fields_to_watch = ('id', 'commercial_partner_id', 'name', 'date_invoice', 'amount_total', 'state')
 
     def is_notifiable(self):
         return self.state == "open" \
            and self.company_id.id == 1 \
            and (self.type == 'out_invoice' or self.type == 'out_refund') \
            and self.number \
-           and self.partner_id.is_notifiable()
+           and self.commercial_partner_id.is_notifiable()
 
     def set_props(self, unlink=False):
         podocuments = """
@@ -32,8 +32,8 @@ class AccountInvoice(BaseExtClass):
         objtype = '13' if self.type == 'out_invoice' else '14'
 
         self.xml = podocuments.format(
-            objtype + "#" + str(self.id),               # IdDocs
-            self.partner_id.ref or self.partner_id.id,  # CardCode
+            objtype + "#O#" + str(self.id),             # IdDocs
+            self.commercial_partner_id.ref or self.commercial_partner_id.id,  # CardCode
             objtype,                                    # ObjType
             self.id,                                    # DocEntry
             self.number,                                # DocNum
