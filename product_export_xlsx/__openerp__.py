@@ -21,7 +21,8 @@
     },
     'data': [
         'wizard/wzd_product_web_report.xml',
-        'report/product_web_xls.xml'
+        'report/product_web_xls.xml',
+        'views/product_web_report.xml'
     ],
     'installable': True,
 }

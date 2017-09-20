@@ -85,4 +85,6 @@ class ProductProduct(models.Model):
                     product.price = customer_price
                 else:
                     self_super += product
+        else:
+            self_super = self
         return super(ProductProduct, self_super)._compute_product_price()
