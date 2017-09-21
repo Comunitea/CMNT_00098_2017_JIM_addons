@@ -213,12 +213,13 @@ class ProductProduct(models.Model):
                     search([('product_id', '=', product.id)])
                 for line in bom_lines:
                     if line.product_qty:
+                        variants = line.bom_id.product_id or \
+                            line.bom_id.product_tmpl_id.product_variant_ids
                         global_available_stock = sum(
                             [res[x.id]['global_available_stock']
                              if x in res
                              else x._calculate_globals()[x.id]
                              ['global_available_stock']
-                             for x in
-                             line.bom_id.product_tmpl_id.product_variant_ids])
+                             for x in variants])
                         stock += global_available_stock * line.product_qty
             product.web_global_stock = int(stock)
