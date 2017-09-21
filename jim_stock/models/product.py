@@ -116,6 +116,9 @@ class ProductProduct(models.Model):
                                     digits=dp.get_precision
                                     ('Product Unit of Measure'),
                                     compute="_compute_global_stock")
+    force_web = fields.Selection([('yes', 'Visible'), ('no', 'No visible'),
+                                  ('tags', 'Según etiquetas')], default='tags',
+                                 string="Forzar web")
     tag_names = fields.Char('Tags', compute='_compute_tag_names', store=True)
     attribute_names = fields.Char('Attributes', compute='_compute_attribute_names', store=True)
     web = fields.Boolean('Web', compute="_compute_web_state", store=True)
@@ -144,7 +147,7 @@ class ProductProduct(models.Model):
     def _calculate_globals(self):
         not_deposit_ids = \
             self.env['stock.location'].sudo().search(
-                [('deposit', '!=', True)]).ids
+                [('deposit', '!=', True), ('usage', '=', 'internal')]).ids
         company_ids = \
             self.env['res.company'].sudo().search(
                 [('no_stock', '=', True)]).ids
@@ -164,11 +167,10 @@ class ProductProduct(models.Model):
         ctx.update({'location': not_deposit_ids})
         qty_available_d = dict(
             [(p['id'], p['qty_available'])
-             for p in self.sudo().read(['qty_available'])])
+             for p in self.with_context(ctx).sudo().read(['qty_available'])])
         outgoing_qty_d = dict(
             [(p['id'], p['outgoing_qty'])
-             for p in self.sudo().read(['outgoing_qty'])])
-
+             for p in self.with_context(ctx).sudo().read(['outgoing_qty'])])
         global_real_stock = qty_available_d
         global_available_stock = dict(
             [(p, qty_available_d[p] - outgoing_qty_d[p])
