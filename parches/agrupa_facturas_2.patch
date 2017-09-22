@@ -1,5 +1,135 @@
+diff --git a/addons/account/models/account_bank_statement.py b/addons/account/models/account_bank_statement.py
+index ed45217..d40fbd6 100644
+--- a/addons/account/models/account_bank_statement.py
++++ b/addons/account/models/account_bank_statement.py
+@@ -563,7 +563,8 @@ class AccountBankStatementLine(models.Model):
+         """
+         # Blue lines = payment on bank account not assigned to a statement yet
+         reconciliation_aml_accounts = [self.journal_id.default_credit_account_id.id, self.journal_id.default_debit_account_id.id]
+-        domain_reconciliation = ['&', '&', ('statement_id', '=', False), ('account_id', 'in', reconciliation_aml_accounts), ('payment_id','<>', False)]
++        domain_reconciliation = ['&', ('statement_id', '=', False),
++                                  ('account_id', 'in', reconciliation_aml_accounts)]
+ 
+         # Black lines = unreconciled & (not linked to a payment or open balance created by statement
+         domain_matching = [('reconciled', '=', False)]
+diff --git a/addons/account/models/account_invoice.py b/addons/account/models/account_invoice.py
+index afbcd6f..48a0a82 100644
+--- a/addons/account/models/account_invoice.py
++++ b/addons/account/models/account_invoice.py
+@@ -1213,7 +1213,8 @@ class AccountInvoiceLine(models.Model):
+         required=True, domain=[('deprecated', '=', False)],
+         default=_default_account,
+         help="The income or expense account related to the selected product.")
+-    price_unit = fields.Float(string='Unit Price', required=True, digits=dp.get_precision('Product Price'))
++    price_unit = fields.Float(string='Unit Price', required=True, digits=(
++        16,4))
+     price_subtotal = fields.Monetary(string='Amount',
+         store=True, readonly=True, compute='_compute_price')
+     price_subtotal_signed = fields.Monetary(string='Amount Signed', currency_field='company_currency_id',
+diff --git a/addons/crm/wizard/base_partner_merge.py b/addons/crm/wizard/base_partner_merge.py
+index 27f3f3e..ec5e471 100644
+--- a/addons/crm/wizard/base_partner_merge.py
++++ b/addons/crm/wizard/base_partner_merge.py
+@@ -83,6 +83,7 @@ class MergePartnerAutomatic(models.TransientModel):
+     group_by_email = fields.Boolean('Email')
+     group_by_name = fields.Boolean('Name')
+     group_by_is_company = fields.Boolean('Is Company')
++    group_by_customer = fields.Boolean('Customer')
+     group_by_vat = fields.Boolean('VAT')
+     group_by_parent_id = fields.Boolean('Parent Company')
+ 
+@@ -359,27 +360,34 @@ class MergePartnerAutomatic(models.TransientModel):
+         for field in fields:
+             if field in ['email', 'name', 'vat']:
+                 filters.append((field, 'IS NOT', 'NULL'))
++            filters.append(('customer', '=', True))
++            filters.append(('is_company', '=', True))
+         criteria = ' AND '.join('%s %s %s' % (field, operator, value) for field, operator, value in filters)
+ 
+-        # build the query
+-        text = [
+-            "SELECT min(id), array_agg(id)",
+-            "FROM res_partner",
+-        ]
+-
+-        if criteria:
+-            text.append('WHERE %s' % criteria)
+-
+-        text.extend([
+-            "GROUP BY %s" % group_fields,
+-            "HAVING COUNT(*) >= 2",
+-            "ORDER BY min(id)",
+-        ])
+-
+-        if maximum_group:
+-            text.append("LIMIT %s" % maximum_group,)
+-
+-        return ' '.join(text)
++        # # build the query
++        # text = [
++        #     "SELECT min(id), array_agg(id)",
++        #     "FROM res_partner",
++        # ]
++        #
++        # if criteria:
++        #     text.append('WHERE %s' % criteria)
++        #
++        # text.extend([
++        #     "GROUP BY %s" % group_fields,
++        #     "HAVING COUNT(*) >= 2",
++        #     "ORDER BY min(id)",
++        # ])
++
++        #if maximum_group:
++        #    text.append("LIMIT %s" % maximum_group,)
++
++        text = "SELECT min(id), array_agg(id) FROM res_partner WHERE vat IS " \
++               "NOT NULL and supplier=True and is_company=True GROUP BY vat, is_company, supplier " \
++               "HAVING COUNT(*) >= 2 ORDER BY min(id)"
++
++        #return ' '.join(text)
++        return text
+ 
+     @api.model
+     def _compute_selected_groupby(self):
+@@ -416,8 +424,7 @@ class MergePartnerAutomatic(models.TransientModel):
+             :param partner_ids : list of partner ids to sort
+         """
+         return self.env['res.partner'].browse(partner_ids).sorted(
+-            key=lambda p: (p.active, p.create_date),
+-            reverse=True,
++            key=lambda p: (p.create_uid), reverse=True
+         )
+ 
+     @api.multi
+diff --git a/addons/crm/wizard/base_partner_merge_views.xml b/addons/crm/wizard/base_partner_merge_views.xml
+index 6c86442..3534e40 100644
+--- a/addons/crm/wizard/base_partner_merge_views.xml
++++ b/addons/crm/wizard/base_partner_merge_views.xml
+@@ -34,6 +34,7 @@
+                             <field name='group_by_email' />
+                             <field name='group_by_name' />
+                             <field name='group_by_is_company' />
++                            <field name='group_by_customer' />
+                             <field name='group_by_vat' />
+                             <field name='group_by_parent_id' />
+                         </group>
+diff --git a/addons/purchase/models/purchase.py b/addons/purchase/models/purchase.py
+index ec1d25a..ac34f92 100644
+--- a/addons/purchase/models/purchase.py
++++ b/addons/purchase/models/purchase.py
+@@ -619,7 +619,8 @@ class PurchaseOrderLine(models.Model):
+     product_uom = fields.Many2one('product.uom', string='Product Unit of Measure', required=True)
+     product_id = fields.Many2one('product.product', string='Product', domain=[('purchase_ok', '=', True)], change_default=True, required=True)
+     move_ids = fields.One2many('stock.move', 'purchase_line_id', string='Reservation', readonly=True, ondelete='set null', copy=False)
+-    price_unit = fields.Float(string='Unit Price', required=True, digits=dp.get_precision('Product Price'))
++    price_unit = fields.Float(string='Unit Price', required=True, digits=(
++        16,4))
+ 
+     price_subtotal = fields.Monetary(compute='_compute_amount', string='Subtotal', store=True)
+     price_total = fields.Monetary(compute='_compute_amount', string='Total', store=True)
 diff --git a/addons/sale/models/sale.py b/addons/sale/models/sale.py
-index 38a4036..166f780 100644
+index 38a4036..bf7750b 100644
 --- a/addons/sale/models/sale.py
 +++ b/addons/sale/models/sale.py
 @@ -157,6 +157,9 @@ class SaleOrder(models.Model):
@@ -8,18 +138,119 @@ index 38a4036..166f780 100644
      product_id = fields.Many2one('product.product', related='order_line.product_id', string='Product')
 +    commercial_partner_id = fields.Many2one(
 +        related='partner_id.commercial_partner_id', string='Commercial Entity',
-+        store=True, readonly=True)
++        store=True, readonly=True, compute_sudo=True)
  
      @api.model
      def _get_customer_lead(self, product_tmpl_id):
-@@ -335,7 +338,9 @@ class SaleOrder(models.Model):
+@@ -330,12 +333,15 @@ class SaleOrder(models.Model):
+         :param final: if True, refunds will be generated if necessary
+         :returns: list of created invoices
+         """
+-        inv_obj = self.env['account.invoice']
++        ctx = self._context.copy()
++        ctx.update(tracking_disable=True)
++        inv_obj = self.env['account.invoice'].with_context(ctx)
+         precision = self.env['decimal.precision'].precision_get('Product Unit of Measure')
          invoices = {}
          references = {}
          for order in self:
 -            group_key = order.id if grouped else (order.partner_invoice_id.id, order.currency_id.id)
 +            group_key = order.id if grouped else (
-+                order.commercial_partner_id.id,
-+                                                  order.currency_id.id)
++                order.commercial_partner_id.id, order.currency_id.id)
              for line in order.order_line.sorted(key=lambda l: l.qty_to_invoice < 0):
                  if float_is_zero(line.qty_to_invoice, precision_digits=precision):
                      continue
+@@ -352,9 +358,9 @@ class SaleOrder(models.Model):
+                         vals['name'] = invoices[group_key].name + ', ' + order.client_order_ref
+                     invoices[group_key].write(vals)
+                 if line.qty_to_invoice > 0:
+-                    line.invoice_line_create(invoices[group_key].id, line.qty_to_invoice)
++                    line.with_context(ctx).invoice_line_create(invoices[group_key].id, line.qty_to_invoice)
+                 elif line.qty_to_invoice < 0 and final:
+-                    line.invoice_line_create(invoices[group_key].id, line.qty_to_invoice)
++                    line.with_context(ctx).invoice_line_create(invoices[group_key].id, line.qty_to_invoice)
+ 
+             if references.get(invoices.get(group_key)):
+                 if order not in references[invoices[group_key]]:
+diff --git a/addons/sale/views/sale_views.xml b/addons/sale/views/sale_views.xml
+index 9206aa4..ff312f0 100644
+--- a/addons/sale/views/sale_views.xml
++++ b/addons/sale/views/sale_views.xml
+@@ -184,7 +184,7 @@
+                         <group>
+                             <field name="partner_id" domain="[('customer','=',True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'/>
+                             <field name="partner_invoice_id" groups="sale.group_delivery_invoice_address" context="{'default_type':'invoice'}"/>
+-                            <field name="partner_shipping_id" groups="sale.group_delivery_invoice_address" context="{'default_type':'delivery'}"/>
++                            <field name="partner_shipping_id" edit="false" groups="sale.group_delivery_invoice_address" context="{'default_type':'delivery'}"/>
+                         </group>
+                         <group>
+                             <field name="date_order" attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"/>
+diff --git a/addons/sale_stock/models/stock.py b/addons/sale_stock/models/stock.py
+index 41ddb89..a3ed7f6 100644
+--- a/addons/sale_stock/models/stock.py
++++ b/addons/sale_stock/models/stock.py
+@@ -30,14 +30,14 @@ class StockMove(models.Model):
+     @api.multi
+     def assign_picking(self):
+         result = super(StockMove, self).assign_picking()
+-        for move in self:
+-            if move.picking_id and move.picking_id.group_id:
+-                picking = move.picking_id
+-                order = self.env['sale.order'].sudo().search([('procurement_group_id', '=', picking.group_id.id)])
+-                picking.message_post_with_view(
+-                    'mail.message_origin_link',
+-                    values={'self': picking, 'origin': order},
+-                    subtype_id=self.env.ref('mail.mt_note').id)
++        # for move in self:
++        #     if move.picking_id and move.picking_id.group_id:
++        #         picking = move.picking_id
++        #         order = self.env['sale.order'].sudo().search([('procurement_group_id', '=', picking.group_id.id)])
++        #         picking.message_post_with_view(
++        #             'mail.message_origin_link',
++        #             values={'self': picking, 'origin': order},
++        #             subtype_id=self.env.ref('mail.mt_note').id)
+         return result
+ 
+ 
+diff --git a/addons/stock/models/stock_quant.py b/addons/stock/models/stock_quant.py
+index 1c11ad0..0d342f6 100644
+--- a/addons/stock/models/stock_quant.py
++++ b/addons/stock/models/stock_quant.py
+@@ -198,12 +198,16 @@ class Quant(models.Model):
+             quants_move_sudo._quant_update_from_move(move, location_to, dest_package_id, lot_id=lot_id, entire_pack=entire_pack)
+             moves_recompute.recalculate_move_state()
+ 
+-        if location_to.usage == 'internal':
++        if location_to.usage == 'internal' and not move.move_dest_id:
+             # Do manual search for quant to avoid full table scan (order by id)
+             self._cr.execute("""
+                 SELECT 0 FROM stock_quant, stock_location WHERE product_id = %s AND stock_location.id = stock_quant.location_id AND
+-                ((stock_location.parent_left >= %s AND stock_location.parent_left < %s) OR stock_location.id = %s) AND qty < 0.0 LIMIT 1
+-            """, (move.product_id.id, location_to.parent_left, location_to.parent_right, location_to.id))
++                ((stock_location.parent_left >= %s AND 
++                stock_location.parent_left < %s) OR stock_location.id = %s) 
++                AND qty < 0.0 AND stock_quant.company_id = %s LIMIT 1
++            """, (move.product_id.id, location_to.parent_left,
++                  location_to.parent_right, location_to.id,
++                  move.company_id.id))
+             if self._cr.fetchone():
+                 quants_reconcile_sudo._quant_reconcile_negative(move)
+ 
+@@ -356,6 +360,7 @@ class Quant(models.Model):
+                ('location_id', 'child_of', self.location_id.id),
+                ('product_id', '=', self.product_id.id),
+                ('owner_id', '=', self.owner_id.id),
++               ('company_id', '=', self.company_id.id),
+                # Do not let the quant eat itself, or it will kill its history (e.g. returns / Stock -> Stock)
+                ('id', '!=', self.propagated_from_id.id)]
+         if self.package_id.id:
+@@ -390,7 +395,8 @@ class Quant(models.Model):
+             qty, move,
+             pack_operation_id=ops and ops.id or False,
+             lot_id=lot_id,
+-            company_id=self.env.context.get('company_id', False),
++            company_id=self.env.context.get('company_id', False) or
++                       move.company_id.id,
+             domain=domain,
+             preferred_domain_list=preferred_domain_list)
+ 

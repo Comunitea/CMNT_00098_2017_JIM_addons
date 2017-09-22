@@ -351,7 +351,8 @@ class StockMove(models.Model):
                          ])
                     move_dest_IC_ids |= multiple_dest
                 # move.process_intercompany_chain()
-            if move.move_dest_id.move_purchase_IC_id:
+            if move.move_dest_id.move_purchase_IC_id and move.move_dest_IC_id.state in (
+                    'waiting', 'confirmed'):
                 multiple_IC = self.search(
                 [('picking_id', '=', move.move_dest_id.move_purchase_IC_id.picking_id.id),
                  ('product_id', '=', move.product_id.id),

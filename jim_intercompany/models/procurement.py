@@ -149,7 +149,7 @@ class ProcurementOrder(models.Model):
                 continue
 
             # CHANGED, GET PARTNER FROM PRODUCT COMPANY
-            partner = procurement.product_id.company_id.partner_id
+            partner = procurement.sudo().product_id.company_id.partner_id
 
             gpo = procurement.rule_id.group_propagation_option
             group = (gpo == 'fixed' and procurement.rule_id.group_id) or \
