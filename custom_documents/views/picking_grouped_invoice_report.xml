@@ -61,7 +61,7 @@
                             <t t-if="picking">
                                 <tr>
                                     <td></td>
-                                    <td><span t-field="picking.partner_id.name"/> <span class="blue_text"> Picking:</span> <span t-field="picking.name"/> <span class="blue_text">Picking date:</span> <span t-field="picking.date_done_date"/></td>
+                                    <td><span t-field="picking.partner_id.name"/> <span class="blue_text"> Picking:</span> <span t-field="picking.name"/> <span class="blue_text">Picking date:</span> <span t-field="picking.date_done_date"/> <span t-if="picking.sale_id.client_order_ref"><span class="blue_text">Customer order number: </span> <span t-field="picking.sale_id.client_order_ref"/></span></td>
                                     <td></td>
                                     <td></td>
                                     <td></td>

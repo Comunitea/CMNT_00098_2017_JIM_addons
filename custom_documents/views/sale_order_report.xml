@@ -125,7 +125,7 @@
                             </div>
                         </div>
                         <div class="col-xs-3" t-if="doc.company_id.iso_logo and not doc.neutral_document">
-                            <img t-att-src="'data:image/png;base64,%s' % doc.company_id.iso_logo"/>
+                            <img t-att-src="'data:image/png;base64,%s' % doc.company_id.iso_logo" style="max-height: 85px;"/>
                         </div>
                     </div>
                     <div class="oe_structure"/>
