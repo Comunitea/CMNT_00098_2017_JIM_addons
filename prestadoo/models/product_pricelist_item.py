@@ -27,24 +27,24 @@ class ProductPricelistItem(models.Model):
         Console.debug('[Prestadoo] Fin de proceso de notificación de PRICES a Jesie')
 
     def get_product_pricelist_query(self):
-        query = self.env["ir.config_parameter"].search([('key', '=', 'prestadoo.product.pricelist.query')])
+        param = self.env["ir.config_parameter"].search([('key', '=', 'prestadoo.product.pricelist.query')])
 
-        if not query:
+        if not param:
             Console.debug("[Prestadoo] No se ha encontrado parámetro 'prestadoo.product.pricelist.query' en "
                           "'Configuración -> Parámetros -> Parámetros del sistema'.")
             return False
         else:
-            return query
+            return param.value
 
     def get_customer_prices_query(self):
-        query = self.env["ir.config_parameter"].search([('key', '=', 'prestadoo.customer.prices.query')])
+        param = self.env["ir.config_parameter"].search([('key', '=', 'prestadoo.customer.prices.query')])
 
-        if not query:
+        if not param:
             Console.debug("[Prestadoo] No se ha encontrado parámetro 'prestadoo.customer.prices.query' en "
                           "'Configuración -> Parámetros -> Parámetros del sistema'.")
             return False
         else:
-            return query
+            return param.value
 
     def get_row_insert_limit(self):
         # Tenemos que hacer inserciones en bloques de 1000 ya que es el máximo permitido. Para esto, utilizaremos
