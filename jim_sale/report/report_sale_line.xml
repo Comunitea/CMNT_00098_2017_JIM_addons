@@ -24,13 +24,13 @@
         <field name="model">report.sale.line.jim</field>
         <field name="arch" type="xml">
             <tree string="Sale lines">
-                <field name="product_id" />
+                <field name="product_id" widget="many2one_clickable"/>
                 <field name="product_code" />
-                <field name="order_id"/>
-                <field name="partner_id"/>
-                <field name="qty_delivered"/>
-                <field name="qty_invoiced"/>
-                <field name="product_uom_qty"/>
+                <field name="order_id" widget="many2one_clickable"/>
+                <field name="partner_id" widget="many2one_clickable"/>
+                <field name="qty_delivered" sum="Total Delivered"/>
+                <field name="qty_invoiced" sum="Total Invoiced"/>
+                <field name="product_uom_qty" sum="Total"/>
                 <field name="state"/>
                 <field name="line_delivered_state"/>
                 <field name="line_invoice_state"/>
@@ -82,7 +82,7 @@
         <field name="name">Sales Lines Analysis</field>
         <field name="res_model">report.sale.line.jim</field>
         <field name="view_type">form</field>
-        <field name="view_mode">tree</field>
+        <field name="view_mode">tree,pivot</field>
 
         </record>
 
