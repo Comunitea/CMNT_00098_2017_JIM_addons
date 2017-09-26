@@ -56,5 +56,19 @@
         </field>
     </record>
 
+     <record id="account_invoice_add_purchase_wzd" model="ir.ui.view">
+        <field name="name">account.invoice.add.purchase.wzd</field>
+        <field name="model">account.invoice</field>
+        <field name="inherit_id" ref="purchase.view_invoice_supplier_purchase_form"/>
+        <field name="arch" type="xml">
+            <field name="purchase_id" position="replace">
+                <label for="purchase_id"/>
+                <div>
+                    <field name="purchase_id" attrs="{'invisible': [('state', '=', 'purchase')]}" class="oe_edit_only oe_inline" options="{'no_create': True}"/>
+                    <button class="oe_link oe_inline" name="action_add_purchase_invoice_wzd" type="object" string="↳Add purchase orders"/>
+                </div>
+            </field>
+        </field>
+     </record>
 
 </odoo>

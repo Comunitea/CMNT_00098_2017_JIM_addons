@@ -95,3 +95,37 @@ class PurchaseOrder(models.Model):
                     seller_id.write({'price': self.currency_id.compute(line.price_unit, currency)})
                 except AccessError:  # no write access rights -> just ignore
                     break
+
+class AccountInvoice(models.Model):
+
+    _inherit = 'account.invoice'
+
+    def action_add_purchase_invoice_wzd(self):
+
+        if not self:
+            return
+        if not self.id:
+            return
+        if not self.partner_id:
+            return
+        ctx = dict(self._context.copy())
+        ctx.update({'partner_id': self.partner_id.id})
+        wizard_obj = self.env['purchase.invoice.wzd'].with_context(ctx)
+        res_id = wizard_obj.create({'partner_id': self.partner_id.id,
+                                    'account_invoice_id': self.id})
+        return {
+            'name': wizard_obj._description,
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': wizard_obj._name,
+            'domain': [],
+            'context': ctx,
+            'type': 'ir.actions.act_window',
+            'target': 'new',
+            'res_id': res_id.id,
+            'nodestroy': True,
+        }
+
+    @api.one
+    def compute_amount(self):
+        self._compute_amount()
