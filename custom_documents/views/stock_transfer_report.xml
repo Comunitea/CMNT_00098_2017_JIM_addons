@@ -51,7 +51,7 @@
                             <td></td>
                             <td></td>
                             <td><span t-field="o.location_id.name"/></td>
-                            <td><span t-field="o.location_id.name"/></td>
+                            <td><span t-field="o.location_dest_id.name"/></td>
                             <td><span t-field="o.create_uid.name"/></td>
                         </tr>
                     </tbody>
