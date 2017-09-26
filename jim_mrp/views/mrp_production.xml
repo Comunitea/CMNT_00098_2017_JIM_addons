@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+
+        <record id="mrp_production_form_view_stock" model="ir.ui.view">
+            <field name="name">mrp.production.form.view.stock</field>
+            <field name="model">mrp.production</field>
+            <field name="inherit_id" ref="mrp.mrp_production_form_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='product_id']" position="after">
+                    <label for="stock" string="Stock (web stock)"/>
+                    <div class="o_row">
+                        <field name="global_real_stock" readonly="1"/> (<field name="web_global_stock" readonly="1"/>)
+                        <button type="object" name="refresh_stock" string="Update stocks" states="confirmed,planned,progress" class="oe_link" />
+                    </div>
+                </xpath>
+                <xpath expr="//field[@name='move_raw_ids']/tree/field[@name='quantity_available']" position="before">
+                    <field name="global_real_stock" readonly="1"/>
+                    <field name="web_global_stock" readonly="1"/>
+                </xpath>
+                <field name="availability" position="after">
+                    <field name="procurement_group_id"/>
+                </field>
+            </field>
+        </record>
+
+</odoo>
