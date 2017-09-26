@@ -13,5 +13,11 @@
         <field name="category_id" ref="base.module_category_hidden"/>
     </record>
 
+    <record model="ir.rule" id="report_sale_line_company">
+        <field name="name">report.sale.line.jim company rule</field>
+        <field name="model_id" ref="model_report_sale_line_jim"/>
+        <field name="global" eval="True"/>
+        <field name="domain_force">['|',('company_id','=',False),('company_id','child_of',[user.company_id.id])]</field>
+    </record>
 
 </odoo>
