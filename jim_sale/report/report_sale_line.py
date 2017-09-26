@@ -16,12 +16,17 @@ class ReportSaleLineJim(models.Model):
     product_id = fields.Many2one('product.product', string ="Articulo", readonly=True)
     product_code = fields.Char(string="Referencia", readonly=True)
     template_code = fields.Char(string="Ref (patrón)", readonly=True)
-    qty_delivered = fields.Float(related="order_line_id.qty_delivered", string="Entregada", readonly=True)
-    qty_invoiced = fields.Float(related="order_line_id.qty_invoiced", string="Facturada", readonly=True)
-    product_uom_qty = fields.Float(related="order_line_id.product_uom_qty", string="Pedida", readonly=True)
+    qty_delivered = fields.Float(string="Entregada", readonly=True)
+    qty_invoiced = fields.Float(string="Facturada", readonly=True)
+    product_uom_qty = fields.Float(string="Pedida", readonly=True)
+    price_subtotal = fields.Monetary(string="Subtotal", readonly=True)
+    price_unit = fields.Float(string="Precio", readonly=True)
+    currency_id = fields.Many2one(related='order_line_id.currency_id')
     partner_id = fields.Many2one('res.partner', string="Cliente", readonly=True)
     user_id = fields.Many2one('res.user', string="Comercial", readonly=True)
     order_id = fields.Many2one('sale.order', string="Order", readonly=True)
+    company_id = fields.Many2one('res.company', string="Company",
+                                 readonly=True)
 
     #picking_id = fields.Many2one('stock.picking', readonly=True)
     line_delivered_state = fields.Selection([('E','Entregado'), ('NE','No entregado')], "Entrega", readonly=True)
@@ -46,6 +51,12 @@ class ReportSaleLineJim(models.Model):
              SELECT l.id as id,
                     l.id as order_line_id, 
                     l.product_id as product_id,
+                    l.price_subtotal,
+                    l.price_unit,
+                    l.qty_delivered,
+                    l.qty_invoiced,
+                    l.product_uom_qty,
+                    l.company_id,
                     pp.default_code as product_code,
                     pt.default_code as template_code,
                     so.partner_id as partner_id,

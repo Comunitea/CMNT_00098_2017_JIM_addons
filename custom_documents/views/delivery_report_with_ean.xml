@@ -23,19 +23,19 @@
                                         <span t-field="o.note"/>
                                     </td>
                                     <td>
-                                        <strong>Carrier: </strong><span t-field="o.carrier_id"/>
+                                        <strong style="margin-left: 5px;">Carrier: </strong><span t-field="o.carrier_id"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
 
-                                        <strong>Packages: </strong><span t-field="o.pick_packages"/>
+                                        <strong style="margin-left: 5px;">Packages: </strong><span t-field="o.pick_packages"/>
                                         <strong>kilos: </strong><span t-field="o.pick_weight"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <strong>Operator: </strong><span t-field="o.operator"/>
+                                        <strong style="margin-left: 5px;">Operator: </strong><span t-field="o.operator"/>
                                     </td>
                                 </tr>
                             </tbody>
