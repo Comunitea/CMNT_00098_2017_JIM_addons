@@ -36,9 +36,9 @@
                     <thead>
                         <tr>
                             <th>Nº Traslado</th>
-                            <th>estado</th>
+                            <th>Estado</th>
                             <th>Fecha compromiso</th>
-                            <th>Fecha entrega</th>
+                            <!--<th>Fecha entrega</th>-->
                             <th>Origen</th>
                             <th>Destino</th>
                             <th>Agente</th>
@@ -48,10 +48,10 @@
                         <tr>
                             <td><span t-field="o.name"/></td>
                             <td><span t-field="o.state"/></td>
-                            <td></td>
-                            <td></td>
-                            <td><span t-field="o.location_id.name"/></td>
-                            <td><span t-field="o.location_id.name"/></td>
+                            <td><span t-field="o.min_date"/></td>
+                            <!--<td></td>-->
+                            <td><span t-field="o.location_id"/></td>
+                            <td><span t-field="o.location_dest_id"/></td>
                             <td><span t-field="o.create_uid.name"/></td>
                         </tr>
                     </tbody>
@@ -92,7 +92,8 @@
                                     <span t-field="line.product_id.default_code"/>
                                 </td>
                                 <td>
-                                    <span t-field="line.linked_move_operation_ids[0].move_id.name_report"/>
+                                    <!--<span t-field="line.linked_move_operation_ids[0].move_id.name_report"/>-->
+                                    <span t-field="line.product_id.sga_name_get"/>
                                 </td>
                                 <td>
                                     <span t-field="line.product_id.barcode"/>
@@ -108,7 +109,7 @@
                                     <span t-field="line.product_id.default_code"/>
                                 </td>
                                 <td>
-                                    <span t-field="line.name_report"/>
+                                    <span t-field="line.product_id.sga_name_get"/>
                                 </td>
                                 <td>
                                     <span t-field="line.product_id.barcode"/>
