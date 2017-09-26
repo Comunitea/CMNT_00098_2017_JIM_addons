@@ -101,7 +101,7 @@
                         </tr>
                     </tfoot>
                 </table>
-                <div class="row">
+                <div class="row" t-if="not o.company_id.hide_fields">
                     <div class="col-xs-2">
                         <img src="/custom_documents/static/src/img/invoice_logo.jpg"/>
                     </div>
@@ -184,7 +184,7 @@
                             </span>
                         </p>
                     </div>
-                    <div class="col-xs-5">
+                    <div class="col-xs-5" t-if="not o.company_id.hide_fields">
                         <span>En caso de devolución del recibo generado para el cobro de esta factura, <span t-field="o.company_id.name"/> aplicará un recargo del 6%</span>
                     </div>
                 </div>

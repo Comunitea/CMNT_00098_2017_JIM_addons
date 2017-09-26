@@ -213,7 +213,7 @@
         <div class="header">
             <div class="row">
                 <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;" >
-                    <div class="sombreado">
+                    <div class="sombreado" t-if="not o.company_id.hide_fields">
                         <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
 
                         <span t-field="company.partner_id"
