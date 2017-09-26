@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+
+        <record id="add_purchase_orders_to_invoice" model="ir.ui.view">
+            <field name="name">add.purchase.order.to.invoice</field>
+            <field name="model">purchase.invoice.wzd</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Select purchase order to selected invoice">
+                    <group>
+                        <field name ="partner_id" readonly="True"/>
+                    </group>
+                    <separator string="Purchase orders to add" colspan="4"/>
+                    <group>
+                        <field name="purchase_order_ids" nolabel="1">
+                            <tree string="Purchase Order" editable="bottom" delete="1" create="0">
+                                <field name="selected"/>
+                                <field name="name"/>
+                                <field name="partner_ref"/>
+                                <field name="origin"/>
+                                <field name="date_order"/>
+                                <field name="amount_untaxed"/>
+                                <field name="amount_tax"/>
+                                <field name="amount_total"/>
+
+                                <field name="currency_id"/>
+                                <field name="picking_state"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="add_to_invoice_order" string="Add to invoice" type="object" class="btn-primary"/>
+                        <button name="select_none" string="Select None" type="object" class="btn-primary"/>
+                        <button name="select_all" string="Select All" type="object" class="btn-primary"/>
+                        <button special="cancel" string="Cancel" class="btn-default"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window name="Add to invoice order"
+            res_model="purchase.invoice.wzd"
+            view_mode="form"
+            view_type="form"
+            target="new"
+            id="action_add_purchase_invoice_wzd"
+            groups="purchase.group_purchase_user"/>
+
+</odoo>
