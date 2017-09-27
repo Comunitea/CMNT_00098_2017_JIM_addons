@@ -123,7 +123,7 @@ class ProductProduct(models.Model):
     attribute_names = fields.Char('Attributes', compute='_compute_attribute_names', store=True)
     web = fields.Boolean('Web', compute="_compute_web_state", store=True)
 
-    @api.depends('force_web')
+    @api.depends('force_web', 'tag_ids', 'product_tmpl_id.web')
     def _compute_web_state(self):
         for product in self:
             if product.force_web == 'yes':
