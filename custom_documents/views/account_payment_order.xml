@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <template id="account_payment_order_report_document">
+        <t t-foreach="docs" t-as="o">
+
+            <t t-set="o" t-value="o.with_context({'lang':o.company_id.partner_id.lang})" />
+            <t t-if="o and 'company_id' in o">
+                <t t-set="company" t-value="o.company_id"></t>
+            </t>
+            <t t-if="not o or not 'company_id' in o">
+                <t t-set="company" t-value="res_company"></t>
+            </t>
+            <div class="header">
+                <div class="row">
+                    <div class="col-xs-6 sombreado" style="margin-bottom: 15px;">
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
+
+                        <span t-field="company.partner_id"
+                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                        <p><strong>CIF/NIF:</strong> <span t-field="company.vat"/></p>
+                        <p><strong>Telf.:</strong> <span t-field="company.phone"/> <strong>FAX:</strong> <span t-field="company.fax"/></p>
+                    </div>
+                    <div class="col-xs-6">
+                        <h1 style="text-align:center;"><span t-field="o.name"/></h1>
+                        <h3 style="text-align:center;">Estado: <span t-field="o.state"/></h3>
+
+                    </div>
+                </div>
+
+                <table class="custom_table" >
+                    <thead>
+                        <tr>
+                            <th>Compañia</th>
+                            <th>Diario de pago</th>
+                            <th>Cuenta bancaria</th>
+                            <th>Importe (Líneas)</th>
+                            <th>Fecha</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span t-field="o.company_id"/></td>
+                            <td><span t-field="o.journal_id"/></td>
+                            <td><span t-field="o.company_partner_bank_id"/></td>
+                            <td><span t-field="o.total_company_currency"/> (<span t-field="o.bank_line_count"/>)</td>
+                            <td><span t-field="o.date_generated"/></td>
+                        </tr>
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+            </div>
+            <div class="page">
+                <table class="custom_table">
+                    <thead>
+                        <tr>
+                            <th style="text-align:left;">Empresa</th>
+                            <th>Factura</th>
+                            <th>Ref de pago</th>
+                            <th>Cuenta Bancaria</th>
+                            <th style="text-align:right;">Importe</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="o.payment_line_ids" t-as="line">
+                            <tr>
+                                <td style="text-align:left;">
+                                    <span t-field="line.partner_id"/>
+                                </td>
+                                <td style="text-align:left;">
+                                    <span t-field="line.communication"/>
+                                </td>
+                                 <td style="text-align:left;">
+                                    <span t-field="line.name"/>
+                                </td>
+                                <td>
+                                    <span t-field="line.partner_bank_id"/>
+                                </td>
+                                <td style="text-align:right;">
+                                    <span t-field="line.amount_company_currency"/>
+                                </td>
+                            </tr>
+                        </t>
+                    </tbody>
+                    <tfoot>
+                       <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tfoot>
+                </table>
+                <h3 style="text-align:right;"><strong>Total: <span t-field="o.total_company_currency"/></strong></h3>
+                <div class="oe_structure"/>
+            </div>
+            <div class="footer"></div>
+        </t>
+    </template>
+
+    <report
+        id="account_payment_order_report"
+        name="custom_documents.account_payment_order_report_document"
+        file="custom_documents.account_payment_order_report_document"
+        report_type="qweb-pdf"
+        model="account.payment.order"
+        string="Listado"/>
+
+    <record id="custom_documents.account_payment_order_report" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="picking_paperformat_euro" />
+    </record>
+</odoo>
