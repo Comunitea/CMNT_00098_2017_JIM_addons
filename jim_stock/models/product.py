@@ -40,7 +40,8 @@ class ProductTemplate(models.Model):
     @api.depends('tag_ids')
     def _compute_web_state(self):
         for template in self:
-            template.web = True in [x.web for x in template.tag_ids]
+            template.web = all(x.web for x in template.tag_ids)
+            #template.web = True in [x.web for x in template.tag_ids]
             for product in template.product_variant_ids:
                 if product.force_web == 'yes':
                     product.web = True
@@ -119,7 +120,7 @@ class ProductProduct(models.Model):
     force_web = fields.Selection([('yes', 'Visible'), ('no', 'No visible'),
                                   ('tags', 'Según etiquetas')], default='tags',
                                  string="Forzar web")
-    tag_names = fields.Char('Tags', compute='_compute_tag_names', store=True)
+
     attribute_names = fields.Char('Attributes', compute='_compute_attribute_names', store=True)
     web = fields.Boolean('Web', compute="_compute_web_state", store=True)
 
@@ -132,11 +133,6 @@ class ProductProduct(models.Model):
                 product.web = False
             elif product.force_web == 'tags':
                 product.web = product.product_tmpl_id.web
-
-    @api.depends('tag_ids')
-    def _compute_tag_names(self):
-        for product in self:
-            product.tag_names = ', '.join(x.name for x in product.tag_ids)
 
     @api.depends('attribute_value_ids')
     def _compute_attribute_names(self):
