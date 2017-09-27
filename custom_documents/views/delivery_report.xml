@@ -159,7 +159,7 @@
                         </div>
                 <div class="row" t-if="not o.neutral_document">
                     <div class="col-xs-3" t-if="o.company_id.iso_logo">
-                        <img t-att-src="'data:image/png;base64,%s' % o.company_id.iso_logo"/>
+                        <img t-att-src="'data:image/png;base64,%s' % o.company_id.iso_logo" style="max-height: 85px;"/>
                     </div>
                  </div>
 
