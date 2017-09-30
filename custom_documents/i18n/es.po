@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-02 16:30+0000\n"
-"PO-Revision-Date: 2017-09-01 12:58+0200\n"
+"PO-Revision-Date: 2017-09-27 11:45+0200\n"
 "Last-Translator: Jesús Ventosinos Mayor <jesus@comunitea.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -228,8 +228,8 @@ msgstr "<span class=\"blue_text\">Picking date:</span>"
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
-msgid "<strong>Operator: </strong>"
-msgstr "<strong>Operario: </strong>"
+msgid "<strong style='margin-left: 5px;'>Operator: </strong>"
+msgstr "<strong style='margin-left: 5px;'>Operario: </strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_picking
@@ -278,8 +278,8 @@ msgstr "Trabajo a realizar"
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
-msgid "<strong>Carrier: </strong>"
-msgstr "<strong>Transportista: </strong>"
+msgid "<strong style='margin-left: 5px;'>Carrier: </strong>"
+msgstr "<strong style='margin-left: 5px;'>Transportista: </strong>"
 
 #. module: custom_documents
 #: model:ir.actions.report.xml,name:custom_documents.custom_delivery_report_ean_action
@@ -681,8 +681,8 @@ msgstr "Paquetes"
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
 #: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
-msgid "<strong>Packages: </strong>"
-msgstr "<strong>Paquetes: </strong>"
+msgid "<strong style='margin-left: 5px;'>Packages: </strong>"
+msgstr "<strong style='margin-left: 5px;'>Paquetes: </strong>"
 
 #. module: custom_documents
 #: model:ir.ui.view,arch_db:custom_documents.custom_layout_header_invoce
