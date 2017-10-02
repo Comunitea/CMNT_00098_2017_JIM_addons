@@ -16,17 +16,37 @@ class StockMove(models.Model):
         move = self[0]
 
         if move.picking_id.state == 'cancel':
-            move.picking_id.state = 'confirmed'
+            move.picking_id.state = 'waiting'
 
         if move.picking_id.state not in ('waiting', 'confirmed', 'partially_available'):
             raise ValidationError(_('Pick state incorrect'))
 
         if move.state in ('cancel'):
-            move.state = 'waiting'
+            move.state = 'confirmed'
 
-        if move.state in ('waiting', 'confirmed', 'assigned'):
+        elif move.state in ('waiting', 'confirmed', 'assigned'):
             move.action_assign()
 
-        if move.state == 'confirmed':
+            #if move.state in ('confirmed', 'waiting'):
+            #    move.force_assign()
+
+    def move_force_availability(self):
+        move = self[0]
+        if move.picking_id.state not in ('waiting', 'confirmed', 'partially_available'):
+            raise ValidationError(_('Pick state incorrect'))
+        if move.state in ('confirmed', 'waiting', 'assigned'):
             move.force_assign()
 
+
+class StockPicking(models.Model):
+    _inherit = 'stock.picking'
+
+    @api.depends('move_type', 'launch_pack_operations', 'move_lines.state', 'move_lines.picking_id',
+                 'move_lines.partially_available')
+    @api.one
+    def _compute_state(self):
+        super(StockPicking, self)._compute_state()
+        if self.move_lines and \
+                any(move.state == 'assigned' for move in self.move_lines) and \
+                any(move.state in ('cancel', 'partially_available') for move in self.move_lines):
+            self.state = 'partially_available'

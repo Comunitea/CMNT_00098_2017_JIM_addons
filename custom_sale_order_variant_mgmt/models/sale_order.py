@@ -165,6 +165,10 @@ class SaleOrderLine(models.Model):
             'res_id': self.ids[0],
             'context': self.env.context}
 
+    @api.multi
+    def _action_procurement_create(self):
+        if self._name == 'sale.order.line':
+            return super(SaleOrderLine, self)._action_procurement_create()
 
 class SaleOrder(models.Model):
 
