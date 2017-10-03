@@ -179,7 +179,7 @@
                                 </span>
                             </p>
                         </div>
-                        <div class="col-xs-5" t-if="not o.company_id.hide_fields">
+                        <div class="col-xs-5" t-if="not o.company_id.hide_fields and o.type not in ('in_refund', 'out_refund')">
                             <span>En caso de devolución del recibo generado para el cobro de esta factura, <span t-field="o.company_id.name"/> aplicará un recargo del 6%</span>
                         </div>
                     </div>
