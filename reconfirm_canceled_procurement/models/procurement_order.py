@@ -24,4 +24,6 @@ class ProcurementOrder(models.Model):
             raise ValidationError(_('None procurement in customer location'))
         for procurement in customer_procs_to_cancel:
             procurement.reset_to_confirmed()
-
+        
+        for procurement in customer_procs_to_cancel:
+            procurement.run()
