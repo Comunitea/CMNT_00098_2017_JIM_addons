@@ -51,6 +51,8 @@
             <field name="name" position="after">
                 <field name="zip"/>
                 <field name="state_id"/>
+                <field name="city"
+                       filter_domain="['|',('state_id','ilike',self),('city','ilike',self)]"/>
             </field>
             <xpath expr="//filter[@name='salesperson']">
                 <filter string="State" context="{'group_by': 'state_id'}"/>
