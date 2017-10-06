@@ -13,6 +13,7 @@
                 <page string="Qweb">
                     <group>
                         <field name="show_discount"/>
+                        <field name="hide_fields"/>
                     </group>
                     <separator string="ISO logo"/>
                     <field name="iso_logo" widget="image"/>

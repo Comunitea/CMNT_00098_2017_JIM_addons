@@ -23,6 +23,7 @@
         'views/purchase_order.xml',
         'views/account_payment.xml',
         'wizard/product_purchase_wizard.xml',
+        'wizard/purchase_invoice_wzd.xml',
 
     ],
     "installable": True

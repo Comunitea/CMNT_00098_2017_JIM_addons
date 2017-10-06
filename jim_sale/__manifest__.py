@@ -17,7 +17,8 @@
         'jim_stock',
         'sale_order_batch_confirm',
         'telesale',
-        'sale_early_payment_discount'
+        'sale_early_payment_discount',
+        'web_tree_many2one_clickable'
     ],
     'contributors': [
         "Comunitea ",

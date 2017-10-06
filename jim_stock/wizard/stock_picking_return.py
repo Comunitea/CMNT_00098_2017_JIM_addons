@@ -102,7 +102,12 @@ class StockReturnPicking(models.TransientModel):
         ctx.update({'return_picking': True,
                     'picking_type_id': self.picking_type_id.id})
         self = self.with_context(ctx)
-        return super(StockReturnPicking, self)._create_returns()
+        id, picking_type_id = super(StockReturnPicking, self)._create_returns()
+        new_moves = self.env['stock.move'].search([('picking_id', '=', id)])
+        for new_move in new_moves:
+            new_move.purchase_line_id = new_move.origin_returned_move_id.purchase_line_id
+
+        return id, picking_type_id
 
 
 

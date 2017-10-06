@@ -134,3 +134,13 @@ class StockMove(models.Model):
                 name_report = line.name.replace(
                     '[%s]' % line.product_id.default_code, '')
             line.name_report = name_report
+
+
+    @api.onchange('product_id')
+    def onchange_product_id(self):
+        """Se hereda el onchange para establecer correctamente el nombre"""
+        res = super(StockMove, self).onchange_product_id()
+        product = self.product_id.with_context(lang=self.partner_id.lang or self.env.user.lang)
+        if product:
+            self.name = product.name_get()[0][1]
+        return res

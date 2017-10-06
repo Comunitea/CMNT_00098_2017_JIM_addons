@@ -40,8 +40,6 @@ class ProductPurchaseWizard(models.TransientModel):
                 order_line._cache)
             self.purchase_order.order_line.create(order_line_vals)
 
-
-
         return {
             'view_type': 'form',
             'view_mode': 'form',
@@ -50,7 +48,6 @@ class ProductPurchaseWizard(models.TransientModel):
             'res_id': self.purchase_order.id,
             'context': self.env.context
         }
-
 
 
     @api.model
@@ -62,6 +59,7 @@ class ProductPurchaseWizard(models.TransientModel):
             return res
         for product in product_ids:
             lines.append({'product_id': product, 'product_qty': 0})
+
         res['line_ids'] = map(lambda x: (0,0,x), lines)
 
         return res
