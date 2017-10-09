@@ -13,7 +13,6 @@
         'delivery',
         'mrp',
         'telesale',
-        'product_custom'
     ],
     'contributors': [
         "Comunitea ",
