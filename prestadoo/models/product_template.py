@@ -9,7 +9,7 @@ class ProductTemplate(BaseExtClass):
                        'product_brand_id', 'attribute_line_ids', 'tag_ids', 'active', 'type', 'company_id')
 
     def is_notifiable(self):
-        return self.type == "product"
+        return self.type == "product" and self.tag_ids
 
     def set_props(self, unlink=False):
         poitem = """
