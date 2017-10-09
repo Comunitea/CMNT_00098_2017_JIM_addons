@@ -79,6 +79,9 @@
                 <xpath expr="//field[@name='confirmation_date']" position="attributes">
                     <attribute name="attrs">{'invisible': [('state','!=','sale')]}</attribute>
                 </xpath>
+                 <xpath expr="//field[@name='date_order']" position="attributes">
+                    <attribute name="attrs">{'invisible': [('state','=','cancel')]}</attribute>
+                </xpath>
                 <xpath expr="//field[@name='validity_date']" position="attributes">
                     <attribute name="attrs">{'invisible': [('validity_date', '!=', ''), ('state','not in ',('draft','sent'))]}</attribute>
                 </xpath>

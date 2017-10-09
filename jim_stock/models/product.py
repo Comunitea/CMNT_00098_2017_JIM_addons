@@ -34,28 +34,6 @@ class ProductTemplate(models.Model):
                                           " in all companies.",
                                           search='_search_global_avail_stock')
 
-    tag_names = fields.Char('Tags', compute='_compute_tag_names', store=True)
-    web = fields.Boolean('Web', compute="_compute_web_state", store=True)
-
-    @api.depends('tag_ids')
-    def _compute_web_state(self):
-        for template in self:
-            template.web = all(x.web for x in template.tag_ids)
-            #template.web = True in [x.web for x in template.tag_ids]
-            for product in template.product_variant_ids:
-                if product.force_web == 'yes':
-                    product.web = True
-                elif product.force_web == 'no':
-                    product.web = False
-                elif product.force_web == 'tags':
-                    product.web = product.product_tmpl_id.web
-
-
-    @api.depends('tag_ids')
-    def _compute_tag_names(self):
-        for product in self:
-            product.tag_names = ', '.join(x.name for x in product.tag_ids)
-
     @api.multi
     def _compute_global_stock(self):
         for template in self:
@@ -116,27 +94,6 @@ class ProductProduct(models.Model):
                                     digits=dp.get_precision
                                     ('Product Unit of Measure'),
                                     compute="_compute_global_stock")
-    force_web = fields.Selection([('yes', 'Visible'), ('no', 'No visible'),
-                                  ('tags', 'Según etiquetas')], default='tags',
-                                 string="Forzar web")
-
-    attribute_names = fields.Char('Attributes', compute='_compute_attribute_names', store=True)
-    web = fields.Boolean('Web', compute="_compute_web_state", store=True)
-
-    @api.depends('force_web', 'tag_ids', 'product_tmpl_id.web')
-    def _compute_web_state(self):
-        for product in self:
-            if product.force_web == 'yes':
-                product.web = True
-            elif product.force_web == 'no':
-                product.web = False
-            elif product.force_web == 'tags':
-                product.web = product.product_tmpl_id.web
-
-    @api.depends('attribute_value_ids')
-    def _compute_attribute_names(self):
-        for product in self:
-            product.attribute_names = ', '.join(x.name_get()[0][1] for x in product.attribute_value_ids)
 
     @api.multi
     def _calculate_globals(self):

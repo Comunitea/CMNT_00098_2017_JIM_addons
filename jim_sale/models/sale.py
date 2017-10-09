@@ -2,10 +2,12 @@
 # © 2016 Comunitea - Javier Colmenero <javier@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import api, fields, models
-import time
-from odoo.addons import decimal_precision as dp
-from odoo.tools import float_compare
+
+#from odoo.addons import decimal_precision as dp
+#from odoo.tools import float_compare
 from odoo.exceptions import ValidationError
+from datetime import datetime, timedelta
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
@@ -42,7 +44,9 @@ class SaleOrder(models.Model):
                                domain=[('sale_selectable', '=', True)])
     lqdr_state = fields.Selection([('no_lqdr',''), ('lqdr_no','LQDR No tramitado'), ('lqdr_si','LQDR Tramitado'), ('lqdr_issue', 'LQDR Incidencia')], string="Estado LQDR", default='no_lqdr')
     sale_origin = fields.Char("Venta a Cliente", compute= _get_origin_sale)
-
+    confirmation_date = fields.Datetime(string='Confirmation Date', readonly=True, index=True,
+                                        help="Fecha en que se confirma y albarana el pedido de venta", oldname="date_confirm")
+    sale_date_planned = fields.Datetime("Date planned")
 
     @api.model
     def create_web(self, vals):
@@ -135,6 +139,9 @@ class SaleOrder(models.Model):
                 order.lqdr_state = 'lqdr_no'
             else:
                order.state = 'pending'
+            date_order = fields.Datetime.now()
+            order.confirmation_date = date_order
+            order.date_order = date_order
         return True
 
     @api.multi
@@ -153,7 +160,9 @@ class SaleOrder(models.Model):
     @api.multi
     def action_sale(self):
         for order in self:
+            #confirmation_date = order.confirmation_date
             order.action_confirm()
+            #order.confirmation_date = confirmation_date
             picking_out = order.picking_ids.filtered(lambda x: x.picking_type_id.code == 'outgoing')
             picking_out.write({'ready': True})
         return True
@@ -208,6 +217,18 @@ class SaleOrder(models.Model):
             'target': 'new',
             'context': ctx}
 
+    @api.multi
+    def action_confirm(self):
+        has_requested_date = 'requested_date' in self.fields_get_keys()
+        time_deadline = " 17:00:00"
+        for order in self:
+            if has_requested_date and self.requested_date:
+                requested_date = datetime.strptime(self.requested_date, DEFAULT_SERVER_DATETIME_FORMAT)
+                order.sale_date_planned = datetime.strptime(requested_date.strftime("%Y-%m-%d") + " 06:00:00", DEFAULT_SERVER_DATETIME_FORMAT)
+            else:
+                order.sale_date_planned = datetime.strftime(datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)
+            print "Order date planned"
+        return super(SaleOrder, self).action_confirm()
 
 
 class SaleOrderLine(models.Model):
@@ -251,6 +272,7 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def action_procurement_create(self):
+
         old_state = self.order_id.state
         self.order_id.state = 'sale'
         new_procs = self._action_procurement_create()
@@ -260,6 +282,21 @@ class SaleOrderLine(models.Model):
     @api.multi
     def _action_procurement_create(self):
         return super(SaleOrderLine, self)._action_procurement_create()
+
+
+    @api.multi
+    def _prepare_order_line_procurement(self, group_id=False):
+        res = super(SaleOrderLine, self)._prepare_order_line_procurement(group_id=group_id)
+        time_deadline = " 17:00:00"
+        datetime_limit = datetime.now().date().strftime("%Y-%m-%d") + time_deadline
+        if datetime_limit >= self.order_id.sale_date_planned:
+            date_planned = datetime.strptime(self.order_id.sale_date_planned, DEFAULT_SERVER_DATETIME_FORMAT) + timedelta(
+                hours=0) + timedelta(days=self.customer_lead)
+        else:
+            date_planned = datetime.strptime(datetime.now().date().strftime("%Y-%m-%d") + " 06:00:00", DEFAULT_SERVER_DATETIME_FORMAT) + timedelta(
+                days=1) + timedelta(days=self.customer_lead)
+        res['date_planned'] = date_planned
+        return res
 
 
 class SaleOrderLineTemplate(models.Model):
