@@ -58,7 +58,6 @@ class ProductTemplate(models.Model):
 
     @api.multi
     def _compute_global_stock(self):
-
         for template in self:
             global_real_stock = 0.0
             global_available_stock = 0.0
@@ -200,20 +199,19 @@ class ProductProduct(models.Model):
                     set(company_available_stock_)}
 
         a = dict([(p, global_real_stock[p] -
-                   company_real_stock[p])for p in self.ids])
+                   company_real_stock[p])for p in self.ids if p in global_available_stock.keys()])
         b = dict([
             (p, global_available_stock[p] - sale_line_data.get(p, 0) -
-             company_available_stock[p])for p in self.ids])
+             company_available_stock[p])for p in self.ids if p in global_available_stock.keys()])
         return dict(
             [(p, {'global_real_stock': a[p],
-                  'global_available_stock': b[p]}) for p in self.ids])
+                  'global_available_stock': b[p]}) for p in self.ids if p in global_available_stock.keys()])
 
     def _compute_global_stock(self):
         res = self._calculate_globals()
-
         bom_obj = self.env["mrp.bom"]
         bom_line_obj = self.env["mrp.bom.line"]
-        for product in self:
+        for product in self.filtered(lambda x: x.id in res.keys()):
             product.global_real_stock = res[product.id]['global_real_stock']
             product.global_available_stock = \
                 res[product.id]['global_available_stock']
