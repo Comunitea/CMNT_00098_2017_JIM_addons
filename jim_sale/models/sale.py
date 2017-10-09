@@ -44,9 +44,7 @@ class SaleOrder(models.Model):
                                domain=[('sale_selectable', '=', True)])
     lqdr_state = fields.Selection([('no_lqdr',''), ('lqdr_no','LQDR No tramitado'), ('lqdr_si','LQDR Tramitado'), ('lqdr_issue', 'LQDR Incidencia')], string="Estado LQDR", default='no_lqdr')
     sale_origin = fields.Char("Venta a Cliente", compute= _get_origin_sale)
-    confirmation_date = fields.Datetime(string='Confirmation Date', readonly=True, index=True,
-                                        help="Fecha en que se confirma y albarana el pedido de venta", oldname="date_confirm")
-    sale_date_planned = fields.Datetime("Date planned")
+
 
     @api.model
     def create_web(self, vals):
@@ -154,6 +152,7 @@ class SaleOrder(models.Model):
     @api.multi
     def action_pending_ok(self):
         for order in self:
+            order.set_requested_date()
             order.action_sale()
         return True
 
@@ -217,19 +216,25 @@ class SaleOrder(models.Model):
             'target': 'new',
             'context': ctx}
 
-    @api.multi
-    def action_confirm(self):
-        has_requested_date = 'requested_date' in self.fields_get_keys()
-        time_deadline = " 17:00:00"
-        for order in self:
-            if has_requested_date and self.requested_date:
-                requested_date = datetime.strptime(self.requested_date, DEFAULT_SERVER_DATETIME_FORMAT)
-                order.sale_date_planned = datetime.strptime(requested_date.strftime("%Y-%m-%d") + " 06:00:00", DEFAULT_SERVER_DATETIME_FORMAT)
-            else:
-                order.sale_date_planned = datetime.strftime(datetime.now(), DEFAULT_SERVER_DATETIME_FORMAT)
-            print "Order date planned"
-        return super(SaleOrder, self).action_confirm()
 
+    def set_requested_date(self):
+        if self.requested_date:
+            requested_date = datetime.strptime(self.requested_date,
+                                             DEFAULT_SERVER_DATETIME_FORMAT)
+
+            self.requested_date = datetime.strptime(requested_date.strftime("%Y-%m-%d") + " 06:00:00",
+                                             DEFAULT_SERVER_DATETIME_FORMAT) - timedelta(days=1)
+        if not self.requested_date:
+            time_deadline = " 17:00:00"
+            datetime_limit = datetime.now().date().strftime("%Y-%m-%d") + time_deadline
+
+            if datetime_limit > fields.Datetime.now():
+                date_planned = datetime.strptime(datetime_limit, DEFAULT_SERVER_DATETIME_FORMAT)
+            else:
+                date_planned = datetime.strptime(datetime.now().date().strftime("%Y-%m-%d") + " 04:00:00",
+                                             DEFAULT_SERVER_DATETIME_FORMAT) + timedelta(
+                    days=1)
+            self.requested_date = date_planned
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -286,17 +291,16 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def _prepare_order_line_procurement(self, group_id=False):
-        res = super(SaleOrderLine, self)._prepare_order_line_procurement(group_id=group_id)
-        time_deadline = " 17:00:00"
-        datetime_limit = datetime.now().date().strftime("%Y-%m-%d") + time_deadline
-        if datetime_limit >= self.order_id.sale_date_planned:
-            date_planned = datetime.strptime(self.order_id.sale_date_planned, DEFAULT_SERVER_DATETIME_FORMAT) + timedelta(
-                hours=0) + timedelta(days=self.customer_lead)
-        else:
-            date_planned = datetime.strptime(datetime.now().date().strftime("%Y-%m-%d") + " 06:00:00", DEFAULT_SERVER_DATETIME_FORMAT) + timedelta(
-                days=1) + timedelta(days=self.customer_lead)
-        res['date_planned'] = date_planned
-        return res
+
+        vals = super(SaleOrderLine, self)._prepare_order_line_procurement(group_id=group_id)
+        for line in self.filtered("order_id.requested_date"):
+            date_planned = fields.Datetime.from_string(line.order_id.requested_date) - timedelta(
+                days=line.order_id.company_id.security_lead)
+            vals.update({
+                'date_planned': fields.Datetime.to_string(date_planned),
+            })
+        return vals
+
 
 
 class SaleOrderLineTemplate(models.Model):
