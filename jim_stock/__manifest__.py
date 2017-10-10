@@ -12,7 +12,7 @@
         'stock',
         'delivery',
         'mrp',
-        'telesale'
+        'telesale',
     ],
     'contributors': [
         "Comunitea ",
