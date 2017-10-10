@@ -173,8 +173,8 @@ class SGAProductProduct(models.Model):
 
     _inherit = "product.product"
 
-    @api.depends('display_name')
     @api.multi
+    @api.depends('display_name')
     def _get_sga_names(self):
         for product in self:
             display_name = (product.display_name.lstrip("[%s]"%product.default_code)).strip()

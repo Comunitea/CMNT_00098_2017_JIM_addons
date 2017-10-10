@@ -20,7 +20,7 @@ class StockPicking(models.Model):
     @api.model
     def create(self, vals):
         defaults = self.default_get(['name', 'picking_type_id'])
-        if vals.get('picking_type_id', False):
+        if vals.get('picking_type_id', False) and vals.get('company_id', False):
             picking_type_id = self.env['stock.picking.type'].with_context(force_company=vals['company_id']).browse(vals['picking_type_id'])[0]
             property_sequence = picking_type_id and picking_type_id.property_sequence_id
             if property_sequence:

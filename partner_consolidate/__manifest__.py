@@ -11,6 +11,7 @@
     'depends': [
         'base',
         'account_payment_partner',
+        'account'
     ],
     'contributors': [
         "Comunitea ",

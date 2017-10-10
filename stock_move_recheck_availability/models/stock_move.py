@@ -12,7 +12,6 @@ class StockMove(models.Model):
     _inherit = 'stock.move'
 
     def move_recheck_availability(self):
-
         move = self[0]
 
         if move.picking_id.state == 'cancel':
@@ -24,11 +23,11 @@ class StockMove(models.Model):
         if move.state in ('cancel'):
             move.state = 'confirmed'
 
-        elif move.state in ('waiting', 'confirmed', 'assigned'):
+        elif move.state in ('waiting', 'assigned'):
             move.action_assign()
 
-            #if move.state in ('confirmed', 'waiting'):
-            #    move.force_assign()
+        elif move.state in ('confirmed'):
+                move.force_assign()
 
     def move_force_availability(self):
         move = self[0]

@@ -8,10 +8,10 @@ class ProductProduct(BaseExtClass):
     packet_size = 500
 
     def is_notifiable(self):
-        return self.product_tmpl_id.type == "product"
+        return self.product_tmpl_id.type == "product" and self.tag_ids
 
     fields_to_watch = ('id', 'default_code', 'name', 'barcode', 'description', 'web_global_stock',
-                       'product_brand_id', 'attribute_line_ids', 'tag_ids', 'active', 'type')
+                       'product_brand_id', 'attribute_line_ids', 'tag_ids', 'active', 'type', 'force_web')
 
     def set_props(self, unlink=False):
         poitem = """
@@ -64,7 +64,7 @@ class ProductProduct(BaseExtClass):
 
             return tallajecode, tallacode, colorcode
 
-        if unlink:
+        if unlink or (self.force_web == 'no'):
             is_active = 'N'
         else:
             is_active = 'Y' if self.active else 'N'

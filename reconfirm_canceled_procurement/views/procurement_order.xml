@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record id="procurement_order_server_action_reconfirmed_cancel" model="ir.actions.server">
+            <field name="name">Reconfirmed Procurements</field>
+            <field name="model_id" ref="model_procurement_order"/>
+            <field name="state">code</field>
+            <field name="code">
+if records:
+    records.reconfirmed_procurement_order()
+            </field>
+        </record>
+
+        <record id="reconfirmed_procurement_order_action" model="ir.values">
+            <field name="model_id" ref="procurement.model_procurement_order" />
+            <field name="name">Reconfirm Procurements</field>
+            <field name="key2">client_action_multi</field>
+            <field name="key">action</field>
+            <field name="model">procurement.order</field>
+            <field name="value" eval="'ir.actions.server,' + str(ref('procurement_order_server_action_reconfirmed_cancel'))" />
+        </record>
+    </data>
+</odoo>

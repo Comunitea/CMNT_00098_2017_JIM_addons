@@ -23,6 +23,34 @@ class PurchaseOrderLine(models.Model):
     line_info = fields.Char("Line info")
     web_global_stock = fields.Float(related="product_id.web_global_stock")
 
+
+    @api.depends('order_id.state', 'move_ids.state')
+    def _compute_qty_received(self):
+
+        for line in self:
+            if line.order_id.state not in ['purchase', 'done']:
+                line.qty_received = 0.0
+                continue
+            if line.product_id.type not in ['consu', 'product']:
+                line.qty_received = line.product_qty
+                continue
+            total = 0.0
+            returns = line.move_ids.filtered(lambda x: x.origin_returned_move_id)
+            for move in line.move_ids - returns:
+                if move.state == 'done':
+                    if move.product_uom != line.product_uom:
+                        total += move.product_uom._compute_quantity(move.product_uom_qty, line.product_uom)
+                    else:
+                        total += move.product_uom_qty
+
+            for move in returns:
+                if move.state == 'done':
+                    if move.product_uom != line.product_uom:
+                        total -= move.product_uom._compute_quantity(move.product_uom_qty, line.product_uom)
+                    else:
+                        total -= move.product_uom_qty
+            line.qty_received = total
+
     @api.multi
     def show_line_info(self):
         #Comentado por si no vale la solucion
@@ -95,6 +123,15 @@ class PurchaseOrder(models.Model):
                     seller_id.write({'price': self.currency_id.compute(line.price_unit, currency)})
                 except AccessError:  # no write access rights -> just ignore
                     break
+
+    @api.multi
+    def button_confirm(self):
+        for order in self:
+            if order.state not in ['draft', 'sent']:
+                continue
+            order.date_order = fields.Datetime.now()
+        return super(PurchaseOrder, self).button_confirm()
+
 
 class AccountInvoice(models.Model):
 
