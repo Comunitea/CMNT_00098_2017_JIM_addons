@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-02 16:30+0000\n"
-"PO-Revision-Date: 2017-09-27 11:45+0200\n"
+"PO-Revision-Date: 2017-10-04 16:53+0200\n"
 "Last-Translator: Jesús Ventosinos Mayor <jesus@comunitea.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -576,6 +576,11 @@ msgstr "Factura agrupada por albarán"
 #: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
 msgid "Customer order number"
 msgstr "Número de pedido de cliente"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "<span class=\"blue_text\">Customer order number: </span>"
+msgstr "<span class=\"blue_text\">Número de pedido de cliente: </span>"
 
 #. module: custom_documents
 #: model:ir.actions.report.xml,name:custom_documents.custom_invoice_report_ean_action
