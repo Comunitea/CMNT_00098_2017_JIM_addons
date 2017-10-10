@@ -100,7 +100,7 @@
                                 <td>
                                     Page: <span class="page"/> of <span class="topage"/>
                                 </td>
-                                <td><span t-field="o.date_order"/></td>
+                                <td><span t-field="o.confirmation_date"/></td>
                                 <td><span t-field="o.name"/></td>
                                 <td><span t-field="o.user_id.name"/> </td>
                             </tr>
@@ -127,7 +127,7 @@
         <div class="header">
             <div class="row">
                 <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;">
-                    <div class="sombreado" t-if=" not o.neutral_document">
+                    <div class="sombreado" t-if=" not o.neutral_document" style="padding-left:10px;">
                         <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
                         <span t-field="company.partner_id"
                             t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
@@ -213,7 +213,7 @@
         <div class="header">
             <div class="row">
                 <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;" >
-                    <div class="sombreado" t-if="not o.company_id.hide_fields">
+                    <div class="sombreado" t-if="not o.company_id.hide_fields" style="padding-left:10px;">
                         <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
 
                         <span t-field="company.partner_id"
