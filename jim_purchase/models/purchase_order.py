@@ -124,6 +124,15 @@ class PurchaseOrder(models.Model):
                 except AccessError:  # no write access rights -> just ignore
                     break
 
+    @api.multi
+    def button_confirm(self):
+        for order in self:
+            if order.state not in ['draft', 'sent']:
+                continue
+            order.date_order = fields.Datetime.now()
+        return super(PurchaseOrder, self).button_confirm()
+
+
 class AccountInvoice(models.Model):
 
     _inherit = 'account.invoice'

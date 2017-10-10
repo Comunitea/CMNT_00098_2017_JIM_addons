@@ -49,9 +49,7 @@ class StockInventoryLineSGA(models.Model):
         for line in self:
             line.global_qty = line.product_id.compute_global_qty(location_id=line.location_id.id)
 
-
     def _get_move_values(self, qty, location_id, location_dest_id):
-
         res = super(StockInventoryLineSGA, self)._get_move_values(qty, location_id, location_dest_id)
         res['company_id'] = self.company_id.id
         return res

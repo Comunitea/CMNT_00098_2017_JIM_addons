@@ -2,10 +2,12 @@
 # © 2016 Comunitea - Javier Colmenero <javier@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import api, fields, models
-import time
-from odoo.addons import decimal_precision as dp
-from odoo.tools import float_compare
+
+#from odoo.addons import decimal_precision as dp
+#from odoo.tools import float_compare
 from odoo.exceptions import ValidationError
+from datetime import datetime, timedelta
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
@@ -135,6 +137,9 @@ class SaleOrder(models.Model):
                 order.lqdr_state = 'lqdr_no'
             else:
                order.state = 'pending'
+            date_order = fields.Datetime.now()
+            order.confirmation_date = date_order
+            order.date_order = date_order
         return True
 
     @api.multi
@@ -147,13 +152,16 @@ class SaleOrder(models.Model):
     @api.multi
     def action_pending_ok(self):
         for order in self:
+            order.set_requested_date()
             order.action_sale()
         return True
 
     @api.multi
     def action_sale(self):
         for order in self:
+            #confirmation_date = order.confirmation_date
             order.action_confirm()
+            #order.confirmation_date = confirmation_date
             picking_out = order.picking_ids.filtered(lambda x: x.picking_type_id.code == 'outgoing')
             picking_out.write({'ready': True})
         return True
@@ -209,6 +217,24 @@ class SaleOrder(models.Model):
             'context': ctx}
 
 
+    def set_requested_date(self):
+        if self.requested_date:
+            requested_date = datetime.strptime(self.requested_date,
+                                             DEFAULT_SERVER_DATETIME_FORMAT)
+
+            self.requested_date = datetime.strptime(requested_date.strftime("%Y-%m-%d") + " 06:00:00",
+                                             DEFAULT_SERVER_DATETIME_FORMAT) - timedelta(days=1)
+        if not self.requested_date:
+            time_deadline = " 17:00:00"
+            datetime_limit = datetime.now().date().strftime("%Y-%m-%d") + time_deadline
+
+            if datetime_limit > fields.Datetime.now():
+                date_planned = datetime.strptime(datetime_limit, DEFAULT_SERVER_DATETIME_FORMAT)
+            else:
+                date_planned = datetime.strptime(datetime.now().date().strftime("%Y-%m-%d") + " 04:00:00",
+                                             DEFAULT_SERVER_DATETIME_FORMAT) + timedelta(
+                    days=1)
+            self.requested_date = date_planned
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -251,6 +277,7 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def action_procurement_create(self):
+
         old_state = self.order_id.state
         self.order_id.state = 'sale'
         new_procs = self._action_procurement_create()
@@ -260,6 +287,20 @@ class SaleOrderLine(models.Model):
     @api.multi
     def _action_procurement_create(self):
         return super(SaleOrderLine, self)._action_procurement_create()
+
+
+    @api.multi
+    def _prepare_order_line_procurement(self, group_id=False):
+
+        vals = super(SaleOrderLine, self)._prepare_order_line_procurement(group_id=group_id)
+        for line in self.filtered("order_id.requested_date"):
+            date_planned = fields.Datetime.from_string(line.order_id.requested_date) - timedelta(
+                days=line.order_id.company_id.security_lead)
+            vals.update({
+                'date_planned': fields.Datetime.to_string(date_planned),
+            })
+        return vals
+
 
 
 class SaleOrderLineTemplate(models.Model):

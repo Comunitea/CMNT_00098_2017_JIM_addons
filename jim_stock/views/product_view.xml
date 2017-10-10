@@ -67,20 +67,6 @@
             </field>
         </record>
 
-         <record id="view_stock_product_product_with_company" model="ir.ui.view">
-            <field name="name">product.stock.tree.with_company</field>
-            <field name="model">product.product</field>
-            <field name="inherit_id" ref="product.product_product_tree_view"/>
-            <field name="arch" type="xml">
-                 <field name="barcode" position="after">
-                    <field name="company_id"/>
-                    <field name="tag_names"/>
-                </field>
-                <field name="attribute_value_ids" position="replace">
-                    <field name="attribute_names"/>
-                </field>
-            </field>
-        </record>
 
         <record id="view_stock_product_template_tree_rep_stock_fields" model="ir.ui.view">
             <field name="name">product.template.stock.tree.rep_stock_fields</field>
