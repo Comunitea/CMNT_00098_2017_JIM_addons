@@ -120,6 +120,7 @@ class ProductProduct(models.Model):
         qty_available_d = dict(
             [(p['id'], p['qty_available'])
              for p in self.with_context(ctx).sudo().read(['qty_available'])])
+        ctx.update({'no_move_ic': True})
         outgoing_qty_d = dict(
             [(p['id'], p['outgoing_qty'])
              for p in self.with_context(ctx).sudo().read(['outgoing_qty'])])
@@ -212,3 +213,11 @@ class ProductProduct(models.Model):
                              for x in variants])
                         stock += global_available_stock * line.product_qty
             product.web_global_stock = int(stock)
+
+    def _get_domain_locations(self):
+        if self._context.get('no_move_ic'):
+            domain_quant_loc, domain_move_in_loc, domain_move_out_loc = super(ProductProduct, self)._get_domain_locations()
+            domain_move_out_loc = [('move_dest_IC_id', '=', False)] + domain_move_out_loc
+            return domain_quant_loc, domain_move_in_loc, domain_move_out_loc
+        else:
+            return super(ProductProduct, self)._get_domain_locations()

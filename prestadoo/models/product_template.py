@@ -65,7 +65,7 @@ class ProductTemplate(BaseExtClass):
         self.obj_type = '4'
 
     def post_write(self):
-        if len(self.product_variant_ids) > 1:
+        if self.product_attribute_count > 0:  # Corregido para que acepte productos con una sola variante
             for prod in self.product_variant_ids:
                 # Utilizamos 'active' como dummy para poder llamar a .write()
                 prod.write({'active': prod.active})
