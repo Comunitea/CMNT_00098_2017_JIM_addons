@@ -60,8 +60,8 @@ class ProductProduct(models.Model):
     def _check_company(self):
         if self.default_code:
             domain = [('default_code', '=', self.default_code), ('active','=', True)]
-            if self.env['product.product'].search(domain):
-                raise ValidationError(_('Rhe referencia must be unique'))
+            if len(self.env['product.product'].search(domain))>1:
+                raise ValidationError(_('Este código ya está asignado a otro artículo'))
 
     @api.depends('force_web', 'tag_ids', 'product_tmpl_id.web')
     def _compute_web_state(self):
