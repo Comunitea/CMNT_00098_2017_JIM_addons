@@ -225,7 +225,7 @@ class SaleOrder(models.Model):
             self.requested_date = datetime.strptime(requested_date.strftime("%Y-%m-%d") + " 06:00:00",
                                              DEFAULT_SERVER_DATETIME_FORMAT) - timedelta(days=1)
         if not self.requested_date:
-            time_deadline = " 17:00:00"
+            time_deadline = " 19:30:00"
             datetime_limit = datetime.now().date().strftime("%Y-%m-%d") + time_deadline
 
             if datetime_limit > fields.Datetime.now():

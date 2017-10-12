@@ -217,7 +217,7 @@ class ProductProduct(models.Model):
     def _get_domain_locations(self):
         if self._context.get('no_move_ic'):
             domain_quant_loc, domain_move_in_loc, domain_move_out_loc = super(ProductProduct, self)._get_domain_locations()
-            domain_move_out_loc = [('move_dest_IC_id', '!=', False)] + domain_move_out_loc
+            domain_move_out_loc = [('move_dest_IC_id', '=', False)] + domain_move_out_loc
             return domain_quant_loc, domain_move_in_loc, domain_move_out_loc
         else:
             return super(ProductProduct, self)._get_domain_locations()
