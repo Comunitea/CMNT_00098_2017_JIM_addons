@@ -40,6 +40,7 @@ class Jesie(object):
 
     @staticmethod
     def write(oper_type, obj_type, obj_key, xml, xml_filtered=None):
+		xml_filtered = xml  # Se envían a los consumidores los mismos mensajes, pues ya se filtran después en función del servicio
         try:
             if xml_filtered:
                 Jesie.__execute_query('EXEC OdooEnqueue ?, ?, ?, ?, ?', (oper_type, obj_type, obj_key, xml,
