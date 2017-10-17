@@ -44,7 +44,7 @@ class AccountInvoice(models.Model):
                                             related=None,
                                             related_field=None,
                                             compute='_get_commercial_partner',
-                                            compute_sudo=True,
+                                            compute_sudo=False,
                                             store=True, readonly=True,
                                             help="The commercial entity that \
                                             will be used on Journal Entries \
