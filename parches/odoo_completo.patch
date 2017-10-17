@@ -118,16 +118,6 @@ diff --git a/addons/purchase/models/purchase.py b/addons/purchase/models/purchas
 index ec1d25a..bd3ec90 100644
 --- a/addons/purchase/models/purchase.py
 +++ b/addons/purchase/models/purchase.py
-@@ -57,7 +57,9 @@ class PurchaseOrder(models.Model):
- 
-             if any(float_compare(line.qty_invoiced, line.product_qty if line.product_id.purchase_method == 'purchase' else line.qty_received, precision_digits=precision) == -1 for line in order.order_line):
-                 order.invoice_status = 'to invoice'
-+                print "to invoice"
-             elif all(float_compare(line.qty_invoiced, line.product_qty if line.product_id.purchase_method == 'purchase' else line.qty_received, precision_digits=precision) >= 0 for line in order.order_line):
-+                print "invoiced"
-                 order.invoice_status = 'invoiced'
-             else:
-                 order.invoice_status = 'no'
 @@ -619,7 +621,8 @@ class PurchaseOrderLine(models.Model):
      product_uom = fields.Many2one('product.uom', string='Product Unit of Measure', required=True)
      product_id = fields.Many2one('product.product', string='Product', domain=[('purchase_ok', '=', True)], change_default=True, required=True)
