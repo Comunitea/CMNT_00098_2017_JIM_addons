@@ -23,7 +23,6 @@
             <field name="name">Import Query to Mecalux</field>
             <field name="model_id" ref="model_stock_inventory"/>
             <field name="state">code</field>
-            <field name="condition">True</field>
             <field name="code">records.get_stock_query_from_mecalux()</field>
         </record>
 

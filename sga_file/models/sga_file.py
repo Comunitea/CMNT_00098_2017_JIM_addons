@@ -362,6 +362,7 @@ class MecaluxFileHeader(models.Model):
 
     @api.model
     def create_new_sga_file(self, sga_filename, dest_path=ODOO_READ_FOLDER, create=True, version = 0):
+
         if create:
             sga_filename = '%s%02d' % (sga_filename[0:17], version)
             domain = [('name', '=', sga_filename)]
@@ -448,7 +449,7 @@ class MecaluxFileHeader(models.Model):
         sga_file = self.create_new_sga_file(filename, ODOO_READ_FOLDER, create=False)
         if not sga_file:
             error_str = 'Error al crear %s en la BD' % filename
-            sga_file.write_log(error_str)
+            self.env['sga.file'].write_log(error_str)
             return False
 
         return sga_file
