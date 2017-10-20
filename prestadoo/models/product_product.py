@@ -119,6 +119,7 @@ class ProductProduct(BaseExtClass):
                                     ('sale_ok', '=', True),
                                     ('default_code', '!=', False),
                                     ('default_code', 'not like', '%ñ%'),
+                                    ('default_code', 'not like', '%Ñ%'),
                                     ('type', '=', 'product')],
                                    order='id')
 
