@@ -14,5 +14,4 @@ class ProductTemplate(models.Model):
     def _compute_product_attribute_count(self):
         self.product_attribute_count = len(self.attribute_line_ids)
 
-
     product_attribute_count = fields.Integer('# Product Attribute', compute='_compute_product_attribute_count', store=True)
