@@ -10,7 +10,7 @@ class StockMove(BaseExtClass):
 
     def is_notifiable(self):
         return self.picking_type_id.code == "outgoing" \
-           and self.company_id.id == 1 \
+           # and self.company_id.id == 1 \
            and self.state == "done" \
            and self.sale_id.partner_id.commercial_partner_id.is_notifiable()
 

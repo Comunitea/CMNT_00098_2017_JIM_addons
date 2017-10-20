@@ -10,7 +10,7 @@ class AccountInvoice(BaseExtClass):
 
     def is_notifiable(self):
         return self.state == "open" \
-           and self.company_id.id == 1 \
+           # and self.company_id.id == 1 \
            and (self.type == 'out_invoice' or self.type == 'out_refund') \
            and self.number \
            and self.commercial_partner_id.is_notifiable()
