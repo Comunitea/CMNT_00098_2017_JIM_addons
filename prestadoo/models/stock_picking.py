@@ -9,8 +9,9 @@ class StockMove(BaseExtClass):
     fields_to_watch = ('id', 'partner_id', 'name', 'date_done', 'amount_total', 'state')
 
     def is_notifiable(self):
+		# La empresa num. 17 es Pallatium
         return self.picking_type_id.code == "outgoing" \
-           # and self.company_id.id == 1 \
+           and self.company_id.id != 17 \
            and self.state == "done" \
            and self.sale_id.partner_id.commercial_partner_id.is_notifiable()
 
