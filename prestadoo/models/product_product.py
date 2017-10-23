@@ -118,7 +118,8 @@ class ProductProduct(BaseExtClass):
         product_list = self.search([('active', '=', True),
                                     ('sale_ok', '=', True),
                                     ('default_code', '!=', False),
-                                    ('default_code', 'not ilike', 'ñ'),
+                                    ('default_code', 'not like', '%ñ%'),
+                                    ('default_code', 'not like', '%Ñ%'),
                                     ('type', '=', 'product')],
                                    order='id')
 

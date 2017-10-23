@@ -25,13 +25,21 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
 
     def compute_global_qty(self, location_id=False, force_company=False):
-        domain = ([('product_id', '=', self.id), ('location_id', '=', location_id)])
+
+        company_no_stock_ids = \
+            self.env['res.company'].sudo().search(
+                [('no_stock', '=', True)]).ids
+
+        domain = ([('product_id', '=', self.id), ('location_id', '=', location_id), ('company_id', 'not in', company_no_stock_ids)])
         if force_company:
             domain += [('company_id', '=', force_company)]
+        else:
+            domain += [('company_id', 'not in', company_no_stock_ids)]
         quants_res = dict((item['product_id'][0], item['qty']) for item in
                           self.env['stock.quant'].sudo().read_group(domain, ['product_id', 'qty'], ['product_id']))
         global_qty = quants_res.get(self.id, 0.0)
         return global_qty
+
 
 class StockInventoryLineSGA(models.Model):
 
@@ -53,6 +61,15 @@ class StockInventoryLineSGA(models.Model):
         res = super(StockInventoryLineSGA, self)._get_move_values(qty, location_id, location_dest_id)
         res['company_id'] = self.company_id.id
         return res
+
+    @api.model
+    def search(self, args, offset=0, limit=0, order=None, count=False):
+        if self._context.get('with_company', False):
+            args += [('company_id', '=', self._context.get('with_company'))]
+
+        return super(StockInventoryLineSGA, self).search(args, offset=offset,
+                                                         limit=limit, order=order,
+                                                         count=count)
 
 class StockInventorySGA(models.Model):
 
@@ -94,6 +111,9 @@ class StockInventorySGA(models.Model):
 
     def import_inventory_STO(self, file_id):
 
+        company_no_stock_ids = \
+            self.env['res.company'].sudo().search(
+                [('no_stock', '=', True)]).ids
         sga_file = self.env['sga.file'].browse(file_id)
         sga_file_name = sga_file.name
         sga_file = open(sga_file.sga_file, 'r')
@@ -103,10 +123,14 @@ class StockInventorySGA(models.Model):
         inventories = []
         warehouse_id = False
 
+        not_in_odoo = []
         line_number = 0
+        cont = len(sga_file_lines)
         for line in sga_file_lines:
+            cont-=1
 
-            if len(line) != 423:
+
+            if len(line) < 420:
                 continue
             # POR RENDIMIENTO LO HAGO AL PRINCIPIO Y GENERICO
             # Warehouse code
@@ -142,52 +166,65 @@ class StockInventorySGA(models.Model):
             st = en
             en += 5
             quantity_dec = float('0.' + line[st:en])
-            quantity = quantity_int + quantity_dec
+            mec_qty = quantity_int + quantity_dec
 
             product_id = self.env['product.product'].search([('default_code', '=', product_code)])
-            line_number+=1
+            line_number += 1
             if not product_id:
-                issue_vals = {'notes': 'No existe el código: %s'%product_code,
-                              }
+                issue_vals = {
+                    'pending_qty': mec_qty,
+                    'notes': 'Articulo no encontrado en odoo %s'%product_code, }
                 self.env['stock.inventory.issue'].create(issue_vals)
-                print "%s: %s No está en ODOO"%(product_code, quantity)
                 continue
             if len(product_id)>1:
                 issue_vals = {'notes': 'Código duplicado: %s'%product_code,
                               }
                 self.env['stock.inventory.issue'].create(issue_vals)
-                print "%s: %s Codigo duplicado en ODOO"%(product_code, quantity)
+                print "%s: %s Codigo duplicado en ODOO"%(product_code, mec_qty)
                 continue
-
-            #print "%s %s: %s" % (line_number, product_code, quantity)
             product_company_id = product_id.company_id
-
-            first = True
-            reg_qty = 0.00
+            if product_company_id.id in company_no_stock_ids:
+                print "%s con compañia que no cuenta stock"%(product_code)
+                continue
+            odoo_qty = product_id.compute_global_qty(location_id=location_id.id)
             reg_qty_done = 0.00
-            original_qty = quantity
-            while quantity > 0.00:
-                quantity, new_inventory, reg_qty = self.reg_stock(product_id,
+            qty_to_reg = mec_qty - odoo_qty
+            if qty_to_reg != 0:
+
+                print "Lineas %s. Referencia: %s Odoo qty = %s Mcx qty = %s"%(cont, product_id.default_code, odoo_qty, mec_qty)
+            original_qty = qty_to_reg
+            if qty_to_reg > 0:
+                qty_to_reg, new_inventory, reg_qty = self.reg_stock(product_id,
                                                          location_id, product_company_id,
-                                                         quantity, reg_qty, force_company=first)
+                                                         qty_to_reg, mec_qty, True)
+
                 reg_qty_done += reg_qty
                 if new_inventory:
                     inventories.append(new_inventory)
 
-                if not first and quantity > 0.00:
-                    issue_vals = {
-                          'pending_qty': original_qty - reg_qty_done,
-                          'product_id': product_id.id,
-                          'notes': 'Incidencia',}
-                    self.env['stock.inventory.issue'].create(issue_vals)
-                    quantity = 0.00
-                first = False
+            if qty_to_reg != 0:
+                qty_to_reg, new_inventory, reg_qty = self.reg_stock(product_id,
+                                                                    location_id, product_company_id,
+                                                                    qty_to_reg, mec_qty, False)
+
+                reg_qty_done += reg_qty
+                if new_inventory:
+                    inventories.append(new_inventory)
+
+            if qty_to_reg != 0.00:
+                issue_vals = {
+                      'pending_qty': original_qty - reg_qty_done,
+                      'product_id': product_id.id,
+                      'notes': 'No es posible regularizar',}
+                self.env['stock.inventory.issue'].create(issue_vals)
 
             ## TODO DE MOMENTO NO HACEMOS EL action_done, pendiente de confirmar que es automatico
-            action_done = True if self.env['ir.config_parameter'].get_param('inventary_auto') == u'True' else False
-            if action_done:
-                for stock_inv in inventories:
-                    stock_inv.sudo().action_done()
+            ##action_done = True if self.env['ir.config_parameter'].get_param('inventary_auto') == u'True' else False
+            ##if action_done:
+            ##    for stock_inv in inventories:
+            ##        stock_inv.sudo().action_done()
+        inventories = list(set(inventories))
+        print "Inventarios %s"%inventories
         return inventories
 
     def new_inv_line(self, product_id, qty, inventory_id, mecalux_stock=0.00):
@@ -217,8 +254,9 @@ class StockInventorySGA(models.Model):
     def get_inventory_for(self, product_id, location_id, company_id):
 
         #miro si hay un inventario abierto para esta compañia y si no lo creo
-        domain = [('location_id','=', location_id.id),
-                  ('company_id','=',company_id.id),
+        domain = [('location_id', '=', location_id.id),
+                  ('company_id', '=', company_id.id),
+                  ('filter', '=', 'partial'),
                   ('state', '=', 'confirm')]
         inventory = self.env['stock.inventory'].search(domain)
 
@@ -227,9 +265,8 @@ class StockInventorySGA(models.Model):
                 'name': u'%s (%s)' % ("MECALUX / ", company_id.ref),
                 'location_id': location_id.id,
                 'filter': 'partial',
-                'company_id': company_id.id
+                'company_id': company_id.id,
             }
-            #lo tengo que poner como sudo
             inventory = self.env['stock.inventory'].sudo().create(stock_inv_vals)
         inventory = inventory[0]
         inventory.action_start()
@@ -237,60 +274,50 @@ class StockInventorySGA(models.Model):
 
 
 
-
-    def reg_stock(self, product_id, location_id, company_id, qty_to_reg, reg_qty, force_company = False):
+    def reg_stock(self, product_id, location_id, company_id, qty_to_reg, mec_qty, force_company = False):
 
         if not product_id or not location_id or not company_id:
             return 0.00, False
-        ## FUNCION QUE REGULARIZA STOCK
 
-        ## CASO 1 . LO QUE HAY COINCIDE CON ODOO >> NO SE HACE NADA
-        ## CASO 2 . HAY MAS EN MECALUX QUE EN ODOO.
-                ## SE REGULARIZA EL STOCK EN LA COMPAÑIA DEL PRODUCTO
+        ctx = self._context.copy()
 
-        ## CASO 3 . HAY MENOS EN MECALUEX QUE EN ODOO.
-            ##SE REGULARIZA PRIMERO LA COMPAÑIA forced_company_id. Si no hay, se sale y se vuielve a llamar sin forced_comapny
-            ##Para regularizar:
-                ## Si el stock de la compañia es mayor que la nueva cantidad entonces ok,
-                ## EXCEPTO que la nueva cantidad sea menor que 0, en ese caso se pone 0 y se seteael restante a la parte negativa
-                ## No debería pasar que la nueva cantidad sea mayor que la cantidad de la compañia (CASO 2)
-
-        odoo_qty = product_id.compute_global_qty(location_id=location_id.id)
-        mecalux_qty = qty_to_reg
-        #caso 1. Evidente ...
-        if mecalux_qty == odoo_qty:
-            return 0.00, False, 0.00
-
-        #caso 2. Menos en Odoo: Se regulariza a mayores la compañia del producto
-        elif mecalux_qty > odoo_qty:
-            company_id = product_id.company_id
-            inventory_id = self.get_inventory_for(product_id, location_id, company_id)
-            new_inv_line = self.new_inv_line(product_id, 0.0, inventory_id, mecalux_qty)
-            new_inv_line.product_qty = new_inv_line.theoretical_qty + (qty_to_reg - odoo_qty)
-            return 0.00, inventory_id.id, 0.00
-
-        #caso 3. Hay mas en Odoo que mecalux
-        elif mecalux_qty < odoo_qty:
-            qty_to_reg = (odoo_qty - mecalux_qty - reg_qty)
+        #Menos en Odoo: Si hay en palla negativos se pone a cero
+        if qty_to_reg > 0 :
+            force_company_qty = 0.00
             if force_company:
                 #Busco stock en Pallatium, si hay fuerzo la compañia
                 force_company = self.env['res.company'].search([('ref', '=', 'PALLAT')])
                 force_company_qty = product_id.compute_global_qty(location_id=location_id.id,
                                                                   force_company=force_company.id)
-
-                if force_company_qty > 0.00:
+                if force_company_qty < 0.00:
+                    #Hay negativos
                     company_id = force_company
-
-            inventory_id = self.get_inventory_for(product_id, location_id, company_id)
-            new_inv_line = self.new_inv_line(product_id, 0.0, inventory_id, mecalux_qty)
-            #si la cantidad en la compañia es mayor que lo que necesito ...
-            if new_inv_line.theoretical_qty >= qty_to_reg:
-                new_inv_line.product_qty = new_inv_line.theoretical_qty - qty_to_reg
-                return 0.00, inventory_id.id, 0.00
+                    max_qty_to_reg = min(qty_to_reg, -force_company_qty)
+                    inventory_id = self.get_inventory_for(product_id, location_id, company_id)
+                    ctx.update({'with_company': company_id.id})
+                    new_inv_line = self.with_context(ctx).new_inv_line(product_id, 0.0, inventory_id, mec_qty)
+                    new_inv_line.product_qty = new_inv_line.theoretical_qty + max_qty_to_reg
+                    qty_to_reg -= max_qty_to_reg
+                    return qty_to_reg, inventory_id.id, max_qty_to_reg
+                else:
+                    return qty_to_reg, False, 0.00
             else:
-                new_inv_line.product_qty = 0
-                qty_to_reg = mecalux_qty - new_inv_line.theoretical_qty
-                return mecalux_qty, inventory_id.id, new_inv_line.theoretical_qty
+                #No hay negativos en pallatium
+                company_id = product_id.company_id
+                inventory_id = self.get_inventory_for(product_id, location_id, company_id)
+                ctx.update({'with_company': company_id.id})
+                new_inv_line = self.with_context(ctx).new_inv_line(product_id, 0.0, inventory_id, mec_qty)
+                new_inv_line.product_qty = new_inv_line.theoretical_qty + qty_to_reg
+                return 0.00, inventory_id.id, qty_to_reg
+
+        #Hay mas en Odoo que mecalux
+        elif qty_to_reg < 0:
+            inventory_id = self.get_inventory_for(product_id, location_id, company_id)
+            ctx.update({'with_company': company_id.id})
+            new_inv_line = self.with_context(ctx).new_inv_line(product_id, 0.0, inventory_id, mec_qty)
+            new_inv_line.product_qty = new_inv_line.theoretical_qty + qty_to_reg
+            return 0.00, inventory_id.id, qty_to_reg
+
 
 
     def global_stock_mecalux(self):

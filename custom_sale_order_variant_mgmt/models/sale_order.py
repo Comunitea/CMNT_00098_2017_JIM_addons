@@ -190,6 +190,9 @@ class SaleOrder(models.Model):
         action = self.env.ref(
             'custom_sale_order_variant_mgmt.sale_order_line_action').read()[0]
         action['domain'] = [('id', 'in', self.order_line.ids)]
+        action['context'] = {
+            'default_order_id': self.id,
+        }
         return action
 
     @api.multi
