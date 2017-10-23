@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-17 12:04+0000\n"
-"PO-Revision-Date: 2017-08-17 12:04+0000\n"
+"POT-Creation-Date: 2017-10-23 15:52+0000\n"
+"PO-Revision-Date: 2017-10-23 15:52+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -59,24 +59,31 @@ msgstr "CONFIRMAR"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:225
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:232
 #, python-format
 msgid "Customer name '' does not exist"
 msgstr "El nombre del cliente'' no existe"
 
 #. module: jim_telesale
 #. openerp-web
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:188
+#, python-format
+msgid "Desc:"
+msgstr "Desc:"
+
+#. module: jim_telesale
+#. openerp-web
 #: code:addons/jim_telesale/static/src/xml/new_order_template.xml:37
 #, python-format
 msgid "Description"
-msgstr "Descripción"
+msgstr "Description"
 
 #. module: jim_telesale
 #. openerp-web
 #: code:addons/jim_telesale/static/src/xml/new_order_template.xml:45
 #, python-format
 msgid "Disc"
-msgstr "Desc"
+msgstr "Disc"
 
 #. module: jim_telesale
 #: model:ir.model,name:jim_telesale.model_stock_location_route
@@ -96,7 +103,7 @@ msgstr "LQDR"
 #: code:addons/jim_telesale/static/src/xml/new_order_template.xml:176
 #, python-format
 msgid "Neutral Doc:"
-msgstr "3ª Plaza:"
+msgstr "Doc. neutro:"
 
 #. module: jim_telesale
 #. openerp-web
@@ -117,7 +124,7 @@ msgstr "Notas"
 #: code:addons/jim_telesale/static/src/xml/new_order_template.xml:149
 #, python-format
 msgid "PRINT ORDER ALM"
-msgstr "IMPRIMIR PEDIDO ALM"
+msgstr "IMPRIMIR PRESUPUESTO ALM"
 
 #. module: jim_telesale
 #. openerp-web
@@ -149,15 +156,15 @@ msgstr "Pendiente aprobación"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:282
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:290
 #, python-format
 msgid "Pricelist name '' does not exist"
-msgstr "La tarifa con nombre '' no existe"
+msgstr "LA tarifa con nombre '' no existe"
 
 #. module: jim_telesale
 #: model:ir.model,name:jim_telesale.model_product_product
 msgid "Product"
-msgstr "Producto"
+msgstr "Product"
 
 #. module: jim_telesale
 #. openerp-web
@@ -209,6 +216,13 @@ msgstr "Almacén"
 #, python-format
 msgid "Yes"
 msgstr "Sí"
+
+#. module: jim_telesale
+#. openerp-web
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:364
+#, python-format
+msgid "You cant set proform state to an order which state is diferent than draft."
+msgstr "No puedes establecer como proforma un pedido cuyo estado sea distinto de presupuesto."
 
 #. module: jim_telesale
 #. openerp-web
