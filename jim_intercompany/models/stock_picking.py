@@ -377,12 +377,29 @@ class StockMove(models.Model):
             if move.sudo().move_dest_IC_id and previous_IC_sale:
                 if move.propagate:
                     move.move_dest_IC_id.sudo().action_cancel()
+                    dest_moves = move.move_dest_IC_id.picking_id.move_lines\
+                        .filtered(
+                        lambda x: x.product_id.id == \
+                        move.move_dest_IC_id.product_id.id
+                                  and x.id != move.move_dest_IC_id.id)
+                    dest_moves.sudo().do_unreserve()
+                    dest_moves.sudo().force_assign()
+
                 elif move.sudo().move_dest_IC.id.state == 'waiting':
                     # If waiting, the chain will be broken and we are not sure if we can still wait for it (=> could take from stock instead)
                     move.sudo().move_dest_IC_id.write({'state': 'confirmed'})
             if move.sudo().move_purchase_IC_id:
                 if move.propagate:
                     move.move_purchase_IC_id.sudo().action_cancel()
+                    dest_moves = move.move_purchase_IC_id.picking_id.move_lines \
+                        .filtered(
+                        lambda x: x.product_id.id == \
+                                  move.move_purchase_IC_id.product_id.id
+                                  and x.id != move.move_purchase_IC_id.id)
+                    dest_moves.sudo().do_unreserve()
+                    dest_moves.sudo().force_assign()
+
+
         self.write({'move_dest_IC_id': False})
         res = super(StockMove, self).action_cancel()
         return res
