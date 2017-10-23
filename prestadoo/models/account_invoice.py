@@ -9,8 +9,9 @@ class AccountInvoice(BaseExtClass):
     fields_to_watch = ('id', 'commercial_partner_id', 'name', 'date_invoice', 'amount_total', 'state')
 
     def is_notifiable(self):
-        return self.state == "open" \
-           and self.company_id.id == 1 \
+ 		# La empresa num. 17 es Pallatium
+       return self.state == "open" \
+           and self.company_id.id != 17 \
            and (self.type == 'out_invoice' or self.type == 'out_refund') \
            and self.number \
            and self.commercial_partner_id.is_notifiable()
