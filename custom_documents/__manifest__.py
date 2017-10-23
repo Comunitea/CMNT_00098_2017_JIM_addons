@@ -50,6 +50,7 @@
         'views/purchase_quotation_report.xml',
         'views/account_payment_order.xml',
         'views/account.xml',
+        'views/ir_qweb.xml',
         'data/stock_mail_template.xml',
         'data/sale_mail_template.xml'
     ],
