@@ -165,7 +165,7 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def write(self, vals):
-        print "----------------\nWrite stock picking %s\n--------------------" % vals
+        #print "----------------\nWrite stock picking %s\n--------------------" % vals
         if self.check_write_in_pm(vals):
             raise ValidationError("No puedes modificar operaciones si está enviado a Mecalux")
 
