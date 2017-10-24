@@ -170,6 +170,15 @@ class SaleOrderLine(models.Model):
         if self._name == 'sale.order.line':
             return super(SaleOrderLine, self)._action_procurement_create()
 
+    @api.multi
+    def unlink(self):
+        templates = [x.template_line.id for x in self]
+        res = super(SaleOrderLine, self).unlink()
+        if self._name == "sale.order.line":
+            templates = list(set(templates))
+            templates_to_unlink = self.env['sale.order.line.template'].browse(templates).filtered(lambda x: x.lines_qty == 0)
+            templates_to_unlink.unlink()
+
 class SaleOrder(models.Model):
 
     _inherit = 'sale.order'
@@ -212,3 +221,4 @@ class SaleOrder(models.Model):
         related_template_lines.unlink()
         res = super(SaleOrder, self).clear_existing_promotion_lines()
         return res
+
