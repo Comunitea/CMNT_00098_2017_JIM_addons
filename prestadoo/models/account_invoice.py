@@ -10,11 +10,11 @@ class AccountInvoice(BaseExtClass):
 
     def is_notifiable(self):
  		# La empresa num. 17 es Pallatium
-       return self.state == "open" \
-           and self.company_id.id != 17 \
-           and (self.type == 'out_invoice' or self.type == 'out_refund') \
-           and self.number \
-           and self.commercial_partner_id.is_notifiable()
+        return self.state == "open" \
+            and self.company_id.id != 17 \
+            and (self.type == 'out_invoice' or self.type == 'out_refund') \
+            and self.number \
+            and self.commercial_partner_id.is_notifiable()
 
     def set_props(self, unlink=False):
         podocuments = """
