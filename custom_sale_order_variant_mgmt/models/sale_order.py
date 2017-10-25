@@ -106,6 +106,19 @@ class SaleOrderLine(models.Model):
                                           compute="_get_global_stock",
                                           store=True)
     note = fields.Text("Notas")
+    partner_id = fields.Many2one(related='order_id.partner_id', string='partner', store=True, readonly=True)
+    pricelist_id = fields.Many2one(related='order_id.pricelist_id', string='partner', store=True, readonly=True)
+    check_edit = fields.Boolean(compute='_compute_check_edit')
+
+    @api.depends('template_line.lines_qty', 'product_id.product_tmpl_id.product_attribute_count')
+    def _compute_check_edit(self):
+        for line in self:
+            check_edit = True
+            if line.product_id.product_tmpl_id.product_attribute_count > 0:
+                check_edit = False
+            if line.template_line.lines_qty > 1:
+                check_edit = False
+            line.check_edit = check_edit
 
     @api.model
     def create(self, vals):
@@ -221,4 +234,3 @@ class SaleOrder(models.Model):
         related_template_lines.unlink()
         res = super(SaleOrder, self).clear_existing_promotion_lines()
         return res
-
