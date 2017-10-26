@@ -100,7 +100,10 @@
                                 <td>
                                     Page: <span class="page"/> of <span class="topage"/>
                                 </td>
-                                <td><span t-field="o.confirmation_date"/></td>
+                                <td>
+                                    <span t-if="o.state not in ('proforma', 'draft', 'sent')" t-field="o.confirmation_date"/>
+                                    <span t-if="o.state in ('proforma', 'draft', 'sent')" t-field="o.date_order"/>
+                                </td>
                                 <td><span t-field="o.name"/></td>
                                 <td><span t-field="o.user_id.name"/> </td>
                             </tr>
