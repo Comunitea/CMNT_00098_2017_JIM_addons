@@ -26,7 +26,6 @@ class SaleOrderLine(models.Model):
         line = super(SaleOrderLine, self).create(vals)
         if not line.product_id.attribute_value_ids:
             line.sequence = line.template_sequence
-            #line.sequence = max(line.template_line.mapped('order_lines.sequence'))
         else:
             new_sequence = 0
             cent = 100
