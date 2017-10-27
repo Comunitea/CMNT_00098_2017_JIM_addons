@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="wzd_claim_line_to_scrap" model="ir.ui.view">
+        <field name="name">wzd.claim.line.to.scrap</field>
+        <field name="model">claim_line.scrap.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Select qties to scrap/stock">
+                <group name="Product" string="Producto">
+
+                    <group>
+                        <field name="claim_line_id" invisible="1"/>
+                        <field name="number" readonly="1"/>
+                        <field name="display_name" readonly="1"/>
+                    </group>
+                </group>
+                <div></div>
+                <group>
+                    <group>
+                        <field name="product_id" readonly="1"/>
+                        <field name="new_qty_to_scrap"/>
+                    </group>
+                    <group>
+                        <field name="product_returned_quantity" readonly="1"/>
+                        <field name="new_qty_to_stock"/>
+                    </group>
+                </group>
+                <footer>
+                    <button
+                            string="Refresh lines"
+                            name="action_refresh_lines" type="object"
+                            class="oe_highlight"/>
+                    <button name="action_cancel"
+                            string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="open_wzd_claim_line_to_scrap" model="ir.actions.act_window">
+        <field name="name">Open scrap claim line</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">claim_line.scrap.wizard</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+     <record id="action_claim_picking_int" model="ir.actions.act_window">
+        <field name="name">Moves to stock/scrap</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">claim_make_picking.wizard</field>
+        <field name="src_model">crm.claim</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+        <field name="context">{'picking_type': 'int','product_return': False}</field>
+    </record>
+
+
+</odoo>
