@@ -63,13 +63,6 @@ class StockPicking(models.Model):
 
 
     ready = fields.Boolean('Revision Ready', default=False, readonly=True)
-    # orig_sale_id = fields.Many2one('sale.order',
-    #                                 compute='_compute_orig_sale',
-    #                                 string='Original sale for this picking',
-    #                                )
-    # orig_sale_str = fields.Char(compute='_compute_orig_sale',
-    #                                string='Original sale for this picking',
-    #                             )
 
     @api.model
     def _prepare_values_extra_move(self, op, product, remaining_qty):
@@ -77,53 +70,6 @@ class StockPicking(models.Model):
         vals['company_id'] = op.picking_id.company_id.id
         vals['extra_move'] = True
         return vals
-
-    # @api.multi
-    # def intercompany_picking_process(self, picking):
-    #     picking = picking.with_context(force_company=picking.company_id.id, company_id=picking.company_id.id)
-    #
-    #     origin_pack_operations = self.pack_operation_product_ids.filtered(lambda x: x.qty_done > 0)
-    #     origin_products = origin_pack_operations.mapped('product_id')
-    #     for origin_product in origin_products:
-    #         orig_product_qty = sum(x.product_qty
-    #                                for x in origin_pack_operations.filtered(lambda x:
-    #                                                                         x.product_id.id == origin_product.id))
-    #         lines = picking.move_lines.filtered(lambda x : x.product_id.id == origin_product.id)
-    #         assigned_lines = lines.filtered(lambda x: x.state == 'assigned')
-    #         assigned_qty = sum(x.product_qty for x in assigned_lines)
-    #         if assigned_qty < orig_product_qty:
-    #             # Buscamos si hay más...
-    #             not_assigned_lines = lines.filtered(lambda x: x.state in ['confirmed', 'waiting'])
-    #             not_assigned_lines.force_assign()
-    #             assigned_lines = lines.filtered(lambda x: x.state == 'assigned')
-    #
-    #         ops = assigned_lines.linked_move_operation_ids.mapped('operation_id')
-    #         ops_qty = sum(x.product_qty for x in ops)
-    #         remain_qty = orig_product_qty
-    #         last_op =False
-    #         if len(ops) == 1:
-    #             ops[0].qty_done = ops[0].product_qty = orig_product_qty
-    #             remain_qty = 0
-    #         else:
-    #
-    #             for op in ops:
-    #                 if remain_qty == 0:
-    #                     op.unlink()
-    #                 else:
-    #                     if op.product_qty < remain_qty:
-    #                         op.done_qty = op.product_qty
-    #                         remain_qty -= op.product_qty
-    #                     else:
-    #                         op.done_qty = op.product_qty = remain_qty
-    #                         remain_qty = 0
-    #                 last_op = op
-    #         if remain_qty > 0 and last_op:
-    #             last_op.done_qty = last_op.product_qty = last_op.product_qty + remain_qty
-    #
-    #     for pack in picking.pack_operation_ids:
-    #         if pack.qty_done <= 0:
-    #             pack.unlink()
-    #     picking.do_transfer()
 
     @api.multi
     def view_related_pickings(self):
@@ -203,8 +149,11 @@ class StockPicking(models.Model):
         if self.purchase_id.intercompany:
             ic_sale = self.env['sale.order'].sudo().search([('auto_purchase_order_id', '=', self.purchase_id.id)])
             for picking in ic_sale.picking_ids.filtered(lambda x:
-                                                        x.sale_id.auto_generated and x.state not in ['done', 'cancel']):
+                    x.location_dest_id.usage == 'customer' and
+                    x.sale_id.auto_generated and
+                    x.state not in ['done', 'cancel']):
                 #self.intercompany_picking_process(picking)
+                self.propagate_op_qty(picking)
                 picking.do_transfer()
         #Si es entrega a cliente buscar lineas en albaranes de compra intercompañia
         if self.picking_type_id.code == 'outgoing':
@@ -216,9 +165,27 @@ class StockPicking(models.Model):
                     and x.location_id.usage == 'supplier' and x.state not in ['done', 'cancel'])
                 for ic_purchase_picking in picking_in_ids:
                     #self.intercompany_picking_process(ic_purchase_picking)
+                    self.propagate_op_qty(ic_purchase_picking)
                     ic_purchase_picking.do_transfer()
 
-        return super(StockPicking, self).do_transfer()
+        res = super(StockPicking, self).do_transfer()
+
+        # Propaga la aignacion movimientos realizado a la compra IC y albaŕn
+        #  de salida si debe hacerlo
+
+        self.move_lines.propagate_assign_IC()
+
+        return res
+
+    def propagate_op_qty (self, picking):
+        for op in self.pack_operation_product_ids:
+            pick_op = picking.pack_operation_product_ids.filtered(lambda x:
+                    x.product_id.id == op.product_id.id)
+            if pick_op and pick_op.qty_done != op.qty_done:
+                pick_op.qty_done = op.qty_done
+                pick_op.product_qty = op.qty_done
+
+
 
     def _create_extra_moves(self):
         '''This function creates move lines on a picking, at the time of do_transfer, based on
@@ -295,6 +262,8 @@ class StockMove(models.Model):
                  ('product_id', '=', move.product_id.id),
                  '|', ('move_dest_id', '!=', move.id),
                  ('move_purchase_IC_id', '!=', move.id)])
+            if len(product_move) > 1:
+                product_move = product_move[0]   ## PARA REVISAR
             if product_move.move_dest_id and \
                     not product_move.picking_id.purchase_id.intercompany:
                 picking = product_move.move_dest_id.picking_id
@@ -335,37 +304,43 @@ class StockMove(models.Model):
                 if move.move_dest_id.state in ['assigned']:
                     move_dests |= move
         if move_dests:
-            move_dests.write({'move_dest_id': False})
+            move_dests.write({'propagate': False})
 
         res = super(StockMove, self).action_done()
-        move_dest_IC_ids = self.env['stock.move']
-        move_purchase_IC_ids = self.env['stock.move']
-        for move in self.sudo():
-            if move.move_dest_IC_id and move.move_dest_IC_id.state in (
-                    'waiting', 'confirmed'):
-                if move.move_dest_id.picking_id.sale_id.auto_generated:
-                    multiple_dest = self.search(
-                        [('picking_id', '=',
-                          move.move_dest_IC_id.picking_id.id),
-                         ('product_id', '=', move.product_id.id),
-                         ])
-                    move_dest_IC_ids |= multiple_dest
-                # move.process_intercompany_chain()
-            if move.move_dest_id.move_purchase_IC_id and move.move_dest_IC_id.state in (
-                    'waiting', 'confirmed'):
-                multiple_IC = self.search(
-                [('picking_id', '=', move.move_dest_id.move_purchase_IC_id.picking_id.id),
-                 ('product_id', '=', move.product_id.id),
-                 ])
-                move_purchase_IC_ids |= multiple_IC
-
-        if move_dest_IC_ids:
-            move_dest_IC_ids.sudo().force_assign()
-        if move_purchase_IC_ids:
-            move_purchase_IC_ids.sudo().do_unreserve()
-            move_purchase_IC_ids.sudo().action_assign()
-
         return res
+
+    def propagate_assign_IC(self):
+
+        previous_IC_sale = \
+            self.mapped('move_dest_id.picking_id.sale_id.auto_generated')
+
+        #pick_purchase_IC = self.filtered(lambda x: x.state=='done').mapped(
+        #    'move_purchase_IC_id.picking_id')
+        pick_dest_IC = self.filtered(lambda x: x.state == 'done').mapped(
+            'move_dest_IC_id.picking_id')
+        if pick_dest_IC and previous_IC_sale:
+            # if pick_dest_IC and pick_dest_IC.state != 'done':
+            #     pick_dest_IC.do_unreserve()
+
+            pick_purchase_IC = self.filtered(
+                    lambda x: x.state == 'done').mapped(
+                    'move_dest_id.move_purchase_IC_id.picking_id')
+            if pick_purchase_IC and pick_purchase_IC.state != 'done':
+                pick_purchase_IC.do_unreserve()
+
+            for move in self.sudo():
+                if pick_dest_IC:
+                    if move.state == 'done' and move.move_dest_IC_id and \
+                            move.move_dest_IC_id.state in (
+                            'waiting', 'confirmed'):
+                        move.move_dest_IC_id.sudo().force_assign()
+                if pick_dest_IC:
+                    if move.state == 'done' \
+                            and move.move_dest_id.move_purchase_IC_id and \
+                            move.move_dest_id.move_purchase_IC_id.state in (
+                                    'waiting', 'confirmed'):
+                        move.move_dest_id.move_purchase_IC_id.sudo().force_assign()
+
 
     @api.multi
     def action_cancel(self):
@@ -377,13 +352,15 @@ class StockMove(models.Model):
             if move.sudo().move_dest_IC_id and previous_IC_sale:
                 if move.propagate:
                     move.move_dest_IC_id.sudo().action_cancel()
-                    dest_moves = move.move_dest_IC_id.picking_id.move_lines\
-                        .filtered(
-                        lambda x: x.product_id.id == \
-                        move.move_dest_IC_id.product_id.id
-                                  and x.id != move.move_dest_IC_id.id)
-                    dest_moves.sudo().do_unreserve()
-                    dest_moves.sudo().force_assign()
+                    # dest_moves = move.move_dest_IC_id.picking_id.move_lines\
+                    #     .filtered(
+                    #     lambda x: x.product_id.id == \
+                    #     move.move_dest_IC_id.product_id.id
+                    #               and x.id != move.move_dest_IC_id.id
+                    #               and x.state not in ['draft', 'cancel',
+                    #                                   'done'])
+                    # dest_moves.sudo().do_unreserve()
+                    # dest_moves.sudo().force_assign()
 
                 elif move.sudo().move_dest_IC.id.state == 'waiting':
                     # If waiting, the chain will be broken and we are not sure if we can still wait for it (=> could take from stock instead)
@@ -391,70 +368,42 @@ class StockMove(models.Model):
             if move.sudo().move_purchase_IC_id:
                 if move.propagate:
                     move.move_purchase_IC_id.sudo().action_cancel()
-                    dest_moves = move.move_purchase_IC_id.picking_id.move_lines \
-                        .filtered(
-                        lambda x: x.product_id.id == \
-                                  move.move_purchase_IC_id.product_id.id
-                                  and x.id != move.move_purchase_IC_id.id)
-                    dest_moves.sudo().do_unreserve()
-                    dest_moves.sudo().force_assign()
+                    # dest_moves = move.move_purchase_IC_id.picking_id.move_lines \
+                    #     .filtered(
+                    #     lambda x: x.product_id.id == \
+                    #               move.move_purchase_IC_id.product_id.id
+                    #               and x.id != move.move_purchase_IC_id.id
+                    #             and x.state not in ['draft', 'cancel', 'done'])
+                    # dest_moves.sudo().do_unreserve()
+                    # dest_moves.sudo().force_assign()
 
 
-        self.write({'move_dest_IC_id': False})
+       # self.write({'move_dest_IC_id': False})
         res = super(StockMove, self).action_cancel()
         return res
-
 
     @api.multi
     def split(self, qty, restrict_lot_id=False, restrict_partner_id=False):
         """ Splits qty from move move into a new move"""
         self = self.with_prefetch()
-        if self.picking_id.purchase_id.intercompany:
-            #Si es una compra intercompañia, le elimina el movimiento
-            # relacionado para asegurarnos de que no hace el split.
-            self.move_dest_id = False
         new_move = super(StockMove, self).split(qty, restrict_lot_id,
                                                 restrict_partner_id)
         # Es previo a la venta IC?
         previous_IC_sale = \
-            self.move_dest_id.picking_id.sale_id.auto_generated \
-                        or False
-        if new_move and previous_IC_sale and self.sudo().move_dest_IC_id:
-            new_move_prop_IC = self.sudo().move_dest_IC_id.split(qty)
-
-            self.env['stock.move'].browse(new_move).sudo().write({
-                'move_dest_IC_id': new_move_prop_IC})
+           self.move_dest_id.picking_id.sale_id.auto_generated  or False
+        #Propagamos el split al movimiento de salida final
+        # if new_move and previous_IC_sale and self.sudo().move_dest_IC_id:
+        #     new_move_prop_IC = self.sudo().move_dest_IC_id.split(qty)
+        #     self.env['stock.move'].browse(new_move).sudo().write({
+        #         'move_dest_IC_id': new_move_prop_IC})
+        #Propagamos el split al al movimiento de compra intercompañía
         if new_move and self.sudo().move_purchase_IC_id:
             new_move_prop_purchase_IC = self.sudo().move_purchase_IC_id.split(qty)
             self.env['stock.move'].browse(new_move).sudo().write({
                 'move_purchase_IC_id': new_move_prop_purchase_IC})
+        if new_move and previous_IC_sale and self.sudo().move_dest_IC_id:
+            self.env['stock.move'].browse(new_move).sudo().write({
+                'move_dest_IC_id': self.env['stock.move'].browse(
+                new_move).move_dest_id.move_purchase_IC_id.move_dest_id.id})
+
         return new_move
-
-
-
-
-
-
-    # @api.multi
-    # def process_intercompany_chain(self):
-    #     ic_purchase = self.sudo().move_dest_id.picking_id.sale_id.auto_purchase_order_id
-    #
-    #     if ic_purchase:
-    #         ic_purchase_move = ic_purchase.picking_ids.move_lines.filtered(
-    #             lambda x: x.product_id.id == self.product_id.id)
-    #         ic_purchase_move.move_dest_id.force_assign()
-    #         message = _("The move for product %s  has been forced by intercompany operation %s from company %s") % (
-    #             self.product_id.name, self.picking_id.name, self.picking_id.company_id.name)
-    #         ic_purchase_move.move_dest_id.picking_id.message_post(body=message)
-    #         forced_qty = 0
-    #         for x in self.linked_move_operation_ids.mapped('operation_id'):
-    #             forced_qty += x.product_qty
-    #         # forced_qty = sum(x.operation_id.product_qty
-    #         #                  for x in self.linked_move_operation_ids)
-    #         if forced_qty != ic_purchase_move.move_dest_id.product_qty and \
-    #                 ic_purchase_move.move_dest_id.linked_move_operation_ids:
-    #             ic_purchase_move.move_dest_id.linked_move_operation_ids[0].\
-    #                 operation_id.product_qty = forced_qty
-    #             message = _("The quantity for product %s  has been set to %d by intercompany operation %s from company %s") % (
-    #                 self.product_id.name, forced_qty, self.picking_id.name, self.picking_id.company_id.name)
-    #             ic_purchase_move.move_dest_id.picking_id.message_post(body=message)
