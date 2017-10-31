@@ -15,7 +15,7 @@
                                 Customer order number
                                 <span t-field="o.mapped('invoice_line_ids.sale_line_ids.order_id').client_order_ref"/><br/>
                             </t>
-                            <span t-field="o.name"/>
+                            <span t-field="o.name" t-if="o.type not in ('in_refund', 'out_refund')"/>
                             <span t-field="o.notes"/>
                     </div>
 
