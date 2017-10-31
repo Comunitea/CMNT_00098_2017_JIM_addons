@@ -3,10 +3,11 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 {
-    'name': 'Sequence en lineas de ventas',
+    'name': 'Sequence en lineas de ventas, albaranes y facturas',
     'version': '10.0.1.0.0',
     'depends': [
         'jim_sale',
+        'jim_purchase',
     ],
     'author': "Comunitea",
     'license': "AGPL-3",
