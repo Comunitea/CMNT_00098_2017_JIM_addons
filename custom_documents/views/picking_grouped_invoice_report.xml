@@ -10,7 +10,7 @@
                 <div class="oe_structure"/>
                 <div class="radius_border" style="margin-bottom: 10px;">
                     Obs.:
-                        <span t-field="o.name"/>
+                        <span t-field="o.name" t-if="o.type not in ('in_refund', 'out_refund')"/>
                         <span t-field="o.notes"/>
                 </div>
                 <t t-if="o.type in ('in_refund', 'out_refund')">
