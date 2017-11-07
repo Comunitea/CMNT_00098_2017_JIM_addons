@@ -85,6 +85,23 @@ class SaleOrderLineTemplate(models.Model):
             return
         self.product_id = self.product_template.product_variant_ids[0]
 
+    @api.onchange('product_uom_qty', 'product_uom', 'route_id')
+    def _onchange_product_id_check_availability(self):
+        return
+
+    @api.onchange('product_id')
+    def _onchange_product_id_uom_check_availability(self):
+        return
+
+    @api.onchange('product_uom_qty')
+    def _onchange_product_uom_qty(self):
+        return
+
+    @api.onchange('product_id')
+    def _onchange_product_id_set_customer_lead(self):
+        return
+
+
 
 class SaleOrderLine(models.Model):
 
