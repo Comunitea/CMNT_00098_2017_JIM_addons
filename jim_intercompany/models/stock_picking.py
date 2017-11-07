@@ -166,7 +166,11 @@ class StockPicking(models.Model):
                 for ic_purchase_picking in picking_in_ids:
                     #self.intercompany_picking_process(ic_purchase_picking)
                     self.propagate_op_qty(ic_purchase_picking)
-                    ic_purchase_picking.do_transfer()
+                    ops_to_do = \
+                        ic_purchase_picking.pack_operation_product_ids\
+                            .filtered(lambda x: x.qty_done > 0)
+                    if ops_to_do:
+                        ic_purchase_picking.do_transfer()
 
         res = super(StockPicking, self).do_transfer()
 
