@@ -167,6 +167,7 @@
                     <filter string="Mecalux status" domain="[]" context="{'group_by':'sga_state'}"/>
                 </xpath>
                 <xpath expr="//filter[@name='late']" position="after">
+                    <filter name="last_72h" string="Last 72h" domain="[('min_date','&gt;', (context_today() - datetime.timedelta(days=3)).strftime('%Y-%m-%d') )]"/>
                     <filter name="next_24h" string="Next 24h" domain="[('min_date','&lt;', (context_today() + datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d') )]"/>
                     <filter name="next_week" string="Next Week" domain="[('min_date','&lt;', (context_today() + datetime.timedelta(weeks=1)).strftime('%%Y-%%m-%%d') )]"/>
                     <filter name="next_two_week" string="Next 15 days" domain="[('min_date','&lt;', (context_today() + datetime.timedelta(days=15)).strftime('%%Y-%%m-%%d') )]"/>
