@@ -327,7 +327,7 @@ class StockInventorySGA(models.Model):
     def action_done(self):
         ## sobre escribo la función para cambiar el signo en caso de pallatium
         if self.company_id.vat:
-            return super(StockInventoryLineSGA, self).action_done()
+            return super(StockInventorySGA, self).action_done()
 
         negative = next((line for line in self.mapped('line_ids') if
                          line.product_qty < 0 and line.product_qty < line.theoretical_qty), False)
