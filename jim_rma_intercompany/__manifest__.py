@@ -16,11 +16,9 @@
         "Comunitea ",
     ],
     "data": [
-        'views/wzd_claim_line_to_scrap.xml',
-        'views/wzd_claim_make_picking.xml',
-        'views/claim_make_picking.xml',
-        'views/purchase_order.xml',
-        'views/sale_order.xml'
+        'views/crm_claim_type.xml',
+        'views/crm_claim.xml',
+        'wizard/crm_claim_rma_make_refund_view.xml'
     ],
     "installable": True
 }

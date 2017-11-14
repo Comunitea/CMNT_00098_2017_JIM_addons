@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record model="ir.ui.view" id="crm_claim_type_form_claim_id">
+        <field name="name">crm.claim.type.form.calim.id</field>
+        <field name="model">crm.claim.type</field>
+        <field name="inherit_id" ref="crm_claim_type.crm_claim_type_form"/>
+        <field name="arch" type="xml">
+            <field name="name" position="after">
+                <field name="return_claim"/>
+            </field>
+        </field>
+    </record>
+</odoo>

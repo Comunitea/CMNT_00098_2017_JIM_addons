@@ -3,10 +3,10 @@
    :alt: License: AGPL-3
 
 ====================
-Jim Sale
+Jim RMA IC
 ====================
 
-Adds Integration with multicompany and procurement rules:
+Adds Intercompany function to RMA
 
 
 

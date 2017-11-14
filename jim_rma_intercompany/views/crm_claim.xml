@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record model="ir.ui.view" id="crm_claim_rma_form_view">
+        <field name="name">CRM - Claim product return Form</field>
+        <field name="model">crm.claim</field>
+        <field name="inherit_id" ref="crm_claim_rma.crm_claim_rma_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='picking_ids']" position="after">
+                <separator colspan="2" string="RMA Claims"/>
+                <field name="claim_ids" colspan="4" readonly="1" attrs="{'invisible': [('claim_ids', '=', [])]}"/>
+            </xpath>
+            <field name="invoice_id" position="after">
+                <field name="invoice_status"/>
+            </field>
+            <xpath expr="//button[2]" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

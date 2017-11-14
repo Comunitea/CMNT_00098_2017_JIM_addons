@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+    <data>
+        <record id="crm_claim_rma_make_refund_ic_refund" model="ir.ui.view">
+            <field name="name">crm.claim.rma.make.refund.form.ic.refund</field>
+            <field name="model">crm.claim.rma.make.refund</field>
+            <field name="type">form</field>
+            <field name="inherit_id" ref="crm_claim_rma.crm_claim_rma_make_refund"/>
+            <field name="arch" type="xml">
+                <field name="invoice_date" position ="after">
+                    <field name="ic_refunds"/>
+                </field>
+            </field>
+        </record>
+    </data>
+</odoo>
