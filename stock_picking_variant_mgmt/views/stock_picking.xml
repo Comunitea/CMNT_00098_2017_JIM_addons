@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="stock_picking_form_variant_mgmt" model="ir.ui.view">
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock.view_picking_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='move_lines']" position="before">
+                <div class="oe_button_box" name="button_box">
+                    <button name="%(action_stock_move_manage_variant)d"
+                            type="action"
+                            string="Add or Modify Variants"
+                            class="oe_edit_only"
+                            states="draft,sent"
+                    />
+                </div>
+            </xpath>
+
+            <xpath expr="//field[@name='move_lines']" position="inside">
+                <field name="product_tmpl_id_stock_move_variant_mgmt" invisible="1"/>
+                <field name="product_attribute_value_ids" invisible="1"/>
+                <!-- Not working until https://github.com/odoo/odoo/pull/13558 -->
+                <!-- Also https://github.com/odoo/odoo/pull/13635 is needed for correct template selection -->
+                <button name="%(action_stock_move_manage_variant)d"
+                        type="action"
+                        string="Modify Variants"
+                        icon="fa-th"
+                        class="oe_edit_only"
+                        context="{'default_product_tmpl_id': product_tmpl_id_purchase_order_variant_mgmt}"
+                        attrs="{'invisible': ['|', ('state', 'not in', ('draft'), ('product_attribute_value_ids', '=', [])]}"
+                />
+            </xpath>
+
+            <xpath expr="//field[@name='move_lines']" position="attributes">
+                <attribute name="options">{'reload_on_button': true}</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
