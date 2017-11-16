@@ -61,6 +61,7 @@ var GridWidget = GridWidgetSuper.include({
         line_model.set('discount', discount);
         line_model.set('global_available_stock', line_vals.stock);
         line_model.set('taxes_ids', line_vals.tax_ids || []); 
+        line_model.set('to_update', true); 
         line_model.update_line_values();
     },
 
