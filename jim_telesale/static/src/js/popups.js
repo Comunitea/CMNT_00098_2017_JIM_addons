@@ -50,7 +50,6 @@ var GridWidget = GridWidgetSuper.include({
 
     // OVERWRITED to set chained discount instead discount and global_stock
     set_cell_vals: function(line_model, line_vals){
-        debugger;
         if ( (line_model.get('qty') != line_vals.qty) || (line_model.get('pvp') != line_vals.price) || (line_model.get('chained_discount') != line_vals.discount) ){
             line_model.set('to_update', true); 
         }
