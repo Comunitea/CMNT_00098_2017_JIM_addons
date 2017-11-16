@@ -43,16 +43,16 @@ class StockPicking(models.Model):
             if op.qty_done == 0:
                 op.qty_done = op.ordered_qty
 
-    @api.one
-    @api.depends('move_lines.procurement_id.sale_line_id.order_id')
-    def _compute_sale_id(self):
-
-        super(StockPicking, self)._compute_sale_id()
-
-        for move in self.move_lines:
-            move_sale = move.move_dest_IC_id or move.move_dest_id or move
-            sale_line = move_sale.procurement_id.sale_line_id
-            if sale_line:
-                self.sale_id = sale_line.order_id
-            return
+    # @api.one
+    # @api.depends('move_lines.procurement_id.sale_line_id.order_id')
+    # def _compute_sale_id(self):
+    #
+    #     super(StockPicking, self)._compute_sale_id()
+    #
+    #     for move in self.move_lines:
+    #         move_sale = move.move_dest_IC_id or move.move_dest_id or move
+    #         sale_line = move_sale.procurement_id.sale_line_id
+    #         if sale_line:
+    #             self.sale_id = sale_line.order_id
+    #         return
 
