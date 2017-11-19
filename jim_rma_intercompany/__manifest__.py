@@ -18,7 +18,8 @@
     "data": [
         'views/crm_claim_type.xml',
         'views/crm_claim.xml',
-        'wizard/crm_claim_rma_make_refund_view.xml'
+        'wizard/crm_claim_rma_make_refund_view.xml',
+        'wizard/crm_claim_rma_make_batch_refund_view.xml',
     ],
     "installable": True
 }

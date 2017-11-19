@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
+
+
     <record model="ir.ui.view" id="crm_claim_rma_form_view">
         <field name="name">CRM - Claim product return Form</field>
         <field name="model">crm.claim</field>
@@ -10,12 +12,114 @@
                 <field name="claim_ids" colspan="4" readonly="1" attrs="{'invisible': [('claim_ids', '=', [])]}"/>
             </xpath>
             <field name="invoice_id" position="after">
+                <field name="stage_sequence" invisible="1"/>
                 <field name="invoice_status"/>
             </field>
+            <field name="priority" position="after">
+                <field name="claim_id" readonly="1" attrs="{'invisible': [('claim_id', '=', False)]}"/>
+            </field>
+            <xpath expr="//field[@name='claim_line_ids']" position="attributes">
+                <attribute name="attrs">{'no_create': [('stage_sequence', '!=', 'default_new')],
+                                         'readonly': [('stage_sequence', '=', 'default_done')],
+                    }</attribute>
+            </xpath>
             <xpath expr="//button[2]" position="attributes">
                 <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//button[1]" position="attributes">
+                <attribute name="attrs">{'invisible': [('stage_sequence', '!=', 'default_new')]}</attribute>
+            </xpath>
+            <xpath expr="//button[3]" position="attributes">
+                <attribute name="attrs">{'invisible': 1}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='partner_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('stage_sequence', '!=', 'default_new')],
+                   }</attribute>
+
+
+
+            </xpath>
+            <xpath expr="//field[@name='warehouse_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('stage_sequence', '!=', 'default_new')]}</attribute>
+            </xpath>
+            <!--xpath expr="//field[@name='claim_type']" position="attributes">
+                <attribute name="attrs">{'readonly': [('stage_sequence', '!=', 'default_new')]}</attribute>
+            </xpath>
+            <xpath expr="//field[@name='company_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('stage_sequence', '!=', 'default_new')]}</attribute>
+            </xpath-->
+            <xpath expr="//field[@name='partner_phone']" position="attributes">
+                <attribute name="required">0</attribute>
+            </xpath>
+             <xpath expr="//field[@name='email_from']" position="attributes">
+                <attribute name="required">0</attribute>
+            </xpath>
+             <xpath expr="//field[@name='invoice_id']" position="attributes">
+                <attribute name="readonly">1</attribute>
+            </xpath>
+
+            <xpath expr="//button[3]" position="after">
+                <button name="%(act_crm_claim_batch_refunds)d"
+                        class="oe_inline"
+                        type='action' string='Abonar'
+                        attrs="{'invisible': [('stage_sequence', '!=', 'default_run')]}"
+                        context="{
+                            'claim_id': id,
+                            }"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="crm_case_claims_form_view_claum_type_ro">
+        <field name="name">CRM - Claim product return Form</field>
+        <field name="model">crm.claim</field>
+        <field name="inherit_id" ref="crm_claim_type.crm_case_claims_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='claim_type']" position="attributes">
+                <attribute name="attrs">{'readonly': [('stage_sequence', '!=', 'default_new')]}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record model="ir.ui.view" id="crm_claim_rma_form_view_com_readonly">
+        <field name="name">CRM - Claim product return Form</field>
+        <field name="model">crm.claim</field>
+        <field name="inherit_id" ref="crm_claim_rma.crm_claim_rma_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='company_id']" position="attributes">
+                <attribute name="attrs">{'readonly': [('stage_sequence', '!=', 'default_new')]}</attribute>
+            </xpath>
+        </field>
+    </record>
+    <record id="tree_crm_claim_rma_intercompany" model="ir.ui.view">
+        <field name="name">CRM - Claims Tree</field>
+        <field name="model">crm.claim</field>
+        <field name="inherit_id" ref="crm_claim.crm_case_claims_tree_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='stage_id']" position="after">
+                <field name="invoice_id"/>
+            </xpath>
+        </field>
+
+   </record>
+
+    <record id="view_crm_claim_lines_filter_ic" model="ir.ui.view">
+        <field name="name">CRM - Claims Search</field>
+        <field name="model">claim.line</field>
+        <field name="inherit_id" ref="crm_claim_rma.view_crm_claim_lines_filter"/>
+        <field name="arch" type="xml">
+
+            <xpath expr="//field[@name='number']" position="before">
+
+                <filter string="Invoiced" name="invoiced"
+                        domain="['|', ('refund_line_id','!=',False),('invoice_line_id','!=',False)]"
+                        separator="1" help="Invoiced claim lines"/>
+                <filter string="To Invoiced" name="invoiced"
+                        domain="[('refund_line_id','=',False),('invoice_line_id','=',False)]"
+                        separator="1" help="Claim lines to invoice"/>
+                <separator orientation="vertical"/>
             </xpath>
 
         </field>
     </record>
+
 </odoo>

@@ -10,4 +10,21 @@
             </field>
         </field>
     </record>
+
+    <record id="crm_stage_claim_type_form_default_stage" model="ir.ui.view">
+            <field name="name">crm.claim.stage.type.form</field>
+            <field name="model">crm.claim.stage</field>
+            <field name="inherit_id" ref="crm_claim.crm_claim_stage_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='sequence']" position="after">
+                    <newline/>
+
+                    <field name="default_new" />
+                    <field name="default_run" />
+                    <field name="default_done" />
+
+                </xpath>
+            </field>
+        </record>
+
 </odoo>
