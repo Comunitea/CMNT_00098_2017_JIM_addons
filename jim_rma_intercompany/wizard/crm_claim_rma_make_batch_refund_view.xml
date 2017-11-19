@@ -61,7 +61,7 @@
             id="menu_crm_claim_refund_wzd"
             parent="crm_claim.menu_aftersale"
             action="act_crm_claim_refunds_wzd"
-            sequence="2">
+            sequence="2"/>
 
 
      <act_window
