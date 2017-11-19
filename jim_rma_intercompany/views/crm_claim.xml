@@ -127,7 +127,7 @@
             </xpath>
         </field>
     </record>
-    <record model="ir.ui.view" id="crm_claim_rma_form_view_com_readonly">
+    <!--record model="ir.ui.view" id="crm_claim_rma_form_view_com_readonly">
         <field name="name">CRM - Claim product return Form</field>
         <field name="model">crm.claim</field>
         <field name="inherit_id" ref="crm_claim_rma.crm_claim_rma_form"/>
@@ -136,7 +136,7 @@
                 <attribute name="attrs">{'readonly': [('stage_sequence', '!=', 'default_new')]}</attribute>
             </xpath>
         </field>
-    </record>
+    </record-->
     <record id="tree_crm_claim_rma_intercompany" model="ir.ui.view">
         <field name="name">CRM - Claims Tree</field>
         <field name="model">crm.claim</field>
