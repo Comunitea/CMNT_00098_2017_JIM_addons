@@ -2,6 +2,16 @@
 <odoo>
 
 
+     <act_window
+            id="act_crm_claim_batch_refunds"
+            name="Batch Refunds"
+            res_model="crm.claim.rma.make.batch.refund"
+            key2="client_action_multi"
+            view_id ="crm_claim_rma_make_batch_refund"
+            multi="True"
+            target="new"
+            src_model="crm.claim"/>
+
     <record model="ir.ui.view" id="crm_claim_rma_form_view">
         <field name="name">CRM - Claim product return Form</field>
         <field name="model">crm.claim</field>
