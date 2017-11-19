@@ -1,6 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
+        <record id="crm_claim_rma_make_batch_refund" model="ir.ui.view">
+            <field name="name">crm.claim.rma.make.batch_refund.form</field>
+            <field name="model">crm.claim.rma.make.batch.refund</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Make claim batch refund">
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <div/>
+                    <group>
+                        <group>
+                            <field name="company_id"/>
+                            <field name="from_invoice_date"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="to_invoice_date"/>
+                        </group>
+                    </group>
+                    <div/>
+                    <group>
+                        <field name="claim_ids" widget ="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field nolabel="1" name="claim_line_ids" readonly="1"/>
+                    </group>
+
+                    <footer>
+                        <button name="make_batch_refund" string="Make refund" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
 
      <act_window
             id="act_crm_claim_batch_refunds"
