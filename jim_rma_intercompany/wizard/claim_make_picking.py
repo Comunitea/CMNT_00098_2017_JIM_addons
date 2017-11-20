@@ -9,6 +9,10 @@ import time
 from odoo import models, fields, exceptions, api, _
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DT_FORMAT
 
+PROCESS_STAGE = 20
+DONE_STAGE = 30
+NEW_STAGE = 1
+
 class ClaimMakePicking(models.TransientModel):
 
     _inherit = 'claim_make_picking.wizard'
@@ -22,11 +26,26 @@ class ClaimMakePicking(models.TransientModel):
         return dest_loc
 
 
+    @api.returns('res.partner')
+    def _get_common_partner_from_line(self, lines):
+        """ If all the lines have the same warranty return partner return that,
+        else return an empty recordset
+        """
+        if lines[0].claim_id.ic:
+            return lines[0].product_id.company_id.partner_id
+        partners = lines.mapped('warranty_return_partner')
+        partners = list(set(partners))
+        return partners[0] if len(partners) == 1 else self.env['res.partner']
+
+
+
     def _get_picking_data(self, claim, picking_type, partner_id):
         res = super(ClaimMakePicking, self)._get_picking_data(claim, picking_type, partner_id)
         picking_type = self._context.get('picking_type', False)
-        res['origin'] = claim.name
+        res['origin'] = claim.code
+
         if picking_type == 'in':
+            res['action_done_bool'] = True
             res['location_dest_id'] = claim.warehouse_id.lot_rma_id.id
             res['picking_type_id'] = claim.warehouse_id.rma_in_type_id.id
         return res
@@ -45,20 +64,25 @@ class ClaimMakePicking(models.TransientModel):
 
     def do_picks(self, claim_ids):
 
+
         domain = [('claim_id', 'in', claim_ids)]
-        picks = self.env['stock.picking'].search(domain)
+
+        picks = self.env['stock.picking'].search(domain, order='id asc')
 
         picks_to_assign = picks.filtered(lambda x: x.state == 'confirmed')
         picks_to_assign.action_assign()
 
-        picks_to_force = picks.filtered(lambda x: x.state in ['waiting', 'partially_available', 'confirmed'])
+        picks_to_force = picks.filtered(lambda x: x.state in ['partially_available', 'confirmed'])
         picks_to_force.force_assign()
 
-        picks_to_do = picks.filtered(lambda x: x.state == 'assigned' and x.note !="RMA picking stock")
+        picks_to_do = picks.filtered(lambda x: x.state == 'assigned' and x.action_done_bool)
         for pick in picks_to_do:
             pick.do_transfer()
 
     def _create_picking(self, claim, picking_type):
+
+        if not claim.stage_id.default_new:
+            raise exceptions.UserError(_('Claim in incorrect stage'))
 
         claim.claim_line_ids.filtered(lambda x: x.state == 'draft').write({'state': 'confirmed'})
 
@@ -72,9 +96,9 @@ class ClaimMakePicking(models.TransientModel):
         res = super(ClaimMakePicking, self.with_context(ctx))._create_picking(claim, picking_type)
 
         if claim.company_id != self.env.user.company_id:
-            pick_ids = claim.sudo().create_RMA_to_stock_pick()
+            stock_pick_ids = claim.sudo().create_RMA_to_stock_pick()
         else:
-            pick_ids = claim.create_RMA_to_stock_pick()
+            stock_pick_ids = claim.create_RMA_to_stock_pick()
 
         claim_ids += [claim.id]
         if not claim.ic:
@@ -84,6 +108,8 @@ class ClaimMakePicking(models.TransientModel):
 
 
         self.sudo().do_picks(claim_ids)
+        self.env['crm.claim'].browse(claim_ids).write({'stage_id': claim._stage_find(state='run')})
+        claim.claim_line_ids.write({'state': 'treated'})
 
         return res
 

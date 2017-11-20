@@ -10,7 +10,7 @@
             <field name="type">form</field>
             <field name="inherit_id" ref="crm_claim_rma.crm_claim_rma_make_refund"/>
             <field name="arch" type="xml">
-                <field name="invoice_date" position ="after">
+                <field name="invoice_date" position="after">
                     <field name="ic_refunds"/>
                 </field>
             </field>

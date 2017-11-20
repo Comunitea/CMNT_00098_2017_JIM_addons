@@ -5,8 +5,14 @@ import time
 from odoo import _, api, exceptions, fields, models
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT as DT_FORMAT
 
+
+PROCESS_STAGE = 20
+DONE_STAGE = 30
+NEW_STAGE = 1
+
 class CrmClaim(models.Model):
     _inherit = 'crm.claim'
+
 
     @api.depends('claim_line_ids.state', 'claim_line_ids.refund_line_id')
     def _get_invoiced(self):
@@ -43,6 +49,20 @@ class CrmClaim(models.Model):
                 ('group_id.claim_id', '=', claim.id)
             ])
 
+    @api.depends('stage_id')
+    def _get_stage_sequence(self):
+
+        def get_default(stage_id):
+            for field in ['default_new', 'default_run', 'default_done']:
+                print field
+                if stage_id[field]:
+                    return field
+
+        for claim in self:
+            print "HIHI"
+            claim.stage_sequence = get_default(claim.stage_id)
+
+
     def _get_invoice_ids(self):
         """ Search all stock_picking associated with this claim.
 
@@ -54,11 +74,13 @@ class CrmClaim(models.Model):
 
         picking_model = self.env['account.invoice']
         for claim in self:
-            claim.invoice_ids = picking_model.search([
-                '|', ('claim_id', 'in', claim.claim_ids.ids),
-                ('claim_id', '=', claim.id)
-            ])
+            claim.invoice_ids = claim.invoice_id
 
+    # Sequence 1 >> New
+    # Sequence 20 >> Process
+    # Sequence 30 >> Done
+    stage_sequence = fields.Char(compute=_get_stage_sequence)
+    partner_id = fields.Many2one(domain=[('is_company','=', True)])
     claim_id = fields.Many2one('crm.claim', "Origin RMA")
     claim_ids = fields.One2many('crm.claim', 'claim_id', "RMA Claim", copy=False)
     invoice_ids = fields.One2many('account.invoice', string='Refunds', compute=_get_invoice_ids, copy=False)
@@ -72,7 +94,6 @@ class CrmClaim(models.Model):
     ], string='Invoice Status', compute='_get_invoiced', store=True, readonly=True)
 
     def create_IC_RMA(self, auto=True):
-
         self.ensure_one()
         claim_ids = self.env['crm.claim']
         claim_line_ids = self.claim_line_ids.filtered(lambda x:x.state=='confirmed')
@@ -80,8 +101,9 @@ class CrmClaim(models.Model):
             return claim_ids
         #miro si hay RMA IC >> Si hay artículos de distinta compañia a la compañia
         cmp_ids = claim_line_ids.mapped('product_id').mapped('company_id') - self.company_id
-        for company in cmp_ids:
-            company_lines = claim_line_ids.filtered(lambda x: x.product_id.company_id.id == company.id and not x.location_dest_id.scrap_location)
+        for company_ in cmp_ids:
+            company = company_.sudo()
+            company_lines = claim_line_ids.filtered(lambda x: x.product_id.company_id.id == company.id)# and not x.location_dest_id.scrap_location)
             lines_icc = self.env['claim.line']
             lines_icp = self.env['claim.line']
             partner_icp = company.partner_id
@@ -122,22 +144,6 @@ class CrmClaim(models.Model):
                 claim_icc = self.env['crm.claim'].with_context().create(new_rma_ICC_vals)
 
                 for line in company_lines:
-
-                    new_rma_ICP_lines = {'product_id': line.product_id.id,
-                                         'unit_sale_price': line.unit_sale_price,
-                                         'product_returned_quantity': line.product_returned_quantity,
-                                         'location_dest_id': partner_icp.property_stock_supplier.id,
-                                         'company_id': company_icp.id,
-                                         'claim_id': claim_icp.id,
-                                         'state': 'confirmed'}
-
-                    new_rma_line = self.env['claim.line'].new(new_rma_ICP_lines)
-                    new_rma_line._product_id_change()
-                    vals = new_rma_line._convert_to_write(new_rma_line._cache)
-                    if vals['unit_sale_price'] == 0.00:
-                        vals['unit_sale_price'] = line.unit_sale_price
-                    lines_icp |= self.env['claim.line'].with_context().create(vals)
-
                     new_rma_ICC_lines = {'product_id': line.product_id.id,
                                          'unit_sale_price': line.unit_sale_price,
                                          'product_returned_quantity': line.product_returned_quantity,
@@ -151,7 +157,33 @@ class CrmClaim(models.Model):
                     vals = new_rma_line._convert_to_write(new_rma_line._cache)
                     if vals['unit_sale_price'] == 0.00:
                         vals['unit_sale_price'] = line.unit_sale_price
-                    lines_icc |= self.env['claim.line'].with_context().create(vals)
+                    new_line_icc = self.env['claim.line'].with_context().create(vals)
+                    lines_icc |= new_line_icc
+                    new_rma_ICP_lines = {'product_id': line.product_id.id,
+                                         'unit_sale_price': line.unit_sale_price,
+                                         'product_returned_quantity': line.product_returned_quantity,
+                                         'location_dest_id': partner_icp.property_stock_supplier.id,
+                                         'company_id': company_icp.id,
+                                         'claim_id': claim_icp.id,
+                                         'state': 'confirmed'}
+
+
+                    new_rma_line = self.env['claim.line'].new(new_rma_ICP_lines)
+                    new_rma_line._product_id_change()
+                    vals = new_rma_line._convert_to_write(new_rma_line._cache)
+                    if vals['unit_sale_price'] == 0.00:
+                        vals['unit_sale_price'] = line.unit_sale_price
+                    new_line_icp = self.env['claim.line'].with_context().create(vals)
+                    lines_icp |= new_line_icp
+                    trace = False
+                    if trace:
+                        #MOVIMIENTOS PARA SEGUIMIENTO
+                        line.move_in_id.move_dest_id = new_line_icp.move_out_id
+                        new_line_icp.move_out_id.move_dest_IC_id = new_line_icc.move_in_id
+                        new_line_icc.move_in_id.move_dest_id = line.move_int_id
+
+
+
 
                     #lines |= (self.env['claim.line'].create(vals))
                 claim_icp.claim_line_ids |= lines_icp
@@ -170,24 +202,29 @@ class CrmClaim(models.Model):
         if not wh:
             wh = self.warehouse_id
 
+        location_id = wh.lot_rma_id
         if type != 'out':
             if type == 'stock':
                 location_dest_id = wh.lot_stock_id
+                picking_type = wh.rma_int_type_id
+                action_done_bool = False
 
             elif type == 'scrap':
                 location_dest_id = self.env['stock.location'].search([('scrap_location', '=', True)])[0]
+                domain = [('default_location_src_id', '=', location_id.id), ('code','=','internal'), ('default_location_dest_id', '=', location_dest_id.id)]
+                picking_type = self.env['stock.picking.type'].search(domain)
+                action_done_bool = True
+                if not picking_type:
+                    raise exceptions.UserError(_('Nos picking type for scrap rma found'))
 
             else:
                 location_dest_id = wh.lot_rma_id
-
-            picking_type = wh.rma_int_type_id
-            location_id = wh.lot_rma_id
-
+                picking_type = wh.rma_int_type_id
+                action_done_bool = True
         else:
             picking_type = wh.rma_out_type_id
-            location_id = wh.lot_rma_id
             location_dest_id = self.partner_id.property_stock_supplier
-
+            action_done_bool = True
         vals = {
             'partner_id': self.partner_id.id,
             'company_id': self.company_id.id,
@@ -199,6 +236,7 @@ class CrmClaim(models.Model):
             'date': time.strftime(DT_FORMAT),
             'note': 'RMA picking {}'.format(type),
             'claim_id': self.id,
+            'action_done_bool': action_done_bool
         }
         return vals
 
@@ -240,8 +278,14 @@ class CrmClaim(models.Model):
             else:
                 stock_move = self.env['stock.move'].create(move_vals)
             if stock_move:
+
                 move.write({'move_int_id': stock_move.id,
                             'state': 'treated'})
+                #PARA SEGUIMIENTO
+                # trace = False
+                # if trace:
+                #    move.move_in_id.move_dest_id = stock_move.id
+                    
         pick.action_confirm()
 
         return pick
@@ -252,13 +296,13 @@ class CrmClaim(models.Model):
             domain = [('claim_id', '=', claim_id.id),
                       ('move_int_id', '=', False),
                       ('move_out_id', '=', False),
+                      ('move_in_id', '!=', False),
                       ('state', '=', 'confirmed')
                       ]
 
             stock_domain = domain + [('product_id.company_id', '=', claim_id.company_id.id)]
             moves = self.env['claim.line'].search(stock_domain)
             if moves:
-
                 stock_moves = moves.filtered(lambda x: not x.location_dest_id.scrap_location)
                 loc_stock = stock_moves.mapped('location_dest_id')
 
@@ -271,19 +315,9 @@ class CrmClaim(models.Model):
                     pick_ids |= stock_pick
 
                 for loc in lot_scrap:
-                    wh_id = self.env['stock.warehouse'].search([('lot_stock_id', '=', loc.id)])
-                    stock_pick = claim_id.create_rma_pick(wh_id, 'scrap', stock_moves.filtered(lambda x:x.location_dest_id.id == loc.id))
+                    wh_id = claim_id.warehouse_id
+                    stock_pick = claim_id.create_rma_pick(wh_id, 'scrap', scrap_moves.filtered(lambda x:x.location_dest_id.id == loc.id))
                     pick_ids |= stock_pick
-            # if stock_icp:
-            #     out_domain = domain + [('claim_id.ic', '=', True),
-            #                            ('location_dest_id.scrap_location', '=', False),
-            #                            ('product_id.company_id', '!=', claim_id.company_id.id)]
-            #     out_moves = self.env['claim.line'].search(out_domain)
-            #     if out_moves:
-            #         wh_id = claim_id.warehouse_id
-            #         stock_pick = claim_id.create_rma_pick(wh_id, 'out', out_moves)
-            #         pick_ids |= stock_pick
-
 
         return pick_ids
 
@@ -305,3 +339,16 @@ class CrmClaim(models.Model):
         if location_id:
             new_wzd.claim_line_source_location_id = location_id
         new_wzd.sudo()._create_picking(self, picking_type)
+
+
+    def _stage_find(self, state=False,team_id=False,name=False,domain=[], order='sequence'):
+        if state:
+            domain += [('default_%s'%state, '=', True)]
+        if team_id:
+            domain += [('team_id', '=', False)]
+        if name:
+            domain += [('name','=',False)]
+
+        # perform search, return the first found
+        crm_stage = self.env['crm.claim.stage'].search(domain, order=order, limit=1)
+        return crm_stage and crm_stage.id or False
