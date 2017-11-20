@@ -21,6 +21,7 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self).action_confirm()
         for order in self:
             order.onchange_do_backorder()
+        return res
 
 
     @api.onchange('do_backorder')
@@ -30,8 +31,3 @@ class SaleOrder(models.Model):
 
         #for pick in self.picking_ids.sudo().filtered(lambda x: x.picking_type_id.sga_integrated):
         #    pick.write({'do_backorder': self.do_backorder})
-
-
-
-
-
