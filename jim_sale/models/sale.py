@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # © 2016 Comunitea - Javier Colmenero <javier@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 
 #from odoo.addons import decimal_precision as dp
 #from odoo.tools import float_compare
@@ -151,10 +151,27 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_pending_ok(self):
+        warning_msg = []
         for order in self:
             order.set_requested_date()
             order.action_sale()
-        return True
+            if order.partner_id.sale_warn_msg:
+                # si se confirman varias ventas se montará un mensaje
+                # con todos los avisos
+                if len(self) > 1:
+                    warning_msg.append(
+                        '%s: %s' % (order.name,
+                                    order.partner_id.sale_warn_msg))
+                else:
+                    warning_msg.append(order.partner_id.sale_warn_msg)
+            if warning_msg:
+                return {
+                    'type': 'ir.actions.act_window.message',
+                    'title': _('Customer warning'),
+                    'message': '\n'.join(warning_msg),
+                }
+            else:
+                return True
 
     @api.multi
     def action_sale(self):
@@ -235,6 +252,7 @@ class SaleOrder(models.Model):
                                              DEFAULT_SERVER_DATETIME_FORMAT) + timedelta(
                     days=1)
             self.requested_date = date_planned
+
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"

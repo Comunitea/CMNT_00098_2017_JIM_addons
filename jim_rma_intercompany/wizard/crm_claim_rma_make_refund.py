@@ -90,8 +90,15 @@ class CrmClaimRmaMakeRefund(models.TransientModel):
                     self.with_context(ctx).make_refund()
 
 
+        claim_ids = self.env['crm.claim']
+        claim_ids |= claim
+        if claim.claim_ids:
+            claim_ids |= claim.claim_ids
+        claim_ids.write({'stage_id': claim._stage_find(state='done')})
+
         result = self.env.ref('account.action_invoice_tree1').read()[0]
         invoice_domain = [('id', 'in', claim.invoice_ids.ids)]
         result['domain'] = invoice_domain
+
         return result
 

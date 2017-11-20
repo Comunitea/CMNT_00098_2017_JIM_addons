@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<openerp>
+    <data>
+
+        <record id="crm_claim_rma_make_batch_refund" model="ir.ui.view">
+            <field name="name">crm.claim.rma.make.batch_refund.form</field>
+            <field name="model">crm.claim.rma.make.batch.refund</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Make claim batch refund">
+                    <group>
+                        <field name="description"/>
+                    </group>
+                    <div/>
+                    <group>
+                        <group>
+                            <field name="company_id"/>
+                            <field name="from_invoice_date"/>
+                        </group>
+                        <group>
+                            <field name="partner_id"/>
+                            <field name="to_invoice_date"/>
+                        </group>
+                    </group>
+                    <div/>
+                    <group>
+                        <field name="claim_ids" widget ="many2many_tags"/>
+                    </group>
+                    <group>
+                        <field nolabel="1" name="claim_line_ids" readonly="1"/>
+                    </group>
+
+                    <footer>
+                        <button name="make_batch_refund" string="Make refund" type="object" class="oe_highlight"/>
+                        or
+                        <button string="Cancel" class="oe_link" special="cancel"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+     <!--record model="ir.actions.act_window" id="act_crm_claim_refunds_wzd">
+        <field name="name">Claim Refunds</field>
+        <field name="res_model">crm.claim.rma.make.batch.refund</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="crm_claim_rma_make_batch_refund"/>
+         <field name="target">new</field>
+        <field name="context">{
+            'search_default_group_by_state': True
+            }
+        </field>
+    </record>
+
+
+     <menuitem
+            name="Claim Refunds Wzd"
+            id="menu_crm_claim_refund_wzd"
+            parent="crm_claim.menu_aftersale"
+            action="act_crm_claim_refunds_wzd"
+            sequence="2"/-->
+
+
+     <act_window
+            id="act_crm_claim_batch_refunds"
+            name="Batch Refunds"
+            res_model="crm.claim.rma.make.batch.refund"
+            key2="client_action_multi"
+            view_id ="crm_claim_rma_make_batch_refund"
+            multi="True"
+            target="new"
+            src_model="crm.claim"/>
+    </data>
+</openerp>

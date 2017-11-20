@@ -25,7 +25,8 @@
         'purchase',
         'commercial_rules',
         'telesale',
-        'sale_early_payment_discount'
+        'sale_early_payment_discount',
+        'report_wkhtmltopdf_param'
     ],
     "data": [
         'views/layout_templates.xml',
@@ -52,6 +53,7 @@
         'views/account.xml',
         'views/ir_qweb.xml',
         'data/stock_mail_template.xml',
-        'data/sale_mail_template.xml'
+        'data/sale_mail_template.xml',
+        'views/product_labels_report.xml'
     ],
 }

@@ -69,6 +69,17 @@ class PurchaseOrderLine(models.Model):
             'context': self.env.context
         }
 
+    def _onchange_quantity(self):
+        if self.price_unit == 0.0:
+            return super(PurchaseOrderLine,self)._onchange_quantity()
+        else:
+            # Llamamos a super para realizar el resto de cambios pero
+            # volvemos a cambiar el precio.
+            price_unit = self.price_unit
+            res = super(PurchaseOrderLine,self)._onchange_quantity()
+            self.price_unit = price_unit
+            return res
+
 
 class PurchaseOrder(models.Model):
 
