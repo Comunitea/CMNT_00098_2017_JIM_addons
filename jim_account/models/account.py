@@ -31,3 +31,9 @@ class AccountMoveLine(models.Model):
         readonly=True)
 
 
+class AccountInvoice(models.Model):
+
+    _inherit = 'account.invoice'
+
+    user_id = fields.Many2one(states={'draft': [('readonly', False)],
+                                      'open': [('readonly', False)]})
