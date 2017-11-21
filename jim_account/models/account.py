@@ -37,3 +37,9 @@ class AccountInvoice(models.Model):
 
     user_id = fields.Many2one(states={'draft': [('readonly', False)],
                                       'open': [('readonly', False)]})
+
+
+    @api.multi
+    def action_invoice_paid(self):
+        super_invoices = self.filtered(lambda inv: inv.amount_total != 0)
+        return super(AccountInvoice, super_invoices).action_invoice_paid()
