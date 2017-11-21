@@ -103,7 +103,7 @@
                             <field name="product_template" attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
                             <field name="product_id" invisible="1"/>
                             <field name="name" attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
-                            <!--field name="global_available_stock"/-->
+                            <field name="global_available_stock"/>
                             <field name="lines_qty"/>
                             <field name="product_uom_qty" attrs="{'readonly': [('lines_qty', '&gt;', 1)]}"/>
                             <field name="product_uom" />
