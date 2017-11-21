@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 # © 2016 Comunitea
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
+from odoo import api, fields, models, _
+import odoo.addons.decimal_precision as dp
+from odoo.exceptions import ValidationError
 
 
 STOCK_TO_REFRESH = 'global_real_stock'
 
-from odoo import api, fields, models, _
-import odoo.addons.decimal_precision as dp
 
 class MrpProduction(models.Model):
 
@@ -19,11 +20,14 @@ class MrpProduction(models.Model):
     web_global_stock = fields.Float('Web stock', readonly=True,
                                     digits=dp.get_precision
                                     ('Product Unit of Measure'))
+
     @api.multi
     def refresh_stock(self):
         for production in self:
-            production.global_real_stock = production.product_id.global_real_stock
-            production.web_global_stock = production.product_id.web_global_stock
+            production.global_real_stock = \
+                production.product_id.global_real_stock
+            production.web_global_stock = \
+                production.product_id.web_global_stock
             for line in production.move_raw_ids:
                 line.global_real_stock = line.product_id.global_real_stock
                 line.web_global_stock = line.product_id.web_global_stock
@@ -43,7 +47,8 @@ class MrpProduction(models.Model):
     @api.model
     def create(self, values):
         if values.get('product_id'):
-            product_id = self.env['product.product'].browse(values['product_id'])
+            product_id = self.env['product.product'].browse(
+                values['product_id'])
             values['global_real_stock'] = product_id.global_real_stock
             values['web_global_stock'] = product_id.web_global_stock
         return super(MrpProduction, self).create(values)
@@ -57,9 +62,7 @@ class MrpProduction(models.Model):
         return moves
 
 
-
-
-class stock_move(models.Model):
+class StockMove(models.Model):
     _inherit = 'stock.move'
 
     global_real_stock = fields.Float('Global Real Stock',
@@ -69,3 +72,19 @@ class stock_move(models.Model):
     web_global_stock = fields.Float('Web stock', readonly=True,
                                     digits=dp.get_precision
                                     ('Product Unit of Measure'))
+
+
+class MrpBoom(models.Model):
+    _inherit = 'mrp.bom'
+
+    @api.constrains('product_id', 'product_tmpl_id', 'bom_line_ids')
+    def _check_product_recursion(self):
+        for bom in self:
+            if bom.product_id:
+                if bom.bom_line_ids.filtered(
+                        lambda x: x.product_id == bom.product_id):
+                    raise ValidationError(
+                        _('BoM line product %s should not \
+be same as BoM product.') % bom.display_name)
+            else:
+                return super(MrpBoom, self)._check_product_recursion()
