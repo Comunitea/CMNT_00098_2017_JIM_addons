@@ -17,4 +17,3 @@ class AccountInvoice(models.Model):
             invoice.claim_ids = self.env['crm.claim'].search([('invoice_id', '=', self.id)])
 
     claim_ids = fields.One2many('crm.claim', string='Claims RMA', compute=_get_claim_ids)
-a
