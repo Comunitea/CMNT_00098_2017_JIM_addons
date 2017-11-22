@@ -102,7 +102,7 @@
                                             t-options='{"widget": "monetary", "display_currency": doc.pricelist_id.currency_id}'/>
                                     </td>
                                 </tr>
-                                <tr class="border-black" t-if="doc.state=='proforma' and doc.early_payment_discount">
+                                <tr class="border-black" t-if="doc.early_payment_discount">
                                     <td><strong>Total con descuento</strong></td>
                                     <td class="text-right">
                                         <span t-field="doc.early_payment_disc_total"
