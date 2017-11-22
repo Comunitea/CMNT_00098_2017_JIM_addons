@@ -40,6 +40,7 @@
         'report/report_sale_line.xml',
         'report/report_web_product.xml',
         'wizard/wzd_sale_order_cancel.xml',
+        'views/pricelist.xml'
     ],
     "installable": True
 }

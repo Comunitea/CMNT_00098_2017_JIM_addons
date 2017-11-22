@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record id="product_pricelist_item_tre_editable" model="ir.ui.view">
+        <field name="name">product.pricelist.item.tree.editable</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Pricelist Items" editable="top">
+                <field name="sequence" widget="handle"/>
+                <field colspan="4" name="name"/>
+                <field name="product_id" groups="product.group_product_variant"/>
+                <field name="product_tmpl_id"/>
+                <field name="categ_id"/>
+                <field name="min_quantity"/>
+                <field name="date_start"/>
+                <field name="date_end"/>
+                <field name="fixed_price"/>
+            </tree>
+        </field>
+    </record>
+
+
+    <record id="product_pricelist_item_fixed_price_action" model="ir.actions.act_window">
+        <field name="name">Fixed prices</field>
+        <field name="res_model">product.pricelist.item</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="product_pricelist_item_tre_editable"/>
+        <field name="domain">[('compute_price', '=', 'fixed')]</field>
+    </record>
+
+    <menuitem name="Fixed prices" parent="sale.menu_product_pricelist_main"
+              action="product_pricelist_item_fixed_price_action"
+              id="product_pricelist_item_fixed_price_menu"/>
+
+</odoo>
