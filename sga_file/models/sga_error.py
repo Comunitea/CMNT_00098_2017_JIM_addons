@@ -7,7 +7,7 @@ from odoo import fields, models, tools, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 import codecs
 IGNORED_CODES = ('20992')
-
+ENCODE = "utf-8"
 class SGAfileerror(models.Model):
 
     _name = "sga.file.error"
@@ -45,7 +45,7 @@ class SGAfileerror(models.Model):
         for line_d in sga_file:
             try:
                 if bom:
-                    line = line_d.decode("latin_1").encode("latin_1")
+                    line = line_d.decode(ENCODE).encode(ENCODE)
                 else:
                     line = line_d
                 line_number += 1
