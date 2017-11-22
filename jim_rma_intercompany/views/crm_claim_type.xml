@@ -7,6 +7,7 @@
         <field name="arch" type="xml">
             <field name="name" position="after">
                 <field name="return_claim"/>
+                <field name="type"/>
             </field>
         </field>
     </record>

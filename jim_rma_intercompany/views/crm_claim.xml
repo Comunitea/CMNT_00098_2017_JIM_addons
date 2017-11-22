@@ -12,14 +12,13 @@
             <field name="invoice_id" position="after">
                 <field name="stage_sequence" invisible="1"/>
                 <field name="invoice_status"/>
+
             </field>
             <field name="priority" position="after">
                 <field name="claim_id" readonly="1" attrs="{'invisible': [('claim_id', '=', False)]}"/>
             </field>
             <xpath expr="//field[@name='claim_line_ids']" position="attributes">
-                <attribute name="attrs">{
-                                         'readonly': [('stage_sequence', '=', 'default_done')],
-                    }</attribute>
+                <attribute name="attrs">{'readonly': [('invoice_status', '=', 'invoiced')]}</attribute>
             </xpath>
             <xpath expr="//button[2]" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -30,13 +29,7 @@
             <xpath expr="//button[3]" position="attributes">
                 <attribute name="attrs">{'invisible': 1}</attribute>
             </xpath>
-            <xpath expr="//field[@name='partner_id']" position="attributes">
-                <attribute name="attrs">{'readonly': [('stage_sequence', '!=', 'default_new')],
-                   }</attribute>
 
-
-
-            </xpath>
             <xpath expr="//field[@name='warehouse_id']" position="attributes">
                 <attribute name="attrs">{'readonly': [('stage_sequence', '!=', 'default_new')]}</attribute>
             </xpath>
@@ -49,6 +42,9 @@
             <xpath expr="//field[@name='team_id']" position="after">
                 <field name="company_id" attrs="{'readonly': [('stage_sequence', '!=', 'default_new')]}" />
             </xpath>
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="ref" readonly="1"></field>
+            </xpath>
             <xpath expr="//field[@name='partner_phone']" position="attributes">
                 <attribute name="required">0</attribute>
             </xpath>
@@ -60,14 +56,57 @@
             </xpath>
 
             <xpath expr="//button[3]" position="after">
+                <button name="write_picks"
+                        class="oe_inline"
+                        type='object' string='Confirmar Picks'
+                        attrs="{'invisible': [('stage_sequence', '!=', 'default_run'), ('picking_status', '!=', 'to_pick')]}"
+                        context="{
+                            'claim_id': id,
+                            }"/>
                 <button name="%(act_crm_claim_batch_refunds)d"
                         class="oe_inline"
                         type='action' string='Abonar'
-                        attrs="{'invisible': [('stage_sequence', '!=', 'default_run')]}"
+                        attrs="{'invisible': [('stage_sequence', '!=', 'default_run'), ('invoice_status','!=','to_invoice')]}"
                         context="{
                             'claim_id': id,
                             }"/>
             </xpath>
+
+            <xpath expr="//field[@name='picking_ids']" position="replace">
+                <div>
+                    <group>
+                        <field name="picking_status"/>
+                    </group>
+                </div>
+                <field name="picking_ids" readonly="1">
+                <tree decoration-muted="state == 'cancel'"
+                      decoration-success="state == 'done' and returned_picking_id == False"
+                      decoration-info="priority == '1' and state not in ('cancel', 'done')"
+                      decoration-bf="priority == '1'"
+                      decoration-warning="returned_picking_id != False"
+                      string="Picking list" colspan="4" readonly="1">
+                    <field name="id"/>
+                    <field name="name"/>
+                    <field name="location_id"/>
+                    <field name="location_dest_id"/>
+                    <field name="company_id"/>
+                    <field name="partner_id"/>
+                    <field name="origin"/>
+                    <field name="returned_picking" invisible="1"/>
+                    <field name="state"/>
+                    <field name="priority" invisible="1"/>
+                    <field name="returned_picking_id" invisible="1"/>
+                    <field name="create_date"/>
+                     <button name="print_this_pick"
+                             icon="fa-print "
+                        class="oe_inline"
+                        type='object' string='Print'
+                        />
+                </tree>
+                </field>
+                <field name="picking_status"/>
+            </xpath>
+
         </field>
     </record>
 

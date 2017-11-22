@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <report
+            string="RMA"
+            id="action_report_picking_CRM"
+            model="crm.claim"
+            report_type="qweb-pdf"
+            name="jim_rma_intercompany.report_crm_claim"
+            file="crm_claim.rma_report"
+        />
+
+        <template id="report_crm_claim">
+            <t t-call="report.html_container">
+                <t t-foreach="docs" t-as="o">
+                    <t t-call="stock.external_layout_barcode_right">
+                        <div class="page">
+                            <br/>
+
+
+                            <br/>
+                            <h1 t-field="o.code" class="mt0"/>
+                            <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th t-if="o.name"><strong>Origen</strong></th>
+                                    <th><strong>Estado</strong></th>
+                                    <th><strong>Fecha</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td t-if="o.name">
+                                        <span t-field="o.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.stage_id"/>
+                                    </td>
+                                    <td>
+                                        <span t-field="o.create_date"/>
+                                    </td>
+
+                                </tr>
+                            </tbody>
+                            </table>
+                            <br/>
+                            <br/>
+                            <table class="table table-condensed" t-if="o.claim_line_ids">
+                              <thead>
+                                <tr>
+                                    <th><strong>Artículo</strong></th>
+                                    <th class="text-right"><strong>Cantidad</strong></th>
+                                    <th class="text-right"><strong>PVP</strong></th>
+                                    <th class="text-right"><strong>Destino</strong></th>
+                                </tr>
+                              </thead>
+                            <tbody>
+                            <tr t-foreach="o.claim_line_ids" t-as="line">
+
+
+                                <td>
+                                    <span t-field="line.product_id"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-field="line.product_returned_quantity"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-field="line.unit_sale_price"/>
+                                </td>
+                                <td class="text-right">
+                                    <span t-field="line.location_dest_id"/>
+                                </td>
+
+
+                    </tr>
+                  </tbody>
+                </table>
+                            <p t-field="o.description"/>
+                        </div>
+                    </t>
+                 </t>
+             </t>
+        </template>
+    </data>
+</odoo>

@@ -28,6 +28,9 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
         ctx = self._context.copy()
         domain = [('id', 'in', ctx.get('active_ids'))]
         claim_ids = self.env['crm.claim'].search(domain)
+
+        if not all(x.stage_id.default_run for x in claim_ids):
+            raise exceptions.UserError('No están todas las reclamaciones en estado correcto')
         if claim_ids and claim_ids[0].company_id != self.env.user.company_id:
             raise exceptions.UserError(_('Not in %s' % claim_ids[0].sudo().company_id.name))
         res = super(CrmClaimRmaMakeBatchRefund, self).default_get(fields)
@@ -45,6 +48,9 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
 
             picks_domain = [('claim_id', 'in', claim_ids.ids)]
             picks = self.env['stock.picking'].search(picks_domain)
+            if not all(x.state=='done' for x in picks):
+                raise exceptions.UserError('No están todas las reclamaciones en estado correcto')
+
             from_invoice_date = min(pick.date_done for pick in picks)
             to_invoice_date = max(pick.date_done for pick in picks)
             line_domain = [('claim_id', 'in', claim_ids.ids),
@@ -65,7 +71,6 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
 
     @api.multi
     def make_batch_refund(self):
-
         if self.company_id != self.env.user.company_id:
             raise exceptions.UserError(_('Not in %s' % self.company_id.name))
         ctx = self._context.copy()
@@ -105,7 +110,7 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
             invoice_line_vals = \
                 {'product_id': line.product_id.id,
                  'name': line.name,
-                 'quantity': line.product_returned_quantity,
+                 'quantity': self.get_claim_line_qty_to_invoice(line) or line.product_returned_quantity,
                  'price_unit': line.unit_sale_price,
                  'invoice_id': new_invoice.id}
 
@@ -131,3 +136,37 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
         result = self.env.ref('account.action_invoice_tree1').read()[0]
         result['domain'] = [('id', '=', new_invoice.id)]
         return result
+
+    @api.multi
+    def get_claim_line_qty_to_invoice(self, line):
+        """Computes the returned quantity on rma claim lines, based on done stock moves related to its pickings
+        """
+
+        qty = 0.0
+        if line.claim_id.claim_type.name == 'Customer':
+            picks = line.claim_id.picking_ids.filtered\
+                (lambda x: x.claim_id == line.claim_id and
+                           (x.location_id.usage == "customer" or x.location_dest_id.usage == "customer"))
+            moves = picks.move_lines.filtered(lambda x: x.claim_line_id == line.id)
+            qty = 0.0
+            for move in moves:
+                if move.location_dest_id.usage == "customer":
+                    qty += move.product_qty
+                elif move.location_id.usage == "customer" and move.to_refund_so:
+                    qty -= move.product_qty
+            line.qty_to_invoice = qty
+
+        elif line.claim_id.claim_type.name == 'Supplier':
+            picks = line.claim_id.picking_ids.filtered\
+                (lambda x: x.claim_id == line.claim_id and
+                           (x.location_id.usage == "supplier" or x.location_dest_id.usage == "supplier"))
+            moves = picks.move_lines.filtered(lambda x:x.claim_line_id == line.id)
+
+            qty = 0.0
+            for move in moves:
+                if move.location_dest_id.usage == "supplier":
+                    qty += move.product_qty
+                elif move.location_id.usage == "supplier" and move.to_refund_so:
+                    qty -= move.product_qty
+            line.qty_to_invoice = qty
+        return qty

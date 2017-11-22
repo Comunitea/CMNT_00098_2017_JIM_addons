@@ -10,3 +10,5 @@ class CrmClaimType(models.Model):
     _inherit = 'crm.claim.type'
 
     return_claim = fields.Many2one('crm.claim.type', 'Return claim')
+    type = fields.Selection([('customer', 'Customer'), ('supplier', 'Supplier'), ('internal', 'Internal')],
+                            string="Type code", help="Claim type code. To get picking type in RMA")
