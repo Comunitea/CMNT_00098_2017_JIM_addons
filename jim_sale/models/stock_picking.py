@@ -43,6 +43,15 @@ class StockPicking(models.Model):
             if op.qty_done == 0:
                 op.qty_done = op.ordered_qty
 
+    def product_qty_to_qty_done(self):
+        if self.state in ('assigned', 'partially_available'):
+            if all(x.qty_done == 0 for x in self.pack_operation_product_ids):
+                for pack in self.pack_operation_ids:
+                    if pack.product_qty > 0:
+                        pack.write({'qty_done': pack.product_qty})
+                    else:
+                        pack.unlink()
+
     # @api.one
     # @api.depends('move_lines.procurement_id.sale_line_id.order_id')
     # def _compute_sale_id(self):
