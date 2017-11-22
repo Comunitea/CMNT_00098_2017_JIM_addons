@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
-        <record model="ir.ui.view" id="view_picking_type_form_property">
-            <field name="name">view.picking.type.property</field>
-            <field name="model">stock.picking.type</field>
-            <field name="inherit_id" ref="stock.view_picking_type_form"/>
-            <field name="arch" type="xml">
-                <field name="sequence_id" position="after">
-                    <field name="property_sequence_id"/>
-                </field>
+    <record model="ir.ui.view" id="view_picking_type_form_property">
+        <field name="name">view.picking.type.property</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_form"/>
+        <field name="arch" type="xml">
+            <field name="sequence_id" position="after">
+                <field name="property_sequence_id"/>
             </field>
-        </record>
-        <record model="ir.ui.view" id="stock.view_picking_type_tree_property">
-            <field name="name">view.picking.type.property.tree</field>
-            <field name="model">stock.picking.type</field>
-            <field name="inherit_id" ref="stock.view_picking_type_tree"/>
-            <field name="arch" type="xml">
-                <field name="sequence_id" position="after">
-                    <field name="property_sequence_id"/>
-                </field>
+        </field>
+    </record>
+
+    <record model="ir.ui.view" id="view_picking_type_tree_property">
+        <field name="name">view.picking.type.property.tree</field>
+        <field name="model">stock.picking.type</field>
+        <field name="inherit_id" ref="stock.view_picking_type_tree"/>
+        <field name="arch" type="xml">
+            <field name="sequence_id" position="after">
+                <field name="property_sequence_id"/>
             </field>
-        </record>
-    </data>
+        </field>
+    </record>
 </odoo>

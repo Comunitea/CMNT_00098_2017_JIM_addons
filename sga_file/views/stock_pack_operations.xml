@@ -13,19 +13,38 @@
         <template id="report_picking_mar">
             <t t-call="report.html_container">
                 <t t-foreach="docs" t-as="o">
+
+                    <t t-if="o.partner_id">
+                        <strong>Partner</strong>
+                        <div t-field="o.dest_address_id"
+                            t-field-options='{"widget": "contact", "fields": ["address", "name", "phone", "mobile"], "no_marker": true, "phone_icons": True, "min_name": True}' />
+                    </t>
                     <t t-call="stock.external_layout_barcode_right">
                         <div class="page">
                             <br/>
-
-
-                            <br/>
                             <h1 t-field="o.name" class="mt0"/>
+
+                            <table class="table table-condensed">
+                            <thead>
+                                <tr>
+                                    <th><strong>Almacén</strong></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <span t-field="o.warehouse_id"/>:
+                                        <span t-field="o.location_id"/> >>> <span t-field="o.location_dest_id"/>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            </table>
+
                             <table class="table table-condensed">
                             <thead>
                                 <tr>
                                     <th t-if="o.origin"><strong>Order (Origin)</strong></th>
                                     <th><strong>State</strong></th>
-                                    <th><strong>Commitment Date</strong></th>
                                     <th name="td_sched_date_h"><strong>Scheduled Date</strong></th>
                                 </tr>
                             </thead>
@@ -37,16 +56,12 @@
                                     <td>
                                         <span t-field="o.state"/>
                                     </td>
-                                    <td>
-                                        <span t-field="o.date"/>
-                                    </td>
                                     <td name="td_sched_date">
                                         <span t-field="o.min_date"/>
                                     </td>
                                 </tr>
                             </tbody>
                             </table>
-                            <br/>
                             <br/>
                             <table class="table table-condensed" t-if="o.pack_operation_ids">
                               <thead>
@@ -64,7 +79,7 @@
                                 <td>
                                     <span t-field="pack_operation.product_id"/>
                                 </td>
-                                <td class="text-left">
+                                <td class="text-right">
                                     <span t-field="pack_operation.product_qty"/>
                                 </td>
 

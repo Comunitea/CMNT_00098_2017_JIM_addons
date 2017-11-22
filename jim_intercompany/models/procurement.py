@@ -209,46 +209,46 @@ class ProcurementOrder(models.Model):
             if po:
                 res += [procurement.id]
 
-            # Create Line
-            po_line = False
-            for line in po.order_line:
-                if line.product_id == procurement.product_id and line.product_uom == procurement.product_id.uom_po_id:
-                    procurement_uom_po_qty = procurement.product_uom.\
-                        _compute_quantity(procurement.product_qty,
-                                          procurement.product_id.uom_po_id)
-                    # CHANGED, GET PRICE UNIT FROM NEW FIELD
-                    intercompany_price = \
-                        line.product_id.get_intercompany_price(
-                            po.company_id.id, po.partner_id.id)
-                    #intercompany_price = line.product_id.intercompany_price
-                    price_unit = self.env['account.tax'].\
-                        _fix_tax_included_price(intercompany_price,
-                                                line.product_id.supplier_taxes_id,
-                                                line.taxes_id)
-
-                    po_line = line.write({
-                        'product_qty': line.product_qty + procurement_uom_po_qty,
-                        'price_unit': price_unit,
-                        'procurement_ids': [(4, procurement.id)]
-                    })
-                    break
-            if not po_line:
-                # CHANGED, SUPPLIER BY PARTNER
-                vals = procurement.\
-                    _prepare_intercompany_purchase_line(po, partner)
-                # CHANGED, GET PRICE UNIT FROM NEW FIELD
-                prod = procurement.product_id
-                taxes = prod.supplier_taxes_id
-                fpos = po.fiscal_position_id
-                taxes_id = fpos.map_tax(taxes) if fpos else taxes
-                if taxes_id:
-                    taxes_id = taxes_id.\
-                        filtered(lambda x: x.company_id.id == po.company_id.id)
-                vals['price_unit'] = self.env['account.tax'].\
-                    _fix_tax_included_price(prod.get_intercompany_price(
-                    po.company_id.id, po.partner_id.id),
-                                            prod.supplier_taxes_id, taxes_id)
-                self.env['purchase.order.line'].create(vals)
+            # # Create Line
+            # po_line = False
+            # for line in po.order_line:
+            #     if line.product_id == procurement.product_id and line.product_uom == procurement.product_id.uom_po_id:
+            #         procurement_uom_po_qty = procurement.product_uom.\
+            #             _compute_quantity(procurement.product_qty,
+            #                               procurement.product_id.uom_po_id)
+            #         # CHANGED, GET PRICE UNIT FROM NEW FIELD
+            #         intercompany_price = \
+            #             line.product_id.get_intercompany_price(
+            #                 po.company_id.id, po.partner_id.id)
+            #         #intercompany_price = line.product_id.intercompany_price
+            #         price_unit = self.env['account.tax'].\
+            #             _fix_tax_included_price(intercompany_price,
+            #                                     line.product_id.supplier_taxes_id,
+            #                                     line.taxes_id)
+            #
+            #         po_line = line.write({
+            #             'product_qty': line.product_qty + procurement_uom_po_qty,
+            #             'price_unit': price_unit,
+            #             'procurement_ids': [(4, procurement.id)]
+            #         })
+            #         break
+            # if not po_line:
+            # CHANGED, SUPPLIER BY PARTNER
+            vals = procurement.\
+                _prepare_intercompany_purchase_line(po, partner)
+            # CHANGED, GET PRICE UNIT FROM NEW FIELD
+            prod = procurement.product_id
+            taxes = prod.supplier_taxes_id
+            fpos = po.fiscal_position_id
+            taxes_id = fpos.map_tax(taxes) if fpos else taxes
+            if taxes_id:
+                taxes_id = taxes_id.\
+                    filtered(lambda x: x.company_id.id == po.company_id.id)
+            vals['price_unit'] = self.env['account.tax'].\
+                _fix_tax_included_price(prod.get_intercompany_price(
+                po.company_id.id, po.partner_id.id),
+                                        prod.supplier_taxes_id, taxes_id)
+            self.env['purchase.order.line'].create(vals)
 
             # # CHANGED, AUTOMATIC CONFIRMATION
             # if auto_confirm:

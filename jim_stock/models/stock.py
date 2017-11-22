@@ -8,6 +8,7 @@ import odoo.addons.decimal_precision as dp
 
 class StockPicking (models.Model):
     _inherit = "stock.picking"
+
     pick_weight = fields.Float(string='Shipping Weight',
                  help="Manual weight in pick. Propagate to next asociated pick.")
 
@@ -15,10 +16,10 @@ class StockPicking (models.Model):
     partner_id = fields.Many2one(
         'res.partner', 'Partner', required=1, default=lambda self: self.env.user.company_id.partner_id.id,
         states={})
-
     observations = fields.Text(related='sale_id.observations')
     purchase_date_order = fields.Datetime(related="purchase_id.date_order")
     confirmation_date = fields.Datetime(related="sale_id.confirmation_date")
+    returned_picking_id = fields.Many2one('stock.picking')
 
 class StockLocation(models.Model):
     _inherit = "stock.location"

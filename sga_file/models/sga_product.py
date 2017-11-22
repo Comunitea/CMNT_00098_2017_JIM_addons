@@ -177,9 +177,8 @@ class SGAProductProduct(models.Model):
     @api.depends('display_name')
     def _get_sga_names(self):
         for product in self:
-            display_name = (product.display_name.lstrip("[%s]"%product.default_code)).strip()
-            product.sga_name_get = display_name
-            product.sga_prod_shortdesc = display_name[0:50]
+            product.sga_name_get = product.display_name
+            product.sga_prod_shortdesc = product.display_name[0:50]
 
     sga_name_get = fields.Char("Mecalux name", compute='_get_sga_names')
     sga_prod_shortdesc = fields.Char("Nombre Radiofrecuencia", compute='_get_sga_names')
@@ -236,7 +235,14 @@ class SGAProductProduct(models.Model):
     @api.model
     def create(self, values):
         return super(SGAProductProduct, self).create(values)
+        icp = self.env['ir.config_parameter']
+        if icp.get_param('product_auto'):
+            fields_to_check = ('default_code', 'barcode', 'categ_id',
+                               'display_name', 'sga_prod_shortdesc')
+            if all(res[field] for field in fields_to_check):
+                res.new_mecalux_file()
 
+        return res
 
     @api.multi
     def new_mecalux_file(self, operation=False):

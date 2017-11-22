@@ -21,7 +21,7 @@
                                 Customer order number
                                 <span t-field="o.mapped('invoice_line_ids.sale_line_ids.order_id').client_order_ref"/><br/>
                             </t>
-                            <span t-field="o.name"/>
+                            <span t-field="o.name" t-if="o.type not in ('in_refund', 'out_refund')"/>
                             <span t-field="o.notes"/>
                     </div>
 
@@ -180,7 +180,7 @@
                             </p>
                         </div>
                         <div class="col-xs-5" t-if="not o.company_id.hide_fields and o.type not in ('in_refund', 'out_refund')">
-                            <span>En caso de devolución del recibo generado para el cobro de esta factura, <span t-field="o.company_id.name"/> aplicará un recargo del 6%</span>
+                            <span>En caso de la devolución del cobro de una factura, <span t-field="o.company_id.name"/>, aplicará un recargo del 6%  en recibos y de un 10% en  pagarés.</span>
                         </div>
                     </div>
 

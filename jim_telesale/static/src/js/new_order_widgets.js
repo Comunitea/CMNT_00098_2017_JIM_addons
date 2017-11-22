@@ -318,39 +318,17 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
         },
     printAlmOrder: function() {
         var self = this;
+        self.ts_model.ready3 = $.Deferred();
         self.print_id = false
         var current_order = this.ts_model.get('selectedOrder')
-        if (current_order.get('erp_id')){
-            // if (current_order.get('state') != 'draft'){
-            //     self.doPrintAlm(current_order.get('erp_id'));
-            //     return;
-            // }
-            // else{
-            //     self.print_id = current_order.get('erp_id')
-            // }
+        if (current_order.get('erp_id') && false){ // No hacerlo nunca por si se modifica un presupuesto
             self.doPrintAlm(current_order.get('erp_id'));
 
         }
         else{
             this.ts_widget.new_order_screen.totals_order_widget.saveCurrentOrder()
-            $.when( self.ts_model.ready2 )
+            $.when( self.ts_model.ready3 )
             .done(function(){
-                // var domain = [['chanel', '=', 'telesale']]
-                // if (self.print_id){
-                //     domain = [['id', '=', self.print_id]]
-                // }
-                // var loaded = self.ts_model.fetch('sale.order', ['id', 'name'], domain)
-                //    .then(function(orders){
-                //        if (orders[0]) {
-                //        var my_id = orders[0].id
-                //        $.when( self.ts_widget.new_order_screen.order_widget.load_order_from_server(my_id) )
-                //        .done(function(){
-                //             var currentOrder = self.ts_model.get('selectedOrder')
-                //             self.doPrint(currentOrder.get('erp_id'));
-                //        });
-
-                //      }
-                //    });
                 var currentOrder = self.ts_model.get('selectedOrder')
                 self.doPrint(currentOrder.get('erp_id'));
             });
@@ -367,11 +345,13 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
         self.saveCurrentOrder(true)
         $.when( self.ts_model.ready2 )
         .done(function(){
-            var loaded = self.ts_model.fetch('sale.order',
-                                            ['id', 'name'],
-                                            [
-                                                ['chanel', '=', 'telesale']
-                                            ])
+            if (self.ts_model.last_sale_id){
+                var domain = [['id', '=', self.ts_model.last_sale_id]]
+            }
+            else{
+                var domain = [['chanel', '=', 'telesale'], ['user_id', '=', self.ts_model.get('user').id]]
+            }
+            var loaded = self.ts_model.fetch('sale.order', ['id', 'name'], domain)
                 .then(function(orders){
                     if (orders[0]) {
                       (new Model('sale.order')).call('ts_action_proforma',[orders[0].id])
@@ -382,6 +362,12 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                           .done(function(){
                             var my_id = orders[0].id
                             $.when( self.ts_widget.new_order_screen.order_widget.load_order_from_server(my_id) )
+                            .done(function(){
+                                self.ts_model.last_sale_id = false
+                            })
+                            .fail(function(){
+                                self.ts_model.last_sale_id = false
+                            });
                           });
 
                     }

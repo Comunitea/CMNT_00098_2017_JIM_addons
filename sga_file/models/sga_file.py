@@ -17,6 +17,7 @@ import re
 #TODO REVISAR CUAL ES MAS EFICIENTE
 #import settings_sga_file
 #IN_FOLDER = settings_sga_file.IN_FOLDER
+ENCODE = "utf-8"
 
 DELETE_FILE = False
 ERRORS = 3
@@ -344,7 +345,7 @@ class MecaluxFileHeader(models.Model):
         f = open(log_path, 'a')
         if f:
             str_log = u'%s >> %s\r' %(header, str_log)
-            f.write(str_log.encode('utf-8'))
+            f.write(str_log.encode(ENCODE))
             f.close()
 
         return True
@@ -539,7 +540,7 @@ class MecaluxFileHeader(models.Model):
             f = open(new_sga_file.sga_file, 'a')
             if f:
                 file_str = "PLS".ljust(265, " ") + "T"
-                f.write(file_str.encode("latin_1"))
+                f.write(file_str.encode(ENCODE))
                 f.close()
                 path = self.get_global_path()
 
@@ -664,7 +665,7 @@ class MecaluxFileHeader(models.Model):
             f = open(new_sga_file.sga_file, 'a')
             if f:
                 file_str = get_line(sgavar, model_pool)
-                f.write(file_str.encode("latin_1"))
+                f.write(file_str.encode(ENCODE))
                 f.close()
 
                 path = self.get_global_path()

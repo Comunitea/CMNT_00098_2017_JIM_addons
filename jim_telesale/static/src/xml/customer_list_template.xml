@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<templates id="template_customer_list" inherit_id="telesale.template_customer_list">
+
+    <!-- AAvoid Company Option -->
+    <t t-extend="CustomerDetailsEdit">
+        <t t-jquery=".company_type" t-operation="replace">
+            <select style="display:inline;" class="company_type" name="type_select">
+               <option value="person" selected="1">Address</option> 
+            </select>
+        </t>
+    </t>
+
+</templates>

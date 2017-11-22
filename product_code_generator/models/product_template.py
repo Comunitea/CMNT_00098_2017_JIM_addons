@@ -40,10 +40,10 @@ class ProductProduct(models.Model):
         # Comprobamos si hay movimientos.
         if vals.get('default_code', False):
             for product in self:
-                if product.stock_move_ids and \
+                if product.active and product.stock_move_ids and \
                         product.default_code and \
                                 vals.get('default_code', False) != product.default_code:
-                    raise ValidationError("No puedes cambiar el código a un artículo con movimientos")
+                    raise ValidationError("No puedes cambiar el código a un artículo [%s] con movimientos"%product.default_code)
         return super(ProductProduct, self).write(vals)
 
     @api.model

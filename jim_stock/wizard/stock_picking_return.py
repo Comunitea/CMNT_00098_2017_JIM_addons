@@ -106,7 +106,7 @@ class StockReturnPicking(models.TransientModel):
         new_moves = self.env['stock.move'].search([('picking_id', '=', id)])
         for new_move in new_moves:
             new_move.purchase_line_id = new_move.origin_returned_move_id.purchase_line_id
-
+        self.env['stock.picking'].browse(id).write({'returned_picking_id': self.env.context['active_id']})
         return id, picking_type_id
 
 

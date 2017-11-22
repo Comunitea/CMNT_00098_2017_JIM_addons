@@ -4,6 +4,7 @@
 
 from odoo import models, fields, api, _
 from odoo.tools import float_compare
+from lxml import etree
 
 
 class SaleOrderLineTemplate(models.Model):
@@ -85,6 +86,23 @@ class SaleOrderLineTemplate(models.Model):
             return
         self.product_id = self.product_template.product_variant_ids[0]
 
+    # @api.onchange('product_uom_qty', 'product_uom', 'route_id')
+    # def _onchange_product_id_check_availability(self):
+    #     return
+    #
+    # @api.onchange('product_id')
+    # def _onchange_product_id_uom_check_availability(self):
+    #     return
+    #
+    # @api.onchange('product_uom_qty')
+    # def _onchange_product_uom_qty(self):
+    #     return
+    #
+    # @api.onchange('product_id')
+    # def _onchange_product_id_set_customer_lead(self):
+    #     return
+
+
 
 class SaleOrderLine(models.Model):
 
@@ -106,6 +124,19 @@ class SaleOrderLine(models.Model):
                                           compute="_get_global_stock",
                                           store=True)
     note = fields.Text("Notas")
+    partner_id = fields.Many2one(related='order_id.partner_id', string='partner', store=True, readonly=True)
+    pricelist_id = fields.Many2one(related='order_id.pricelist_id', string='partner', store=True, readonly=True)
+    check_edit = fields.Boolean(compute='_compute_check_edit')
+
+    @api.depends('template_line.lines_qty', 'product_id.product_tmpl_id.product_attribute_count')
+    def _compute_check_edit(self):
+        for line in self:
+            check_edit = True
+            if line.product_id.product_tmpl_id.product_attribute_count > 0:
+                check_edit = False
+            if line.template_line.lines_qty > 1:
+                check_edit = False
+            line.check_edit = check_edit
 
     @api.model
     def create(self, vals):
@@ -189,6 +220,26 @@ class SaleOrder(models.Model):
     sale_order_line_count = fields.Integer(
         compute='_compute_sale_order_line_count')
 
+    @api.model
+    def fields_view_get(self, view_id=None, view_type='form', toolbar=False,
+                        submenu=False):
+        """
+        Override to add message_content field in all the objects
+        that inherits mail.thread
+        """
+        res = super(SaleOrder, self).fields_view_get(
+            view_id=view_id, view_type=view_type, toolbar=toolbar,
+            submenu=submenu)
+        if view_type == 'form':
+            doc = etree.XML(res['arch'])
+
+            for node in doc.xpath("//field[@name='order_line']"):
+                # Add message_content in search view
+
+                node.getparent().remove(node)
+            res['arch'] = etree.tostring(doc)
+        return res
+
     @api.depends('order_line')
     def _compute_sale_order_line_count(self):
         for order in self:
@@ -221,4 +272,3 @@ class SaleOrder(models.Model):
         related_template_lines.unlink()
         res = super(SaleOrder, self).clear_existing_promotion_lines()
         return res
-

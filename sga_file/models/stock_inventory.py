@@ -14,23 +14,41 @@ import re
 
 class StockInventoryIssue(models.Model):
 
+
+    # def _get_move_ids(self, location_id = False, product_id = False):
+    #     domain = [('location_id', '=', location_id.id),
+    #               ('location_dest_id', '=', location_id.id),
+    #               ('product_id', '=', product_id.id)]
+    #
+    #     res = self.env['stock.move'].sudo().read_group(domain, ['id', 'product_id'], ['product_id'])
+    #     self.move_ids = len(res)
+
     _name = "stock.inventory.issue"
+
     pending_qty = fields.Float("Cantidad pendiente")
     product_id = fields.Many2one('product.product')
     active = fields.Boolean('ACK', default="True")
     notes = fields.Char('Notas')
+    read = fields.Boolean('Read from Mecalux')
+    mecalux_qty = fields.Float('Qty read from Mecalux')
+    odoo_qty = fields.Float('Qty read from Odoo')
+    #move_ids = fields.Integer('Moves implied', compute="_get_move_ids")
+    code = fields.Char('Product code')
+
+
+
+
 
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
     def compute_global_qty(self, location_id=False, force_company=False):
-
         company_no_stock_ids = \
             self.env['res.company'].sudo().search(
                 [('no_stock', '=', True)]).ids
 
-        domain = ([('product_id', '=', self.id), ('location_id', '=', location_id), ('company_id', 'not in', company_no_stock_ids)])
+        domain = ([('product_id', '=', self.id), ('location_id', '=', location_id)])
         if force_company:
             domain += [('company_id', '=', force_company)]
         else:
@@ -52,7 +70,8 @@ class StockInventoryLineSGA(models.Model):
         digits=dp.get_precision('Product Unit of Measure'), readonly=True, store=True)
 
 
-    @api.depends('location_id', 'product_id')
+    #@api.depends('location_id', 'product_id')
+    @api.depends('location_id')
     def _compute_global_qty(self):
         for line in self:
             line.global_qty = line.product_id.compute_global_qty(location_id=line.location_id.id)
@@ -107,7 +126,6 @@ class StockInventorySGA(models.Model):
         ids = [x.product_id.id for x in self.line_ids]
         new_sga_file = self.env['sga.file'].check_sga_file('product.product', ids, code='PST')
         return new_sga_file
-
 
     def import_inventory_STO(self, file_id):
 
@@ -190,7 +208,6 @@ class StockInventorySGA(models.Model):
             reg_qty_done = 0.00
             qty_to_reg = mec_qty - odoo_qty
             if qty_to_reg != 0:
-
                 print "Lineas %s. Referencia: %s Odoo qty = %s Mcx qty = %s"%(cont, product_id.default_code, odoo_qty, mec_qty)
             original_qty = qty_to_reg
             if qty_to_reg > 0:
@@ -250,7 +267,6 @@ class StockInventorySGA(models.Model):
         new_inventory_line = self.env['stock.inventory.line'].sudo().create(new_line_vals)
         return new_inventory_line
 
-
     def get_inventory_for(self, product_id, location_id, company_id):
 
         #miro si hay un inventario abierto para esta compañia y si no lo creo
@@ -271,8 +287,6 @@ class StockInventorySGA(models.Model):
         inventory = inventory[0]
         inventory.action_start()
         return inventory
-
-
 
     def reg_stock(self, product_id, location_id, company_id, qty_to_reg, mec_qty, force_company = False):
 
@@ -318,8 +332,6 @@ class StockInventorySGA(models.Model):
             new_inv_line.product_qty = new_inv_line.theoretical_qty + qty_to_reg
             return 0.00, inventory_id.id, qty_to_reg
 
-
-
     def global_stock_mecalux(self):
         if self.location_id.barcode != 'PLS':
             raise ValidationError ("Solo para almacén de Palas")
@@ -328,6 +340,24 @@ class StockInventorySGA(models.Model):
             self.env['sga.file'].create_global_PST()
         else:
             raise ValidationError("Si quieres selccionar productos, debes hacerlo desde la vista tree de productos")
+
+    @api.multi
+    def action_done(self):
+        ## sobre escribo la función para cambiar el signo en caso de pallatium
+        if self.company_id.vat:
+            return super(StockInventorySGA, self).action_done()
+
+        negative = next((line for line in self.mapped('line_ids') if
+                         line.product_qty < 0 and line.product_qty < line.theoretical_qty), False)
+        if negative:
+            raise UserError(_('You cannot set a negative product quantity greater than teorical quatity in an inventory line:\n\t%s - qty: %s') % (
+            negative.product_id.name, negative.product_qty))
+        self.action_check()
+        self.write({'state': 'done'})
+        self.post_inventory()
+        return True
+
+
 
 
 

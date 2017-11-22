@@ -6,6 +6,7 @@
 from odoo import fields, models, tools, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 import codecs
+ENCODE = "utf-8"
 
 class SGAAlias(models.Model):
 
@@ -29,7 +30,7 @@ class SGAAlias(models.Model):
         for line_d in sga_file:
             try:
                 if bom:
-                    line = line_d.decode("utf-8-sig").encode("utf-8")
+                    line = line_d.decode(ENCODE).encode(ENCODE)
                 else:
                     line = line_d
 

@@ -49,6 +49,10 @@
                     <field name="global_qty"/>
                     <field name="stock_mecalux"/>
                 </field>
+
+                <xpath expr="//field[@name='line_ids']/tree" position="attributes">
+                    <attribute name="decoration-bf">product_qty &lt; 0 and product_qty &lt; theoretical_qty</attribute>
+                </xpath>
             </field>
         </record>
 

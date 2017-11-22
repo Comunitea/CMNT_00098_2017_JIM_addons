@@ -18,7 +18,8 @@
         'sale_order_batch_confirm',
         'telesale',
         'sale_early_payment_discount',
-        'web_tree_many2one_clickable'
+        'web_tree_many2one_clickable',
+        'web_ir_actions_act_window_message'
     ],
     'contributors': [
         "Comunitea ",
@@ -39,6 +40,7 @@
         'report/report_sale_line.xml',
         'report/report_web_product.xml',
         'wizard/wzd_sale_order_cancel.xml',
+        'views/pricelist.xml'
     ],
     "installable": True
 }
