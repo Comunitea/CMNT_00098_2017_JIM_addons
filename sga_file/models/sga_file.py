@@ -17,7 +17,7 @@ import re
 #TODO REVISAR CUAL ES MAS EFICIENTE
 #import settings_sga_file
 #IN_FOLDER = settings_sga_file.IN_FOLDER
-ENCODE = "utf-8"
+ENCODE = "latin_1"
 
 DELETE_FILE = False
 ERRORS = 3
