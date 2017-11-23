@@ -48,7 +48,7 @@ class ProductTemplate(BaseExtClass):
         self.xml = poitem.format(
             self.template_code or self.default_code or self.id,     # ItemCode
             self.name,                                              # ItemName
-            '',                                                     # CodeBars
+            self.barcode or '',                                     # CodeBars
             self.description or '',                                 # UserText
             '',                                                     # Model
             tallaje or '',                                          # Tallaje

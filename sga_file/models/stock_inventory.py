@@ -14,23 +14,41 @@ import re
 
 class StockInventoryIssue(models.Model):
 
+
+    # def _get_move_ids(self, location_id = False, product_id = False):
+    #     domain = [('location_id', '=', location_id.id),
+    #               ('location_dest_id', '=', location_id.id),
+    #               ('product_id', '=', product_id.id)]
+    #
+    #     res = self.env['stock.move'].sudo().read_group(domain, ['id', 'product_id'], ['product_id'])
+    #     self.move_ids = len(res)
+
     _name = "stock.inventory.issue"
+
     pending_qty = fields.Float("Cantidad pendiente")
     product_id = fields.Many2one('product.product')
     active = fields.Boolean('ACK', default="True")
     notes = fields.Char('Notas')
+    read = fields.Boolean('Read from Mecalux')
+    mecalux_qty = fields.Float('Qty read from Mecalux')
+    odoo_qty = fields.Float('Qty read from Odoo')
+    #move_ids = fields.Integer('Moves implied', compute="_get_move_ids")
+    code = fields.Char('Product code')
+
+
+
+
 
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
     def compute_global_qty(self, location_id=False, force_company=False):
-
         company_no_stock_ids = \
             self.env['res.company'].sudo().search(
                 [('no_stock', '=', True)]).ids
 
-        domain = ([('product_id', '=', self.id), ('location_id', '=', location_id), ('company_id', 'not in', company_no_stock_ids)])
+        domain = ([('product_id', '=', self.id), ('location_id', '=', location_id)])
         if force_company:
             domain += [('company_id', '=', force_company)]
         else:

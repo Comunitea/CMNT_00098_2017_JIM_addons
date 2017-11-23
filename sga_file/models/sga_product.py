@@ -235,7 +235,14 @@ class SGAProductProduct(models.Model):
     @api.model
     def create(self, values):
         return super(SGAProductProduct, self).create(values)
+        icp = self.env['ir.config_parameter']
+        if icp.get_param('product_auto'):
+            fields_to_check = ('default_code', 'barcode', 'categ_id',
+                               'display_name', 'sga_prod_shortdesc')
+            if all(res[field] for field in fields_to_check):
+                res.new_mecalux_file()
 
+        return res
 
     @api.multi
     def new_mecalux_file(self, operation=False):

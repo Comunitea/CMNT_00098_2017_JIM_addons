@@ -134,6 +134,7 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_lqdr_option(self):
+        warning_msg = []
         for order in self:
             self.confirm_checks()
 
@@ -145,21 +146,6 @@ class SaleOrder(models.Model):
             date_order = fields.Datetime.now()
             order.confirmation_date = date_order
             order.date_order = date_order
-        return True
-
-    @api.multi
-    def action_lqdr_ok(self):
-        for order in self:
-            order.state = 'pending'
-            order.lqdr_state = 'lqdr_si'
-        return True
-
-    @api.multi
-    def action_pending_ok(self):
-        warning_msg = []
-        for order in self:
-            order.set_requested_date()
-            order.action_sale()
             if order.partner_id.sale_warn_msg:
                 # si se confirman varias ventas se montará un mensaje
                 # con todos los avisos
@@ -177,6 +163,20 @@ class SaleOrder(models.Model):
                 }
             else:
                 return True
+
+    @api.multi
+    def action_lqdr_ok(self):
+        for order in self:
+            order.state = 'pending'
+            order.lqdr_state = 'lqdr_si'
+        return True
+
+    @api.multi
+    def action_pending_ok(self):
+        for order in self:
+            order.set_requested_date()
+            order.action_sale()
+        return True
 
     @api.multi
     def action_sale(self):
