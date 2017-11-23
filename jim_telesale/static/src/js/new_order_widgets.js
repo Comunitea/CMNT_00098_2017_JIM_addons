@@ -321,7 +321,7 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
         self.ts_model.ready3 = $.Deferred();
         self.print_id = false
         var current_order = this.ts_model.get('selectedOrder')
-        if (current_order.get('erp_id') && current_order.get('erp_state') != 'draft'){ // No hacerlo nunca por si se modifica un presupuesto
+        if (current_order.get('erp_id') && current_order.get('erp_state') != 'draft'){
             self.doPrintAlm(current_order.get('erp_id'));
 
         }
