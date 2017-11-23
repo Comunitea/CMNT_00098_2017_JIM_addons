@@ -146,15 +146,21 @@ class SaleOrder(models.Model):
             date_order = fields.Datetime.now()
             order.confirmation_date = date_order
             order.date_order = date_order
-            if order.partner_id.sale_warn_msg:
+            if order.partner_id.sale_warn_msg or \
+                    order.partner_id.property_payment_term_id.prepayment:
                 # si se confirman varias ventas se montará un mensaje
                 # con todos los avisos
+                order_msg = ""
+                if order.partner_id.property_payment_term_id.prepayment:
+                    order_msg += "PAGO POR ANTICIPADO \n\n"
+                if order.partner_id.sale_warn_msg:
+                    order_msg += order.partner_id.sale_warn_msg
                 if len(self) > 1:
                     warning_msg.append(
                         '%s: %s' % (order.name,
-                                    order.partner_id.sale_warn_msg))
+                                    order_msg))
                 else:
-                    warning_msg.append(order.partner_id.sale_warn_msg)
+                    warning_msg.append(order_msg)
             if warning_msg:
                 return {
                     'type': 'ir.actions.act_window.message',
