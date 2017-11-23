@@ -44,7 +44,12 @@ class SaleOrder(models.Model):
                                domain=[('sale_selectable', '=', True)])
     lqdr_state = fields.Selection([('no_lqdr',''), ('lqdr_no','LQDR No tramitado'), ('lqdr_si','LQDR Tramitado'), ('lqdr_issue', 'LQDR Incidencia')], string="Estado LQDR", default='no_lqdr')
     sale_origin = fields.Char("Venta a Cliente", compute= _get_origin_sale)
-
+    partner_shipping_id = fields.Many2one(
+        states={'draft': [('readonly', False)], 'sent': [('readonly', False)],
+                'progress': [('readonly', False)],'lqdr': [('readonly', False)],
+                'progress_lqdr': [('readonly', False)],
+                'pending': [('readonly', False)],
+                'sale': [('readonly', False)], })
 
     @api.model
     def create_web(self, vals):
@@ -252,6 +257,17 @@ class SaleOrder(models.Model):
                                              DEFAULT_SERVER_DATETIME_FORMAT) + timedelta(
                     days=1)
             self.requested_date = date_planned
+
+    @api.multi
+    def write(self, vals):
+        for sale in self:
+            if 'partner_shipping_id' in vals and sale.procurement_group_id:
+                sale.procurement_group_id.partner_id = vals['partner_shipping_id']
+                pickings = self.env['stock.picking'].search(
+                    [('group_id', '=', sale.procurement_group_id.id),
+                     ('partner_id', '=', sale.partner_shipping_id.id)])
+                pickings.write({'partner_id': vals['partner_shipping_id']})
+        return super(SaleOrder, self).write(vals)
 
 
 class SaleOrderLine(models.Model):
