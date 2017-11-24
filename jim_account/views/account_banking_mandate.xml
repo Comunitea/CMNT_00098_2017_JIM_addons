@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_mandate_form_edit_name" model="ir.ui.view">
+        <field name="name">view_mandate_form_edit_name</field>
+        <field name="model">account.banking.mandate</field>
+        <field name="inherit_id" ref="account_banking_mandate.view_mandate_form"/>
+        <field name="arch" type="xml">
+            <field name="unique_mandate_reference" position="attributes">
+                <attribute name="readonly">0</attribute>
+            </field>
+        </field>
+    </record>
+
+
+</odoo>
