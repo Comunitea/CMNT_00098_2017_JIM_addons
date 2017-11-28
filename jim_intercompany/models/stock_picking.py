@@ -153,6 +153,7 @@ class StockPicking(models.Model):
                     x.sale_id.auto_generated and
                     x.state not in ['done', 'cancel']):
                 #self.intercompany_picking_process(picking)
+                picking.action_assign()
                 self.propagate_op_qty(picking)
                 picking.do_transfer()
         #Si es entrega a cliente buscar lineas en albaranes de compra intercompañia
@@ -392,6 +393,9 @@ class StockMove(models.Model):
         self = self.with_prefetch()
         new_move = super(StockMove, self).split(qty, restrict_lot_id,
                                                 restrict_partner_id)
+        # El nuevo movimiento no deb tener ordered_qty ya que se conserva en
+        #  el original , en el movieminto original, no....
+        self.browse(new_move).write({'ordered_qty': 0})
         # Es previo a la venta IC?
         previous_IC_sale = \
            self.move_dest_id.picking_id.sale_id.auto_generated  or False

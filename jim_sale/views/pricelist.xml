@@ -22,12 +22,27 @@
     </record>
 
 
+    <record id="product_pricelist_item_view_search" model="ir.ui.view">
+        <field name="name">product.pricelist.item.search</field>
+        <field name="model">product.pricelist.item</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search>
+               <field name="name"/>
+               <field name="product_id"/>
+               <field name="product_tmpl_id"/>
+               <field name="pricelist_id"/>
+           </search>
+        </field>
+    </record>
+
     <record id="product_pricelist_item_fixed_price_action" model="ir.actions.act_window">
         <field name="name">Fixed prices</field>
         <field name="res_model">product.pricelist.item</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="product_pricelist_item_tre_editable"/>
+        <field name="search_view_id" ref="product_pricelist_item_view_search"/>
         <field name="domain">[('compute_price', '=', 'fixed')]</field>
     </record>
 

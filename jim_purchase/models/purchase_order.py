@@ -122,18 +122,9 @@ class PurchaseOrder(models.Model):
 
     @api.multi
     def _add_supplier_to_product(self):
-        res = super(PurchaseOrder, self)._add_supplier_to_product()
-        for line in self.order_line:
-            partner = self.partner_id if not self.partner_id.parent_id else \
-                self.partner_id.parent_id
-            if line.product_id.seller_ids.filtered(lambda x: x.name == partner):
-                seller_id = line.product_id.seller_ids.filtered(lambda x: x.name == partner)
-                currency = partner.property_purchase_currency_id or self.env.user.company_id.currency_id
-
-                try:
-                    seller_id.write({'price': self.currency_id.compute(line.price_unit, currency)})
-                except AccessError:  # no write access rights -> just ignore
-                    break
+        # Evitamos añadir el proveedor al producto o cambiar el precio, se hace
+        # en la factura
+        pass
 
     @api.multi
     def button_confirm(self):

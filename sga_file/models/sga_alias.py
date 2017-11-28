@@ -6,7 +6,7 @@
 from odoo import fields, models, tools, api, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 import codecs
-ENCODE = "utf-8"
+ENCODE = "latin_1"
 
 class SGAAlias(models.Model):
 

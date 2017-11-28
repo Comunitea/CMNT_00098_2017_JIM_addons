@@ -44,7 +44,12 @@ class SaleOrder(models.Model):
                                domain=[('sale_selectable', '=', True)])
     lqdr_state = fields.Selection([('no_lqdr',''), ('lqdr_no','LQDR No tramitado'), ('lqdr_si','LQDR Tramitado'), ('lqdr_issue', 'LQDR Incidencia')], string="Estado LQDR", default='no_lqdr')
     sale_origin = fields.Char("Venta a Cliente", compute= _get_origin_sale)
-
+    partner_shipping_id = fields.Many2one(
+        states={'draft': [('readonly', False)], 'sent': [('readonly', False)],
+                'progress': [('readonly', False)],'lqdr': [('readonly', False)],
+                'progress_lqdr': [('readonly', False)],
+                'pending': [('readonly', False)],
+                'sale': [('readonly', False)], })
 
     @api.model
     def create_web(self, vals):
@@ -129,6 +134,7 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_lqdr_option(self):
+        warning_msg = []
         for order in self:
             self.confirm_checks()
 
@@ -140,7 +146,29 @@ class SaleOrder(models.Model):
             date_order = fields.Datetime.now()
             order.confirmation_date = date_order
             order.date_order = date_order
-        return True
+            if order.partner_id.sale_warn_msg or \
+                    order.partner_id.property_payment_term_id.prepayment:
+                # si se confirman varias ventas se montará un mensaje
+                # con todos los avisos
+                order_msg = ""
+                if order.partner_id.property_payment_term_id.prepayment:
+                    order_msg += "PAGO POR ANTICIPADO \n\n"
+                if order.partner_id.sale_warn_msg:
+                    order_msg += order.partner_id.sale_warn_msg
+                if len(self) > 1:
+                    warning_msg.append(
+                        '%s: %s' % (order.name,
+                                    order_msg))
+                else:
+                    warning_msg.append(order_msg)
+            if warning_msg:
+                return {
+                    'type': 'ir.actions.act_window.message',
+                    'title': _('Customer warning'),
+                    'message': '\n'.join(warning_msg),
+                }
+            else:
+                return True
 
     @api.multi
     def action_lqdr_ok(self):
@@ -151,27 +179,10 @@ class SaleOrder(models.Model):
 
     @api.multi
     def action_pending_ok(self):
-        warning_msg = []
         for order in self:
             order.set_requested_date()
             order.action_sale()
-            if order.partner_id.sale_warn_msg:
-                # si se confirman varias ventas se montará un mensaje
-                # con todos los avisos
-                if len(self) > 1:
-                    warning_msg.append(
-                        '%s: %s' % (order.name,
-                                    order.partner_id.sale_warn_msg))
-                else:
-                    warning_msg.append(order.partner_id.sale_warn_msg)
-            if warning_msg:
-                return {
-                    'type': 'ir.actions.act_window.message',
-                    'title': _('Customer warning'),
-                    'message': '\n'.join(warning_msg),
-                }
-            else:
-                return True
+        return True
 
     @api.multi
     def action_sale(self):
@@ -252,6 +263,17 @@ class SaleOrder(models.Model):
                                              DEFAULT_SERVER_DATETIME_FORMAT) + timedelta(
                     days=1)
             self.requested_date = date_planned
+
+    @api.multi
+    def write(self, vals):
+        for sale in self:
+            if 'partner_shipping_id' in vals and sale.procurement_group_id:
+                sale.procurement_group_id.partner_id = vals['partner_shipping_id']
+                pickings = self.env['stock.picking'].search(
+                    [('group_id', '=', sale.procurement_group_id.id),
+                     ('partner_id', '=', sale.partner_shipping_id.id)])
+                pickings.write({'partner_id': vals['partner_shipping_id']})
+        return super(SaleOrder, self).write(vals)
 
 
 class SaleOrderLine(models.Model):
