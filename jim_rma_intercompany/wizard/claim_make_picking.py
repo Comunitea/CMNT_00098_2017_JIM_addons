@@ -124,7 +124,7 @@ class ClaimMakePicking(models.TransientModel):
 
 
         self.sudo().do_picks(claim_ids)
-        self.env['crm.claim'].browse(claim_ids).write({'stage_id': claim._stage_find(state='run')})
+        self.env['crm.claim'].browse(claim_ids).write({'stage_id': claim._stage_find(domain=[('default_run','=',True)])})
         claim.claim_line_ids.write({'state': 'treated'})
 
         return res

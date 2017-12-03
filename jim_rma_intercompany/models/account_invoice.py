@@ -17,3 +17,13 @@ class AccountInvoice(models.Model):
             invoice.claim_ids = self.env['crm.claim'].search([('invoice_id', '=', self.id)])
 
     claim_ids = fields.One2many('crm.claim', string='Claims RMA', compute=_get_claim_ids)
+
+    def open_this_invoice(self):
+        res= {'type': 'ir.actions.act_window',
+         'name': ('Factura'),
+         'view_mode': 'form, tree',
+         'view_type': 'form',
+         'res_model': 'account.invoice',
+         'res_id': self.id
+         }
+        return res

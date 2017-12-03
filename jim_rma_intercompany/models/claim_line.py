@@ -23,6 +23,10 @@ class ClaimLine(models.Model):
                                        ' to the stocked/scraped product')
     #invoice_line_id = fields.Many2one('account.invoice.line', string="Invoice line")
     claim_line_id = fields.Many2one('claim.line')
+    #sobreescribo para quitar opciones y mejorar descripcion de los estados
+    state = fields.Selection(default='confirmed')
+
+
 
     @api.model
     def create(self, vals):

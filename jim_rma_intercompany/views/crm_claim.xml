@@ -12,13 +12,35 @@
             <field name="invoice_id" position="after">
                 <field name="stage_sequence" invisible="1"/>
                 <field name="invoice_status"/>
+                <field name="picking_status"/>
 
             </field>
             <field name="priority" position="after">
                 <field name="claim_id" readonly="1" attrs="{'invisible': [('claim_id', '=', False)]}"/>
             </field>
-            <xpath expr="//field[@name='claim_line_ids']" position="attributes">
-                <attribute name="attrs">{'readonly': [('invoice_status', '=', 'invoiced')]}</attribute>
+            <xpath expr="//field[@name='claim_line_ids']" position="replace">
+                <field name="claim_line_ids" attrs="{'readonly': [('invoice_status', '=', 'invoiced')]}">
+                    <tree string="Returned lines" editable="bottom" decoration-success="refund_line_id or invoice_line_id">
+                        <field name="claim_id" invisible="1"/>
+                        <field name="state"/>
+                        <field name="product_id"  options="{'no_create': True, 'no_create_edit':True}"/>
+                        <field name="name"/>
+                        <field name="unit_sale_price"/>
+                        <field name="prodlot_id" invisible="1"/>
+
+                        <!--field name="warning"/>
+                        <field name="warranty_type"/>
+                        <button name="set_warranty" string="Compute Warranty"
+                                type="object" icon="gtk-justify-fill"/-->
+                        <field name="product_returned_quantity"/>
+                        <field name="claim_origin"/>
+                        <field name="claim_diagnosis"/>
+                        <field name="refund_line_id" invisible="1"/>
+                        <field name="invoice_line_id" invisible="1"/>
+                        <field name="location_dest_id"/>
+                    </tree>
+                </field>
+
             </xpath>
             <xpath expr="//button[2]" position="attributes">
                 <attribute name="invisible">1</attribute>
@@ -58,26 +80,44 @@
             <xpath expr="//button[3]" position="after">
                 <button name="write_picks"
                         class="oe_inline"
-                        type='object' string='Confirmar Picks'
-                        attrs="{'invisible': [('stage_sequence', '!=', 'default_run'), ('picking_status', '!=', 'to_pick')]}"
+                        type='object' string='Validar'
+                        help="Validar todos los albaranes asociados a este RMA"
+                        attrs="{'invisible': [('picking_status', '!=', 'to do')]}"
                         context="{
                             'claim_id': id,
                             }"/>
                 <button name="%(act_crm_claim_batch_refunds)d"
                         class="oe_inline"
-                        type='action' string='Abonar'
-                        attrs="{'invisible': [('stage_sequence', '!=', 'default_run'), ('invoice_status','!=','to_invoice')]}"
+                        type='action' string='Facturar'
+                        help="Facturar este albarán. Los intercomañias NO se validan"
+                        attrs="{'invisible': [('invoice_status','!=','to invoice')]}"
                         context="{
                             'claim_id': id,
                             }"/>
             </xpath>
 
+
+            <xpath expr="//field[@name='invoice_ids']" position="replace">
+                <field name="invoice_ids" readonly="1">
+                    <tree>
+                        <field name="partner_id"/>
+                        <field name="number"/>
+                        <field name="reference"/>
+                        <field name="company_id"/>
+                        <field name="origin"/>
+                        <field name="amount_total"/>
+                        <field name="state"/>
+                        <button name="open_this_invoice"
+                            icon="fa-pencil-square-o"
+                            class="oe_inline"
+                            type='object' string='Open'
+                        />
+                    </tree>
+                </field>
+            </xpath>
+
             <xpath expr="//field[@name='picking_ids']" position="replace">
-                <div>
-                    <group>
-                        <field name="picking_status"/>
-                    </group>
-                </div>
+               
                 <field name="picking_ids" readonly="1">
                 <tree decoration-muted="state == 'cancel'"
                       decoration-success="state == 'done' and returned_picking_id == False"
@@ -85,14 +125,13 @@
                       decoration-bf="priority == '1'"
                       decoration-warning="returned_picking_id != False"
                       string="Picking list" colspan="4" readonly="1">
-                    <field name="id"/>
+                    <field name="id" invisible="1"/>
                     <field name="name"/>
                     <field name="location_id"/>
                     <field name="location_dest_id"/>
                     <field name="company_id"/>
                     <field name="partner_id"/>
                     <field name="origin"/>
-                    <field name="returned_picking" invisible="1"/>
                     <field name="state"/>
                     <field name="priority" invisible="1"/>
                     <field name="returned_picking_id" invisible="1"/>
@@ -102,9 +141,14 @@
                         class="oe_inline"
                         type='object' string='Print'
                         />
+                    <button name="open_this_pick"
+                             icon="fa-pencil-square-o"
+                        class="oe_inline"
+                        type='object' string='Open'
+                        />
                 </tree>
                 </field>
-                <field name="picking_status"/>
+
             </xpath>
 
         </field>
@@ -145,7 +189,7 @@
                         domain="['|', ('refund_line_id','!=',False),('invoice_line_id','!=',False)]"
                         separator="1" help="Invoiced claim lines"/>
                 <filter string="To Invoiced" name="invoiced"
-                        domain="[('refund_line_id','=',False),('invoice_line_id','=',False)]"
+                        domain="[('state','=','treated'), ('refund_line_id','=',False), ('invoice_line_id','=',False)]"
                         separator="1" help="Claim lines to invoice"/>
                 <separator orientation="vertical"/>
             </xpath>
