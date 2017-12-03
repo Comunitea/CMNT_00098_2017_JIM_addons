@@ -40,7 +40,8 @@
         #'data/sga_product_uom.xml',
         'security/ir.model.access.csv',
         'views/stock_pack_operations.xml',
-        'wizard/stock_picking_mecalux_confirm.xml'
+        'wizard/stock_picking_mecalux_confirm.xml',
+        'wizard/check_mecalux_stock.xml',
     ],
     "demo": [
 
