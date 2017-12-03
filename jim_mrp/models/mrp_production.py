@@ -46,20 +46,12 @@ class MrpProduction(models.Model):
 
     @api.model
     def create(self, values):
+        res = super(MrpProduction, self).create(values)
         if values.get('product_id'):
-            product_id = self.env['product.product'].browse(
-                values['product_id'])
-            values['global_real_stock'] = product_id.global_real_stock
-            values['web_global_stock'] = product_id.web_global_stock
-        return super(MrpProduction, self).create(values)
-
-    def _generate_raw_moves(self, exploded_lines):
-        moves = super(MrpProduction, self)._generate_raw_moves(exploded_lines)
-        if moves:
-            for line in moves:
-                line.global_real_stock = line.product_id.global_real_stock
-                line.web_global_stock = line.product_id.web_global_stock
-        return moves
+            ctx = dict(self._context)
+            ctx.pop('force_company', False)
+            res.with_context(ctx).refresh_stock()
+        return res
 
 
 class StockMove(models.Model):

@@ -65,8 +65,14 @@ class Partner(BaseExtClass):
                 </pocustomeraddress>
             """
 
+        # Comprobamos que la compañía sea Jim Sports, si no, habrá que buscar la tarifa
+        if self.env.user.company_id.id == 1:
+            pricelist = self.property_product_pricelist
+        else:
+            pricelist = self.sudo().with_context(force_company=1).property_product_pricelist
+
         if not unlink and self.active:
-            if self.property_product_pricelist.name == 'SIN PRECIO':
+            if pricelist.name == 'SIN PRECIO':
                 valid = 'P'
             else:
                 valid = 'Y'
@@ -84,7 +90,7 @@ class Partner(BaseExtClass):
                     self.email,                            # E_Mail
                     self.web_password,                     # Password
                     valid,                                 # validFor
-                    self.property_product_pricelist.legacy_code or 1000 + self.property_product_pricelist.id)  # ListNum
+                    pricelist.legacy_code or 1000 + pricelist.id)  # ListNum
 
             self.obj_type = '2'
 
