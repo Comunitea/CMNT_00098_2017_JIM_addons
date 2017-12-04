@@ -560,7 +560,7 @@ class MecaluxFileHeader(models.Model):
 
 
     @api.multi
-    def check_sga_file(self, model, ids=[], code=False, create=True):
+    def check_sga_file(self, model, ids=[], code=False, create=True, version=False):
         # code = False,  version = False, field_list = False, field_ids = False, field_list_ids = False):
         # model modelo principal
         # ids si se especifica recorre solo estos id,
@@ -637,7 +637,9 @@ class MecaluxFileHeader(models.Model):
             return res
 
         domain = [('code', '=', code)]
-        sgavar = self.env['sgavar.file'].search(domain)
+        if version:
+            domain += [('version', '=', version)]
+        sgavar = self.env['sgavar.file'].search(domain, limit=1)
         if not sgavar:
             return
             raise ValidationError("No se ha encontrado un modelo para ese tipo de fichero %s" % code)

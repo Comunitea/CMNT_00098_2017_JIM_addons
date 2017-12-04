@@ -35,11 +35,6 @@ class StockInventoryIssue(models.Model):
     #move_ids = fields.Integer('Moves implied', compute="_get_move_ids")
     code = fields.Char('Product code')
 
-
-
-
-
-
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
