@@ -640,6 +640,7 @@ class MecaluxFileHeader(models.Model):
         if version:
             domain += [('version', '=', version)]
         sgavar = self.env['sgavar.file'].search(domain, limit=1)
+
         if not sgavar:
             return
             raise ValidationError("No se ha encontrado un modelo para ese tipo de fichero %s" % code)

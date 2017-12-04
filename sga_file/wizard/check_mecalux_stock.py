@@ -4,7 +4,11 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 
+<<<<<<< HEAD
 from odoo import fields, models, api
+=======
+from odoo import fields, models
+>>>>>>> c33fb64b6c08397f108207e35d7a7296c1ff32b6
 from odoo.exceptions import AccessError, UserError, ValidationError
 
 class WizCheckMecaluxStock(models.TransientModel):
@@ -21,6 +25,7 @@ class WizCheckMecaluxStock(models.TransientModel):
 
     def regularize(self):
 
+<<<<<<< HEAD
         not_product = self.get_product_waiting_sga_confirm()
         domain = [('type', '=', 'product'),('active','=',True)]
         domain += [('default_code', '!=', '')]
@@ -49,3 +54,20 @@ class WizCheckMecaluxStock(models.TransientModel):
         product_ids = [item['product_id'][0] for item in self.env['stock.move'].sudo().search_read(domain, ['id', 'product_id'])]
         return product_ids or []
 
+=======
+        domain = [('type', '=', 'product')]
+        domain += [('default_code', '!=', '')]
+        #domain += [('', '!=', '')]
+        product_ids = self.env['product.product'].search(domain)
+        if self.tag_ids:
+            product_ids = product_ids.filtered(lambda x: self.tag_ids in x.tag_ids)
+        if self.categ_ids:
+            product_ids = product_ids.filtered(lambda x: x.categ_id == self.categ_ids)
+
+        ids = product_ids.ids
+        print len(ids)
+        new_sga_file = self.env['sga.file'].check_sga_file('product.product', ids, code='PST', version=3)
+        return new_sga_file
+
+
+>>>>>>> c33fb64b6c08397f108207e35d7a7296c1ff32b6
