@@ -103,7 +103,6 @@ class ProductProduct(models.Model):
         company_ids = \
             self.env['res.company'].sudo().search(
                 [('no_stock', '=', True)]).ids
-
         self._cr.execute(
             "SELECT SOL.product_id, sum(SOL.product_uom_qty) as qty FROM "
             "sale_order_line SOL "
@@ -155,7 +154,6 @@ class ProductProduct(models.Model):
                     company_available_stock_.get(k, 0)
                     for k in set(company_available_stock) |
                     set(company_available_stock_)}
-
         a = dict([(p, global_real_stock[p] -
                    company_real_stock[p])for p in self.ids if p in global_available_stock.keys()])
         b = dict([
@@ -221,3 +219,65 @@ class ProductProduct(models.Model):
             return domain_quant_loc, domain_move_in_loc, domain_move_out_loc
         else:
             return super(ProductProduct, self)._get_domain_locations()
+
+    @api.multi
+    def move_stock_import(self, location, qty, cost, date, company):
+        self.ensure_one()
+        inventory_location_id = self.env.ref('stock.location_inventory').id
+        customer_location_id = self.env.ref(
+            'stock.stock_location_customers').id
+        self_date_context = self.with_context(create_date=date)
+
+        move_out = self_date_context.env['stock.move'].create({
+            'name': self.name,
+            'product_id': self.id,
+            'product_uom': self.uom_id.id,
+            'product_uom_qty': qty,
+            'date': date,
+            'state': 'confirmed',
+            'company_id': company.id,
+            'location_id': location.id,
+            'location_dest_id': customer_location_id,
+        })
+        location_quants = self.env['stock.quant'].search(
+            [('product_id', '=', self.id), ('location_id', '=', location.id),
+             ('company_id', '=', company.id),
+             ('reservation_id', '=', False), ('qty', '>', 0)],
+            order='in_date asc')
+        unnasigned_qty = qty
+        quants = []
+        for quant in location_quants:
+            if not unnasigned_qty:
+                break
+            if quant.qty < unnasigned_qty:
+                quants.append((quant, quant.qty))
+                unnasigned_qty -= quant.qty
+            else:
+                quants.append((quant, unnasigned_qty))
+                unnasigned_qty = 0
+        if unnasigned_qty:
+            quants.append((None, unnasigned_qty))
+        self_date_context.env['stock.quant'].quants_reserve(quants, move_out)
+        if move_out.state != 'assigned':
+            move_out.state = 'assigned'
+        # No llamamos a action_done, debido a que al reservar los quants
+        # manualmente falla
+        self_date_context.env['stock.quant'].quants_move(
+            quants, move_out, move_out.location_dest_id)
+        move_out.quants_unreserve()
+        move_out.write({'state': 'done', 'date': date, 'date_expected': date})
+
+        # Creamos la entrada en la otra compañía con 1 movimiento
+        move_in = self_date_context.sudo().env['stock.move'].create({
+            'name': self.name,
+            'product_id': self.id,
+            'product_uom': self.uom_id.id,
+            'product_uom_qty': qty,
+            'date': date,
+            'company_id': 17,
+            'state': 'confirmed',
+            'location_id': inventory_location_id,
+            'location_dest_id': 253,
+        })
+        move_in.sudo().action_done()
+        move_in.sudo().write({'date': date, 'date_expected': date})

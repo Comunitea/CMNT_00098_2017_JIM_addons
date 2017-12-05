@@ -54,3 +54,15 @@ class StockQuantPackage(models.Model):
     shipping_volume = fields.Float(string='Shipping Volume',
                                    compute="_compute_package_volume",
                                    digits=(10, 6))
+
+
+class StockQuant(models.Model):
+
+    _inherit = 'stock.quant'
+
+    @api.model
+    def create(self, vals):
+        if self._context.get('create_date', False):
+            vals['in_date'] = self._context['create_date']
+            vals['create_date'] = self._context['create_date']
+        return super(StockQuant, self).create(vals)
