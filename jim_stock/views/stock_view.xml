@@ -80,19 +80,13 @@
                 <field name="partner_id" position="attributes">
                     <attribute name="attrs"></attribute>
                 </field>
-                <field name="origin" position="replace">
-                    <label for="origin"/>
-                    <div>
-                        <field name="origin" class="oe_inline"/>
-                        <label class="oe_inline" string="  >>  " attrs="{'invisible': [('sale_id', '=', False), ('purchase_id', '=', False)]}"/>
-                        <field name="sale_id" class="oe_inline" attrs="{'invisible': [('sale_id', '=', False)]}"/>
-                        <field name="purchase_id"  class="oe_inline" attrs="{'invisible': [('purchase_id', '=', False)]}"/>
-                    </div>
+                <xpath expr="//field[@name='min_date']"  position="after">
+                    <field name="sale_id" invisible="1"/>
                     <field name="purchase_date_order" attrs="{'invisible': [('purchase_id', '=', False)]}"/>
-                    <field name="confirmation_date" attrs="{'invisible': [('sale_id', '=', False)]}"/>
-                </field>
+                    <field name="confirmation_date" attrs="{'invisible': [('orig_sale_id', '=', False)]}"/>
+                </xpath>
                 <field name="pack_operation_product_ids" position="after">
-                    <group string="Observations" attrs="{'invisible': [('sale_id', '=', False)]}">
+                    <group string="Observations" attrs="{'invisible': [('orig_sale_id', '=', False)]}">
                         <field name="observations" nolabel="1"/>
                     </group>
                 </field>
@@ -144,6 +138,6 @@
 
             </field>
         </record>
-
+        <menuitem id="menu_stock_scrips" name="Utilidades" parent="stock.menu_stock_config_settings" sequence="14"/>
     </data>
 </odoo>

@@ -35,6 +35,6 @@
         <field name="target">new</field>
     </record>
 
-    <menuitem id="check_all_mecalux_stock" name="Check mecalux stock" parent="stock.menu_stock_config_settings" sequence="17" action="act_check_all_mecalux_stock"/>
+    <menuitem id="check_all_mecalux_stock" name="Check mecalux stock" parent="jim_stock.menu_stock_scrips" sequence="17" action="act_check_all_mecalux_stock"/>
 
 </odoo>

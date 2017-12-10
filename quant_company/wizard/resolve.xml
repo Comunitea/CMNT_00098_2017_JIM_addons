@@ -26,6 +26,6 @@
         <field name="target">new</field>
     </record>
 
-    <menuitem id="resolve_quant_menu" name="Resolve Qaunts" parent="stock.menu_stock_config_settings" sequence="14" action="act_resolve_quant"/>
+    <menuitem id="resolve_quant_menu" name="Resolve Qaunts" parent="jim_stock.menu_stock_scrips" sequence="14" action="act_resolve_quant"/>
 </odoo>
 
