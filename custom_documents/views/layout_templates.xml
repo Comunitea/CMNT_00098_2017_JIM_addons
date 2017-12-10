@@ -189,8 +189,8 @@
                                 </td>
                                 <td><span t-field="o.date_done_date"/></td>
                                 <td><span t-field="o.name"/></td>
-                                <td><span t-field="o.sale_id.name"/></td>
-                                <td><span t-field="o.sale_id.user_id.name"/> </td>
+                                <td><span t-field="o.orig_sale_id.name"/></td>
+                                <td><span t-field="o.orig_sale_id.user_id.name"/> </td>
                             </tr>
                         </tbody>
                         <tfoot>

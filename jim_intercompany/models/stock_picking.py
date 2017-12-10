@@ -42,14 +42,12 @@ class StockPicking(models.Model):
 
     @api.multi
     def _compute_orig_sale(self):
+
         for record in self:
             sales = self.env['sale.order'].search(
                 [('procurement_group_id', '=', record.group_id.id)])
             sale = sales.filtered(lambda x : x.auto_generated == False)
-            if sale:
-                record.orig_sale_id = sale.id
-                record.orig_sale_str = sale.name
-            else:
+            if not sale:
                 sale = sales.filtered(lambda x: x.auto_generated == True)
                 ic_purchase = self.env['purchase.order'].sudo().\
                     browse(sale.mapped('auto_purchase_order_id').id)
@@ -57,11 +55,13 @@ class StockPicking(models.Model):
                     [('procurement_group_id', 'in', [ic_purchase.mapped(
                         'group_id').id])])
                 sale = sales.filtered(lambda x: x.auto_generated == False)
-                if sale:
-                    record.orig_sale_id = sale.id
-                    record.orig_sale_str = sale.name
+            if sale:
+                record.orig_sale_id = sale[0].id
+                record.orig_sale_str = sale[0].name
 
 
+    orig_sale_id = fields.Many2one('sale.order', 'Origen', compute=_compute_orig_sale)
+    orig_sale_name = fields.Char('Sale order')
     ready = fields.Boolean('Revision Ready', default=False, readonly=True)
 
     @api.model
