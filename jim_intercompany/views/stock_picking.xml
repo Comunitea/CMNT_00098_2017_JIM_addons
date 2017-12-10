@@ -61,8 +61,8 @@
         <field name="arch" type="xml">
 
         <field name="picking_type_id" position="replace">
-            <field name="orig_sale_id" />
-            <!--field name="orig_sale_str" /-->
+            <!--field name="orig_sale_id" /-->
+            <field name="orig_sale_str"/>
             <field name="picking_type_id" />
             <field name="company_id" />
         </field>
@@ -90,9 +90,11 @@
                     <label for="origin"/>
                     <div>
                         <field name="origin" class="oe_inline"/>
-                        <label class="oe_inline" string="  &gt;&gt;  " attrs="{'invisible': [('sale_id', '=', False), ('purchase_id', '=', False)]}"/>
-                        <field name="orig_sale_id" class="oe_inline"/><!-- attrs="{'invisible': [('orig_sale_id', '=', False)]}"/-->
+                        <label class="oe_inline" string="  &gt;&gt;  " attrs="{'invisible': [('purchase_id', '=', False)]}"/>
                         <field name="purchase_id" class="oe_inline" attrs="{'invisible': [('purchase_id', '=', False)]}"/>
+                        <label class="oe_inline" string="  &gt;&gt;  "/>
+                        <field name="orig_sale_str" class="oe_inline" attrs="{'invisible': [('orig_sale_id','!=',False)]}"/>
+                        <field name="orig_sale_id" class="oe_inline" attrs="{'invisible': [('orig_sale_id','=',False)]}"/>
                     </div>
             </field>
         </field>

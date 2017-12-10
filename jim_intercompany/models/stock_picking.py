@@ -40,6 +40,16 @@ class StockPicking(models.Model):
         for record in self:
             record.ready = not record.ready
 
+    def _get_ic_sale(self, sales):
+        sale = sales.filtered(lambda x: x.auto_generated == True)
+        ic_purchase = self.env['purchase.order'].sudo(). \
+            browse(sale.mapped('auto_purchase_order_id').id)
+        sales = self.env['sale.order'].search(
+            [('procurement_group_id', 'in', [ic_purchase.mapped(
+                'group_id').id])])
+        sale = sales.filtered(lambda x: x.auto_generated == False)
+        return sale and sale[0].name or ''
+
     @api.multi
     def _compute_orig_sale(self):
 
@@ -47,21 +57,20 @@ class StockPicking(models.Model):
             sales = self.env['sale.order'].search(
                 [('procurement_group_id', '=', record.group_id.id)])
             sale = sales.filtered(lambda x : x.auto_generated == False)
-            if not sale:
-                sale = sales.filtered(lambda x: x.auto_generated == True)
-                ic_purchase = self.env['purchase.order'].sudo().\
-                    browse(sale.mapped('auto_purchase_order_id').id)
-                sales = self.env['sale.order'].search(
-                    [('procurement_group_id', 'in', [ic_purchase.mapped(
-                        'group_id').id])])
-                sale = sales.filtered(lambda x: x.auto_generated == False)
             if sale:
-                record.orig_sale_id = sale[0].id
-                record.orig_sale_str = sale[0].name
+                name = sale[0].name
+                id = sale[0].id
+            else:
+                name = self.sudo()._get_ic_sale(sales)
+                id = False
+
+            record.orig_sale_str = name
+            record.orig_sale_id = id
 
 
-    orig_sale_id = fields.Many2one('sale.order', 'Origen', compute=_compute_orig_sale)
-    orig_sale_name = fields.Char('Sale order')
+
+    orig_sale_id = fields.Many2one('sale.order', 'Origen', compute=_compute_orig_sale, multi=True)
+    orig_sale_str = fields.Char('Sale order', compute=_compute_orig_sale, multi=True)
     ready = fields.Boolean('Revision Ready', default=False, readonly=True)
 
     @api.model

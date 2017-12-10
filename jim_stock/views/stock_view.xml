@@ -83,10 +83,10 @@
                 <xpath expr="//field[@name='min_date']"  position="after">
                     <field name="sale_id" invisible="1"/>
                     <field name="purchase_date_order" attrs="{'invisible': [('purchase_id', '=', False)]}"/>
-                    <field name="confirmation_date" attrs="{'invisible': [('orig_sale_id', '=', False)]}"/>
+                    <field name="confirmation_date" attrs="{'invisible': [('sale_id', '=', False)]}"/>
                 </xpath>
                 <field name="pack_operation_product_ids" position="after">
-                    <group string="Observations" attrs="{'invisible': [('orig_sale_id', '=', False)]}">
+                    <group string="Observations" attrs="{'invisible': [('sale_id', '=', False)]}">
                         <field name="observations" nolabel="1"/>
                     </group>
                 </field>
