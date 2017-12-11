@@ -94,8 +94,7 @@ class CrmClaimRmaMakeRefund(models.TransientModel):
         claim_ids |= claim
         if claim.claim_ids:
             claim_ids |= claim.claim_ids
-        claim_ids.write({'stage_id': claim._stage_find(state='done')})
-
+        claim_ids.write({'stage_id': claim._stage_find(domain=[('default_done', '=', True)])})
         result = self.env.ref('account.action_invoice_tree1').read()[0]
         invoice_domain = [('id', 'in', claim.invoice_ids.ids)]
         result['domain'] = invoice_domain

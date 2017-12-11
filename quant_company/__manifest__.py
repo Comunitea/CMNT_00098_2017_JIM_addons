@@ -10,7 +10,7 @@
     'description': 'Soluciono problemas',
     'license': 'AGPL-3',
     'depends': [
-        'stock'
+        'jim_stock'
     ],
     'contributors': [
 

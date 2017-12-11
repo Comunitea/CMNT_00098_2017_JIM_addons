@@ -13,34 +13,30 @@ NEW_STAGE = 1
 class CrmClaim(models.Model):
     _inherit = 'crm.claim'
 
-
+    @api.depends('stage_id')
     def _get_picked(self):
 
         for claim in self:
-            claim.picking_status = 'no'
-            #
-            # picks = self.env['stock.picking'].search([('claim_id', '=', claim.id), ('state','!=', 'cancel')])
-            # pick_status = picks
-            # if not pick_status:
-            #     pick_status = 'no'
-            # elif all(x.state == "done" for x in pick_status):
-            #     pick_status = 'all done'
-            # else:
-            #     pick_status = 'to do'
-            # claim.picking_status = pick_status
+            if not claim.picking_ids:
+                claim.picking_status = 'no'
+            elif all(x.state == 'done' for x in claim.picking_ids):
+                claim.picking_status = 'all done'
+            else:
+                claim.picking_status = 'to do'
+
 
     @api.depends('claim_line_ids.state', 'claim_line_ids.refund_line_id')
     def _get_invoiced(self):
 
         for claim in self:
             line_invoice_status = [line for line in claim.claim_line_ids if
-                                   line.state != 'draft']
+                                   line.state == 'treated']
             if not line_invoice_status:
                 invoice_status = 'no'
             elif all(x.refund_line_id for x in line_invoice_status):
                 invoice_status = 'invoiced'
             else:
-                invoice_status = 'no'
+                invoice_status = 'to invoice'
             claim.invoice_status = invoice_status
 
 
@@ -386,13 +382,7 @@ class CrmClaim(models.Model):
         new_wzd.sudo()._create_picking(self, picking_type)
 
 
-    def _stage_find(self, state=False,team_id=False,name=False,domain=[], order='sequence'):
-        if state:
-            domain += [('default_%s'%state, '=', True)]
-        if team_id:
-            domain += [('team_id', '=', False)]
-        if name:
-            domain += [('name','=',False)]
+    def _stage_find(self,domain=[], order='sequence'):
 
         # perform search, return the first found
         crm_stage = self.env['crm.claim.stage'].search(domain, order=order, limit=1)

@@ -36,16 +36,3 @@ class StockMove(models.Model):
         if move.state in ('confirmed', 'waiting', 'assigned'):
             move.force_assign()
 
-
-class StockPicking(models.Model):
-    _inherit = 'stock.picking'
-
-    @api.depends('move_type', 'launch_pack_operations', 'move_lines.state', 'move_lines.picking_id',
-                 'move_lines.partially_available')
-    @api.one
-    def _compute_state(self):
-        super(StockPicking, self)._compute_state()
-        if self.move_lines and \
-                any(move.state == 'assigned' for move in self.move_lines) and \
-                any(move.state in ('cancel', 'partially_available') for move in self.move_lines):
-            self.state = 'partially_available'

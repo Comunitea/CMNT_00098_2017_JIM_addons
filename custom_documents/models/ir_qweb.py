@@ -18,11 +18,16 @@ class Contact(models.AbstractModel):
 
             opf = options and options.get('fields') or ["name", "address", "phone", "mobile", "fax", "email"]
             value = value.sudo().with_context(show_address=True)
+            phone = ''
+            if value.phone:
+                phone = value.phone
+            elif options.get('parent_phone', False) and value.commercial_partner_id.phone:
+                phone = value.commercial_partner_id.phone
             name_get = value.name or ''
             val = {
                 'name': name_get.split("\n")[0],
                 'address': escape("\n".join(value.name_get()[0][1].split("\n")[1:])).strip(),
-                'phone': value.phone,
+                'phone': phone,
                 'mobile': value.mobile,
                 'fax': value.fax,
                 'city': value.city,
