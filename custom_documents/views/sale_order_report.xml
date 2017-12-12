@@ -3,6 +3,8 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
 
+    <delete id="account_payment_sale.report_sale_payment_mode" model='ir.ui.view'/>
+
     <template id="remove_early_payment" inherit_id="sale_early_payment_discount.sale_order_add_early_payment">
         <xpath expr="//tr[@class='border-black ep_disc']" position="replace"></xpath>
         <xpath expr="//tr[@class='ep_disc']" position="replace"></xpath>
