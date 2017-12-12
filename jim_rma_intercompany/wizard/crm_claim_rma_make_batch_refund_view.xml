@@ -19,6 +19,7 @@
                         <group>
                             <field name="company_id"/>
                             <field name="from_invoice_date"/>
+                            <field name="reference"/>
                         </group>
                         <group>
                             <field name="partner_id"/>

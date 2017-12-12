@@ -64,10 +64,14 @@ class ProductProduct(BaseExtClass):
 
             return tallajecode, tallacode, colorcode
 
-        if unlink or (self.force_web == 'no'):
+        if unlink or (self.force_web == 'no') or not self.active:
             is_active = 'N'
         else:
-            is_active = 'Y' if self.active else 'N'
+            is_active = 'N'
+            for tag in self.tag_ids:
+                if tag.web:
+                    is_active = 'Y'
+            # is_active = 'Y' if self.active else 'N'
 
         tallaje, talla, color = get_tallaje_talla_color()
 

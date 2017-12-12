@@ -14,6 +14,7 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
 
     description = fields.Char(default=_default_description, required=True)
     invoice_date = fields.Date("Invoice date", default=fields.Datetime.now)
+    reference = fields.Char("Referencia de proveedor")
     from_invoice_date = fields.Date("From date")
     to_invoice_date = fields.Date("To date")
     partner_id = fields.Many2one("res.partner", "Customer")
@@ -48,7 +49,7 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
 
             picks_domain = [('claim_id', 'in', claim_ids.ids)]
             picks = self.env['stock.picking'].search(picks_domain)
-            if not all(x.state=='done' for x in picks):
+            if not all(x.state=='done' or x.state=='cancel' for x in picks):
                 raise exceptions.UserError('No están todas las reclamaciones en estado correcto')
 
             from_invoice_date = min(pick.date_done for pick in picks)
@@ -65,9 +66,23 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
             res['from_invoice_date'] = from_invoice_date
             res['to_invoice_date'] = to_invoice_date
             res['claim_ids'] = ctx.get('active_ids')
+            res['reference'] = partner_id.ref
 
         return res
 
+    def get_invoice_vals_from_refund(self, type):
+        origin = ' '.join([x.code for x in self.claim_ids])
+        vals = {
+            'partner_id': self.partner_id.id,
+            'type': (type),
+            'date_invoice': self.invoice_date,
+            'company_id': self.company_id.id,
+            'state': 'draft',
+            'claim_ids': self.claim_ids,
+            'origin': origin,
+            'reference': self.reference or origin
+        }
+        return vals
 
     @api.multi
     def make_batch_refund(self):
@@ -89,21 +104,13 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
             type = ('out_refund')
             move_field = 'move_in_id'
         #Creo una factura
-        invoice_vals = {
-            'partner_id': self.partner_id.id,
-            'type': (type),
-            'date_invoice': self.invoice_date,
-            'company_id': self.company_id.id,
-            'state': 'draft',
-            'claim_ids': self.claim_ids,
-            'origin': ' '.join([x.code for x in self.claim_ids]),
-        }
+        invoice_vals = self.get_invoice_vals_from_refund(type)
+
         invoice = invoice_obj.new(invoice_vals)
         invoice._onchange_partner_id()
         invoice_vals = invoice._convert_to_write(invoice._cache)
         new_invoice = invoice_obj.create(invoice_vals)
-
-        stage = self.claim_ids[0]._stage_find(state='done')
+        stage = self.claim_ids[0]._stage_find(domain=[('default_done','=',True)])
 
         picking_ids = self.env['stock.picking']
         for line in lines_to_invoice:
@@ -120,7 +127,8 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
             new_line = invoice_line_obj.create(invoice_line_vals)
             new_line.write({'price_unit': line.unit_sale_price,
                             'name': line.name})
-            line.refund_line_id = new_line
+            line.write({'refund_line_id': new_line.id,
+                        })
             picking_ids |= line[move_field].picking_id
 
         new_invoice.compute_taxes()

@@ -25,8 +25,17 @@ class StockPicking(models.Model):
             # if any(move.to_refund_so for move in self.move_lines):
             #     pick.returned_picking = True
 
-    returned_picking = fields.Many2one('stock.picking', compute="get_returned_picking")
+    #returned_picking = fields.Many2one('stock.picking', compute="get_returned_picking")
 
     def print_this_pick(self):
         return self.env["report"].get_action(self, 'sga_file.report_picking_mar')
 
+    def open_this_pick(self):
+        res= {'type': 'ir.actions.act_window',
+         'name': ('Albarán'),
+         'view_mode': 'form, tree',
+         'view_type': 'form',
+         'res_model': 'stock.picking',
+         'res_id': self.id
+         }
+        return res

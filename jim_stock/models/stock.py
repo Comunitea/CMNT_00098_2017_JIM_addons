@@ -21,6 +21,13 @@ class StockPicking (models.Model):
     confirmation_date = fields.Datetime(related="sale_id.confirmation_date")
     returned_picking_id = fields.Many2one('stock.picking')
 
+    def _get_label_data(self):
+        res = super(StockPicking, self)._get_label_data()
+        res['total_bultos'] = self.pick_packages
+        res['total_kilos'] = self.pick_weight
+        res.pop('peso_bulto', False)
+        return res
+
 class StockLocation(models.Model):
     _inherit = "stock.location"
 

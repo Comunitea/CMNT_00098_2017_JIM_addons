@@ -13,6 +13,7 @@
         'delivery',
         'mrp',
         'telesale',
+        'delivery_carrier_label_seur'
     ],
     'contributors': [
         "Comunitea ",
