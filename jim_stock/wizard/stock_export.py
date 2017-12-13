@@ -23,23 +23,27 @@ class JimStockExport(models.TransientModel):
         worksheet = workbook.add_worksheet()
         worksheet.write(0, 0, 'ItemCode')
         worksheet.write(0, 1, 'ItemName')
-        worksheet.write(0, 2, 'Quantity')
-        worksheet.write(0, 3, 'Quantity import')
-        worksheet.write(0, 4, 'WarehouseCode')
+        worksheet.write(0, 2, 'Location nternal id')
+        worksheet.write(0, 3, 'Location')
+        worksheet.write(0, 4, 'Quantity')
+        worksheet.write(0, 5, 'Quantity import')
+        worksheet.write(0, 6, 'WarehouseCode')
         quants = self.env['stock.quant'].read_group(
             [('company_id', '=', self.company.id),
              ('location_id.usage', '=', 'internal'),
              ('product_id.active', '=', True)],
             ['product_id', 'location_id', 'qty'],
-            ['product_id', 'location_id'])
+            ['product_id', 'location_id'], lazy=False)
         row = 1
         for quant in quants:
             product = self.env['product.product'].browse(
                 quant['product_id'][0])
             worksheet.write(row, 0, product.default_code)
             worksheet.write(row, 1, product.name)
-            worksheet.write(row, 2, quant['qty'])
-            worksheet.write(row, 3, quant['qty'])
+            worksheet.write(row, 2,  quant['location_id'][0])
+            worksheet.write(row, 3,  quant['location_id'][1])
+            worksheet.write(row, 4, quant['qty'])
+            worksheet.write(row, 5, quant['qty'])
             row += 1
         workbook.close()
         file_data.seek(0)

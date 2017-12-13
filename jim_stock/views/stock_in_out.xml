@@ -45,6 +45,7 @@
                                     <field name="quantity"/>
                                     <field name="warehouse"/>
                                     <field name="location"/>
+                                    <field name="location_dest"/>
                                     <field name="cost_price"/>
                                 </tree>
                             </field>

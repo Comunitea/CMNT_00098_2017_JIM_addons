@@ -221,7 +221,7 @@ class ProductProduct(models.Model):
             return super(ProductProduct, self)._get_domain_locations()
 
     @api.multi
-    def move_stock_import(self, location, qty, cost, date, company):
+    def move_stock_import(self, location, location_dest, qty, cost, date, company):
         self.ensure_one()
         inventory_location_id = self.env.ref('stock.location_inventory').id
         customer_location_id = self.env.ref(
@@ -277,7 +277,7 @@ class ProductProduct(models.Model):
             'company_id': 17,
             'state': 'confirmed',
             'location_id': inventory_location_id,
-            'location_dest_id': 253,
+            'location_dest_id': location_dest.id,
         })
         move_in.sudo().action_done()
         move_in.sudo().write({'date': date, 'date_expected': date})

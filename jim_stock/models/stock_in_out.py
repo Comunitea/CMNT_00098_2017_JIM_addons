@@ -31,6 +31,7 @@ class StockInOutLine(models.Model):
     quantity = fields.Float()
     warehouse = fields.Many2one('stock.warehouse')
     location = fields.Many2one('stock.location')
+    location_dest = fields.Many2one('stock.location')
     cost_price = fields.Float()
 
     @api.onchange('warehouse')
@@ -51,5 +52,5 @@ class StockInOutLine(models.Model):
     def move_stock(self):
         for line in self:
             line.product.move_stock_import(
-                line.location, line.quantity, line.cost_price,
-                line.in_out.date, line.in_out.company)
+                line.location, line.location_dest, line.quantity,
+                line.cost_price, line.in_out.date, line.in_out.company)

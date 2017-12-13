@@ -23,13 +23,13 @@ class JimStockImport(models.TransientModel):
         in_out = self.env['stock.in.out'].create({})
         for line in range(1, sh.nrows):
             row = sh.row_values(line)
-            if not row[0] or not row[2] or not row[3]:
+            if not row[0] or not row[4] or not row[5]:
                 continue
             product_code = row[0]
-            qty = float(row[3])
+            qty = float(row[5])
             if qty <= 0:
                 continue
-            warehouse_code = row[4]
+            warehouse_code = row[6]
             product = self.env['product.product'].search(
                 [('default_code', '=', product_code)])
             if not product:
@@ -40,12 +40,16 @@ class JimStockImport(models.TransientModel):
             if not warehouse:
                 raise UserError(_('Warehouse with code %s not found') %
                                 warehouse_code)
-
+            location_dest = self.env['stock.location'].search([('id', '=', row[2])])
+            if not location_dest:
+                raise UserError(_('Location with id %s and name %s not found')
+                                % row[2], row[3])
             new_line = self.env['stock.in.out.line'].create({
                 'product': product.id,
                 'quantity': qty,
                 'warehouse': warehouse.id,
-                'in_out': in_out.id
+                'in_out': in_out.id,
+                'location_dest': location_dest.id
 
             })
             new_line.onchange_warehouse()
