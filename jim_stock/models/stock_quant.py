@@ -29,3 +29,23 @@ class StockQuant(models.Model):
                 preferred_domain_list.remove(fallback_domain2)
 
         return super(StockQuant, self).quants_get_reservation(qty, move, pack_operation_id, lot_id, company_id, domain, preferred_domain_list)
+
+    @api.model
+    def quants_get_preferred_domain(self, qty, move, ops=False, lot_id=False, domain=None, preferred_domain_list=[]):
+        ''' This function tries to find quants for the given domain and move/ops, by trying to first limit
+            the choice on the quants that match the first item of preferred_domain_list as well. But if the qty requested is not reached
+            it tries to find the remaining quantity by looping on the preferred_domain_list (tries with the second item and so on).
+            Make sure the quants aren't found twice => all the domains of preferred_domain_list should be orthogonal
+        '''
+        if move.inventory_id:
+            fallback_domain2 = [('reservation_id.inventory_id', '!=', move.inventory_id.id)]
+            if fallback_domain2 in preferred_domain_list:
+                preferred_domain_list.remove(fallback_domain2)
+        return self.quants_get_reservation(
+            qty, move,
+            pack_operation_id=ops and ops.id or False,
+            lot_id=lot_id,
+            company_id=self.env.context.get('company_id', False) or
+                       move.company_id.id,
+            domain=domain,
+            preferred_domain_list=preferred_domain_list)
