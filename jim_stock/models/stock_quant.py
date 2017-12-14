@@ -41,11 +41,4 @@ class StockQuant(models.Model):
             fallback_domain2 = [('reservation_id.inventory_id', '!=', move.inventory_id.id)]
             if fallback_domain2 in preferred_domain_list:
                 preferred_domain_list.remove(fallback_domain2)
-        return self.quants_get_reservation(
-            qty, move,
-            pack_operation_id=ops and ops.id or False,
-            lot_id=lot_id,
-            company_id=self.env.context.get('company_id', False) or
-                       move.company_id.id,
-            domain=domain,
-            preferred_domain_list=preferred_domain_list)
+        return super(StockQuant, self).quants_get_preferred_domain(qty, move, ops, lot_id, domain, preferred_domain_list)
