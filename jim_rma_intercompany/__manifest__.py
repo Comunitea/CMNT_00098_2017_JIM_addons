@@ -10,7 +10,9 @@
     'license': 'AGPL-3',
     'depends': [
         'jim_intercompany',
+        'jim_stock',
         'crm_claim',
+        'crm_claim_rma'
     ],
     'contributors': [
         "Comunitea ",

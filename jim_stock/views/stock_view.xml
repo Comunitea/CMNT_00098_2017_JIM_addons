@@ -139,5 +139,17 @@
             </field>
         </record>
         <menuitem id="menu_stock_scrips" name="Utilidades" parent="stock.menu_stock_config_settings" sequence="14"/>
+
+        <record id="view_picking_withcarrier_out_form_hide_button" model="ir.ui.view">
+            <field name="name">stock.picking</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="base_delivery_carrier_label.view_picking_withcarrier_out_form"/>
+            <field name="arch" type="xml">
+                <button name="action_generate_carrier_label" position="attributes">
+                    <attribute name="states"></attribute>
+                    <attribute name="attrs">{'invisible': ['|', ('carrier_tracking_ref', '!=', False), ('state', '!=', 'done')]}</attribute>
+                </button>
+            </field>
+        </record>
     </data>
 </odoo>
