@@ -54,15 +54,19 @@ class StockPicking(models.Model):
     def _compute_orig_sale(self):
 
         for record in self:
-            sales = self.env['sale.order'].search(
-                [('procurement_group_id', '=', record.group_id.id)])
-            sale = sales.filtered(lambda x : x.auto_generated == False)
-            if sale:
-                name = sale[0].name
-                id = sale[0].id
-            else:
-                name = self.sudo()._get_ic_sale(sales)
-                id = False
+            name = ''
+            id = False
+            sale = []
+            if record.group_id:
+                sales = self.env['sale.order'].search(
+                    [('procurement_group_id', '=', record.group_id.id)])
+                sale = sales.filtered(lambda x : x.auto_generated == False)
+                if sale:
+                    name = sale[0].name
+                    id = sale[0].id
+                else:
+                    name = self.sudo()._get_ic_sale(sales)
+                    id = False
 
             record.orig_sale_str = name
             record.orig_sale_id = id
