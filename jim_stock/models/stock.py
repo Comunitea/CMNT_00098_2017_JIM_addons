@@ -61,3 +61,14 @@ class StockQuantPackage(models.Model):
     shipping_volume = fields.Float(string='Shipping Volume',
                                    compute="_compute_package_volume",
                                    digits=(10, 6))
+
+
+class StockMove(models.Model):
+
+    @api.multi
+    def do_unreserve(self):
+
+        res = super(StockMove, self).do_unreserve()
+        for move in self:
+            move.pack_operation_ids.unlink()
+
