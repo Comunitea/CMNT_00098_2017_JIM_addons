@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="view_return_dest_move_cancelled" model="ir.ui.view">
+        <field name="name">wiz_return_dest_move_cancelled_form</field>
+        <field name="model">wiz.return.dest.move.cancelled</field>
+        <field name="arch" type="xml">
+            <form string="Reg moves in location">
+                <group>
+                    <p>This wizard create returns for moves wicht move__dest_id is cancelled</p>
+                </group>
+                <group>
+                    <group>
+                        <field name="location_id"/>
+                        <field name="picking_type_id"/>
+                        <field name="action_done"/>
+                    </group>
+                    <group>
+                        <field name="location_dest_id"/>
+                        <field name="dst_picking_type_id"/>
+
+                    </group>
+                </group>
+
+                <group colspan="2">
+                    <field name="pick_ids" nolabel="1">
+                        <tree>
+                            <field name="picking_done_id"/>
+                            <field name="picking_cancelled_id"/>
+                            <field name="picking_type_id"/>
+                        </tree>
+                    </field>
+
+                </group>
+                <footer>
+                    <button name="create_returns" string="Treat picks" type="object" default_focus="1" class="oe_highlight" />
+                    <button name="show_picks" string="Show picks" type="object" class="oe_highlight" help="List picks with moves done and move_dest_id cancelled"/>
+
+                    or
+                    <button special="cancel" string="Cancel" class="oe_link" />
+                </footer>
+            </form>
+        </field>
+    </record>
+
+
+    <record id="act_return_dest_move_cancelled" model="ir.actions.act_window">
+        <field name="name">Return dest moves cancelled</field>
+        <field name="res_model">wiz.return.dest.move.cancelled</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="return_dest_move_cancelled_menu" name="Wzd Done moves to cancel dest" parent="jim_stock.menu_stock_scrips" sequence="17" action="act_return_dest_move_cancelled"/>
+
+</odoo>

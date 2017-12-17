@@ -7,12 +7,27 @@
             <form string="Reg location">
                 <group>
                     <p>This wizard regularize quants not reserve</p>
+                </group>
+                <group>
+                    <group>
+                        <field name="location_id"/>
+                    </group>
+                    <group>
+                        <field name="product_id"/>
+                    </group>
+                </group>
+                <group>
+                    <group>
+                        <field name="action_done"/>
+                    </group>
+                    <group>
 
-                    <field name="location_id"/>
+                    </group>
                 </group>
                 <footer>
                     <button name="regularize_quants" string="Reg neg quants location" type="object" default_focus="1" class="oe_highlight" />
                     <button name="regularize" string="Reg location" type="object" class="oe_highlight" />
+
                     or
                     <button special="cancel" string="Cancel" class="oe_link" />
                 </footer>
