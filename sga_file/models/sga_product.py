@@ -177,8 +177,9 @@ class SGAProductProduct(models.Model):
     @api.depends('display_name')
     def _get_sga_names(self):
         for product in self:
-            product.sga_name_get = product.display_name
-            product.sga_prod_shortdesc = product.display_name[0:50]
+            name = product.display_name and product.display_name[0:50] or product.name
+            product.sga_name_get = name
+            product.sga_prod_shortdesc = name[0:50]
 
     sga_name_get = fields.Char("Mecalux name", compute='_get_sga_names')
     sga_prod_shortdesc = fields.Char("Nombre Radiofrecuencia", compute='_get_sga_names')
