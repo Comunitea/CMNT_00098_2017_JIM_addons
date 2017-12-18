@@ -21,6 +21,7 @@
         'wizard/regularize_location.xml',
         'wizard/return_dest_move_canceled.xml',
         'views/return_dest_move_canceled.xml',
+        'views/stock_picking.xml',
         'security/ir.model.access.csv',
     ],
     "demo": [

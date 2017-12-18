@@ -60,6 +60,9 @@ class WizRegularizeLocation(models.TransientModel):
 
     def regularize(self):
 
+        if self.env.user.id not in (1, 169):
+            raise ValueError('No tienes permisos')
+
         if not self.location_id:
             raise ValueError ('Need a location to regularize')
         self.ensure_one()
@@ -71,15 +74,9 @@ class WizRegularizeLocation(models.TransientModel):
         if self.product_id:
             domain += [('product_id', '=', self.product_id.id)]
         inventory = self.get_inventory_for(self.product_id, self.location_id, self.env.user.company_id)
-
-
         flds = ['product_id', 'qty']
         quants = self.env['stock.quant'].read_group(domain, flds, 'product_id')
         quants = [quant for quant in quants if quant['qty'] != 0]
-
-        #quants = dict((item['product_id'][0], item['qty']) for item in
-        #     self.env['stock.quant'].read_group(domain, flds, 'product_id') if item['qty'] != 0)
-        cont = len(quants)
 
         for quant in quants:
             qty = quant['qty']
@@ -186,6 +183,9 @@ class WizRegularizeLocation(models.TransientModel):
 
     def regularize_quants(self):
 
+        if self.env.user.id not in (1, 169):
+            raise ValueError('No tienes permisos')
+
         if not self.location_id:
             raise ValueError ('Necesitas poner una ubicacion')
         loc_id = self.location_id.id
@@ -196,8 +196,6 @@ class WizRegularizeLocation(models.TransientModel):
         if self.product_id:
             domain += [('product_id', '=', self.product_id.id)]
 
-
-        location_regularize = 29
         flds=['product_id', 'qty']
         quants = self.env['stock.quant'].read_group(domain, flds, 'product_id')
         quants = [quant for quant in quants if quant['qty'] == 0]
@@ -208,11 +206,9 @@ class WizRegularizeLocation(models.TransientModel):
                 print "%s Trato %s"%(cont, quant['product_id'][1])
                 domain_pos = [('qty', '>', 0)] + quant['__domain']
                 quant_to_check_ids = self.env['stock.quant'].search(domain_pos)
-
                 for quant_to_check in quant_to_check_ids:
                     print "Quant nº %s"%quant_to_check.id
                     res = quant_to_check.sudo()._quant_reconcile_negative(False)
-
 
         domain_neg = [('qty', '<', 0)] + domain
         quants = self.env['stock.quant'].read_group(domain_neg, flds, 'product_id')
@@ -224,15 +220,12 @@ class WizRegularizeLocation(models.TransientModel):
             domain_pos = [('qty','>', 0), ('product_id', '=', quant['product_id'][1])] + domain
             quant_to_check_ids = self.env['stock.quant'].search(domain_pos, order = "qty desc")
             for quant_pos in quant_to_check_ids:
-
                 if quant_pos.qty >= qty_neg:
                     res = quant_pos.sudo()._quant_reconcile_negative(False)
                     qty_neg = 0
-
                 else:
                     res = quant_pos.sudo()._quant_reconcile_negative(False)
                     qty_neg -= quant_pos.qty
-
                 if qty_neg <= 0:
                     break
 
