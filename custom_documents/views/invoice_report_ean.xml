@@ -64,7 +64,7 @@
                                     <span t-field="line.product_id.default_code"/>
                                 </td>
                                 <td>
-                                    <span t-field="line.name_report"/>
+                                    <t t-foreach="line.name_report.split('\n')" t-as="name_line"><p t-esc="name_line"/></t>
                                 </td>
                                 <td>
                                     <span t-field="line.quantity"/>
