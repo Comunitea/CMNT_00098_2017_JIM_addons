@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-09-07 17:12+0000\n"
-"PO-Revision-Date: 2017-12-05 10:30+0100\n"
+"PO-Revision-Date: 2017-12-19 11:59+0100\n"
 "Last-Translator: Jesús Ventosinos Mayor <jesus@comunitea.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -20,6 +20,24 @@ msgstr ""
 #: model:ir.ui.menu,name:jim_stock.menu_jim_stock_import
 msgid "Import stock"
 msgstr "Importar stock"
+
+#. module: jim_stock
+#: selection:jim.stock.import,type:0
+#: selection:stock.in.out,type:0
+msgid "In"
+msgstr "Entrada"
+
+#. module: jim_stock
+#: selection:jim.stock.import,type:0
+#: selection:stock.in.out,type:0
+msgid "Out"
+msgstr "Salida"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_jim_stock_import_type
+#: model:ir.model.fields,field_description:jim_stock.field_stock_in_out_type
+msgid "Type"
+msgstr "Tipo"
 
 #. module: jim_stock
 #: model:ir.model.fields,field_description:jim_stock.field_jim_stock_import_import_file
