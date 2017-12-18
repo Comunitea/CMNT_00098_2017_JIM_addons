@@ -1,19 +1,112 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#	* jim_stock
+#   * jim_stock
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-09-07 17:12+0000\n"
-"PO-Revision-Date: 2017-09-07 17:12+0000\n"
-"Last-Translator: <>\n"
+"PO-Revision-Date: 2017-12-05 10:30+0100\n"
+"Last-Translator: Jesús Ventosinos Mayor <jesus@comunitea.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: jim_stock
+#: model:ir.actions.act_window,name:jim_stock.jim_stock_import_action
+#: model:ir.ui.menu,name:jim_stock.menu_jim_stock_import
+msgid "Import stock"
+msgstr "Importar stock"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_jim_stock_import_import_file
+msgid "File to import"
+msgstr "Archivo a importar"
+
+#. module: jim_stock
+#: model:ir.ui.view,arch_db:jim_stock.jim_stock_export_form
+#: model:ir.ui.view,arch_db:jim_stock.jim_stock_import_form
+msgid "or"
+msgstr "o"
+
+#. module: jim_stock
+#: model:ir.ui.view,arch_db:jim_stock.jim_stock_export_form
+#: model:ir.ui.view,arch_db:jim_stock.jim_stock_import_form
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: jim_stock
+#: code:addons/jim_stock/wizard/stock_import.py:37
+#, python-format
+msgid "Product with code %s not found"
+msgstr "El producto con código %s no ha sido encontrado"
+
+#. module: jim_stock
+#: code:addons/jim_stock/wizard/stock_import.py:40
+#, python-format
+msgid "Warehouse with code %s not found"
+msgstr "El almacén con código %s no ha sido encontrado"
+
+#. module: jim_stock
+#: model:ir.actions.act_window,name:jim_stock.jim_stock_export_action
+#: model:ir.ui.menu,name:jim_stock.menu_jim_stock_export
+msgid "Export stock"
+msgstr "Exportar stock"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_jim_stock_export_file
+msgid "File"
+msgstr "Archivo"
+
+#. module: jim_stock
+#: model:ir.ui.view,arch_db:jim_stock.jim_stock_export_form
+msgid "Export"
+msgstr "Exportar"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_in_out_name
+msgid "Description"
+msgstr "Descripción"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_in_out_date
+msgid "Date"
+msgstr "Fecha"
+
+#. module: jim_stock
+#: selection:stock.in.out,state:0
+msgid "Draft"
+msgstr "Borrador"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_in_out_lines
+#: model:ir.ui.view,arch_db:jim_stock.stock_in_out_view_form
+msgid "Lines"
+msgstr "Líneas"
+
+#. module: jim_stock
+#: selection:stock.in.out,state:0
+msgid "Confirmed"
+msgstr "Confirmado"
+
+#. module: jim_stock
+#: model:ir.ui.view,arch_db:jim_stock.stock_in_out_view_form
+msgid "Confirm"
+msgstr "Confirmar"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_jim_stock_export_company
+#: model:ir.model.fields,field_description:jim_stock.field_stock_in_out_company
+msgid "Company"
+msgstr "Compañía"
+
+#. module: jim_stock
+#: model:ir.ui.view,arch_db:jim_stock.jim_stock_import_form
+msgid "Import"
+msgstr "Importar"
 
 #. module: jim_stock
 #: model:ir.ui.view,arch_db:jim_stock.product_template_form_view_procurement_button_add_global
@@ -161,8 +254,40 @@ msgstr "Albarán"
 
 #. module: jim_stock
 #: model:ir.model,name:jim_stock.model_product_product
+#: model:ir.model.fields,field_description:jim_stock.field_stock_in_out_line_product
 msgid "Product"
 msgstr "Producto"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_in_out_line_warehouse
+msgid "Warehouse"
+msgstr "Almacén"
+
+#. module: jim_stock
+#: model:ir.ui.view,arch_db:jim_stock.jim_stock_export_form
+msgid "Close"
+msgstr "Cerrar"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_in_out_line_location
+msgid "Location"
+msgstr "Ubicación"
+
+#. module: jim_stock
+#: model:ir.actions.act_window,name:jim_stock.stock_in_out_action
+#: model:ir.ui.menu,name:jim_stock.stock_in_out_menu
+msgid "Stock in/out"
+msgstr "Entradas/salidas stock"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_in_out_line_cost_price
+msgid "Cost price"
+msgstr "Cost price"
+
+#. module: jim_stock
+#: model:ir.model.fields,field_description:jim_stock.field_stock_in_out_line_quantity
+msgid "Quantity"
+msgstr "Cantidad"
 
 #. module: jim_stock
 #: model:ir.model,name:jim_stock.model_product_template
@@ -272,4 +397,3 @@ msgstr "Ancho"
 #: model:ir.model,name:jim_stock.model_stock_return_picking_line
 msgid "stock.return.picking.line"
 msgstr "stock.return.picking.line"
-
