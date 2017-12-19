@@ -11,6 +11,7 @@
             <form string="Stock import">
                 <group>
                     <field name="import_file"/>
+                    <field name="type"/>
                 </group>
                 <footer>
                     <button name="import_stock" string="Import" type="object" class="oe_highlight"/>

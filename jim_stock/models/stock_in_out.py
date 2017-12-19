@@ -10,6 +10,8 @@ class StockInOut(models.Model):
     _name = 'stock.in.out'
 
     name = fields.Char('Description')
+    type = fields.Selection(
+        (('in', 'In'), ('out', 'Out')), required=True)
     date = fields.Date()
     lines = fields.One2many('stock.in.out.line', 'in_out')
     state = fields.Selection(
@@ -31,12 +33,11 @@ class StockInOutLine(models.Model):
     quantity = fields.Float()
     warehouse = fields.Many2one('stock.warehouse')
     location = fields.Many2one('stock.location')
-    location_dest = fields.Many2one('stock.location')
     cost_price = fields.Float()
 
     @api.onchange('warehouse')
     def onchange_warehouse(self):
-        for line in self:
+        for line in self.filtered(lambda x: x.in_out.type == 'out'):
             line.location = line.warehouse.lot_stock_id
 
     @api.onchange('product')
@@ -52,5 +53,5 @@ class StockInOutLine(models.Model):
     def move_stock(self):
         for line in self:
             line.product.move_stock_import(
-                line.location, line.location_dest, line.quantity,
-                line.cost_price, line.in_out.date, line.in_out.company)
+                line.location, line.quantity, line.cost_price,
+                line.in_out.date, line.in_out.company, line.in_out.type)

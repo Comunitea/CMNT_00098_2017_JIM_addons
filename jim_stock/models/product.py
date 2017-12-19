@@ -221,63 +221,58 @@ class ProductProduct(models.Model):
             return super(ProductProduct, self)._get_domain_locations()
 
     @api.multi
-    def move_stock_import(self, location, location_dest, qty, cost, date, company):
+    def move_stock_import(self, location, qty, cost, date, company, in_out_type):
         self.ensure_one()
-        inventory_location_id = self.env.ref('stock.location_inventory').id
-        customer_location_id = self.env.ref(
-            'stock.stock_location_customers').id
         self_date_context = self.with_context(create_date=date)
-
-        move_out = self_date_context.env['stock.move'].create({
+        move_vals = {
             'name': self.name,
             'product_id': self.id,
             'product_uom': self.uom_id.id,
             'product_uom_qty': qty,
             'date': date,
             'state': 'confirmed',
-            'company_id': company.id,
-            'location_id': location.id,
-            'location_dest_id': customer_location_id,
-        })
-        location_quants = self.env['stock.quant'].search(
-            [('product_id', '=', self.id), ('location_id', '=', location.id),
-             ('company_id', '=', company.id),
-             ('reservation_id', '=', False), ('qty', '>', 0)],
-            order='in_date asc')
-        unnasigned_qty = qty
-        quants = []
-        for quant in location_quants:
-            if not unnasigned_qty:
-                break
-            if quant.qty < unnasigned_qty:
-                quants.append((quant, quant.qty))
-                unnasigned_qty -= quant.qty
-            else:
-                quants.append((quant, unnasigned_qty))
-                unnasigned_qty = 0
-        if unnasigned_qty:
-            quants.append((None, unnasigned_qty))
-        self_date_context.env['stock.quant'].quants_reserve(quants, move_out)
-        if move_out.state != 'assigned':
-            move_out.state = 'assigned'
-        # No llamamos a action_done, debido a que al reservar los quants
-        # manualmente falla
-        self_date_context.env['stock.quant'].quants_move(
-            quants, move_out, move_out.location_dest_id)
-        move_out.quants_unreserve()
-        move_out.write({'state': 'done', 'date': date, 'date_expected': date})
+            'company_id': company.id
+        }
 
-        # Creamos la entrada en la otra compañía con 1 movimiento
-        move_in = self_date_context.sudo().env['stock.move'].create({
-            'name': self.name,
-            'product_id': self.id,
-            'product_uom': self.uom_id.id,
-            'product_uom_qty': qty,
-            'date': date,
-            'company_id': 17,
-            'state': 'confirmed',
-            'location_id': inventory_location_id,
-            'location_dest_id': location_dest.id,
-        })
-        move_in.sudo().action_done()
-        move_in.sudo().write({'date': date, 'date_expected': date})
+        if in_out_type == 'out':
+            customer_location_id = self.env.ref(
+                'stock.stock_location_customers').id
+            move_vals['location_id'] = location.id
+            move_vals['location_dest_id'] = customer_location_id
+        else:
+            inventory_location_id = self.env.ref('stock.location_inventory').id
+            move_vals['location_id'] = inventory_location_id
+            move_vals['location_dest_id'] = location.id
+        move = self_date_context.sudo().env['stock.move'].create(move_vals)
+
+        if in_out_type == 'out':
+            location_quants = self.env['stock.quant'].search(
+                [('product_id', '=', self.id), ('location_id', '=', location.id),
+                 ('company_id', '=', company.id),
+                 ('reservation_id', '=', False), ('qty', '>', 0)],
+                order='in_date asc')
+            unnasigned_qty = qty
+            quants = []
+            for quant in location_quants:
+                if not unnasigned_qty:
+                    break
+                if quant.qty < unnasigned_qty:
+                    quants.append((quant, quant.qty))
+                    unnasigned_qty -= quant.qty
+                else:
+                    quants.append((quant, unnasigned_qty))
+                    unnasigned_qty = 0
+            if unnasigned_qty:
+                quants.append((None, unnasigned_qty))
+            self_date_context.env['stock.quant'].quants_reserve(quants, move)
+            if move.state != 'assigned':
+                move.state = 'assigned'
+            # No llamamos a action_done, debido a que al reservar los quants
+            # manualmente falla
+            self_date_context.env['stock.quant'].quants_move(
+                quants, move, move.location_dest_id)
+            move.quants_unreserve()
+            move.write({'state': 'done', 'date': date, 'date_expected': date})
+        else:
+            move.sudo().action_done()
+            move.sudo().write({'date': date, 'date_expected': date})
