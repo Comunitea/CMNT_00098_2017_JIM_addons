@@ -57,4 +57,18 @@
               parent="jim_stock.menu_stock_scrips"
               action="act_tree_return_dest_move_cancelled"/>
 
+    <record id="stock_picking_set_hide_done_to_cancel" model="ir.actions.server">
+        <field name="name">Hide in list</field>
+        <field name="model_id" ref="model_done_to_cancel_picks"/>
+        <field name="state">code</field>
+        <field name="condition">True</field>
+        <field name="code">records.set_hide_done_to_cancel()</field>
+    </record>
+      <record id="stock_picking_menu_set_hide_done_to_cancel" model="ir.values">
+            <field name="name">stock.picking.menu.hide.done.to.cancel</field>
+            <field name="model">done.to.cancel.picks</field>
+            <field name="key" >action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,%d'%stock_picking_set_hide_done_to_cancel"/>
+        </record>
 </odoo>

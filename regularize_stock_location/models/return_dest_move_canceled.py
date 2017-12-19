@@ -7,6 +7,12 @@
 from odoo import fields, models, api, tools
 
 
+class StockPicking(models.Model):
+
+    _inherit ='stock.picking'
+
+    hide_next_canceled = fields.Boolean('Reviewed (done to cancel)', help="Show in done to cancel picks", default=False)
+
 class UtilsDoneCancelPicks(models.Model):
 
     _name = "done.to.cancel.picks"
@@ -51,7 +57,7 @@ class UtilsDoneCancelPicks(models.Model):
         join stock_move sm2 on sm1.move_dest_id = sm2.id 
         join stock_picking sp1 on sp1.id = sm1.picking_id 
         join stock_picking sp2 on sp2.id = sm2.picking_id 
-        where sm2.state = 'cancel' and sm1.state='done' 
+        where sm2.state = 'cancel' and sm1.state='done' and not sp1.hide_next_canceled  
         and sm1.location_dest_id = sm2.location_id 
         group by sp1.id, sp2.id, sp2.picking_type_id, sp2.company_id, sp1.location_id, sp1.location_dest_id, sp2.location_dest_id, sp2.partner_id
         order by sp1.id
@@ -60,8 +66,15 @@ class UtilsDoneCancelPicks(models.Model):
 
     @api.model_cr
     def init(self):
-        print self.env.cr
         tools.drop_view_if_exists(self.env.cr, self._table)
         sql = """CREATE or REPLACE VIEW %s as (%s FROM %s)""" % (self._table, self._select(), self._from() )
-        print sql
         self.env.cr.execute(sql)
+
+
+    @api.multi
+    def set_hide_done_to_cancel(self):
+        pick_ids = self.mapped('picking_done_id').ids
+        return self.env['stock.picking'].browse(pick_ids).write({'hide_next_canceled': True})
+
+
+
