@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="view_tree_return_dest_move_cancelled" model="ir.ui.view">
+        <field name="name">return.tree.dest.move.cancelled</field>
+        <field name="model">done.to.cancel.picks</field>
+        <field name="arch" type="xml">
+            <tree string="Reg moves in location">
+                <field name="orig_loc_id"/>
+                <field name="picking_done_id" widget="many2one_clickable" />
+                <field name="act_loc_id"/>
+                <field name="picking_cancelled_id"  widget="many2one_clickable" />
+                <field name="next_loc_id"/>
+                <field name="picking_type_id"/>
+                <field name="partner_id"/>
+                <field name="sale_id"  widget="many2one_clickable" />
+                <field name="purchase_id"  widget="many2one_clickable" />
+                <field name="moves"/>
+                <field name="company_id"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_tree_return_dest_move_cancelled_search" model="ir.ui.view">
+            <field name="name">teturn.tree.dest.move.cancelled.search</field>
+            <field name="model">done.to.cancel.picks</field>
+            <field name="arch" type="xml">
+                <search string="Picking Lists">
+                    <filter name="orders" string="Sale/Purchase orders" filter_domain="['|',('sale_id','ilike', self),('purchase','ilike',self)]"/>
+                    <filter name="picks" string="Picks" filter_domain="['|',('picking_done_id','ilike', self),('picking_cancelled_id','ilike',self)]"/>
+                    <filter name="partner_id" string="Partner" filter_domain="[('partner_id','ilike', self)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
+                        <filter string="Partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Picking type" domain="[]" context="{'group_by':'picking_type_id'}"/>
+                        <filter string="Act location" domain="[]" context="{'group_by':'act_loc_id'}"/>
+                        <filter string="Next location" domain="[]" context="{'group_by':'next_loc_id'}"/>
+                        <filter string="Orig location" domain="[]" context="{'group_by':'orig_location_id'}"/>
+
+
+                    </group>
+
+                </search>
+            </field>
+    </record>
+
+    <record id="act_tree_return_dest_move_cancelled" model="ir.actions.act_window">
+        <field name="name">Done to cancel picks</field>
+        <field name="res_model">done.to.cancel.picks</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_tree_return_dest_move_cancelled"/>
+        <field name="search_id" ref="view_tree_return_dest_move_cancelled_search"/>
+    </record>
+
+    <menuitem id="tree_return_dest_move_cancelled_menu"
+              name="Done to cancel picks"
+              parent="jim_stock.menu_stock_scrips"
+              action="act_tree_return_dest_move_cancelled"/>
+
+</odoo>

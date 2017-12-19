@@ -21,13 +21,18 @@ class StockPicking(models.Model):
 
 
 class StockMove(models.Model):
+
     _inherit = 'stock.move'
+
+    returned_qty = fields.Float("Returned quantity", digits=dp.get_precision('Product Unit of Measure'))
 
     @api.multi
     def copy(self, default=None):
         if self._context.get('return_picking', False) and self._context.get('picking_type_id', False):
             default.update({'picking_type_id': self._context['picking_type_id']})
         return super(StockMove, self).copy(default)
+
+
 
 class StockReturnPickingLine(models.TransientModel):
     _inherit = "stock.return.picking.line"
@@ -106,6 +111,9 @@ class StockReturnPicking(models.TransientModel):
         new_moves = self.env['stock.move'].search([('picking_id', '=', id)])
         for new_move in new_moves:
             new_move.purchase_line_id = new_move.origin_returned_move_id.purchase_line_id
+        for return_line in self.product_return_moves:
+            return_line.move_id.returned_qty += return_line.quantity
+            new_move.origin_returned_move_id.returned_qty += new_move.quantity
         self.env['stock.picking'].browse(id).write({'returned_picking_id': self.env.context['active_id']})
         return id, picking_type_id
 

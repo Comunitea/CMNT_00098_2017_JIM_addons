@@ -184,6 +184,9 @@
                     <field name="move_dest_IC_id" groups="sga_file.group_sga_file_debug"/>
                     <field name="move_purchase_IC_id" groups="sga_file.group_sga_file_debug"/>
                 </xpath>
+                <xpath expr="//field[@name='name']" position="before">
+                    <field name="id" groups="sga_file.group_sga_file_debug"/>
+                </xpath>
             </field>
         </record>
 

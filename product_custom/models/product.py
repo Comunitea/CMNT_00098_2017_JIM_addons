@@ -56,12 +56,16 @@ class ProductProduct(models.Model):
     #'']
 
     @api.multi
-    @api.constrains('default_code')
+    @api.constrains('default_code', 'type')
     def _check_company(self):
-        if self.default_code:
-            domain = [('default_code', '=', self.default_code), ('active','=', True)]
-            if len(self.env['product.product'].search(domain))>1:
-                raise ValidationError(_('Este código ya está asignado a otro artículo'))
+        for product in self:
+            if product.default_code:
+                domain = [('default_code', '=ilike', product.default_code), ('type', '=', 'product'), ('id', '!=', product.id)]
+                flds = ['display_name']
+                product_ids = self.env['product.product'].search_read(
+                    domain, flds)
+                if product_ids:
+                    raise ValidationError(_('Este código ya está asignado a otro artículo'))
 
     @api.depends('force_web', 'tag_ids', 'product_tmpl_id.web')
     def _compute_web_state(self):

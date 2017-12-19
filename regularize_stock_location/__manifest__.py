@@ -9,7 +9,7 @@
     'author': 'Comunitea, ',
     "category": "",
     'license': 'AGPL-3',
-    'description': 'Allow regularize quants not reserve ',
+    'description': 'Allow regularize quants not reserve, list done moves to canceled moves ',
     'depends': ['jim_stock'
     ],
     'contributors': [
@@ -18,7 +18,10 @@
     ,
 
     "data": [
-        'wizard/regularize_location.xml'
+        'wizard/regularize_location.xml',
+        'wizard/return_dest_move_canceled.xml',
+        'views/return_dest_move_canceled.xml',
+        'security/ir.model.access.csv',
     ],
     "demo": [
 
