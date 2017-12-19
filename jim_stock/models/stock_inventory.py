@@ -17,9 +17,3 @@ class StockInventoryLine(models.Model):
     # With this we avoid to write this field in inventory_lines belonging to
     # other company
     product_name = fields.Char(readonly=True)
-
-
-    def _get_quants(self):
-        quants = super(StockInventoryLine, self)._get_quants()
-        ids = quants.sudo().filtered(lambda x:x.propagated_from_id.company_id.id == self.inventory_id.company_id.id).ids
-        return self.env['stock.quant'].browse(ids)
