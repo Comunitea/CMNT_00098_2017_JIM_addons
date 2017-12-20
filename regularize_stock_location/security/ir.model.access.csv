@@ -1,2 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_done_to_cancel_picks,done.to.cancel.picks,model_done_to_cancel_picks,stock.group_stock_manager,1,1,1,1
+access_done_to_waiting_moves,done.to.waiting.moves,model_done_to_waiting_moves,stock.group_stock_manager,1,1,1,1
+access_product_stock_company_rel,product.stock.company.rel,model_product_stock_company_rel,stock.group_stock_manager,1,1,1,1

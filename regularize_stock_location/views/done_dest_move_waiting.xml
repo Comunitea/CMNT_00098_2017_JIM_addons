@@ -1,0 +1,79 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="view_tree_return_dest_move_waiting" model="ir.ui.view">
+        <field name="name">return.tree.dest.move.waiting</field>
+        <field name="model">done.to.waiting.moves</field>
+        <field name="arch" type="xml">
+            <tree string="Reg moves in location">
+                <field name="orig_loc_id"/>
+                <field name="product_id" widget="many2one_clickable" />
+                <field name="move_done_id" invisible="1"/>
+                <field name="move_waiting_id" invisible="1"/>
+
+                <field name="picking_done_id" widget="many2one_clickable" />
+                <field name="act_loc_id"/>
+                <field name="picking_waiting_id"  widget="many2one_clickable" />
+                <field name="next_loc_id"/>
+                <field name="picking_type_id"/>
+                <field name="partner_id"/>
+                <field name="sale_id"  widget="many2one_clickable" />
+                <field name="purchase_id"  widget="many2one_clickable" />
+                <field name="moves"/>
+                <field name="company_id"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_tree_done_dest_move_waiting_search" model="ir.ui.view">
+            <field name="name">done.tree.dest.move.waiting.search</field>
+            <field name="model">done.to.waiting.moves</field>
+            <field name="arch" type="xml">
+                <search string="Picking Lists">
+                    <filter name="orders" string="Sale/Purchase orders" filter_domain="['|',('sale_id','ilike', self),('purchase','ilike',self)]"/>
+                    <filter name="picks" string="Picks" filter_domain="['|',('picking_done_id','ilike', self),('picking_cancelled_id','ilike',self)]"/>
+                    <filter name="partner_id" string="Partner" filter_domain="[('partner_id','ilike', self)]"/>
+                    <filter name="product_id" string="Product" filter_domain="[('product_id','ilike', self)]"/>
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
+                        <filter string="Picking" domain="[]" context="{'group_by':'picking_done_id'}"/>
+                        <filter string="Partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Picking type" domain="[]" context="{'group_by':'picking_type_id'}"/>
+                        <filter string="Act location" domain="[]" context="{'group_by':'act_loc_id'}"/>
+                        <filter string="Next location" domain="[]" context="{'group_by':'next_loc_id'}"/>
+                        <filter string="Orig location" domain="[]" context="{'group_by':'orig_location_id'}"/>
+
+                    </group>
+
+                </search>
+            </field>
+    </record>
+
+    <record id="act_tree_done_dest_move_waiting" model="ir.actions.act_window">
+        <field name="name">Done to waiting moves</field>
+        <field name="res_model">done.to.waiting.moves</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_tree_return_dest_move_waiting"/>
+        <field name="search_id" ref="view_tree_done_dest_move_waiting_search"/>
+    </record>
+
+    <menuitem id="tree_done_dest_move_waiting_menu"
+              name="Done to waiting moves"
+              parent="jim_stock.menu_stock_scrips"
+              action="act_tree_done_dest_move_waiting"/>
+
+    <record id="stock_picking_set_hide_done_to_waiting_moves" model="ir.actions.server">
+        <field name="name">Hide in list</field>
+        <field name="model_id" ref="model_done_to_waiting_moves"/>
+        <field name="state">code</field>
+        <field name="condition">True</field>
+        <field name="code">records.set_hide_done_to_waiting()</field>
+    </record>
+      <record id="stock_picking_menu_set_hide_done_to_waiting" model="ir.values">
+            <field name="name">stock.picking.menu.hide.done.to.waiting.moves</field>
+            <field name="model">done.to.waiting.moves</field>
+            <field name="key" >action</field>
+            <field name="key2">client_action_multi</field>
+            <field name="value" eval="'ir.actions.server,%d'%stock_picking_set_hide_done_to_waiting_moves"/>
+        </record>
+</odoo>
