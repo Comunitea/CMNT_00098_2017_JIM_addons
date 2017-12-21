@@ -5,7 +5,7 @@
 # © 2009-2013 Akretion,
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo import fields, models
+from odoo import fields, models, api
 
 
 class AccountInvoice(models.Model):
@@ -26,4 +26,14 @@ class AccountInvoice(models.Model):
          'res_model': 'account.invoice',
          'res_id': self.id
          }
+        return res
+
+    @api.multi
+    def unlink(self):
+        claim_ids = self.env['crm.claim']
+        for invoice in self:
+            claim_ids |= invoice.claim_ids
+        res = super(AccountInvoice, self).unlink()
+        if claim_ids:
+            claim_ids._get_invoiced()
         return res

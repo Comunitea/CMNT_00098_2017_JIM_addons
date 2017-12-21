@@ -96,13 +96,14 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
         lines_to_invoice = self.claim_line_ids
         invoice_obj = self.env['account.invoice'].with_context(ctx)
         invoice_line_obj = self.env['account.invoice.line'].with_context(ctx)
-
-        if self.claim_ids[0].claim_type.name == "Customer":
+        if self.claim_ids[0].claim_type.type == "supplier":
             type = ('in_refund')
             move_field = 'move_out_id'
         else:
             type = ('out_refund')
             move_field = 'move_in_id'
+
+
         #Creo una factura
         invoice_vals = self.get_invoice_vals_from_refund(type)
 
