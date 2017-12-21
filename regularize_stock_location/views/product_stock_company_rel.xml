@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="view_tree_product_stock_company_rel" model="ir.ui.view">
+        <field name="name">tree.product.stock.company.rel</field>
+        <field name="model">product.stock.company.rel</field>
+        <field name="arch" type="xml">
+            <tree string="Stock x Product x Comapny">
+                <field name="product_id" widget="many2one_clickable"/>
+                <field name="location_id" widget="many2one_clickable" />
+                <field name="product_company_id"  widget="many2one_clickable" />
+                <field name="qty"/>
+                <field name="stock_company_id"  widget="many2one_clickable" />
+                <field name="bool_company_id"/>
+            </tree>
+        </field>
+    </record>
+    <record id="view_tree_product_stock_company_rel_search" model="ir.ui.view">
+            <field name="name">product.stock.company.rel.search</field>
+            <field name="model">product.stock.company.rel</field>
+            <field name="arch" type="xml">
+                <search string="Stock list">
+                    <filter name="product" string="Product" filter_domain="[('product_id','ilike', self)]"/>
+                    <filter name="product_company_id" string="Product company" filter_domain="[('product_company_id','ilike', self)]"/>
+                    <filter name="stock_company_id" string="Stock company" filter_domain="[('stock_company_id','ilike', self)]"/>
+                    <filter name="not_stock_product_company_id" string="Dif Company" domain="[('bool_company_id','=', False)]"/>
+                    <filter name="stock_product_company_id" string="Same Company" domain="[('bool_company_id','=', True)]"/>
+
+                    <separator/>
+                    <group expand="0" string="Group By">
+                        <filter string="Product Company" domain="[]" context="{'group_by':'product_company_id'}"/>
+                        <filter string="Stock Company" domain="[]" context="{'group_by':'stock_company_id'}"/>
+                        <filter string="Location" domain="[]" context="{'group_by':'location_id'}"/>
+                        <!--filter string="Picking type" domain="[]" context="{'group_by':'picking_type_id'}"/>
+                        <filter string="Act location" domain="[]" context="{'group_by':'act_loc_id'}"/>
+                        <filter string="Next location" domain="[]" context="{'group_by':'next_loc_id'}"/>
+                        <filter string="Orig location" domain="[]" context="{'group_by':'orig_location_id'}"/-->
+
+
+                    </group>
+
+                </search>
+            </field>
+    </record>
+
+    <record id="act_tree_product_stock_company_rel" model="ir.actions.act_window">
+        <field name="name">Stock x Company</field>
+        <field name="res_model">product.stock.company.rel</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="view_tree_product_stock_company_rel"/>
+        <field name="search_id" ref="view_tree_product_stock_company_rel_search"/>
+    </record>
+
+    <menuitem id="tree_product_stock_company_rel_menu"
+              name="Stock x company x product"
+              parent="jim_stock.menu_stock_scrips"
+              action="act_tree_product_stock_company_rel"/>
+
+</odoo>

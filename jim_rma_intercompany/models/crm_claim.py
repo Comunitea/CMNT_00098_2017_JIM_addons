@@ -237,19 +237,19 @@ class CrmClaim(models.Model):
 
         return claim_ids
 
-    def RMA_to_stock_pick_vals(self, wh, type='stock'):
+    def RMA_to_stock_pick_vals(self, wh, type='stock', location_dest_id = False):
         if not wh:
             wh = self.warehouse_id
 
         location_id = wh.lot_rma_id
         if type != 'out':
             if type == 'stock':
-                location_dest_id = wh.lot_stock_id
+                location_dest_id = location_dest_id or wh.lot_stock_id
                 picking_type = wh.rma_int_type_id
                 action_done_bool = False
 
             elif type == 'scrap':
-                location_dest_id = self.env['stock.location'].search([('scrap_location', '=', True)])[0]
+                location_dest_id = location_dest_id or self.env['stock.location'].search([('scrap_location', '=', True)])[0]
                 domain = [('default_location_src_id', '=', location_id.id), ('code','=','internal'), ('default_location_dest_id', '=', location_dest_id.id)]
                 picking_type = self.env['stock.picking.type'].search(domain)
                 action_done_bool = True
@@ -257,12 +257,12 @@ class CrmClaim(models.Model):
                     raise exceptions.UserError(_('Nos picking type for scrap rma found'))
 
             else:
-                location_dest_id = wh.lot_rma_id
+                location_dest_id = location_dest_id or  wh.lot_rma_id
                 picking_type = wh.rma_int_type_id
                 action_done_bool = True
         else:
             picking_type = wh.rma_out_type_id
-            location_dest_id = self.partner_id.property_stock_supplier
+            location_dest_id = location_dest_id or self.partner_id.property_stock_supplier
             action_done_bool = True
         vals = {
             'partner_id': self.partner_id.id,
@@ -305,7 +305,7 @@ class CrmClaim(models.Model):
         else:
             ctx = self._context.copy()
             ctx.update({'force_company': self.company_id.id})
-        pick_vals = self.RMA_to_stock_pick_vals(wh, type)
+        pick_vals = self.RMA_to_stock_pick_vals(wh, type, moves[0].location_dest_id)
         if ctx:
             pick = self.env['stock.picking'].sudo().with_context(ctx).create(pick_vals)
         else:
@@ -325,7 +325,7 @@ class CrmClaim(models.Model):
                 # trace = False
                 # if trace:
                 #    move.move_in_id.move_dest_id = stock_move.id
-                    
+
         pick.action_confirm()
 
         return pick

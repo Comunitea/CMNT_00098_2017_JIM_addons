@@ -113,7 +113,7 @@ class StockReturnPicking(models.TransientModel):
             new_move.purchase_line_id = new_move.origin_returned_move_id.purchase_line_id
         for return_line in self.product_return_moves:
             return_line.move_id.returned_qty += return_line.quantity
-            new_move.origin_returned_move_id.returned_qty += new_move.quantity
+            new_move.origin_returned_move_id.returned_qty += new_move.product_uom_qty
         self.env['stock.picking'].browse(id).write({'returned_picking_id': self.env.context['active_id']})
         return id, picking_type_id
 

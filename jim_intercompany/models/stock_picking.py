@@ -52,7 +52,6 @@ class StockPicking(models.Model):
 
     @api.multi
     def _compute_orig_sale(self):
-
         for record in self:
             name = ''
             id = False
@@ -64,10 +63,9 @@ class StockPicking(models.Model):
                 if sale:
                     name = sale[0].name
                     id = sale[0].id
-                else:
+                elif sales:
                     name = self.sudo()._get_ic_sale(sales)
                     id = False
-
             record.orig_sale_str = name
             record.orig_sale_id = id
 
