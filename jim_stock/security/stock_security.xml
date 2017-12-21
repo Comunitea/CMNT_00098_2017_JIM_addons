@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-<data noupdate="0">
 
     <record id="group_stock_lqdr" model="res.groups">
         <field name="name">Review LQDR</field>
@@ -11,6 +10,12 @@
         <field name="name">Review Sale for confirm</field>
         <field name="category_id" ref="base.module_category_hidden"/>
     </record>
-</data>
+
+    <record id="stock_in_out_multicompany" model="ir.rule">
+        <field name="name">Stock in out multicompany</field>
+        <field ref="model_stock_in_out" name="model_id"/>
+        <field name="domain_force">['|',('company','=',False),('company','child_of',[user.company_id.id])]</field>
+    </record>
+
 
 </odoo>

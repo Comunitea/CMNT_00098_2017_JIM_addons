@@ -62,14 +62,26 @@ class StockQuantPackage(models.Model):
                                    compute="_compute_package_volume",
                                    digits=(10, 6))
 
-#
-# class StockMove(models.Model):
-#
-#     _inherit = "stock.move"
-#     @api.multi
-#     def do_unreserve(self):
-#
-#         res = super(StockMove, self).do_unreserve()
-#         for move in self:
-#             move.pack_operation_ids.unlink()
+class StockQuant(models.Model):
 
+    _inherit = 'stock.quant'
+
+    @api.model
+    def create(self, vals):
+        if self._context.get('create_date', False):
+            vals['in_date'] = self._context['create_date']
+        res = super(StockQuant, self).create(vals)
+        if self._context.get('create_date', False):
+            self.env.cr.execute("update stock_quant set create_date='%s' where id=%s" % (self._context['create_date'], res.id))
+        return res
+
+class StockMove(models.Model):
+
+    _inherit = 'stock.move'
+
+    @api.model
+    def create(self, vals):
+        res = super(StockMove, self).create(vals)
+        if self._context.get('create_date', False):
+            self.env.cr.execute("update stock_move set create_date='%s' where id=%s" % (self._context['create_date'], res.id))
+        return res

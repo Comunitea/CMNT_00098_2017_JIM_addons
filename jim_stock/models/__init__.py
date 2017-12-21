@@ -8,3 +8,4 @@ from . import stock
 from . import stock_inventory
 from . import route
 from . import stock_quant
+from . import stock_in_out

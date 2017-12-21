@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+    <record id="jim_stock_import_form" model="ir.ui.view">
+        <field name="name">jim.stock.import.form</field>
+        <field name="model">jim.stock.import</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Stock import">
+                <group>
+                    <field name="import_file"/>
+                    <field name="type"/>
+                </group>
+                <footer>
+                    <button name="import_stock" string="Import" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window name="Import stock"
+        res_model="jim.stock.import"
+        view_id="jim_stock_import_form"
+        view_mode="form"
+        target="new"
+        id="jim_stock_import_action"/>
+
+    <menuitem name="Import stock" parent="stock.menu_stock_inventory_control"
+              action="jim_stock_import_action"
+              id="menu_jim_stock_import"/>
+
+</odoo>

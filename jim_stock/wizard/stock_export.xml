@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+    <record id="jim_stock_export_form" model="ir.ui.view">
+        <field name="name">jim.stock.export.form</field>
+        <field name="model">jim.stock.export</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Stock export">
+                <group>
+                    <field name="company" attrs="{'invisible': [('file', '!=', False)]}"/>
+                    <field name="name" invisible="1"/>
+                    <field name="file" readonly="True" filename="name" attrs="{'invisible': [('file', '=', False)]}"/>
+                </group>
+                <footer attrs="{'invisible': [('file', '!=', False)]}">
+                    <button name="export_stock" string="Export" type="object" class="oe_highlight"/>
+                    or
+                    <button string="Cancel" class="oe_link" special="cancel"/>
+                </footer>
+                <footer attrs="{'invisible': [('file', '=', False)]}">
+                    <button string="Close" class="oe_link" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <act_window name="Export stock"
+        res_model="jim.stock.export"
+        view_id="jim_stock_export_form"
+        view_mode="form"
+        target="new"
+        id="jim_stock_export_action"/>
+
+    <menuitem name="Export stock" parent="stock.menu_stock_inventory_control"
+              action="jim_stock_export_action"
+              id="menu_jim_stock_export"/>
+
+</odoo>

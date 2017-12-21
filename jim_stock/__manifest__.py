@@ -25,7 +25,11 @@
         'views/route_view.xml',
         #'views/product_web_view.xml',
         'security/stock_security.xml',
-        'wizard/stock_picking_return.xml'
+        'wizard/stock_picking_return.xml',
+        'wizard/stock_import.xml',
+        'wizard/stock_export.xml',
+        'views/stock_in_out.xml',
+        'security/ir.model.access.csv'
     ],
     "installable": True
 }
