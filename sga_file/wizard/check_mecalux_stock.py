@@ -35,7 +35,6 @@ class WizCheckMecaluxStock(models.TransientModel):
             product_ids = product_ids.filtered(lambda x: self.tag_ids in x.tag_ids)
 
         ids = product_ids.ids
-        print "Articulos : %s"%len(ids)
         new_sga_file = self.env['sga.file'].check_sga_file('product.product', ids, code='PST')
         return new_sga_file
 
@@ -48,7 +47,6 @@ class WizCheckMecaluxStock(models.TransientModel):
             pick_ids = picks.ids
         else:
             return []
-        print "numero de albaranes con articulos %s"%len(pick_ids)
         domain = [('picking_id', 'in', pick_ids)]
         product_ids = [item['product_id'][0] for item in self.env['stock.move'].sudo().search_read(domain, ['id', 'product_id'])]
         return product_ids or []
