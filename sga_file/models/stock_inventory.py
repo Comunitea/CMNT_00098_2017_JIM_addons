@@ -66,7 +66,7 @@ class StockInventoryLineSGA(models.Model):
 
 
     #@api.depends('location_id', 'product_id')
-    @api.depends('location_id')
+    @api.depends('location_id', 'product_id')
     def _compute_global_qty(self):
         for line in self:
             line.global_qty = line.product_id.compute_global_qty(location_id=line.location_id.id)

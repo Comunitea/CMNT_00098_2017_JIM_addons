@@ -195,6 +195,7 @@ class StockPickingSGA(models.Model):
         picks.write({'sga_state': 'NE'})
 
     def button_new_mecalux_file(self, ctx):
+
         return self.with_context(ctx).new_mecalux_file()
 
     def new_mecalux_file(self, operation=False, force=False):
