@@ -25,6 +25,9 @@ class SGAfileerror(models.Model):
     date_error = fields.Char('Fecha')
     ack = fields.Boolean("Ack", default=False)
     note = fields.Text("File line")
+    partner_id = fields.Many2one('res.partner', string='Partner')
+    product_id = fields.Many2one('product.product', string='Artículo')
+    picking_id = fields.Many2one('stock.picking', string='Albarán')
 
     def confirm_ack(self):
         self.write({'ack': True})
@@ -93,7 +96,9 @@ class SGAfileerror(models.Model):
                 val['note'] = line
                 error_file = error_obj.search([('file_name', '=', val['file_name']), ('error_code', '=', val['error_code'])])
                 if not error_file:
+                    self.update_vals(val)
                     error_file = error_obj.create(val)
+
                     self.refresh_sga_state(val['object_type'], val['object_id'], line)
                 pool_ids.append(error_file.id)
             except:
@@ -103,9 +108,43 @@ class SGAfileerror(models.Model):
         sga_file.close()
         return pool_ids
 
+    def update_vals(self, val):
+        error_code = val['error_code']
+        if error_code == '20995':
+            domain = [('name','=',val['object_id'])]
+            object_id = self.env['stock.picking'].search(domain)
+            val['picking_id'] = object_id and object_id[0].id or False
+        elif error_code == '00001':
+            domain = [('default_code', '=', val['object_id'])]
+            object_id = self.env['product.product'].search(domain)
+            val['product_id'] = object_id and object_id[0].id or False
+        elif error_code == '20991':
+            if val['object_type'] == 'PRO':
+                domain = [('default_code', '=', val['object_id'])]
+                object_id= self.env['product.product'].search(domain)
+                val['product_id'] = object_id and object_id[0].id or False
+            elif val['object_type'] == 'SOR':
+                object_id = val['error_message'].split(' ')
+                if len(object_id) >= 6:
+                    object_id = object_id[4]
+                    domain = [('default_code', '=', object_id)]
+                    object_id = self.env['product.product'].search(domain)
+                    val['product_id'] = object_id and object_id[0].id or False
+            elif val['object_type'] == 'PRE':
+                domain = [('name', '=', val['object_id'])]
+                object_id= self.env['stock.picking'].search(domain)
+                val['picking_id'] = object_id and object_id[0].id or False
+
+            elif val['object_type'] == 'ACC':
+                domain = [('ref', '=', val['object_id'])]
+                object_id = self.env['res.partner'].search(domain)
+                val['partner_id'] = object_id and object_id[0].id or False
+        return val
+
     def refresh_sga_state(self, object_type, object_name, line):
         if object_type in ('PRE', 'SOR'):
             domain = [('name', '=', object_name)]
             object = self.env['stock.picking'].search(domain)
             if object:
                 object.message_post(body="Pick <em>%s</em> <b>Error en </b>.\n%s" % (object.name, line))
+

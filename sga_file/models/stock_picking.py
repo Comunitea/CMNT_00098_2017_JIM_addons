@@ -579,7 +579,7 @@ class StockPickingSGA(models.Model):
                       'sga_operation': sga_operation,
                       'object_type': sga_operation,
                       'object_id': pick.name,
-                      'date_error': sga_file_obj.name[6:14].strip(),
+                      'date_error': sga_file_obj.name[5:19].strip(),
                       'error_code': error_code,
                       'error_message': error_message}
         self.env['sga.file.error'].create(error_vals)
