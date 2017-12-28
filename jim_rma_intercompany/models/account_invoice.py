@@ -19,11 +19,22 @@ class AccountInvoice(models.Model):
     claim_ids = fields.One2many('crm.claim', string='Claims RMA', compute=_get_claim_ids)
 
     def open_this_invoice(self):
+
+        if self.type in ('out_refund', 'out_invoice'):
+            form_view_ref = self.env.ref('account.invoice_form', False)
+            tree_view_ref = self.env.ref('account.invoice_tree', False)
+        else:
+            form_view_ref = self.env.ref('account.invoice_supplier_form', False)
+            tree_view_ref = self.env.ref('account.invoice_supplier_tree', False)
+
+
         res= {'type': 'ir.actions.act_window',
          'name': ('Factura'),
          'view_mode': 'form, tree',
          'view_type': 'form',
          'res_model': 'account.invoice',
+         'views': [(form_view_ref.id, 'form')],
+         'target': 'current',
          'res_id': self.id
          }
         return res

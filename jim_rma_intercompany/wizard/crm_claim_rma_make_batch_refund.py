@@ -142,9 +142,8 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
             })
         if not new_invoice or new_invoice and not new_line:
             raise exceptions.UserError(_(''))
-        result = self.env.ref('account.action_invoice_tree1').read()[0]
-        result['domain'] = [('id', '=', new_invoice.id)]
-        return result
+
+        return new_invoice and new_invoice.open_this_invoice()
 
     @api.multi
     def get_claim_line_qty_to_invoice(self, line):
