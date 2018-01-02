@@ -69,12 +69,20 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
             res['reference'] = partner_id.ref
 
         return res
+    def get_journal_id(self, type):
+        if type in ['in_invoice', 'in_refund']:
+            journal = self.env['account.journal'].search([('type', '=', 'purchase')], limit=1)
+        else:
+            journal = self.env['account.journal'].search([('type', '=', 'sale')], limit=1)
+
+        return journal.id
 
     def get_invoice_vals_from_refund(self, type):
         origin = ' '.join([x.code for x in self.claim_ids])
         vals = {
             'partner_id': self.partner_id.id,
             'type': (type),
+            'journal_id': self.get_journal_id(type),
             'date_invoice': self.invoice_date,
             'company_id': self.company_id.id,
             'state': 'draft',
