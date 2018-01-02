@@ -39,7 +39,7 @@ class JimStockExport(models.TransientModel):
             product = self.env['product.product'].browse(
                 quant['product_id'][0])
             worksheet.write(row, 0, product.default_code)
-            worksheet.write(row, 1, product.name)
+            worksheet.write(row, 1, product.display_name)
             worksheet.write(row, 2,  quant['location_id'][0])
             worksheet.write(row, 3,  quant['location_id'][1])
             worksheet.write(row, 4, quant['qty'])
