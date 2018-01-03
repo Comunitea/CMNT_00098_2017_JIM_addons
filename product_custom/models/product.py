@@ -66,6 +66,14 @@ class ProductProduct(models.Model):
                     domain, flds)
                 if product_ids:
                     raise ValidationError(_('Este código ya está asignado a otro artículo'))
+            if product.product_tmpl_id:
+                domain = [('template_code', '=ilike', product.default_code), ('type', '=', 'product'),
+                          ('id', '!=', product.product_tmpl_id.id)]
+                flds = ['display_name']
+                product_ids = self.env['product.template'].search_read(
+                    domain, flds)
+                if product_ids:
+                    raise ValidationError(_('Este código ya está asignado a otro artículo (plantilla)'))
 
     @api.depends('force_web', 'tag_ids', 'product_tmpl_id.web')
     def _compute_web_state(self):

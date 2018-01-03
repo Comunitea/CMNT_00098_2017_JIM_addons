@@ -54,6 +54,27 @@ class ProductProduct(models.Model):
                 product.product_tmpl_id.default_code = vals['default_code']
         return product
 
+    @api.multi
+    @api.constrains('default_code', 'type')
+    def _check_unique_product_code(self):
+        for product in self:
+            if product.default_code:
+                domain = [('default_code', '=ilike', product.default_code), ('type', '=', 'product'),
+                          ('id', '!=', product.id)]
+                flds = ['display_name']
+                product_ids = self.env['product.product'].search_read(
+                    domain, flds)
+                if product_ids:
+                    raise ValidationError(_('Este código ya está asignado a otro artículo'))
+            if product.product_tmpl_id:
+                domain = [('template_code', '=ilike', product.default_code), ('type', '=', 'product'),
+                          ('id', '!=', product.product_tmpl_id.id)]
+                flds = ['display_name']
+                product_ids = self.env['product.template'].search_read(
+                    domain, flds)
+                if product_ids:
+                    raise ValidationError(_('Este código ya está asignado a otro artículo (plantilla)'))
+
 
 class ProductTemplate(models.Model):
 
@@ -101,3 +122,17 @@ class ProductTemplate(models.Model):
                 self.product_variant_ids.default_code = self.default_code
             else:
                 self.set_product_product_default_code()
+
+    @api.multi
+    @api.constrains('template_code', 'type')
+    def _check_unique_template_code(self):
+        for template in self:
+            if template.template_code:
+                domain = [('template_code', '=ilike', template.template_code), ('type', '=', 'product'),
+                          ('id', '!=', template.id)]
+                flds = ['display_name']
+                product_ids = self.env['product.template'].search_read(
+                    domain, flds)
+                if product_ids:
+                    raise ValidationError(_('Este código ya está asignado a otra plantilla'))
+
