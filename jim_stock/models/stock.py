@@ -6,6 +6,9 @@ from odoo.exceptions import UserError
 
 import odoo.addons.decimal_precision as dp
 
+import time
+from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
+
 class StockPicking (models.Model):
     _inherit = "stock.picking"
 
@@ -20,6 +23,7 @@ class StockPicking (models.Model):
     purchase_date_order = fields.Datetime(related="purchase_id.date_order")
     confirmation_date = fields.Datetime(related="sale_id.confirmation_date")
     returned_picking_id = fields.Many2one('stock.picking')
+    force_date = fields.Datetime('Forzar fecha de entrada')
 
     def _get_label_data(self):
         res = super(StockPicking, self)._get_label_data()
@@ -27,6 +31,20 @@ class StockPicking (models.Model):
         res['total_kilos'] = self.pick_weight
         res.pop('peso_bulto', False)
         return res
+
+    @api.multi
+    def action_done(self):
+        create_date = self.force_date or time.strftime(
+            DEFAULT_SERVER_DATETIME_FORMAT)
+        self_date_context = self.with_context(create_date=create_date)
+        return super(StockPicking, self_date_context).action_done()
+
+    @api.multi
+    def do_transfer(self):
+        create_date = self.force_date or time.strftime(
+            DEFAULT_SERVER_DATETIME_FORMAT)
+        self_date_context = self.with_context(create_date=create_date)
+        return super(StockPicking, self_date_context).do_transfer()
 
 class StockLocation(models.Model):
     _inherit = "stock.location"
@@ -84,4 +102,12 @@ class StockMove(models.Model):
         res = super(StockMove, self).create(vals)
         if self._context.get('create_date', False):
             self.env.cr.execute("update stock_move set create_date='%s' where id=%s" % (self._context['create_date'], res.id))
+        return res
+
+    @api.multi
+    def action_done(self):
+        res = super(StockMove, self).action_done()
+        date = self._context.get('create_date', time.strftime(
+            DEFAULT_SERVER_DATETIME_FORMAT))
+        self.write({'date': date})
         return res
