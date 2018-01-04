@@ -33,6 +33,8 @@ class ProcurementOrder(models.Model):
     purchase_line_IC = fields.Many2one('purchase.order.line',
                                        'Related purchase line', copy=False,
                                        index=True)
+    no_product_company = fields.Boolean('No ejecutar abastecimineto '
+                                        'multicompañia de producto')
 
 
     @api.model
@@ -72,7 +74,8 @@ class ProcurementOrder(models.Model):
             # Si depende de la compañia pero es de la misma compañia es
             # movimiento
             if self.company_id.id == self.product_id.company_id.id or \
-                            self.company_id.no_ic or self.product_id.no_ic:
+                            self.company_id.no_ic or self.product_id.no_ic\
+                    or self.no_product_company:
 
                 # In case Phantom BoM splits only into procurements
                 if not self.move_ids:
@@ -104,7 +107,8 @@ class ProcurementOrder(models.Model):
     def _run(self):
         if self.rule_id and self.rule_id.action == 'product_company':
             if self.company_id.id == self.product_id.company_id.id or \
-                            self.company_id.no_ic or self.product_id.no_ic:
+                            self.company_id.no_ic or self.product_id.no_ic or \
+                            self.no_product_company:
                 # get the product only with move
                 if not self.rule_id.location_src_id:
                     self.message_post(body=_('No source location defined!'))

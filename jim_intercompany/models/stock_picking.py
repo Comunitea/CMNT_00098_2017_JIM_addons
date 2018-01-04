@@ -245,6 +245,10 @@ class StockMove(models.Model):
         vals = super(StockMove, self)._prepare_procurement_from_move()
         vals['move_dest_IC_id'] = self.move_dest_IC_id.id or \
                                   self.move_dest_id.move_dest_IC_id.id
+        if self.procurement_id.sale_line_id.order_id.partner_id.id == \
+                self.product_id.company_id.partner_id.id:
+            vals['no_product_company'] = True
+
         return vals
 
     def prepare_propagate_vals(self, product_move, picking):
