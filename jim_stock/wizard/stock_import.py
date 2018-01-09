@@ -31,7 +31,8 @@ class JimStockImport(models.TransientModel):
             if qty <= 0:
                 continue
             product = self.env['product.product'].search(
-                [('default_code', '=', product_code)])
+                [('default_code', '=', product_code), '|',
+                 ('active', '=', True), ('active', '=', False)])
             if not product:
                 raise UserError(_('Product with code %s not found') %
                                 product_code)

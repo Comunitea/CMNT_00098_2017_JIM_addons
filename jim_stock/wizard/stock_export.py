@@ -30,8 +30,7 @@ class JimStockExport(models.TransientModel):
         worksheet.write(0, 6, 'WarehouseCode')
         quants = self.env['stock.quant'].read_group(
             [('company_id', '=', self.company.id),
-             ('location_id.usage', '=', 'internal'),
-             ('product_id.active', '=', True)],
+             ('location_id.usage', '=', 'internal')],
             ['product_id', 'location_id', 'qty'],
             ['product_id', 'location_id'], lazy=False)
         row = 1
