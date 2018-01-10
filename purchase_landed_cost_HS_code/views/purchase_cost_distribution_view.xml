@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="view_purchase_cost_distribution_line_tax_form" model="ir.ui.view">
+        <field name="name">purchase.cost.distribution.line.tax.form</field>
+        <field name="model">purchase.cost.distribution.line</field>
+        <field name="inherit_id" ref="purchase_landed_cost.view_purchase_cost_distribution_line_form"/>
+        <field name="arch" type="xml">
+            <field name="product_price_unit" position="after">
+                <field name="tax" />
+            </field>
+        </field>
+    </record>
+</odoo>

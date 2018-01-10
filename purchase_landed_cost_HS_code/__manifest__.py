@@ -2,9 +2,9 @@
 # © 2017 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
-    "name": "Add containers to landed cost",
+    "name": "Add Taxes form HS Codes to landed cost",
     "summary": "",
-    "version": "8.0.1.0.0",
+    "version": "10.0.1.0.0",
     "category": "Uncategorized",
     "website": "comunitea.com",
     "author": "Comunitea",
@@ -12,11 +12,10 @@
     "application": False,
     "installable": True,
     "depends": [
-        "base",
         "purchase_landed_cost",
-        "shipping_container"
+        "product_harmonized_system"
     ],
     "data": [
-        'wizard/picking_import_wizard.xml'
+        "views/purchase_cost_distribution_view.xml"
     ],
 }
