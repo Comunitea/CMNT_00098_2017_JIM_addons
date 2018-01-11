@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 # © 2016 Comunitea
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
-from odoo import api, fields, models
+from odoo import api, fields, models, _
+from odoo.exceptions import UserError
 
 
 class AccountMoveLine(models.Model):
@@ -38,8 +39,42 @@ class AccountInvoice(models.Model):
     user_id = fields.Many2one(states={'draft': [('readonly', False)],
                                       'open': [('readonly', False)],
                                       'paid': [('readonly', False)]})
+    invoice_line_ids = fields.One2many(readonly=False)
 
     @api.multi
     def action_invoice_paid(self):
         super_invoices = self.filtered(lambda inv: inv.amount_total != 0)
         return super(AccountInvoice, super_invoices).action_invoice_paid()
+
+
+class AccountInvoiceLine(models.Model):
+
+    _inherit = 'account.invoice.line'
+
+    state = fields.Selection()
+    name = fields.Char(readonly=True, states={'draft': [('readonly', False)]})
+    uom_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
+    product_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
+    price_unit = fields.Float(readonly=True, states={'draft': [('readonly', False)]})
+    quantity = fields.Float(readonly=True, states={'draft': [('readonly', False)]})
+    discount = fields.Float(readonly=True, states={'draft': [('readonly', False)]})
+    chained_discount = fields.Float(readonly=True, states={'draft': [('readonly', False)]})
+    invoice_line_tax_ids = fields.Many2many(readonly=True, states={'draft': [('readonly', False)]})
+    account_analytic_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
+    asset_category_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
+    account_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
+    analytic_tag_ids = fields.Many2many(readonly=True, states={'draft': [('readonly', False)]})
+    state = fields.Selection([
+            ('draft','Draft'),
+            ('proforma', 'Pro-forma'),
+            ('proforma2', 'Pro-forma'),
+            ('open', 'Open'),
+            ('paid', 'Paid'),
+            ('cancel', 'Cancelled'),
+        ], related='invoice_id.state')
+
+    @api.multi
+    def unlink(self):
+        if any(self.filtered(lambda r: r.state in ('open', 'paid'))):
+            raise UserError(_('No se pueden eliminar lineas de facturas abiertas'))
+        return super(AccountInvoiceLine, self).unlink()
