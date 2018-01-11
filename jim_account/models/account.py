@@ -51,7 +51,6 @@ class AccountInvoiceLine(models.Model):
 
     _inherit = 'account.invoice.line'
 
-    state = fields.Selection()
     name = fields.Char(readonly=True, states={'draft': [('readonly', False)]})
     uom_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
     product_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
