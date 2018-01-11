@@ -29,7 +29,8 @@
         'wizard/stock_import.xml',
         'wizard/stock_export.xml',
         'views/stock_in_out.xml',
-        'security/ir.model.access.csv'
+        'views/account_invoice.xml',
+        'security/ir.model.access.csv',
     ],
     "installable": True
 }
