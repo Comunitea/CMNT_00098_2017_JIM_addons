@@ -18,6 +18,9 @@
                     <group>
                         <field name="offset"/>
                         <field name="limit"/>
+                        <field name="date"/>
+                        <field name="stock_field"/>
+                        <field name="valued"/>
                     </group>
                 </group>
                 <footer>

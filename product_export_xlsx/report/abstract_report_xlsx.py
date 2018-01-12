@@ -44,7 +44,7 @@ class AbstractReportXslx(ReportXlsx):
         self._define_formats(workbook)
         report_name = self._get_report_name()
         #filters = self._get_report_filters(report)
-        self.columns = self._get_report_columns(report)
+        self.columns = self._get_report_columns(report, data['stock_field'], data['valued'])
         self.sheet = workbook.add_worksheet(report_name[:31])
         self._set_column_width()
         #self._write_report_title(report_name)
@@ -165,7 +165,9 @@ class AbstractReportXslx(ReportXlsx):
         Columns are defined with `_get_report_columns` method.
         """
         for col_pos, column in self.columns.iteritems():
-            value = line_object.get(column['field'])
+            value = line_object.get(column['field'], 0.0)
+            if not value:
+                value = 0.0
             cell_type = column.get('type', 'string')
             if cell_type == 'string':
                 self.sheet.write_string(self.row_pos, col_pos, value or '')
@@ -215,7 +217,7 @@ class AbstractReportXslx(ReportXlsx):
         """
         raise NotImplementedError()
 
-    def _get_report_columns(self, report):
+    def _get_report_columns(self, report, stock_field, valued):
         """
             Allow to define the report columns
             which will be used to generate report.
