@@ -4,3 +4,4 @@
 
 from . import product_tag
 from . import product
+from . import account_invoice_report

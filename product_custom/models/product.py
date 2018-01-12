@@ -120,3 +120,11 @@ class ProductTag(models.Model):
     _inherit = "product.tag"
 
     legacy_code = fields.Char("Legacy code", size=18)
+
+
+
+class ProductCategory(models.Model):
+
+    _inherit = "product.category"
+
+    active = fields.Boolean(default=True)
