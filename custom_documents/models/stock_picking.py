@@ -28,12 +28,12 @@ class StockPicking(models.Model):
     @api.depends('min_date')
     def _compute_min_date_date(self):
         for pick in self:
-            pick.min_date_date = pick.min_date.split(' ')[0]
+            pick.min_date_date = pick.min_date and \
+                                 pick.min_date.split(' ')[0] or False
             if pick.date_done:
                 pick.date_done_date = pick.date_done.split(' ')[0]
             else:
-                pick.date_done_date = pick.min_date.split(' ')[0]
-
+                pick.date_done_date = pick.min_date_date
     # Si el albaran  se finalizó antes de las 17:30 entre semana se envía el
     # mismo día.
     def _compute_same_day_delivery(self):
