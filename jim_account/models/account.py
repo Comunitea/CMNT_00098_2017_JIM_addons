@@ -51,7 +51,7 @@ class AccountInvoiceLine(models.Model):
 
     _inherit = 'account.invoice.line'
 
-    name = fields.Char(required=True, states={'open': [('readonly', True)]})
+    #name = fields.Char(required=True, states={'open': [('readonly', True)]})
     state = fields.Selection([
             ('draft','Draft'),
             ('proforma', 'Pro-forma'),
