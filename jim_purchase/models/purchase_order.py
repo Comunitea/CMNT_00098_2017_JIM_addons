@@ -134,6 +134,13 @@ class PurchaseOrder(models.Model):
             order.date_order = fields.Datetime.now()
         return super(PurchaseOrder, self).button_confirm()
 
+    @api.model
+    def _prepare_picking(self):
+        res = super(PurchaseOrder, self)._prepare_picking()
+        if self.group_id:
+            res['partner_id'] = self.group_id.partner_id.id
+        return res
+
 
 class AccountInvoice(models.Model):
 
