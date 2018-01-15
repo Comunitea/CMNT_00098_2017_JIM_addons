@@ -15,6 +15,8 @@
     'website': 'http://www.comunitea.com',
     'data': ["views/product_tags_view.xml",
              "views/product_web_report.xml",
+             "views/product_category.xml",
+             "views/account_invoice_report_view.xml",
              "views/product_view.xml"],
     'installable': True,
     'auto_install': False,

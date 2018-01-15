@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+<data>
+     <record id="view_account_invoice_report_search_active_categ" model="ir.ui.view">
+        <field name="name">account.invoice.report.active.categ.search</field>
+        <field name="model">account.invoice.report</field>
+        <field name="inherit_id" ref="account.view_account_invoice_report_search"/>
+        <field name="arch" type="xml">
+            <field name="categ_id" position="after">
+                <field name="active_category" filter_domain="[('active_category', '=', True)]"/>
+            </field>
+
+        </field>
+     </record>
+</data>
+</odoo>
