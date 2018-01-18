@@ -18,6 +18,7 @@ class WizardValuationHistory(models.TransientModel):
     stock_field = fields.Selection(
         (('qty_available', 'Available'), ('web_global_stock', 'Web global stock')), default='web_global_stock')
     valued = fields.Boolean()
+    location_ids = fields.Many2many('stock.location', 'locations')
 
     @api.multi
     def open_product_web_report(self):
@@ -26,7 +27,10 @@ class WizardValuationHistory(models.TransientModel):
         prod_ctx = self.env['product.product']
         if self.date:
             use_date = self.date
-            prod_ctx = self.env['product.product'].with_context(to_date=self.date)
+            if self.location_ids:
+                prod_ctx = self.env['product.product'].with_context(to_date=self.date, location=self.location_ids._ids)
+            else:
+                prod_ctx = self.env['product.product'].with_context(to_date=self.date)
         else:
             use_date = date.today().strftime('%Y-%m-%d')
         offset = 0
@@ -85,7 +89,11 @@ class WizardValuationHistory(models.TransientModel):
                         SELECT ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY date_invoice DESC) AS ordered, *
                         FROM(
                             SELECT ai.date_invoice, il.product_id, il.quantity, il.price_subtotal, il.arancel_percentage, il.arancel,
-                             ((il.price_subtotal / ai.amount_untaxed) * ai.delivery_cost) / il.quantity AS delivery,
+                            CASE
+                                WHEN ai.amount_untaxed = 0 THEN NULL
+                                WHEN il.quantity = 0 THEN NULL
+                                ELSE ((il.price_subtotal / ai.amount_untaxed) * ai.delivery_cost) / il.quantity
+                            END AS delivery,
                              il.price_unit as price_unit
                             FROM account_invoice_line il
                                 JOIN product_product pp ON il.product_id = pp.id
@@ -94,13 +102,14 @@ class WizardValuationHistory(models.TransientModel):
                                 JOIN res_country rc ON rp.country_id = rc.id
                             WHERE pp.default_code != 'LM' AND rc.code != 'ES'
                                 and pp.id in %s and ai.date_invoice <= '%s'
+                                and ai.company_id = %s
                                 and ai.type = 'in_invoice') as tb
                     ) tb2
                     WHERE tb2.ordered <= 3
 
                 )tb3
                 GROUP BY product_id
-                ORDER BY product_id""" % (tuple(new_dict.keys()), use_date))
+                ORDER BY product_id""" % (tuple(new_dict.keys()), use_date, self.env.user.company_id.id))
                 aranceles = self.env.cr.fetchall()
                 for arancel in aranceles:
                     new_dict[arancel[0]].update(
