@@ -66,7 +66,11 @@ class WizardValuationHistory(models.TransientModel):
             product_dict = prod_ctx.search_read(domain, fields, offset=offset, limit=inc)
             new_dict = {x.pop('id'): x for x in product_dict}
             if self.valued:
-                self.env.cr.execute("""SELECT product_id,
+                self.env.cr.execute("""SELECT
+                    CASE
+                        WHEN tb3.product_id IS NOT NULL THEN tb3.product_id
+                        ELSE tb4.product_id
+                    END AS producto,
                     SUM(quantity) AS CantidadTotal, SUM(price_subtotal) AS ImporteTotal,
                     AVG(arancel) AS Arancel,
                     CASE
@@ -93,23 +97,40 @@ class WizardValuationHistory(models.TransientModel):
                                 WHEN ai.amount_untaxed = 0 THEN NULL
                                 WHEN il.quantity = 0 THEN NULL
                                 ELSE ((il.price_subtotal / ai.amount_untaxed) * ai.delivery_cost) / il.quantity
-                            END AS delivery,
-                             il.price_unit as price_unit
+                            END AS delivery
                             FROM account_invoice_line il
                                 JOIN product_product pp ON il.product_id = pp.id
                                 JOIN account_invoice ai ON il.invoice_id = ai.id
                                 JOIN res_partner rp ON ai.partner_id = rp.id
                                 JOIN res_country rc ON rp.country_id = rc.id
-                            WHERE pp.default_code != 'LM' 
-                                and pp.id in %s and ai.date_invoice <= '%s'
-                                and ai.company_id = %s
+                            WHERE pp.default_code != 'LM'  AND rc.code != 'ES'
+                                and pp.id in {0} and ai.date_invoice <= '{1}'
+                                and ai.company_id = {2}
                                 and ai.type = 'in_invoice') as tb
                     ) tb2
                     WHERE tb2.ordered <= 3
 
-                )tb3
-                GROUP BY product_id
-                ORDER BY product_id""" % (tuple(new_dict.keys()), use_date, self.env.user.company_id.id))
+                )tb3 FULL OUTER JOIN
+                (
+                    SELECT *
+                    FROM(
+                        SELECT ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY date_invoice DESC) AS ordered, *
+                        FROM(
+                            SELECT ai.date_invoice, il.product_id, il.price_unit as price_unit
+                            FROM account_invoice_line il
+                                JOIN product_product pp ON il.product_id = pp.id
+                                JOIN account_invoice ai ON il.invoice_id = ai.id
+                                JOIN res_partner rp ON ai.partner_id = rp.id
+                                JOIN res_country rc ON rp.country_id = rc.id
+                            WHERE pp.default_code != 'LM'
+                                and pp.id in {0} and ai.date_invoice <= '{1}'
+                                and ai.company_id = {2}
+                                and ai.type = 'in_invoice') as tb
+                    ) tb2
+                    WHERE tb2.ordered <= 3)tb4
+                ON tb3.product_id = tb4.product_id
+                GROUP BY producto
+                ORDER BY producto""".format(tuple(new_dict.keys()), use_date, self.env.user.company_id.id))
                 aranceles = self.env.cr.fetchall()
                 for arancel in aranceles:
                     new_dict[arancel[0]].update(
