@@ -3,6 +3,7 @@
 
 from odoo import api, models, fields, _
 from datetime import date
+from odoo.tools import float_is_zero
 
 
 class WizardValuationHistory(models.TransientModel):
@@ -56,7 +57,8 @@ class WizardValuationHistory(models.TransientModel):
         else:
             limit = prod_ctx.search(domain, count=True)
 
-        fields = ('display_name', 'default_code', 'tag_names', 'web', self.stock_field)
+        fields = ('display_name', 'default_code', 'tag_names', 'web',
+                  self.stock_field, 'standard_price')
         read = []
         inc = 250
         print "Numero de registros a exportar: %s\nBuscando ..."%limit

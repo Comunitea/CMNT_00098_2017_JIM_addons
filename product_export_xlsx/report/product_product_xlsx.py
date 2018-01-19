@@ -37,6 +37,8 @@ class ProductWebXslx(abstract_report_xlsx.AbstractReportXslx):
             columns[9] = {'header': _('porcentaje_arancel'), 'field': 'porcentaje_arancel', 'width': 15, 'type': 'float'}
             columns[10] = {'header': _('delivery'), 'field': 'delivery', 'width': 15, 'type': 'float'}
             columns[11] = {'header': _('price_unit'), 'field': 'price_unit', 'width': 15, 'type': 'float'}
+            columns[12] = {'header': _('Precio coste medio SAP'), 'field':
+                'standard_price', 'width': 15, 'type': 'float'}
         return columns
 
     def _get_report_filters(self, report):
