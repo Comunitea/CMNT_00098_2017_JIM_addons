@@ -174,12 +174,13 @@ class SGAProductProduct(models.Model):
     _inherit = "product.product"
 
     @api.multi
-    @api.depends('display_name')
     def _get_sga_names(self):
+        ctx = self._context.copy()
+        ctx.update({'display_default_code': False})
         for product in self:
-            name = product.display_name and product.display_name[0:50] or product.name
-            product.sga_name_get = name
-            product.sga_prod_shortdesc = name[0:50]
+            #name = product.display_name and product.display_name[0:50] or product.name
+            product.sga_name_get = product.with_context(ctx).name_get()[0][1]
+            product.sga_prod_shortdesc = product.sga_name_get[0:50]
 
     sga_name_get = fields.Char("Mecalux name", compute='_get_sga_names')
     sga_prod_shortdesc = fields.Char("Nombre Radiofrecuencia", compute='_get_sga_names')
