@@ -160,7 +160,7 @@ msgstr "Articulos en web (listado)
 #: model:ir.actions.act_window,name:product_export_xlsx.action_wizard_menu_web
 #: model:ir.ui.menu,name:product_export_xlsx.menu_action_product_web
 msgid "Product web report (XLS)"
-msgstr "Artículos en web (XLS)"
+msgstr "$$ Stock+Arancel+Transporte"
 
 #. module: product_export_xlsx
 #: model:ir.ui.view,arch_db:product_export_xlsx.view_product_web_wzd
