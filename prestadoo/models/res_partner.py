@@ -69,7 +69,10 @@ class Partner(BaseExtClass):
         if self.env.user.company_id.id == 1:
             pricelist = self.property_product_pricelist
         else:
-            pricelist = self.sudo().with_context(force_company=1).property_product_pricelist
+            pricelist_obj = self.env['product.pricelist']
+            pricelist_id = pricelist_obj.sudo()._get_partner_pricelist(
+                self.id, 1)
+            pricelist = pricelist_obj.browse(pricelist_id)
 
         if not unlink and self.active:
             if pricelist.name == 'SIN PRECIO':

@@ -22,6 +22,8 @@
                         <field name="stock_field"/>
                         <field name="valued"/>
                     </group>
+                    <separator string="Locations"/>
+                    <field name="location_ids" nolabel="1"/>
                 </group>
                 <footer>
                     <button name="open_product_web_report" string="Retrieve the product web xls" type="object" class="btn-primary"/>

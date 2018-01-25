@@ -38,7 +38,8 @@ class StockInOutLine(models.Model):
     @api.onchange('warehouse')
     def onchange_warehouse(self):
         for line in self.filtered(lambda x: x.in_out.type == 'out'):
-            line.location = line.warehouse.lot_stock_id
+            if line.warehouse:
+                line.location = line.warehouse.lot_stock_id
 
     @api.onchange('product')
     def onchange_product(self):

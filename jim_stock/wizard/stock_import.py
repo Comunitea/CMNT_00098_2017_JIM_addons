@@ -36,6 +36,13 @@ class JimStockImport(models.TransientModel):
             if not product:
                 raise UserError(_('Product with code %s not found') %
                                 product_code)
+            if len(product) > 1:
+                raise UserError(_('Se ha encontrado más de un producto en '
+                                  'Odoo con '
+                                  'la referencia %s. Estas referencias '
+                                  'deben ser únicas') %
+                                product_code)
+
             new_line_vals = {
                 'product': product.id,
                 'quantity': qty,
@@ -49,12 +56,22 @@ class JimStockImport(models.TransientModel):
                 new_line_vals['location'] = location_dest.id
             if self.type == 'out':
                 warehouse_code = row[6]
-                warehouse = self.env['stock.warehouse'].search(
-                    [('code', '=', warehouse_code)])
-                if not warehouse:
-                    raise UserError(_('Warehouse with code %s not found') %
+                if warehouse_code:
+                    warehouse = self.env['stock.warehouse'].search(
+                        [('code', '=', warehouse_code)])
+                    new_line_vals['warehouse'] = warehouse.id
+                    if not warehouse:
+                        raise UserError(_('Warehouse with code %s not found') %
                                     warehouse_code)
-                new_line_vals['warehouse'] = warehouse.id
+                    new_line_vals['warehouse'] = warehouse.id
+                else:
+                    location_orig = self.env['stock.location'].search(
+                        [('id', '=', row[2])])
+                    if not location_orig:
+                        raise UserError(
+                            _('Location with id %s and name %s not found')
+                            % row[2], row[3])
+                    new_line_vals['location'] = location_orig.id
             new_line = self.env['stock.in.out.line'].create(new_line_vals)
             new_line.onchange_warehouse()
             new_line.onchange_product()

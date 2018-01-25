@@ -51,18 +51,7 @@ class AccountInvoiceLine(models.Model):
 
     _inherit = 'account.invoice.line'
 
-    name = fields.Char(readonly=True, states={'draft': [('readonly', False)]})
-    uom_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
-    product_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
-    price_unit = fields.Float(readonly=True, states={'draft': [('readonly', False)]})
-    quantity = fields.Float(readonly=True, states={'draft': [('readonly', False)]})
-    discount = fields.Float(readonly=True, states={'draft': [('readonly', False)]})
-    chained_discount = fields.Float(readonly=True, states={'draft': [('readonly', False)]})
-    invoice_line_tax_ids = fields.Many2many(readonly=True, states={'draft': [('readonly', False)]})
-    account_analytic_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
-    asset_category_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
-    account_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)]})
-    analytic_tag_ids = fields.Many2many(readonly=True, states={'draft': [('readonly', False)]})
+    #name = fields.Char(required=True, states={'open': [('readonly', True)]})
     state = fields.Selection([
             ('draft','Draft'),
             ('proforma', 'Pro-forma'),
