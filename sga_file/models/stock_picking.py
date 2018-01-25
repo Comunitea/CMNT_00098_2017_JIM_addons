@@ -190,7 +190,7 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def move_to_NE(self):
-        sga_states_to_NE = ('PM', 'EI', 'EE', 'MT', False)
+        sga_states_to_NE = ('PM', 'EI', 'EE', 'MT', 'MC', False)
         picks = self.filtered(lambda x: x.sga_integrated and x.sga_state in sga_states_to_NE)
         picks.write({'sga_state': 'NE'})
 
@@ -383,7 +383,7 @@ class StockPickingSGA(models.Model):
                 st = 40
                 en = st + 30
                 rec_order_code = line[st:en].strip()
-                pick = pick_obj.search([('name', '=', rec_order_code), ('sga_state', '=', 'PM')])
+                pick = pick_obj.search([('name', '=', rec_order_code), ('sga_state', 'in', ('MC', 'PM'))])
                 #if not pick:
                 #    pick = pick_obj.search([('backorder_id.name', '=', rec_order_code), ('sga_state', 'in', ('PM', 'EI'))])
                 if pick:
