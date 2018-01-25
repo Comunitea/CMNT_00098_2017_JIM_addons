@@ -204,5 +204,16 @@
             </field>
         </record>
 
+        <record id="view_picking_withcarrier_out_form_edit_carrier_id" model="ir.ui.view">
+            <field name="name">stock.picking_withcarrier.form.view_carrier_id_editable</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="delivery.view_picking_withcarrier_out_form" />
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='carrier_id']" position="attributes">
+                    <attribute name="attrs">{'readonly': 0}</attribute>
+            </xpath>
+            </field>
+        </record>
+
     </data>
 </openerp>
