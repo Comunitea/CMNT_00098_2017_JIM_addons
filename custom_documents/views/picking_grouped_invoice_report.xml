@@ -10,6 +10,9 @@
                 <div class="oe_structure"/>
                 <div class="radius_border" style="margin-bottom: 10px;">
                     Obs.:
+                        <t t-if="o.partner_id != o.commercial_partner_id">
+                            Associated: <span t-field="o.partner_id.name"/>
+                        </t>
                         <span t-field="o.name" t-if="o.type not in ('in_refund', 'out_refund')"/>
                         <span t-field="o.notes"/>
                 </div>

@@ -7,13 +7,20 @@ msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-08-02 16:30+0000\n"
-"PO-Revision-Date: 2017-11-17 14:33+0100\n"
+"PO-Revision-Date: 2018-01-30 18:21+0100\n"
 "Last-Translator: Jesús Ventosinos Mayor <jesus@comunitea.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: \n"
 "Plural-Forms: \n"
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_invoice_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.report_picking_grouped_invoice_document
+msgid "Associated:"
+msgstr "Asociado:"
 
 #. module: custom_documents
 #: model:ir.model.fields,field_description:custom_documents.field_delivery_carrier_delivery_cost
