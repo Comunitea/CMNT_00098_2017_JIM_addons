@@ -50,7 +50,7 @@ class SaleOrder(models.Model):
                 'progress_lqdr': [('readonly', False)],
                 'pending': [('readonly', False)],
                 'sale': [('readonly', False)], })
-
+    company_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
     @api.model
     def create_web(self, vals):
         partner = self.env['res.partner'].browse(vals['partner_id'])
