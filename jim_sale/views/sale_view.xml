@@ -13,9 +13,9 @@
                 <field name="partner_invoice_id" position="attributes">
                     <attribute name="context">{'no_edit': partner_invoice_id}</attribute>
                 </field>
-                <field name="partner_shipping_id" position="attributes">
+                <!--field name="partner_shipping_id" position="attributes">
                     <attribute name="context">{'no_edit': partner_shipping_id}</attribute>
-                </field>
+                </field-->
 
             </field>
         </record>
