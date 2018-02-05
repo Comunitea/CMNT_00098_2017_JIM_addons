@@ -8,7 +8,7 @@ class ProductProduct(BaseExtClass):
     packet_size = 500
 
     def is_notifiable(self):
-        return self.product_tmpl_id.type == "product" and self.tag_ids
+        return self.product_tmpl_id.type == "product" and self.tag_ids and ('False' not in self.default_code)
 
     fields_to_watch = ('id', 'default_code', 'name', 'barcode', 'description', 'web_global_stock',
                        'product_brand_id', 'attribute_line_ids', 'tag_ids', 'active', 'type', 'force_web')

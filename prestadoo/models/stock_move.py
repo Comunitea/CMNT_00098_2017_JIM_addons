@@ -32,7 +32,8 @@ class StockMove(BaseExtClass):
             self.id,                                                    # LineNum (del stock.move o self)
             self.product_id.default_code or self.product_id.id,         # ItemCode
             self.product_uom_qty if self.state == "assigned" else 0,    # Quantity
-            tools.format_date(self.purchase_line_id.date_planned)       # ShipDate (de la línea de pedido de compras)
+            tools.format_date(self.date_expected)                       # ShipDate (del albarán)
+            # tools.format_date(self.purchase_line_id.date_planned)
         )
 
         self.obj_type = '20'
