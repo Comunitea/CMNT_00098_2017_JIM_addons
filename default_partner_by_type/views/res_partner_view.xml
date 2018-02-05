@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+    <record id="view_partner_form_default_type_partner" model="ir.ui.view">
+        <field name="name">res.partner.form.default.type.partner</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            <field name="ref" position="after">
+               <label for="default_partner_by_type" />
+               <div>
+                   <field name="default_partner_by_type" readonly="1"/>
+                   <button name="set_as_default" string="Por defecto" type="object" icon="fa-indent" class="oe_inline" ></button>
+               </div>
+            </field>
+            <xpath expr="//kanban/field[@name='customer']" position="after">
+               <field name="default_partner_by_type"/>
+            </xpath>
+            <xpath expr="//div[contains(@class, 'oe_kanban_details')]" position="inside">
+                <t t-if="record.default_partner_by_type.raw_value === true">
+                    <i class="fa fa-star"/>
+                </t>
+            </xpath>
+            <xpath expr="//form/sheet/field[@name='type']" position="after">
+                <group attributes="{'invisible': [('parent_id', '!=', False)]}">
+                    <label for="default_partner_by_type" />
+
+                    <div>
+                        <field name="default_partner_by_type" readonly="1"/>
+                        <button name="set_as_default" string="Por defecto" type="object" icon="fa-indent" class="oe_inline" ></button>
+                    </div>
+                </group>
+            </xpath>
+        </field>
+    </record>
+    <record id="partner_kanban_view_default_type_partner" model="ir.ui.view">
+        <field name="name">res.partner.kanban.default.type</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.res_partner_kanban_view"/>
+        <field name="priority" eval="10"/>
+        <field name="arch" type="xml">
+            <field name="is_company" position="after">
+                <field name="default_partner_by_type"/>
+            </field>
+            <xpath expr="//div[contains(@class, 'oe_kanban_partner_categories')]" position="after">
+                <t t-if="record.default_partner_by_type.raw_value === true">
+                    <i class="fa fa-star"/>
+                </t>
+            </xpath>
+        </field>
+    </record>
+    </data>
+</odoo>

@@ -41,13 +41,16 @@ class purchase_order(models.Model):
         """
         partner_addr = partner.sudo().address_get(['invoice', 'delivery', 'contact'])
         warehouse = company.warehouse_id
+        pricelist_obj = self.env['product.pricelist']
+        pricelist_id = pricelist_obj.sudo()._get_partner_pricelist(
+            partner.id, company.id)
         return {
             'name': self.env['ir.sequence'].sudo().next_by_code('sale.order') or '/',
             'company_id': company.id,
             'warehouse_id': warehouse.id,
             'client_order_ref': name,
             'partner_id': partner.id,
-            'pricelist_id': partner.property_product_pricelist.id,
+            'pricelist_id': pricelist_id,
             'partner_invoice_id': partner_addr['invoice'],
             'date_order': self.date_order,
             'fiscal_position_id': partner.property_account_position_id.id,
