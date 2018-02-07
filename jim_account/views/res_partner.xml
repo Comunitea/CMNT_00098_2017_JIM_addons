@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2018 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+    <record id="partner_view_buttons_remove_invisible" model="ir.ui.view">
+    <field name="name">account_payment_mode.res_partner_form</field>
+    <field name="model">res.partner</field>
+        <field name="inherit_id" ref="account_payment_mode.partner_view_buttons"/>
+        <field name="arch" type="xml">
+        <group name="banks" position="attributes">
+            <attribute name="attrs">{'invisible': [('is_company', '=', False)]}</attribute>
+        </group>
+        </field>
+    </record>
+</odoo>

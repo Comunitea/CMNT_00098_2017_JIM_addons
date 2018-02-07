@@ -19,7 +19,8 @@
     "data": [
         'views/account_move.xml',
         'views/account_banking_mandate.xml',
-        'views/account_invoice.xml'
+        'views/account_invoice.xml',
+        'views/res_partner.xml'
     ],
     "installable": True
 }
