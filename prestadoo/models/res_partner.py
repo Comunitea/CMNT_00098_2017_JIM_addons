@@ -32,7 +32,7 @@ class Partner(BaseExtClass):
                                         'active', 'type', 'parent_id', 'company_id')
                 return True
             else:
-                self.fields_to_watch = ('active', 'type', 'parent_id', 'street', 'zip', 'city', 'country_id',
+                self.fields_to_watch = ('name', 'active', 'type', 'parent_id', 'street', 'zip', 'city', 'country_id',
                                         'company_id')
                 return self.type == 'delivery'
 
@@ -102,7 +102,7 @@ class Partner(BaseExtClass):
                     self.parent_id.ref or self.parent_id.id,    # CardCode
                     self.legacy_code or '#' + str(self.id),     # LineNum
                     self.name,                                  # Address
-                    '1' if self.active else '-1',               # DefaultAddress
+                    '-1' if valid == 'N' else '1',              # DefaultAddress
                     self.street or '',                          # Street
                     self.street2 or '',                         # Block
                     self.zip or '',                             # ZipCode
