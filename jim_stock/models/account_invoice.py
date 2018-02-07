@@ -3,7 +3,7 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import models, fields, api
-
+from odoo.exceptions import UserError, ValidationError
 
 class AccountInvoiceLine(models.Model):
 
@@ -20,6 +20,15 @@ class AccountInvoiceLine(models.Model):
             else:
                 line.arancel = 0
 
+    @api.model
+    def create(self, vals):
+        if self.invoice_id.state != 'draft':
+            raise UserError('Solo se pueden añadir lineas a facturas en '
+                            'estado borrador. Descarte los cambios cancele '
+                            'la factura y sitúela en '
+                            'estado borrador para realizar esta operación')
+        else:
+            return super(AccountInvoiceLine, self).create(vals)
 
 class AccountInvoice(models.Model):
 
