@@ -220,10 +220,10 @@ class SaleOrder(models.Model):
         return action
 
     def confirm_checks(self):
-        if self.partner_shipping_id.country_id and self.partner_shipping_id.country_id.name.encode('UTF-8') == "%s"%"España":
-            if not self.partner_shipping_id.state_id:
-                raise ValidationError("No puedes confirmar sin provincia de envío")
-
+        if not self.partner_shipping_id.country_id:
+            raise ValidationError("No puedes confirmar sin pais de envío")
+        if self.partner_shipping_id.country_id.id == 69 and not self.partner_shipping_id.state_id:
+            raise ValidationError("No puedes confirmar sin provincia de envío")
 
     def action_cancel_wzd(self):
 

@@ -4,6 +4,7 @@
 
 from odoo import models, fields, api
 from lxml import etree
+from odoo.exceptions import ValidationError
 
 class ResPartner(models.Model):
 
@@ -35,3 +36,22 @@ class ResPartner(models.Model):
                 self.tostring = etree.tostring(doc)
                 res['arch'] = self.tostring
         return res
+
+    @api.model
+    def create(self, vals):
+        res = super(ResPartner, self).create(vals)
+        res.check_state_id()
+        return res
+
+    @api.multi
+    def write(self, vals):
+        res = super(ResPartner, self).write(vals)
+        for partner in self:
+            partner.check_state_id()
+        return res
+
+    @api.multi
+    def check_state_id(self):
+        for partner in self:
+            if partner.country_id and partner.country_id.id == 69 and not partner.state_id:
+                raise ValidationError("No puedes confirmar sin provincia de envío")

@@ -96,7 +96,7 @@ class StockPickingSGA(models.Model):
                 #city = pick_dest.partner_id.state_id and pick_dest.partner_id.state_id.name or pick_dest.partner_id.country_id.name
                 #name = pick_dest.partner_id.name
 
-            city = partner.state_id and partner.state_id.name or partner.country_id.name
+            city = partner.state_id and partner.state_id.name or partner.country_id and partner.country_id.name or 'Sin definir'
             name = partner.name
             pick.shipping_city = city
             pick.shipping_partner_name = name
