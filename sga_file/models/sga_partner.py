@@ -29,7 +29,7 @@ class ResPartnerSGA(models.Model):
         fields_to_check = ('ref', 'name', 'display_name', 'is_company')
         fields = sorted(list(set(values).intersection(set(fields_to_check))))
         if fields:
-            values.update({'state': 'PA'})
+            values.update({'sga_state': 'PA'})
         res = super(ResPartnerSGA, self).write(values)
         if fields:
             icp = self.env['ir.config_parameter']

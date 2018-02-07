@@ -146,7 +146,8 @@ class SetStateIdFromZip(object):
 
 
     def set_state_id(self):
-        partner_ids = self.search('res.partner', [('state_id', '=', False),('country_id', '!=', False),('zip', '!=', False)])
+        partner_ids = self.a('res.partner', [('write_date', '>', '6/2/2018 18:30:00'),
+                                             ('country_id', '!=', False),('zip', '!=', False)])
         print "partners no: ", len(partner_ids)
         cont = 1
 

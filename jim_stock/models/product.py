@@ -111,7 +111,8 @@ class ProductProduct(models.Model):
             "WHERE SOL.product_id in %s "
             "AND SO.state in ('lqdr', 'pending', 'progress_lqdr', 'progress',"
             " 'proforma') "
-            "AND not SLR.no_stock group BY SOL.product_id", [tuple(self.ids)])
+            "AND not SLR.no_stock AND SO.company_id NOT IN %s "
+            "group BY SOL.product_id", [tuple(self.ids), tuple(company_ids)])
         sale_line_data = dict(self._cr.fetchall())
 
         ctx = self._context.copy()
