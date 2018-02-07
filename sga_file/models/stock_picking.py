@@ -88,12 +88,16 @@ class StockPickingSGA(models.Model):
                 pick_dest = pick
 
             if pick_dest.sale_id and pick_dest.sale_id.partner_shipping_id:
-                city = pick_dest.sale_id.partner_shipping_id.state_id.name
-                name = pick_dest.sale_id.partner_shipping_id.name
+                partner = pick_dest.sale_id.partner_shipping_id
+                #city = pick_dest.sale_id.partner_shipping_id.state_id and pick_dest.sale_id.partner_shipping_id.state_id.name or pick_dest.sale_id.partner_shipping_id.country_id.name
+                #name = pick_dest.sale_id.partner_shipping_id.name
             else:
-                city = pick_dest.partner_id.state_id.name
-                name = pick_dest.partner_id.name
+                partner = pick_dest.partner_id
+                #city = pick_dest.partner_id.state_id and pick_dest.partner_id.state_id.name or pick_dest.partner_id.country_id.name
+                #name = pick_dest.partner_id.name
 
+            city = partner.state_id and partner.state_id.name or partner.country_id and partner.country_id.name or 'Sin definir'
+            name = partner.name
             pick.shipping_city = city
             pick.shipping_partner_name = name
 
