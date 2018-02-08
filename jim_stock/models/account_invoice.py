@@ -22,13 +22,14 @@ class AccountInvoiceLine(models.Model):
 
     @api.model
     def create(self, vals):
-        if self.invoice_id.state != 'draft':
+        res = super(AccountInvoiceLine, self).create(vals)
+        if res.invoice_id.state != 'draft':
             raise UserError('Solo se pueden añadir lineas a facturas en '
                             'estado borrador. Descarte los cambios cancele '
                             'la factura y sitúela en '
                             'estado borrador para realizar esta operación')
-        else:
-            return super(AccountInvoiceLine, self).create(vals)
+        return res
+
 
 class AccountInvoice(models.Model):
 
