@@ -87,12 +87,12 @@ class ProductTemplate(models.Model):
                 filtered(lambda x: x.attribute_line_ids):
             for product_id in tmpl_id.product_variant_ids:
                 default_code = tmpl_id.template_code
-                for att in product_id.attribute_line_ids.\
-                        sorted(key=lambda r: r.attribute_id.sequence):
+                for att in product_id.attribute_line_ids.sorted(key=lambda r: r.attribute_id.sequence):
                     seq = product_id.attribute_value_ids.\
                         filtered(lambda r: r.attribute_id == att.attribute_id)
                     seq_code = seq.code
-                    default_code += '.%s' %seq_code
+                    if seq_code:
+                        default_code += '.%s' %seq_code
                 if product_id.default_code != default_code:
                     product_id.default_code = default_code
 
@@ -104,6 +104,10 @@ class ProductTemplate(models.Model):
 
     @api.multi
     def create_variant_ids(self):
+        for tmpl_id in self:
+            if tmpl_id.attribute_line_ids and not tmpl_id.attribute_line_ids.filtered(lambda x: x.value_ids):
+                raise ValidationError ("No puedes poner un atributo sin valores de atributo")
+
         res = super(ProductTemplate, self).create_variant_ids()
         self.set_product_product_default_code()
         return res
