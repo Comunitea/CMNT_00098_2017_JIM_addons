@@ -111,6 +111,20 @@ class StockPicking(models.Model):
                     'amount_tax': amount_tax,
                     'amount_total': amount_untaxed + amount_tax,
                 })
+            else:
+                amount_untaxed = sum(pick.pack_operation_ids.mapped(
+                    'sale_price_subtotal')) + \
+                    sum(global_discount_lines.mapped('price_subtotal')) + \
+                    sum(pick.sale_services.mapped('price_subtotal'))
+                amount_tax = sum(pick.pack_operation_ids.mapped(
+                    'sale_price_tax')) + \
+                    sum(global_discount_lines.mapped('price_tax')) + \
+                    sum(pick.sale_services.mapped('price_tax'))
+                pick.update({
+                    'amount_untaxed': amount_untaxed,
+                    'amount_tax': amount_tax,
+                    'amount_total': amount_untaxed + amount_tax,
+                })
         return res
 
     @api.depends('sale_id')
