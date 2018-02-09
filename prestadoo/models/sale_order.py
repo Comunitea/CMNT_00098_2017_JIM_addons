@@ -10,8 +10,8 @@ class SaleOrder(BaseExtClass):
                        'state')
 
     def is_notifiable(self):
-		# La empresa num. 17 es Pallatium
-        return self.state == "pending" \
+        # La empresa num. 17 es Pallatium
+        return (self.state == "pending" or self.state == "lqdr")\
            and self.company_id.id != 17 \
            and self.partner_id.commercial_partner_id.is_notifiable()
 
