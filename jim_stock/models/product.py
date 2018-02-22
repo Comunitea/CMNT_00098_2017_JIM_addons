@@ -133,7 +133,6 @@ class ProductProduct(models.Model):
         company_available_stock = dict([(x.id, 0) for x in self])
         if company_ids:
             for company in company_ids:
-                ctx = self._context.copy()
                 ctx.update({'force_company': company})
                 company_available = dict(
                     [(p['id'], p['qty_available']) for p in
