@@ -71,6 +71,7 @@
         <field name="inherit_id" ref="account_payment_partner.view_partner_property_form"/>
         <field name="arch" type="xml">
             <field name="property_payment_term_id" position="attributes">
+                <attribute name="widget">many2one</attribute>
                 <attribute name="attrs">{'required': [('is_company', '=', True),('customer', '=', True)]}</attribute>
             </field>
             <field name="customer_payment_mode_id" position="attributes">
