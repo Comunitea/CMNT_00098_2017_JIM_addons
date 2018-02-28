@@ -80,6 +80,20 @@ class PurchaseOrderLine(models.Model):
             self.price_unit = price_unit
             return res
 
+    @api.multi
+    def _prepare_stock_moves_bis(self, picking):
+        """ Prepare the stock moves data for one order line. This function returns a list of
+        dictionary ready to be used in stock.move's create()
+        """
+        self.ensure_one()
+        res = []
+        if self.product_id.type not in ['product', 'consu']:
+            return res
+        ### DROPSHIPPING CANCELADO ###
+        for procurement in self.procurement_ids.filtered(lambda p: p.state == 'cancel' and p.rule_id.id == 141):
+            procurement.reset_to_confirmed()
+        return super(PurchaseOrderLine, self)._prepare_stock_moves(picking)
+
 
 class PurchaseOrder(models.Model):
 
