@@ -18,8 +18,8 @@ class AccountPaymentOrder(models.Model):
     def generated2uploaded(self):
 
         for order in self:
-            if order.date_uploaded == '':
-                order.data_uploaded = fields.Date.context_today(self)
+            if order.date_uploaded == False:
+                order.date_uploaded = fields.Date.context_today(self)
 
             if order.payment_mode_id.generate_move:
                 order.generate_move()
