@@ -52,6 +52,7 @@ class ResPartner(models.Model):
 
     @api.multi
     def check_state_id(self):
+
         for partner in self:
             if partner.country_id and partner.country_id.id == 69 and not partner.state_id:
-                raise ValidationError("No puedes confirmar sin provincia de envío")
+                raise ValidationError("No puedes tener un contacto sin provincia de envío. Partner con id: %s" %partner.id)

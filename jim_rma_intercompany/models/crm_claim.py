@@ -181,37 +181,32 @@ class CrmClaim(models.Model):
                 claim_icc = self.env['crm.claim'].with_context().create(new_rma_ICC_vals)
 
                 for line in company_lines:
+                    name = line.product_id.name_get()[0][1]
+                    icc_price = line.product_id.get_intercompany_price(company_icc.id, claim_icc.partner_id.id)
                     new_rma_ICC_lines = {'product_id': line.product_id.id,
-                                         'unit_sale_price': line.unit_sale_price,
+                                         'name': name,
+                                         'unit_sale_price': icc_price,
                                          'product_returned_quantity': line.product_returned_quantity,
-                                         'location_dest_id': line.location_dest_id,
+                                         'location_dest_id': line.location_dest_id.id,
                                          'company_id': company_icc.id,
                                          'claim_id': claim_icc.id,
                                          'claim_line_id': line.id,
                                          'state': 'confirmed'}
-
                     new_rma_line = self.env['claim.line'].new(new_rma_ICC_lines)
-                    new_rma_line._product_id_change()
                     vals = new_rma_line._convert_to_write(new_rma_line._cache)
-                    if vals['unit_sale_price'] == 0.00:
-                        vals['unit_sale_price'] = line.unit_sale_price
                     new_line_icc = self.env['claim.line'].with_context().create(vals)
                     lines_icc |= new_line_icc
                     new_rma_ICP_lines = {'product_id': line.product_id.id,
-                                         'unit_sale_price': line.unit_sale_price,
+                                         'name': name,
+                                         'unit_sale_price': icc_price,
                                          'product_returned_quantity': line.product_returned_quantity,
                                          'location_dest_id': partner_icp.property_stock_supplier.id,
                                          'company_id': company_icp.id,
                                          'claim_id': claim_icp.id,
                                          'claim_line_id': new_line_icc.id,
                                          'state': 'confirmed'}
-
-
                     new_rma_line = self.env['claim.line'].new(new_rma_ICP_lines)
-                    new_rma_line._product_id_change()
                     vals = new_rma_line._convert_to_write(new_rma_line._cache)
-                    if vals['unit_sale_price'] == 0.00:
-                        vals['unit_sale_price'] = line.unit_sale_price
                     new_line_icp = self.env['claim.line'].with_context().create(vals)
                     lines_icp |= new_line_icp
 
