@@ -105,3 +105,10 @@ class AccountInvoiceLine(models.Model):
                 price, currency, qty, product=self.product_id,
                 partner=self.invoice_id.partner_id)
         return taxes['total_excluded'] if taxes else qty * price
+
+
+class AccountPaymentMode(models.Model):
+
+    _inherit = 'account.payment.mode'
+
+    report_refund_warning = fields.Text(translate=True)

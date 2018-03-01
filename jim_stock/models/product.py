@@ -198,7 +198,8 @@ class ProductProduct(models.Model):
                     stock += (min_qty * bom.product_qty)
             else:
                 bom_lines = bom_line_obj.\
-                    search([('product_id', '=', product.id)])
+                    search([('product_id', '=', product.id),
+                            ('bom_id.no_web_stock', '=', False)])
                 for line in bom_lines:
                     if line.product_qty:
                         variants = line.bom_id.product_id or \
