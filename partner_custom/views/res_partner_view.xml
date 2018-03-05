@@ -124,7 +124,6 @@
         <field name="arch" type="xml">
             <field name="state_id" position="attributes">
                 <attribute name="attrs">{
-                    'readonly': [('type', '=', 'contact'),('parent_id', '!=', False)],
                     'required': [('type', '=', 'delivery'), ('country_id', '=', %(base.es)d)]}</attribute>
             </field>
             <field name="ref" position="attributes">
