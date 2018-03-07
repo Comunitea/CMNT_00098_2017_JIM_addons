@@ -114,5 +114,6 @@ class SaleOrderLine(models.Model):
         if product_id:
             product = self.env['product.product'].browse(product_id)
             res.update({'global_available_stock':
-                        product.global_available_stock})
+                        product.global_available_stock,
+                        'chained_discount': str(res.get('discount', 0.0))})
         return res

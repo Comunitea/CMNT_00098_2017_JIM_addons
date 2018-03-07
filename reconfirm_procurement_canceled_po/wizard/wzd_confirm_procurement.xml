@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+   <record id="wzd_confirm_procurement" model="ir.ui.view">
+        <field name="name">wzd.confirm.procurement.form</field>
+        <field name="model">wzd.confirm.procurement</field>
+        <field name="arch" type="xml">
+            <form string="Reconfirm canceled procurement">
+
+                <p>
+                    This purchases has procurement orders linked to sale orders.
+                    If you reconfirm this procurements, you'll reactivate this sale orders.
+                    If you don't reconfirm them, the sale order will not be reactivate.
+                </p>
+
+                <h2>Purchase order</h2>
+
+
+
+                <field name="purchase_ids" nolabel="1" readonly="1" widget="many2many_tags"></field>
+
+                <field name="procurement_ids" nolabel="1" readonly="1" widget="many2many"></field>
+
+                <footer>
+                    <p>Confirm purchase order options</p>
+                    <button name="reconfirm_procurement" string="Reconfirm procurements" type="object" class="btn-primary"/>
+                    <button name="not_reconfirm_procurement" string="Not reconfirm procurement" type="object" class="btn-primary"/>
+                    <button string="Cancel" class="btn-default" special="cancel" />
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
