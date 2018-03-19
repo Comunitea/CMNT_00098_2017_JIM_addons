@@ -71,6 +71,11 @@
                         </div>
 
                 </xpath>
+                <xpath expr="//field[@name='partner_id']" position="attributes">
+                     <attribute name="domain">[('customer','=', True), ('type','=', 'contact')]</attribute>
+                     <!--field name="partner_id" domain="[('is_company','=',True), ('customer','=', True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'/-->
+                </xpath>
+
                 <xpath expr="//field[@name='carrier_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
