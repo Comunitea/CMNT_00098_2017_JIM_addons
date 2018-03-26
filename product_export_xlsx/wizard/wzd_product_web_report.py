@@ -69,37 +69,46 @@ class WizardValuationHistory(models.TransientModel):
             new_dict = {x.pop('id'): x for x in product_dict}
             if self.valued:
                 self.env.cr.execute("""SELECT
-                    CASE
-                        WHEN tb3.product_id IS NOT NULL THEN tb3.product_id
-                        ELSE tb4.product_id
-                    END AS producto,
-                    SUM(quantity) AS CantidadTotal, SUM(price_subtotal) AS ImporteTotal,
-                    AVG(arancel) AS Arancel,
-                    CASE
-                        WHEN SUM(quantity) = 0 THEN NULL
-                        ELSE SUM(price_subtotal)/SUM(quantity)
-
-                    END AS PrecioUnitario,
-                    CASE
-                        WHEN AVG(quantity) = 0 THEN NULL
-                        WHEN AVG(price_subtotal) = 0 THEN NULL
-                        ELSE ROUND(CAST((AVG(arancel) / (AVG(price_subtotal)/AVG(quantity))) * 100 AS numeric), 2)
-
-                    END AS PorcentajeArancel,
-                    AVG(delivery) as delivery, AVG(price_unit) as price_unit
-
-                FROM(
-
-                    SELECT *
-                    FROM(
+                CASE
+                WHEN tb3.product_id IS NOT NULL THEN tb3.product_id
+                ELSE tb4.product_id
+                END AS producto,
+                SUM(quantity) AS CantidadTotal, SUM(price_subtotal) AS ImporteTotal,
+                CASE
+                WHEN AVG(quantity_imp) = 0 THEN NULL
+                ELSE ROUND(CAST(SUM(arancel_linea) / sum(quantity_imp) AS numeric), 2)
+                END AS Arancel,
+                CASE
+                WHEN SUM(quantity) = 0 THEN NULL
+                ELSE SUM(price_subtotal)/SUM(quantity)
+            
+                END AS PrecioUnitario,
+                CASE
+                WHEN AVG(price_subtotal_imp) = 0 THEN NULL
+                ELSE ROUND( cast((sum(arancel_percentage_linea) / sum(quantity_imp))as numeric ), 2)
+            
+                END AS PorcentajeArancel,
+                AVG(delivery) as delivery, AVG(price_unit) as price_unit,
+                count(tb4.line_id) as num_lineas
+            
+            FROM(
+             SELECT *
+		        FROM(
                         SELECT ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY date_invoice DESC) AS ordered, *
                         FROM(
-                            SELECT ai.date_invoice, il.product_id, il.quantity, il.price_subtotal, il.arancel_percentage, il.arancel,
+                            SELECT ai.date_invoice, il.product_id, 
+                            il.quantity as quantity_imp, il.price_subtotal*
+                            (ai.amount_untaxed_signed/ai.amount_untaxed) as 
+                            price_subtotal_imp, 
+                            il.arancel_percentage,  il.arancel,
+			                il.arancel * il.quantity AS arancel_linea, il.arancel_percentage * il.quantity AS arancel_percentage_linea,
                             CASE
                                 WHEN ai.amount_untaxed = 0 THEN NULL
                                 WHEN il.quantity = 0 THEN NULL
                                 ELSE ((il.price_subtotal / ai.amount_untaxed) * ai.delivery_cost) / il.quantity
-                            END AS delivery
+                            END AS delivery,
+                            
+                            il.id as line_id
                             FROM account_invoice_line il
                                 JOIN product_product pp ON il.product_id = pp.id
                                 JOIN account_invoice ai ON il.invoice_id = ai.id
@@ -108,17 +117,33 @@ class WizardValuationHistory(models.TransientModel):
                             WHERE pp.default_code != 'LM'  AND rc.code != 'ES'
                                 and pp.id in {0} and ai.date_invoice <= '{1}'
                                 and ai.company_id = {2}
-                                and ai.type = 'in_invoice') as tb
+                                and ai.type = 'in_invoice'
+                                and il.quantity != 0) as tb
                     ) tb2
                     WHERE tb2.ordered <= 3
 
-                )tb3 FULL OUTER JOIN
-                (
-                    SELECT *
+                ) tb3 
+                
+                FULL OUTER JOIN
+         (
+               SELECT *
                     FROM(
                         SELECT ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY date_invoice DESC) AS ordered, *
                         FROM(
-                            SELECT ai.date_invoice, il.product_id, il.price_unit as price_unit
+                            SELECT ai.date_invoice, il.product_id, 
+                            il.price_unit  * (
+                            ai.amount_untaxed_signed/ai.amount_untaxed) as price_unit, 
+                            il.quantity,il.price_subtotal*
+                            (ai.amount_untaxed_signed/ai.amount_untaxed) as 
+                            price_subtotal, 
+                            il.arancel_percentage,  il.arancel,
+			                il.arancel * il.quantity AS arancel_linea, il.arancel_percentage * il.quantity AS arancel_percentage_linea,
+                            CASE
+                                WHEN ai.amount_untaxed = 0 THEN NULL
+                                WHEN il.quantity = 0 THEN NULL
+                                ELSE ((il.price_subtotal / ai.amount_untaxed) * ai.delivery_cost) / il.quantity
+                            END AS delivery,
+                            il.id as line_id
                             FROM account_invoice_line il
                                 JOIN product_product pp ON il.product_id = pp.id
                                 JOIN account_invoice ai ON il.invoice_id = ai.id
@@ -127,24 +152,28 @@ class WizardValuationHistory(models.TransientModel):
                             WHERE pp.default_code != 'LM'
                                 and pp.id in {0} and ai.date_invoice <= '{1}'
                                 and ai.company_id = {2}
-                                and ai.type = 'in_invoice') as tb
+                                and ai.type = 'in_invoice'
+                                and il.quantity != 0) as tb
                     ) tb2
-                    WHERE tb2.ordered <= 3)tb4
-                ON tb3.product_id = tb4.product_id
+                    WHERE tb2.ordered <= 3) tb4
+                ON tb3.line_id = tb4.line_id
                 GROUP BY producto
-                ORDER BY producto""".format(tuple(new_dict.keys()), use_date, self.env.user.company_id.id))
+                ORDER BY producto""".format(tuple(new_dict.keys()),
+                                            use_date, self.env.user.company_id.id))
                 aranceles = self.env.cr.fetchall()
                 for arancel in aranceles:
                     new_dict[arancel[0]].update(
                         {'cantidad_total': arancel[1],
-                         'importe_total': arancel[2], 'arancel': arancel[3],
+                         'importe_total': arancel[2],
+                         'arancel': arancel[3],
                          'precio_unitario': arancel[4],
                          'porcentaje_arancel': arancel[5],
                          'delivery': arancel[6],
-                         'price_unit': arancel[7]})
+                         'price_unit': arancel[7],
+                         'num_lineas': arancel[8]})
             read.extend(new_dict.values())
             offset += inc
-        print "Generando XLS ..."
+        #print "Generando XLS ..."
         #product['ids'] = self.env['product.product'].search(domain).ids
         return {'type': 'ir.actions.report.xml',
                 'report_name': 'product_web_xls',
