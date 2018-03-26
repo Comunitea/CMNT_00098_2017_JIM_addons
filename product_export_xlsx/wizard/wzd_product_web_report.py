@@ -69,19 +69,16 @@ class WizardValuationHistory(models.TransientModel):
             new_dict = {x.pop('id'): x for x in product_dict}
             if self.valued:
                 self.env.cr.execute("""SELECT
-                CASE
-                WHEN tb3.product_id IS NOT NULL THEN tb3.product_id
-                ELSE tb4.product_id
-                END AS producto,
-                SUM(quantity) AS CantidadTotal, SUM(price_subtotal) AS ImporteTotal,
+                tb3.product_id AS producto,
+                SUM(quantity_imp) AS CantidadTotal, SUM(price_subtotal_imp) AS 
+                ImporteTotal,
                 CASE
                 WHEN AVG(quantity_imp) = 0 THEN NULL
                 ELSE ROUND(CAST(SUM(arancel_linea) / sum(quantity_imp) AS numeric), 2)
                 END AS Arancel,
                 CASE
-                WHEN SUM(quantity) = 0 THEN NULL
-                ELSE SUM(price_subtotal)/SUM(quantity)
-            
+                WHEN SUM(quantity_imp) = 0 THEN NULL
+                ELSE SUM(price_subtotal_imp)/SUM(quantity_imp)
                 END AS PrecioUnitario,
                 CASE
                 WHEN AVG(price_subtotal_imp) = 0 THEN NULL
@@ -89,7 +86,7 @@ class WizardValuationHistory(models.TransientModel):
             
                 END AS PorcentajeArancel,
                 AVG(delivery) as delivery, AVG(price_unit) as price_unit,
-                count(tb4.line_id) as num_lineas
+                count(tb3.line_id) as num_lineas
             
             FROM(
              SELECT *
@@ -97,6 +94,8 @@ class WizardValuationHistory(models.TransientModel):
                         SELECT ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY date_invoice DESC) AS ordered, *
                         FROM(
                             SELECT ai.date_invoice, il.product_id, 
+                            il.price_unit  * (
+                            ai.amount_untaxed_signed/ai.amount_untaxed) as price_unit, 
                             il.quantity as quantity_imp, il.price_subtotal*
                             (ai.amount_untaxed_signed/ai.amount_untaxed) as 
                             price_subtotal_imp, 
@@ -114,7 +113,7 @@ class WizardValuationHistory(models.TransientModel):
                                 JOIN account_invoice ai ON il.invoice_id = ai.id
                                 JOIN res_partner rp ON ai.partner_id = rp.id
                                 JOIN res_country rc ON rp.country_id = rc.id
-                            WHERE pp.default_code != 'LM'  AND rc.code != 'ES'
+                            WHERE pp.default_code != 'LM' 
                                 and pp.id in {0} and ai.date_invoice <= '{1}'
                                 and ai.company_id = {2}
                                 and ai.type = 'in_invoice'
@@ -124,39 +123,7 @@ class WizardValuationHistory(models.TransientModel):
 
                 ) tb3 
                 
-                FULL OUTER JOIN
-         (
-               SELECT *
-                    FROM(
-                        SELECT ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY date_invoice DESC) AS ordered, *
-                        FROM(
-                            SELECT ai.date_invoice, il.product_id, 
-                            il.price_unit  * (
-                            ai.amount_untaxed_signed/ai.amount_untaxed) as price_unit, 
-                            il.quantity,il.price_subtotal*
-                            (ai.amount_untaxed_signed/ai.amount_untaxed) as 
-                            price_subtotal, 
-                            il.arancel_percentage,  il.arancel,
-			                il.arancel * il.quantity AS arancel_linea, il.arancel_percentage * il.quantity AS arancel_percentage_linea,
-                            CASE
-                                WHEN ai.amount_untaxed = 0 THEN NULL
-                                WHEN il.quantity = 0 THEN NULL
-                                ELSE ((il.price_subtotal / ai.amount_untaxed) * ai.delivery_cost) / il.quantity
-                            END AS delivery,
-                            il.id as line_id
-                            FROM account_invoice_line il
-                                JOIN product_product pp ON il.product_id = pp.id
-                                JOIN account_invoice ai ON il.invoice_id = ai.id
-                                JOIN res_partner rp ON ai.partner_id = rp.id
-                                JOIN res_country rc ON rp.country_id = rc.id
-                            WHERE pp.default_code != 'LM'
-                                and pp.id in {0} and ai.date_invoice <= '{1}'
-                                and ai.company_id = {2}
-                                and ai.type = 'in_invoice'
-                                and il.quantity != 0) as tb
-                    ) tb2
-                    WHERE tb2.ordered <= 3) tb4
-                ON tb3.line_id = tb4.line_id
+               
                 GROUP BY producto
                 ORDER BY producto""".format(tuple(new_dict.keys()),
                                             use_date, self.env.user.company_id.id))
