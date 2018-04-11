@@ -7,7 +7,6 @@ from datetime import datetime
 from dateutil.relativedelta import relativedelta
 
 
-
 class PurchaseForecast(models.Model):
 
     _name = "purchase.forecast"
