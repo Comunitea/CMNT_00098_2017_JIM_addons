@@ -11,6 +11,7 @@
     'depends': [
         'purchase',
         'purchase_advance_payment',
+        'purchase_order_variant_mgmt',
         'jim_stock'
 
     ],

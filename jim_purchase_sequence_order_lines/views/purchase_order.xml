@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <record model="ir.ui.view" id="purchase_order_variants_template_sequence">
+            <field name="name">purchase.order.variants.variant.sequence</field>
+            <field name="model">purchase.order</field>
+            <field name="inherit_id" ref="purchase.purchase_order_form"/>
+            <field name="arch" type="xml">
+               <xpath expr="//field[@name='order_line']/tree/field[@name='sequence']" position="after">
+                   <field name="template_sequence" widget="handle" groups="jim_purchase_sequence_order_lines.group_reorder_purchase_line"/>
+               </xpath>
+
+               <xpath expr="//field[@name='order_line']/tree/button[@name='606']" position="attributes">
+                   <attribute name="context">{'default_product_tmpl_id': product_tmpl_id_purchase_order_variant_mgmt,
+                                              'default_template_sequence': template_sequence}
+                   </attribute>
+               </xpath>
+
+               <xpath expr="//button[@name='606']" position="before">
+                    <button name="reorder_sequence" type="object" class="oe_edit_only" string="Aplicar orden" states="draft,sent" groups="jim_purchase_sequence_order_lines.group_reorder_purchase_line"/>
+               </xpath>
+
+            </field>
+        </record>
+    </data>
+</odoo>

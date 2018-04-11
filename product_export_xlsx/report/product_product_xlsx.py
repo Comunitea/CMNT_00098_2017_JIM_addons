@@ -33,12 +33,17 @@ class ProductWebXslx(abstract_report_xlsx.AbstractReportXslx):
             columns[5] = {'header': _('cantidad_total'), 'field': 'cantidad_total', 'width': 15, 'type': 'float'}
             columns[6] = {'header': _('importe_total'), 'field': 'importe_total', 'width': 15, 'type': 'float'}
             columns[7] = {'header': _('arancel'), 'field': 'arancel', 'width': 15, 'type': 'float'}
-            columns[8] = {'header': _('precio_unitario'), 'field': 'precio_unitario', 'width': 15, 'type': 'float'}
+            columns[8] = {'header': _('Precio Medio'), 'field':
+                'precio_unitario', 'width': 15, 'type': 'float'}
             columns[9] = {'header': _('porcentaje_arancel'), 'field': 'porcentaje_arancel', 'width': 15, 'type': 'float'}
             columns[10] = {'header': _('delivery'), 'field': 'delivery', 'width': 15, 'type': 'float'}
-            columns[11] = {'header': _('price_unit'), 'field': 'price_unit', 'width': 15, 'type': 'float'}
-            columns[12] = {'header': _('Precio coste medio SAP'), 'field':
+           #columns[11] = {'header': _('Media precio unit.'), 'field':
+           #    'price_unit',
+           #               'width': 15, 'type': 'float'}
+            columns[11] = {'header': _('Precio coste medio SAP'), 'field':
                 'standard_price', 'width': 15, 'type': 'float'}
+            columns[12] = {'header': _('Numero lineas'), 'field': 'num_lineas',
+                           'width': 10, 'type': 'float'}
         return columns
 
     def _get_report_filters(self, report):

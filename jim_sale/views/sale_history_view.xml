@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2018 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record id="sale_history_tree" model="ir.ui.view">
+        <field name="name">sale.history.tree</field>
+        <field name="model">sale.history</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Product Sales" >
+                <field name="product_id"/>
+                <field name="qty"/>
+                <field name="date"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="sale_history_view_search" model="ir.ui.view">
+        <field name="name">sale.history.search</field>
+        <field name="model">sale.history</field>
+        <field name="type">search</field>
+        <field name="arch" type="xml">
+            <search>
+               <field name="product_id"/>
+           </search>
+        </field>
+    </record>
+
+    <record id="sale_history_action" model="ir.actions.act_window">
+        <field name="name">Product Sales History</field>
+        <field name="res_model">sale.history</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,pivot</field>
+        <field name="view_id" ref="sale_history_tree"/>
+        <field name="search_view_id" ref="sale_history_view_search"/>
+    </record>
+
+    <menuitem name="Sales History" parent="sales_team.menu_sale_report"
+              action="sale_history_action"
+              id="sale_history_menu" sequence="20"/>
+</odoo>
