@@ -7,7 +7,7 @@
         <field name="model">sale.history</field>
         <field name="type">tree</field>
         <field name="arch" type="xml">
-            <tree string="Product Sales" >
+            <tree string="Product Sales" editable="top">
                 <field name="product_id"/>
                 <field name="qty"/>
                 <field name="date"/>

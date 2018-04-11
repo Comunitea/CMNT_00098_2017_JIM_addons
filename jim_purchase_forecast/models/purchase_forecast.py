@@ -4,6 +4,8 @@
 
 from odoo import fields, models, api
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
+
 
 
 class PurchaseForecast(models.Model):
@@ -39,13 +41,23 @@ class PurchaseForecast(models.Model):
     def _get_demand(self, product_id):
         return 0.0
 
-    @api.model
+    @api.multi
     def _get_qty_year_ago(self, product_id, num_years_ago=0):
+        self.ensure_one()
         qty = 0
         today = datetime.today()
-        year = today.year - num_years_ago
-        date_start = str(year) + '-' + '01' + '-' + '01'
-        date_end = str(year) + '-' + '12' + '-' + '31'
+        future_date = today + relativedelta(months=+self.stock_months)
+
+        year_today = today.year - num_years_ago
+        year_future = future_date.year - num_years_ago
+        month_today = today.strftime("%m")
+        month_future = future_date.strftime("%m")
+
+        day_today = today.strftime("%d")
+        day_future = future_date.strftime("%d")
+
+        date_start = str(year_today) + '-' + month_today + '-' + day_today
+        date_end = str(year_future) + '-' + month_future + '-' + day_future
         print date_start
         print date_end
         company_id = self.env.user.company_id.id
