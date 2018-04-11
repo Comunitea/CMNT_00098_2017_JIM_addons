@@ -1,0 +1,161 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* jim_purchase_forecast
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-04-11 15:40+0000\n"
+"PO-Revision-Date: 2018-04-11 15:40+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_year1_ago
+msgid "1 Year Ago"
+msgstr "Hace 1 Año"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_year2_ago
+msgid "2 Year Ago"
+msgstr "Hace 2 Años"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_year3_ago
+msgid "3 Year Ago"
+msgstr "Hace 3 Años"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_year4_ago
+msgid "4 Year Ago"
+msgstr "Hace 4 Años"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_year5_ago
+msgid "5 Year Ago"
+msgstr "Hace 5 Años"
+
+#. module: jim_purchase_forecast
+#: model:ir.ui.view,arch_db:jim_purchase_forecast.purchase_forecast_view_form
+msgid "Create Forecast Lines"
+msgstr "Crear Líneas de previsión"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_create_uid
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_create_date
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_stock
+msgid "Current Stock"
+msgstr "Stock actual"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_demand
+msgid "Demand"
+msgstr "Demanda"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_display_name
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_forecast_id
+msgid "Forecast"
+msgstr "Previsión"
+
+#. module: jim_purchase_forecast
+#: model:ir.ui.view,arch_db:jim_purchase_forecast.purchase_forecast_view_form
+msgid "Forecast Lines"
+msgstr "Líneas previsión"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_id
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_id
+msgid "ID"
+msgstr "ID"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast___last_update
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_write_uid
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_write_date
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_name
+msgid "Name"
+msgstr "Nombre"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_lines_count
+msgid "Nº Lines"
+msgstr "Nº Líneas"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_product_id
+msgid "Product"
+msgstr "Producto"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_category_id
+msgid "Product Category"
+msgstr "Categoría de producto"
+
+#. module: jim_purchase_forecast
+#: model:ir.actions.act_window,name:jim_purchase_forecast.action_purchase_forecast
+#: model:ir.ui.menu,name:jim_purchase_forecast.menu_purchase_forecast
+msgid "Purchase Forecast"
+msgstr "Previsión de compras"
+
+#. module: jim_purchase_forecast
+#: model:ir.actions.act_window,name:jim_purchase_forecast.action_forecast_lines
+#: model:ir.ui.menu,name:jim_purchase_forecast.menu_purchase_forecast_lines
+msgid "Purchase Forecast Lines"
+msgstr "Líneas previsión compras"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,help:jim_purchase_forecast.field_purchase_forecast_line_stock
+msgid "Real stock in all companies."
+msgstr "Stock real en todas las compañías."
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_stock_months
+msgid "Stock Months"
+msgstr "Meses de stock"
+
+#. module: jim_purchase_forecast
+#: model:ir.model,name:jim_purchase_forecast.model_purchase_forecast
+msgid "purchase.forecast"
+msgstr "purchase.forecast"
+
+#. module: jim_purchase_forecast
+#: model:ir.model,name:jim_purchase_forecast.model_purchase_forecast_line
+msgid "purchase.forecast.line"
+msgstr "purchase.forecast.line"
+
