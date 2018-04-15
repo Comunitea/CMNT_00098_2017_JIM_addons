@@ -5,6 +5,7 @@
 from odoo import fields, models, api
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import numpy as np
 
 
 class PurchaseForecast(models.Model):
@@ -38,7 +39,41 @@ class PurchaseForecast(models.Model):
 
     @api.model
     def _get_demand(self, product_id):
-        return 0.0
+        # least-squares solution to a linear matrix equation.
+        x = np.array([0, 1, 2, 3, 4])
+        y = np.array([product_id.year5_ago,
+                      product_id.year4_ago,
+                      product_id.year3_ago,
+                      product_id.year2_ago,
+                      product_id.year1_ago])
+        A = np.vstack([x, np.ones(len(x))]).T
+        m, c = np.linalg.lstsq(A, y)[0]
+        demand = m * 5 + c
+        if demand < 0:
+            demand = 0
+        return demand
+
+    @api.model
+    def _get_sales(self, product_id):
+        #company_id = self.env.user.company_id.id
+        query = """
+                    SELECT  Sum(
+                    case WHEN product_uom_qty - qty_delivered >= 0
+                      THEN product_uom_qty - qty_delivered
+                      ELSE 0 END) 
+                     FROM sale_order_line WHERE
+                      product_id = %s 
+                      and state in ('lqdr','pending', 'progress',
+                       'progress_lqdr','sale')
+                    GROUP BY product_id
+                """ % (product_id)
+
+        self._cr.execute(query)
+        qres = self._cr.fetchall()
+        if qres:
+            qty = qres[0][0]
+            return qty
+        return 0
 
     @api.multi
     def _get_qty_year_ago(self, product_id, num_years_ago=0):
@@ -72,8 +107,11 @@ class PurchaseForecast(models.Model):
         qres = self._cr.fetchall()
         if qres:
             qty = qres[0][0]
-        print qres
-        return qty
+            return qty
+        return 0
+
+
+
 
     @api.multi
     def create_lines(self):
@@ -82,7 +120,7 @@ class PurchaseForecast(models.Model):
         products = self.env['product.product'].\
             search([('categ_id', '=', self.category_id.id)])
         for product in products:
-
+            ventas = self._get_sales(product.id)
             vals = {
                 'forecast_id': self.id,
                 'product_id': product.id,
@@ -91,9 +129,20 @@ class PurchaseForecast(models.Model):
                 'year3_ago': self._get_qty_year_ago(product.id, 3),
                 'year4_ago': self._get_qty_year_ago(product.id, 4),
                 'year5_ago': self._get_qty_year_ago(product.id, 5),
-                'demand': self._get_demand(product.id)
+                'sales': ventas,
+                'stock': product.global_real_stock
             }
-            self.env['purchase.forecast.line'].create(vals)
+            line = self.env['purchase.forecast.line'].create(vals)
+            line.demand = self._get_demand(line)
+            purchase = max(line.demand, ventas) - product.global_real_stock
+            line.seller_id = product.seller_ids and product.seller_ids[0] \
+                             and product.seller_ids[0].name or False
+            line.harbor_id = line.seller_id and line.seller_id.harbor_ids and\
+                            line.seller_id.harbor_ids[0] or False
+
+            if purchase < 0:
+                purchase = 0
+            line.purchase = purchase
 
     @api.multi
     def show_lines(self):
@@ -116,5 +165,8 @@ class PurchaseForecastLine(models.Model):
     year4_ago = fields.Float('4 Year Ago')
     year5_ago = fields.Float('5 Year Ago')
     demand = fields.Float('Demand')
-    stock = fields.Float('Current Stock',
-                         related="product_id.global_real_stock")
+    sales = fields.Float('Confirmed Sales')
+    purchase = fields.Float('Recommended purchase')
+    stock = fields.Float('Current Stock')
+    seller_id = fields.Many2one('res.partner', 'Seller')
+    harbor_id = fields.Many2one('res.harbor', 'Harbor')

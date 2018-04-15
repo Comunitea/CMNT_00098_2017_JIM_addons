@@ -67,15 +67,19 @@
         <field name="model">purchase.forecast.line</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="forecast_id"/>
+                <!--field name="forecast_id"/-->
                 <field name="product_id"/>
-                <field name="year1_ago"/>
-                <field name="year2_ago"/>
-                <field name="year3_ago"/>
-                <field name="year4_ago"/>
                 <field name="year5_ago"/>
+                <field name="year4_ago"/>
+                <field name="year3_ago"/>
+                <field name="year2_ago"/>
+                <field name="year1_ago"/>
                 <field name="demand"/>
+                <field name="sales"/>
                 <field name="stock"/>
+                <field name="purchase"/>
+                <field name="seller_id"/>
+                <field name="harbor_id"/>
             </tree>
         </field>
     </record>
@@ -90,7 +94,11 @@
                             <field name="forecast_id"/>
                             <field name="product_id"/>
                             <field name="demand"/>
+                            <field name="sales"/>
                             <field name="stock"/>
+                            <field name="purchase"/>
+                            <field name="seller_id"/>
+                            <field name="harbor_id"/>
                         </group>
                        <group>
                             <field name="year1_ago"/>

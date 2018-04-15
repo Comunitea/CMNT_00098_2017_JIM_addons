@@ -1,4 +1,5 @@
 # Translation of Odoo Server.
+# Translation of Odoo Server.
 # This file contains the translation of the following modules:
 #	* jim_purchase_forecast
 #
@@ -65,7 +66,7 @@ msgstr "Stock actual"
 #. module: jim_purchase_forecast
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_demand
 msgid "Demand"
-msgstr "Demanda"
+msgstr "Demanda Estimada"
 
 #. module: jim_purchase_forecast
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_display_name
