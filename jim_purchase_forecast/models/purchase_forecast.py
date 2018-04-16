@@ -13,8 +13,9 @@ class PurchaseForecast(models.Model):
     _name = "purchase.forecast"
 
     name = fields.Char('Name', required=True)
-    category_id = fields.Many2one('product.category', 'Product Category',
-                                  required=True)
+    category_ids = fields.Many2many('product.category',
+                                    string='Product Categorys',
+                                    required=True)
     lines_count = fields.Float('Nº Lines', compute='_get_lines_count')
     stock_months = fields.Integer('Stock Months')
 
@@ -118,7 +119,7 @@ class PurchaseForecast(models.Model):
         self.ensure_one()
         self.delete_forecast_lines()
         products = self.env['product.product'].\
-            search([('categ_id', '=', self.category_id.id)])
+            search([('categ_id', 'in', self.category_ids.ids)])
         for product in products:
             ventas = self._get_sales(product.id)
             vals = {
