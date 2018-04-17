@@ -8,8 +8,10 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
-                <field name="category_id"/>
+                <field name="category_ids"/>
                 <field name="stock_months"/>
+                <field name="seller_id"/>
+                <field name="harbor_id"/>
             </tree>
         </field>
     </record>
@@ -29,9 +31,15 @@
                     </div>
 
                     <group>
-                        <field name="name"/>
-                        <field name="category_id"/>
-                        <field name="stock_months"/>
+                        <group string="Purchase Forecast">
+                            <field name="name"/>
+                            <field name="stock_months"/>
+                        </group>
+                        <group string="Product Filters">
+                            <field name="category_ids" widget="many2many_tags"/>
+                            <field name="seller_id"/>
+                            <field name="harbor_id"/>
+                        </group>
                     </group>
                 </sheet>
             </form>
@@ -67,15 +75,19 @@
         <field name="model">purchase.forecast.line</field>
         <field name="arch" type="xml">
             <tree>
-                <field name="forecast_id"/>
+                <!--field name="forecast_id"/-->
                 <field name="product_id"/>
-                <field name="year1_ago"/>
-                <field name="year2_ago"/>
-                <field name="year3_ago"/>
-                <field name="year4_ago"/>
                 <field name="year5_ago"/>
+                <field name="year4_ago"/>
+                <field name="year3_ago"/>
+                <field name="year2_ago"/>
+                <field name="year1_ago"/>
                 <field name="demand"/>
+                <field name="sales"/>
                 <field name="stock"/>
+                <field name="purchase"/>
+                <field name="seller_id"/>
+                <field name="harbor_id"/>
             </tree>
         </field>
     </record>
@@ -90,7 +102,11 @@
                             <field name="forecast_id"/>
                             <field name="product_id"/>
                             <field name="demand"/>
+                            <field name="sales"/>
                             <field name="stock"/>
+                            <field name="purchase"/>
+                            <field name="seller_id"/>
+                            <field name="harbor_id"/>
                         </group>
                        <group>
                             <field name="year1_ago"/>

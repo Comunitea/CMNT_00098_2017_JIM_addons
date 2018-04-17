@@ -2,9 +2,10 @@
 # © 2016 Comunitea - Kiko Sanchez <kiko@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-from odoo import fields, models, api
+from odoo import fields, models, api, exceptions, _
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
+import numpy as np
 
 
 class PurchaseForecast(models.Model):
@@ -12,10 +13,13 @@ class PurchaseForecast(models.Model):
     _name = "purchase.forecast"
 
     name = fields.Char('Name', required=True)
-    category_id = fields.Many2one('product.category', 'Product Category',
-                                  required=True)
+    category_ids = fields.Many2many('product.category',
+                                    string='Product Categorys',
+                                    required=False)
     lines_count = fields.Float('Nº Lines', compute='_get_lines_count')
     stock_months = fields.Integer('Stock Months')
+    seller_id = fields.Many2one('res.partner', 'Seller')
+    harbor_id = fields.Many2one('res.harbor', 'Harbor')
 
     @api.multi
     def _get_lines_count(self):
@@ -38,7 +42,40 @@ class PurchaseForecast(models.Model):
 
     @api.model
     def _get_demand(self, product_id):
-        return 0.0
+        # least-squares solution to a linear matrix equation.
+        x = np.array([0, 1, 2, 3, 4])
+        y = np.array([product_id.year5_ago,
+                      product_id.year4_ago,
+                      product_id.year3_ago,
+                      product_id.year2_ago,
+                      product_id.year1_ago])
+        a = np.vstack([x, np.ones(len(x))]).T
+        m, c = np.linalg.lstsq(a, y)[0]
+        demand = m * 5 + c
+        if demand < 0:
+            demand = 0
+        return demand
+
+    @api.model
+    def _get_sales(self, product_id):
+        query = """
+                    SELECT  Sum(
+                    case WHEN product_uom_qty - qty_delivered >= 0
+                      THEN product_uom_qty - qty_delivered
+                      ELSE 0 END)
+                     FROM sale_order_line WHERE
+                      product_id = %s
+                      and state in ('lqdr','pending', 'progress',
+                       'progress_lqdr','sale')
+                    GROUP BY product_id
+                """ % (product_id)
+
+        self._cr.execute(query)
+        qres = self._cr.fetchall()
+        if qres:
+            qty = qres[0][0]
+            return qty
+        return 0
 
     @api.multi
     def _get_qty_year_ago(self, product_id, num_years_ago=0):
@@ -72,17 +109,109 @@ class PurchaseForecast(models.Model):
         qres = self._cr.fetchall()
         if qres:
             qty = qres[0][0]
-        print qres
-        return qty
+            return qty
+        return 0
+
+    @api.multi
+    def _query_product_category(self):
+        res = ("", {})
+        if self.category_ids:
+            query = """
+                SELECT pp.id
+                FROM product_product pp
+                INNER JOIN product_template pt on pt.id = pp.product_tmpl_id
+                WHERE pt.categ_id in %(categ_ids)s
+            """
+            params = {
+                'categ_ids': tuple(self.category_ids.ids)
+            }
+            res = (query, params)
+        return res
+
+    @api.multi
+    def _query_product_seller(self):
+        res = ("", {})
+        if self.seller_id:
+            query = """
+                SELECT pp.id
+                FROM product_product pp
+                INNER JOIN product_template pt
+                    on pt.id = pp.product_tmpl_id
+                INNER JOIN product_supplierinfo psi
+                    on psi.product_tmpl_id = pt.id
+                WHERE psi.name = %(seller_id)s
+            """
+            params = {'seller_id': self.seller_id.id}
+            res = (query, params)
+        return res
+
+    @api.multi
+    def _query_product_harbor(self):
+        res = ("", {})
+        if self.harbor_id:
+            query = """
+                SELECT pp.id
+                FROM product_product pp
+                INNER JOIN product_template pt on pt.id = pp.product_tmpl_id
+                INNER JOIN product_supplierinfo psi
+                    on psi.product_tmpl_id = pt.id
+                INNER JOIN res_partner rp on rp.id = psi.name
+                INNER JOIN res_harbor_res_partner_rel rhp
+                    on rhp.res_partner_id = rp.id
+                WHERE  rhp.res_harbor_id = %(harbor_id)s
+            """
+            params = {'harbor_id': self.harbor_id.id}
+            res = (query, params)
+        return res
+
+    @api.multi
+    def _get_products(self):
+        self.ensure_one()
+        # One query by filter
+        query_category, map1 = self._query_product_category()
+        query_seller, map2 = self._query_product_seller()
+        query_harbor, map3 = self._query_product_harbor()
+
+        # Mmaking union of existing queries if exist
+        intersect_separator = "\nINTERSECT\n"
+        product_query = ""
+        if query_category:
+            product_query += query_category
+        if query_seller:
+            separator = ''
+            if product_query:
+                separator = intersect_separator
+            product_query += separator + query_seller
+        if query_harbor:
+            separator = ''
+            if product_query:
+                separator = intersect_separator
+            product_query += separator + query_harbor
+
+        if not product_query:
+            raise exceptions.UserError(_('You need to select one filter \
+                                          condition.'))
+        # Query products search execution
+        map_dic = {}
+        map_dic.update(map1)
+        map_dic.update(map2)
+        map_dic.update(map3)
+        self._cr.execute(product_query, map_dic)
+        qres = self._cr.fetchall()
+
+        product_ids = [t[0] for t in qres]
+        if not product_ids:
+            raise exceptions.UserError(_('No products founded. No forecast \
+                                          lines created'))
+        return self.env['product.product'].browse(product_ids)
 
     @api.multi
     def create_lines(self):
         self.ensure_one()
         self.delete_forecast_lines()
-        products = self.env['product.product'].\
-            search([('categ_id', '=', self.category_id.id)])
+        products = self._get_products()
         for product in products:
-
+            ventas = self._get_sales(product.id)
             vals = {
                 'forecast_id': self.id,
                 'product_id': product.id,
@@ -91,9 +220,20 @@ class PurchaseForecast(models.Model):
                 'year3_ago': self._get_qty_year_ago(product.id, 3),
                 'year4_ago': self._get_qty_year_ago(product.id, 4),
                 'year5_ago': self._get_qty_year_ago(product.id, 5),
-                'demand': self._get_demand(product.id)
+                'sales': ventas,
+                'stock': product.global_real_stock
             }
-            self.env['purchase.forecast.line'].create(vals)
+            line = self.env['purchase.forecast.line'].create(vals)
+            line.demand = self._get_demand(line)
+            purchase = max(line.demand, ventas) - product.global_real_stock
+            line.seller_id = product.seller_ids and product.seller_ids[0] \
+                and product.seller_ids[0].name or False
+            line.harbor_id = line.seller_id and line.seller_id.harbor_ids and\
+                line.seller_id.harbor_ids[0] or False
+
+            if purchase < 0:
+                purchase = 0
+            line.purchase = purchase
 
     @api.multi
     def show_lines(self):
@@ -116,5 +256,8 @@ class PurchaseForecastLine(models.Model):
     year4_ago = fields.Float('4 Year Ago')
     year5_ago = fields.Float('5 Year Ago')
     demand = fields.Float('Demand')
-    stock = fields.Float('Current Stock',
-                         related="product_id.global_real_stock")
+    sales = fields.Float('Confirmed Sales')
+    purchase = fields.Float('Recommended purchase')
+    stock = fields.Float('Current Stock')
+    seller_id = fields.Many2one('res.partner', 'Seller')
+    harbor_id = fields.Many2one('res.harbor', 'Harbor')
