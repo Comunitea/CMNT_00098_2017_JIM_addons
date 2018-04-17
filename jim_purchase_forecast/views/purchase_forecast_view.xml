@@ -10,6 +10,8 @@
                 <field name="name"/>
                 <field name="category_ids"/>
                 <field name="stock_months"/>
+                <field name="seller_id"/>
+                <field name="harbor_id"/>
             </tree>
         </field>
     </record>
@@ -29,9 +31,15 @@
                     </div>
 
                     <group>
-                        <field name="name"/>
-                        <field name="category_ids" widget="many2many_tags"/>
-                        <field name="stock_months"/>
+                        <group string="Purchase Forecast">
+                            <field name="name"/>
+                            <field name="stock_months"/>
+                        </group>
+                        <group string="Product Filters">
+                            <field name="category_ids" widget="many2many_tags"/>
+                            <field name="seller_id"/>
+                            <field name="harbor_id"/>
+                        </group>
                     </group>
                 </sheet>
             </form>

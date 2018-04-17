@@ -2,7 +2,7 @@
 # © 2016 Comunitea - Kiko Sanchez <kiko@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
-from odoo import fields, models, api
+from odoo import fields, models, api, exceptions, _
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import numpy as np
@@ -15,9 +15,11 @@ class PurchaseForecast(models.Model):
     name = fields.Char('Name', required=True)
     category_ids = fields.Many2many('product.category',
                                     string='Product Categorys',
-                                    required=True)
+                                    required=False)
     lines_count = fields.Float('Nº Lines', compute='_get_lines_count')
     stock_months = fields.Integer('Stock Months')
+    seller_id = fields.Many2one('res.partner', 'Seller')
+    harbor_id = fields.Many2one('res.harbor', 'Harbor')
 
     @api.multi
     def _get_lines_count(self):
@@ -47,8 +49,8 @@ class PurchaseForecast(models.Model):
                       product_id.year3_ago,
                       product_id.year2_ago,
                       product_id.year1_ago])
-        A = np.vstack([x, np.ones(len(x))]).T
-        m, c = np.linalg.lstsq(A, y)[0]
+        a = np.vstack([x, np.ones(len(x))]).T
+        m, c = np.linalg.lstsq(a, y)[0]
         demand = m * 5 + c
         if demand < 0:
             demand = 0
@@ -56,14 +58,13 @@ class PurchaseForecast(models.Model):
 
     @api.model
     def _get_sales(self, product_id):
-        #company_id = self.env.user.company_id.id
         query = """
                     SELECT  Sum(
                     case WHEN product_uom_qty - qty_delivered >= 0
                       THEN product_uom_qty - qty_delivered
-                      ELSE 0 END) 
+                      ELSE 0 END)
                      FROM sale_order_line WHERE
-                      product_id = %s 
+                      product_id = %s
                       and state in ('lqdr','pending', 'progress',
                        'progress_lqdr','sale')
                     GROUP BY product_id
@@ -111,15 +112,104 @@ class PurchaseForecast(models.Model):
             return qty
         return 0
 
+    @api.multi
+    def _query_product_category(self):
+        res = ("", {})
+        if self.category_ids:
+            query = """
+                SELECT pp.id
+                FROM product_product pp
+                INNER JOIN product_template pt on pt.id = pp.product_tmpl_id
+                WHERE pt.categ_id in %(categ_ids)s
+            """
+            params = {
+                'categ_ids': tuple(self.category_ids.ids)
+            }
+            res = (query, params)
+        return res
 
+    @api.multi
+    def _query_product_seller(self):
+        res = ("", {})
+        if self.seller_id:
+            query = """
+                SELECT pp.id
+                FROM product_product pp
+                INNER JOIN product_template pt
+                    on pt.id = pp.product_tmpl_id
+                INNER JOIN product_supplierinfo psi
+                    on psi.product_tmpl_id = pt.id
+                WHERE psi.name = %(seller_id)s
+            """
+            params = {'seller_id': self.seller_id.id}
+            res = (query, params)
+        return res
 
+    @api.multi
+    def _query_product_harbor(self):
+        res = ("", {})
+        if self.harbor_id:
+            query = """
+                SELECT pp.id
+                FROM product_product pp
+                INNER JOIN product_template pt on pt.id = pp.product_tmpl_id
+                INNER JOIN product_supplierinfo psi
+                    on psi.product_tmpl_id = pt.id
+                INNER JOIN res_partner rp on rp.id = psi.name
+                INNER JOIN res_harbor_res_partner_rel rhp
+                    on rhp.res_partner_id = rp.id
+                WHERE  rhp.res_harbor_id = %(harbor_id)s
+            """
+            params = {'harbor_id': self.harbor_id.id}
+            res = (query, params)
+        return res
+
+    @api.multi
+    def _get_products(self):
+        self.ensure_one()
+        # One query by filter
+        query_category, map1 = self._query_product_category()
+        query_seller, map2 = self._query_product_seller()
+        query_harbor, map3 = self._query_product_harbor()
+
+        # Mmaking union of existing queries if exist
+        intersect_separator = "\nINTERSECT\n"
+        product_query = ""
+        if query_category:
+            product_query += query_category
+        if query_seller:
+            separator = ''
+            if product_query:
+                separator = intersect_separator
+            product_query += separator + query_seller
+        if query_harbor:
+            separator = ''
+            if product_query:
+                separator = intersect_separator
+            product_query += separator + query_harbor
+
+        if not product_query:
+            raise exceptions.UserError(_('You need to select one filter \
+                                          condition.'))
+        # Query products search execution
+        map_dic = {}
+        map_dic.update(map1)
+        map_dic.update(map2)
+        map_dic.update(map3)
+        self._cr.execute(product_query, map_dic)
+        qres = self._cr.fetchall()
+
+        product_ids = [t[0] for t in qres]
+        if not product_ids:
+            raise exceptions.UserError(_('No products founded. No forecast \
+                                          lines created'))
+        return self.env['product.product'].browse(product_ids)
 
     @api.multi
     def create_lines(self):
         self.ensure_one()
         self.delete_forecast_lines()
-        products = self.env['product.product'].\
-            search([('categ_id', 'in', self.category_ids.ids)])
+        products = self._get_products()
         for product in products:
             ventas = self._get_sales(product.id)
             vals = {
@@ -137,9 +227,9 @@ class PurchaseForecast(models.Model):
             line.demand = self._get_demand(line)
             purchase = max(line.demand, ventas) - product.global_real_stock
             line.seller_id = product.seller_ids and product.seller_ids[0] \
-                             and product.seller_ids[0].name or False
+                and product.seller_ids[0].name or False
             line.harbor_id = line.seller_id and line.seller_id.harbor_ids and\
-                            line.seller_id.harbor_ids[0] or False
+                line.seller_id.harbor_ids[0] or False
 
             if purchase < 0:
                 purchase = 0
