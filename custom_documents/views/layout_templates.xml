@@ -171,7 +171,12 @@
                     <table class="custom_table">
                         <thead>
                             <tr>
-                                <th>Customer Nº</th>
+                                <t t-if="o.sale_id">
+                                    <th>Customer Nº</th>
+                                </t>
+                                <t t-if="not o.sale_id and o.purchase_id">
+                                    <th>Supplier Nº</th>
+                                </t>
                                 <th>CIF/NIF</th>
                                 <th>Page nº</th>
                                 <th>Date</th>
@@ -181,7 +186,8 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <t t-if="o.sale_id">
+                                <tr>
                                 <td><span t-field="o.sale_id.partner_id.ref"/></td>
                                 <td><span t-field="o.sale_id.partner_id.vat"/></td>
                                 <td>
@@ -192,6 +198,21 @@
                                 <td><span t-field="o.orig_sale_str"/></td>
                                 <td><span t-field="o.sale_id.user_id.name"/> </td>
                             </tr>
+                            </t>
+                            <t t-if="not o.sale_id and o.purchase_id">
+                                <tr>
+                                <td><span t-field="o.purchase_id.partner_id.ref"/></td>
+                                <td><span t-field="o.purchase_id.partner_id.vat"/></td>
+                                <td>
+                                    Page: <span class="page"/> of <span class="topage"/>
+                                </td>
+                                <td><span t-field="o.date_done_date"/></td>
+                                <td><span t-field="o.name"/></td>
+                                <td><span t-field="o.purchase_id.name"/></td>
+                                <td><span t-field="o.purchase_id.write_uid.name"/> </td>
+                            </tr>
+                            </t>
+
                         </tbody>
                         <tfoot>
                             <tr>
