@@ -18,14 +18,23 @@
                             <tbody>
                                 <tr>
                                     <td rowspan="3" class="col-xs-8">
-                                        Obs:
-                                        <t t-if="o.sale_id.client_order_ref">
-                                            Customer order number <span t-field="o.sale_id.client_order_ref"/> <br/>
+                                        <t t-if="o.sale_id">
+                                            Obs:
+                                            <t t-if="o.sale_id.client_order_ref">
+                                                Customer order number <span t-field="o.sale_id.client_order_ref"/> <br/>
+                                            </t>
+                                            <t t-if="o.sale_id.observations">
+                                                <span t-field="o.sale_id.observations"/> <br/>
+                                            </t>
+                                            <span t-field="o.note"/>
                                         </t>
-                                        <t t-if="o.sale_id.observations">
-                                            <span t-field="o.sale_id.observations"/> <br/>
+                                        <t t-if="not o.sale_id and o.purchase_id">
+                                            Obs:
+                                            <t t-if="o.purchase_id.partner_ref">
+                                                Customer order number <span t-field="o.purchase_id.partner_ref"/> <br/>
+                                            </t>
+                                            <span t-field="o.note"/>
                                         </t>
-                                        <span t-field="o.note"/>
                                     </td>
                                     <td>
                                         <strong style="margin-left: 5px;">Carrier: </strong><span t-field="o.carrier_id"/>
@@ -59,51 +68,72 @@
                                     <th>Description</th>
                                     <th>Quantity</th>
                                     <th>Price/unit</th>
-                                    <th t-if="o.company_id.show_discount">Disc.</th>
+                                    <th t-if="o.company_id.show_discount and o.sale_id">Disc.</th>
                                     <th>Amount</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr t-foreach="o.pack_operation_product_ids" t-as="line">
-                                    <td>
-                                        <span t-field="line.product_id.default_code"/>
-                                    </td>
-                                     <td>
-                                        <span t-field="line.linked_move_operation_ids[0].move_id.name_report"/>
-                                    </td>
-                                     <td>
-                                        <span t-field="line.qty_done"/>
-                                    </td>
-                                    <td>
-                                        <span t-field="line.sale_price_unit"/>
-                                    </td>
-                                    <td t-if="o.company_id.show_discount">
-                                        <span t-field="line.sale_discount"/>
-                                    </td>
-                                    <td>
-                                       <span t-field="line.sale_price_subtotal"/>
-                                    </td>
-                                </tr>
-                                <tr t-foreach="o.sale_services" t-as="service_line">
-                                    <td>
-                                        <span t-field="service_line.product_id.default_code"/>
-                                    </td>
-                                     <td>
-                                        <span t-field="service_line.name_report"/>
-                                    </td>
-                                     <td>
-                                        <span t-field="service_line.product_uom_qty"/>
-                                    </td>
-                                    <td>
-                                        <span t-field="service_line.price_unit"/>
-                                    </td>
-                                    <td t-if="o.company_id.show_discount">
-                                        <span t-field="service_line.discount"/>
-                                    </td>
-                                    <td>
-                                       <span t-field="service_line.price_subtotal"/>
-                                    </td>
-                                </tr>
+                                <t t-if="o.sale_id">
+                                    <tr t-foreach="o.pack_operation_product_ids" t-as="line">
+                                        <td>
+                                            <span t-field="line.product_id.default_code"/>
+                                        </td>
+                                         <td>
+                                            <span t-field="line.linked_move_operation_ids[0].move_id.name_report"/>
+                                        </td>
+                                         <td>
+                                            <span t-field="line.qty_done"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="line.sale_price_unit"/>
+                                        </td>
+                                        <td t-if="o.company_id.show_discount and o.sale_id">
+                                            <span t-field="line.sale_discount"/>
+                                        </td>
+                                        <td>
+                                           <span t-field="line.sale_price_subtotal"/>
+                                        </td>
+                                    </tr>
+                                    <tr t-foreach="o.sale_services" t-as="service_line">
+                                        <td>
+                                            <span t-field="service_line.product_id.default_code"/>
+                                        </td>
+                                         <td>
+                                            <span t-field="service_line.name_report"/>
+                                        </td>
+                                         <td>
+                                            <span t-field="service_line.product_uom_qty"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="service_line.price_unit"/>
+                                        </td>
+                                        <td t-if="o.company_id.show_discount">
+                                            <span t-field="service_line.discount"/>
+                                        </td>
+                                        <td>
+                                           <span t-field="service_line.price_subtotal"/>
+                                        </td>
+                                    </tr>
+                                </t>
+                                 <t t-if="not o.sale_id and o.purchase_id">
+                                    <tr t-foreach="o.pack_operation_product_ids" t-as="line">
+                                        <td>
+                                            <span t-field="line.product_id.default_code"/>
+                                        </td>
+                                         <td>
+                                            <span t-field="line.linked_move_operation_ids[0].move_id.name_report"/>
+                                        </td>
+                                         <td>
+                                            <span t-field="line.qty_delivered"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="line.purchase_price_unit"/>
+                                        </td>
+                                        <td>
+                                           <span t-field="line.purchase_price_subtotal"/>
+                                        </td>
+                                    </tr>
+                                 </t>
 
                             </tbody>
                             <tfoot>
@@ -112,7 +142,7 @@
                                     <td></td>
                                     <td></td>
                                     <td></td>
-                                    <td t-if="o.company_id.show_discount"></td>
+                                    <td t-if="o.company_id.show_discount and o.sale_id"></td>
                                     <td></td>
                                 </tr>
                             </tfoot>
@@ -137,33 +167,33 @@
                                         <td><strong>Total Without Taxes</strong></td>
                                         <td class="text-right">
                                             <span t-field="o.amount_untaxed"
-                                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                t-options='{"widget": "monetary", "display_currency": o.purchase_currency_id}'/>
                                         </td>
                                     </tr>
                                         <tr>
                                             <td>Taxes</td>
                                             <td class="text-right">
                                                 <span t-field="o.amount_tax"
-                                                    t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                    t-options='{"widget": "monetary", "display_currency": o.purchase_currency_id}'/>
                                             </td>
                                         </tr>
                                     <tr class="border-black">
                                         <td><strong>Total</strong></td>
                                         <td class="text-right">
                                             <span t-field="o.amount_total"
-                                                t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                                t-options='{"widget": "monetary", "display_currency": o.purchase_currency_id}'/>
                                         </td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
-                <div class="row" t-if="not o.neutral_document">
-                    <div class="col-xs-3" t-if="o.company_id.iso_logo">
-                        <img t-att-src="'data:image/png;base64,%s' % o.company_id.iso_logo" style="max-height: 85px;"/>
-                    </div>
-                 </div>
+                        <div class="row" t-if="not o.neutral_document">
+                            <div class="col-xs-3" t-if="o.company_id.iso_logo">
+                                <img t-att-src="'data:image/png;base64,%s' % o.company_id.iso_logo" style="max-height: 85px;"/>
+                            </div>
+                         </div>
 
-            </div>
+                    </div>
 
                 </t>
             </xpath>
