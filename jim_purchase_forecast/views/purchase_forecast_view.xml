@@ -85,6 +85,7 @@
                 <field name="demand"/>
                 <field name="sales"/>
                 <field name="stock"/>
+                <field name="incoming_pending"/>
                 <field name="purchase"/>
                 <field name="seller_id"/>
                 <field name="harbor_id"/>

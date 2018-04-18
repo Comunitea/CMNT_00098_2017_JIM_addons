@@ -205,6 +205,9 @@ class PurchaseForecast(models.Model):
                                           lines created'))
         return self.env['product.product'].browse(product_ids)
 
+    def _get_incoming_pending(self, product_id):
+        return 69
+
     @api.multi
     def create_lines(self):
         self.ensure_one()
@@ -221,6 +224,7 @@ class PurchaseForecast(models.Model):
                 'year4_ago': self._get_qty_year_ago(product.id, 4),
                 'year5_ago': self._get_qty_year_ago(product.id, 5),
                 'sales': ventas,
+                'incoming_pending': self._get_incoming_pending(product.id),
                 'stock': product.global_real_stock
             }
             line = self.env['purchase.forecast.line'].create(vals)
@@ -259,5 +263,6 @@ class PurchaseForecastLine(models.Model):
     sales = fields.Float('Confirmed Sales')
     purchase = fields.Float('Recommended purchase')
     stock = fields.Float('Current Stock')
+    incoming = fields.Float('Incoming Pending')
     seller_id = fields.Many2one('res.partner', 'Seller')
     harbor_id = fields.Many2one('res.harbor', 'Harbor')
