@@ -131,7 +131,8 @@ class PurchaseForecast(models.Model):
             WHERE sm.product_id = %s  AND
                   sm.date_expected >= '%s' AND sm.date_expected <= '%s' AND
                   sp.state in ('done') AND
-                  spt.code = 'outgoing' AND sl.usage = 'customer'
+                  spt.code = 'outgoing' AND sl.usage = 'customer' AND
+                  sp.partner_id not in (select partner_id from res_company)
         """ % (product_id, date_start, date_end)
         self._cr.execute(query2)
         qres = self._cr.fetchall()
@@ -248,7 +249,8 @@ class PurchaseForecast(models.Model):
             WHERE sm.product_id = %s  AND
                   sm.date_expected >= '%s' AND sm.date_expected <= '%s' AND
                   sp.state in ('assigned', 'partially_available') AND
-                  spt.code = 'incoming' AND sl.usage = 'supplier'
+                  spt.code = 'incoming' AND sl.usage = 'supplier' AND
+                  sp.partner_id not in (select partner_id from res_company)
         """ % (product_id, date_start, date_end)
         self._cr.execute(query)
         qres = self._cr.fetchall()
@@ -271,7 +273,8 @@ class PurchaseForecast(models.Model):
             WHERE sm.product_id = %s  AND
                   sm.date_expected < '%s' AND sm.date_expected > '%s' AND
                   sp.state in ('assigned', 'partially_available') AND
-                  spt.code = 'incoming' AND sl.usage = 'supplier'
+                  spt.code = 'incoming' AND sl.usage = 'supplier' AND
+                  sp.partner_id not in (select partner_id from res_company)
         """ % (product_id, date_start, date_end)
         self._cr.execute(query)
         qres = self._cr.fetchall()
