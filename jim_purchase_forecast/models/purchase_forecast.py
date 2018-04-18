@@ -18,7 +18,8 @@ class PurchaseForecast(models.Model):
                                     required=False)
     lines_count = fields.Float('Nº Lines', compute='_get_lines_count')
     stock_months = fields.Integer('Stock Months')
-    seller_id = fields.Many2one('res.partner', 'Seller', domain=[('supplier', '=', True)])
+    seller_id = fields.Many2one('res.partner', 'Seller',
+                                domain=[('supplier', '=', True)])
     harbor_id = fields.Many2one('res.harbor', 'Harbor')
 
     @api.multi
@@ -78,9 +79,7 @@ class PurchaseForecast(models.Model):
         return 0
 
     @api.multi
-    def _get_qty_year_ago(self, product_id, num_years_ago=0):
-        self.ensure_one()
-        qty = 0
+    def get_dates(self, num_years_ago=0):
         today = datetime.today()
         future_date = today + relativedelta(months=+self.stock_months)
 
@@ -94,9 +93,18 @@ class PurchaseForecast(models.Model):
 
         date_start = str(year_today) + '-' + month_today + '-' + day_today
         date_end = str(year_future) + '-' + month_future + '-' + day_future
+        return date_start, date_end
+
+    @api.multi
+    def _get_qty_year_ago(self, product_id, num_years_ago=0):
+        self.ensure_one()
+        qty = 0
+        date_start, date_end = self.get_dates(num_years_ago)
         print date_start
         print date_end
         company_id = self.env.user.company_id.id
+
+        # Query sale hystory
         query = """
             SELECT sum(qty)
             FROM sale_history
@@ -109,8 +117,29 @@ class PurchaseForecast(models.Model):
         qres = self._cr.fetchall()
         if qres:
             qty = qres[0][0]
-            return qty
-        return 0
+            if not qty:
+                qty = 0
+
+        # Query odoo sales from outgoings moves
+        qty2 = 0
+        query2 = """
+            SELECT sum(product_uom_qty)
+            FROM stock_move sm
+            INNER JOIN stock_picking sp on sp.id = sm.picking_id
+            INNER JOIN stock_picking_type spt on spt.id = sp.picking_type_id
+            INNER JOIN stock_location sl on sl.id = sp.location_dest_id
+            WHERE sm.product_id = %s  AND
+                  sm.date_expected >= '%s' AND sm.date_expected <= '%s' AND
+                  sp.state in ('done') AND
+                  spt.code = 'outgoing' AND sl.usage = 'customer'
+        """ % (product_id, date_start, date_end)
+        self._cr.execute(query2)
+        qres = self._cr.fetchall()
+        if qres:
+            qty2 = qres[0][0]
+            if not qty2:
+                qty2 = 0
+        return qty + qty2
 
     @api.multi
     def _query_product_category(self):
@@ -205,8 +234,51 @@ class PurchaseForecast(models.Model):
                                           lines created'))
         return self.env['product.product'].browse(product_ids)
 
-    def _get_incoming_pending(self, product_id):
-        return 69
+    def _get_incoming_stock_months(self, product_id):
+        """
+        Get purchase qty in stock motns range
+        """
+        date_start, date_end = self.get_dates()
+        query = """
+            SELECT sum(product_uom_qty)
+            FROM stock_move sm
+            INNER JOIN stock_picking sp on sp.id = sm.picking_id
+            INNER JOIN stock_picking_type spt on spt.id = sp.picking_type_id
+            INNER JOIN stock_location sl on sl.id = sp.location_id
+            WHERE sm.product_id = %s  AND
+                  sm.date_expected >= '%s' AND sm.date_expected <= '%s' AND
+                  sp.state in ('assigned', 'partially_available') AND
+                  spt.code = 'incoming' AND sl.usage = 'supplier'
+        """ % (product_id, date_start, date_end)
+        self._cr.execute(query)
+        qres = self._cr.fetchall()
+        if qres:
+            qty = qres[0][0]
+            return qty
+        return 0
+
+    def _get_incoming_remaining(self, product_id):
+        """
+        Get purchase out of stock moths range
+        """
+        date_start, date_end = self.get_dates()
+        query = """
+            SELECT sum(product_uom_qty)
+            FROM stock_move sm
+            INNER JOIN stock_picking sp on sp.id = sm.picking_id
+            INNER JOIN stock_picking_type spt on spt.id = sp.picking_type_id
+            INNER JOIN stock_location sl on sl.id = sp.location_id
+            WHERE sm.product_id = %s  AND
+                  sm.date_expected < '%s' AND sm.date_expected > '%s' AND
+                  sp.state in ('assigned', 'partially_available') AND
+                  spt.code = 'incoming' AND sl.usage = 'supplier'
+        """ % (product_id, date_start, date_end)
+        self._cr.execute(query)
+        qres = self._cr.fetchall()
+        if qres:
+            qty = qres[0][0]
+            return qty
+        return 0
 
     @api.multi
     def create_lines(self):
@@ -224,7 +296,8 @@ class PurchaseForecast(models.Model):
                 'year4_ago': self._get_qty_year_ago(product.id, 4),
                 'year5_ago': self._get_qty_year_ago(product.id, 5),
                 'sales': ventas,
-                'incoming_pending': self._get_incoming_pending(product.id),
+                'incoming_months': self._get_incoming_stock_months(product.id),
+                'incoming_remaining': self._get_incoming_remaining(product.id),
                 'stock': product.global_real_stock
             }
             line = self.env['purchase.forecast.line'].create(vals)
@@ -263,6 +336,7 @@ class PurchaseForecastLine(models.Model):
     sales = fields.Float('Confirmed Sales')
     purchase = fields.Float('Recommended purchase')
     stock = fields.Float('Current Stock')
-    incoming = fields.Float('Incoming Pending')
+    incoming_months = fields.Float('Incoming Pending (Stock Months)')
+    incoming_remaining = fields.Float('Incoming Pending (Remaining)')
     seller_id = fields.Many2one('res.partner', 'Seller')
     harbor_id = fields.Many2one('res.harbor', 'Harbor')
