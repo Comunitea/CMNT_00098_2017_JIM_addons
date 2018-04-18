@@ -18,7 +18,7 @@ class PurchaseForecast(models.Model):
                                     required=False)
     lines_count = fields.Float('Nº Lines', compute='_get_lines_count')
     stock_months = fields.Integer('Stock Months')
-    seller_id = fields.Many2one('res.partner', 'Seller')
+    seller_id = fields.Many2one('res.partner', 'Seller', domain=[('supplier', '=', True)])
     harbor_id = fields.Many2one('res.harbor', 'Harbor')
 
     @api.multi
