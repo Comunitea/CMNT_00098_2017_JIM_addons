@@ -63,8 +63,8 @@
     </record>
 
     <menuitem name="Purchase Forecast" id="menu_purchase_forecast"
-      parent="purchase.menu_purchase_config"
-      sequence="25"
+      parent="purchase.menu_purchase_root"
+      sequence="90"
       action="action_purchase_forecast"/>
 
 
@@ -77,8 +77,8 @@
             <tree>
                 <!--field name="forecast_id"/-->
                 <field name="product_id"/>
-                <field name="year5_ago"/>
-                <field name="year4_ago"/>
+                <!--field name="year5_ago"/>
+                <field name="year4_ago"/-->
                 <field name="year3_ago"/>
                 <field name="year2_ago"/>
                 <field name="year1_ago"/>
@@ -90,10 +90,8 @@
                 <field name="pending_purchase"/>
                 <field name="purchase"/>
                 <field name="seller_id"/>
+                <field name="seller_price"/>
                 <field name="harbor_id"/>
-
-
-
         </field>
     </record>
     <record id="purchase_forecast_line_view_form" model="ir.ui.view">
@@ -110,16 +108,23 @@
                             <field name="sales"/>
                             <field name="stock"/>
                             <field name="purchase"/>
-                            <field name="seller_id"/>
-                            <field name="harbor_id"/>
                         </group>
-                       <group>
+                        <group>
                             <field name="year1_ago"/>
                             <field name="year2_ago"/>
                             <field name="year3_ago"/>
                             <field name="year4_ago"/>
                             <field name="year5_ago"/>
                         </group>
+                        <group col="6" colspan="2" string="Sellers">
+                            <field name="seller_id"/>
+                            <field name="seller_price"/>
+                            <field name="harbor_id"/>
+                            <field name="seller2_id"/>
+                            <field name="seller2_price"/>
+                            <field name="harbor2_id"/>
+                        </group>
+
                     </group>
                     <group>
                         <group>
@@ -143,7 +148,16 @@
         <field name="arch" type="xml">
             <search>
                 <field name="product_id"/>
-                <field name="forecast_id"/>
+                <field name="seller_id"/>
+                <separator />
+                <filter
+                        string="Recommended purchase"
+                        domain="[('purchase','>',0)]"
+                        help="Recommnded purchase >0"/>
+                <group expand="0" string="Group By">
+                        <filter string="Seller" domain="[]" context="{'group_by':'seller_id'}"/>
+                        <filter string="Harbor" domain="[]" context="{'group_by':'harbor_id'}"/>
+                    </group>
             </search>
         </field>
     </record>

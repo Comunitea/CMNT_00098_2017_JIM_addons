@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-04-18 16:32+0000\n"
-"PO-Revision-Date: 2018-04-18 16:32+0000\n"
+"POT-Creation-Date: 2018-04-19 05:06+0000\n"
+"PO-Revision-Date: 2018-04-19 05:06+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -70,7 +70,7 @@ msgstr "Stock actual"
 #. module: jim_purchase_forecast
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_demand
 msgid "Demand"
-msgstr "Demanda Estimada"
+msgstr "Demanda estimada"
 
 #. module: jim_purchase_forecast
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_display_name
@@ -89,10 +89,21 @@ msgid "Forecast Lines"
 msgstr "Líneas previsión"
 
 #. module: jim_purchase_forecast
+#: model:ir.ui.view,arch_db:jim_purchase_forecast.purchase_forecast_line_view_filter
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: jim_purchase_forecast
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_harbor_id
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_harbor_id
+#: model:ir.ui.view,arch_db:jim_purchase_forecast.purchase_forecast_line_view_filter
 msgid "Harbor"
 msgstr "Puerto"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_harbor2_id
+msgid "Harbor 2"
+msgstr "Puerto 2"
 
 #. module: jim_purchase_forecast
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_id
@@ -134,7 +145,7 @@ msgid "Name"
 msgstr "Nombre"
 
 #. module: jim_purchase_forecast
-#: code:addons/jim_purchase_forecast/models/purchase_forecast.py:233
+#: code:addons/jim_purchase_forecast/models/purchase_forecast.py:234
 #, python-format
 msgid "No products founded. No forecast                                           lines created"
 msgstr "No se encontraron productos. No se crearon las líneas de previsión"
@@ -143,6 +154,16 @@ msgstr "No se encontraron productos. No se crearon las líneas de previsión"
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_lines_count
 msgid "Nº Lines"
 msgstr "Nº Líneas"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_seller_price
+msgid "Price 1"
+msgstr "Precio 1"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_seller2_price
+msgid "Price 2"
+msgstr "Precio 2"
 
 #. module: jim_purchase_forecast
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_product_id
@@ -173,14 +194,31 @@ msgstr "Líneas previsión compras"
 
 #. module: jim_purchase_forecast
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_purchase
+#: model:ir.ui.view,arch_db:jim_purchase_forecast.purchase_forecast_line_view_filter
 msgid "Recommended purchase"
-msgstr "Recommended purchase"
+msgstr "Con compra recomendada"
+
+#. module: jim_purchase_forecast
+#: model:ir.ui.view,arch_db:jim_purchase_forecast.purchase_forecast_line_view_filter
+msgid "Recommnded purchase >0"
+msgstr "Compra recomendada > 0"
 
 #. module: jim_purchase_forecast
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_seller_id
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_seller_id
+#: model:ir.ui.view,arch_db:jim_purchase_forecast.purchase_forecast_line_view_filter
 msgid "Seller"
 msgstr "Proveedor"
+
+#. module: jim_purchase_forecast
+#: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_line_seller2_id
+msgid "Seller 2"
+msgstr "Proveedor 2"
+
+#. module: jim_purchase_forecast
+#: model:ir.ui.view,arch_db:jim_purchase_forecast.purchase_forecast_line_view_form
+msgid "Sellers"
+msgstr "Proveedores"
 
 #. module: jim_purchase_forecast
 #: model:ir.model.fields,field_description:jim_purchase_forecast.field_purchase_forecast_stock_months
@@ -188,10 +226,10 @@ msgid "Stock Months"
 msgstr "Meses de stock"
 
 #. module: jim_purchase_forecast
-#: code:addons/jim_purchase_forecast/models/purchase_forecast.py:221
+#: code:addons/jim_purchase_forecast/models/purchase_forecast.py:222
 #, python-format
 msgid "You need to select one filter                                           condition."
-msgstr "Necesitas filtrar los productos por almenos una condición."
+msgstr "Necesitas filtrar los productos por al menos una condición."
 
 #. module: jim_purchase_forecast
 #: model:ir.model,name:jim_purchase_forecast.model_purchase_forecast

@@ -374,11 +374,20 @@ class PurchaseForecast(models.Model):
             }
             line = self.env['purchase.forecast.line'].create(vals)
             line.demand = self._get_demand(line)
-            purchase = max(line.demand, ventas) - product.global_real_stock
+            purchase = max(line.demand, ventas) - product.global_real_stock \
+                - line.incoming_months
             line.seller_id = product.seller_ids and product.seller_ids[0] \
                 and product.seller_ids[0].name or False
+            line.seller_price = line.seller_id and product.seller_ids[0].price
+            line.seller2_id = product.seller_ids and len(product.seller_ids)\
+                              > 1 and product.seller_ids[1] \
+                             and product.seller_ids[1].name or False
+            line.seller2_price = line.seller2_id and product.seller_ids[
+                1].price
             line.harbor_id = line.seller_id and line.seller_id.harbor_ids and\
                 line.seller_id.harbor_ids[0] or False
+            line.harbor2_id = line.seller2_id and line.seller2_id.harbor_ids \
+                              and line.seller2_id.harbor_ids[0] or False
 
             if purchase < 0:
                 purchase = 0
@@ -415,4 +424,8 @@ class PurchaseForecastLine(models.Model):
     related_purchase_id = fields.Many2one('purchase.order',
                                           'Related Purchase')
     seller_id = fields.Many2one('res.partner', 'Seller')
+    seller2_id = fields.Many2one('res.partner', 'Seller 2')
+    seller_price = fields.Float('Price 1')
+    seller2_price = fields.Float('Price 2')
     harbor_id = fields.Many2one('res.harbor', 'Harbor')
+    harbor2_id = fields.Many2one('res.harbor', 'Harbor 2')
