@@ -283,6 +283,70 @@ class PurchaseForecast(models.Model):
             return qty
         return 0
 
+    def _get_pending_purchase(self, product_id):
+        """
+        Get purchase out of stock moths range
+        """
+        qty = 0
+        query = """
+            SELECT sum(product_qty)
+            FROM purchase_order_line pol
+            INNER JOIN purchase_order po on po.id = pol.order_id
+            WHERE pol.product_id = %s  AND
+                  po.state not in ('cancel', 'purchase', 'done')
+        """ % (product_id)
+        self._cr.execute(query)
+        qres = self._cr.fetchall()
+        if qres:
+            qty = qres[0][0]
+            if not qty:
+                qty = 0
+        return qty
+
+    def _get_related_purchase_id(self, product_id):
+        """
+        Get purchase out of stock moths range
+        """
+        po_id = False
+        query = """
+            SELECT min(po.id)
+            FROM purchase_order_line pol
+            INNER JOIN purchase_order po on po.id = pol.order_id
+            WHERE pol.product_id = %s  AND
+                  po.state not in ('cancel', 'purchase', 'done')
+        """ % (product_id)
+        self._cr.execute(query)
+        qres = self._cr.fetchall()
+        if qres:
+            po_id = qres[0][0]
+            if not po_id:
+                po_id = False
+        return po_id
+
+    def _get_related_picking_id(self, product_id):
+        """
+        Get purchase out of stock moths range
+        """
+        picking_id = False
+        query = """
+            SELECT min(sp.id)
+            FROM stock_move sm
+            INNER JOIN stock_picking sp on sp.id = sm.picking_id
+            INNER JOIN stock_picking_type spt on spt.id = sp.picking_type_id
+            INNER JOIN stock_location sl on sl.id = sp.location_id
+            WHERE sm.product_id = %s  AND
+                  sp.state in ('assigned', 'partially_available') AND
+                  spt.code = 'incoming' AND sl.usage = 'supplier' AND
+                  sp.partner_id not in (select partner_id from res_company)
+        """ % (product_id)
+        self._cr.execute(query)
+        qres = self._cr.fetchall()
+        if qres:
+            pick_id = qres[0][0]
+            if pick_id:
+                picking_id = pick_id
+        return picking_id
+
     @api.multi
     def create_lines(self):
         self.ensure_one()
@@ -301,6 +365,11 @@ class PurchaseForecast(models.Model):
                 'sales': ventas,
                 'incoming_months': self._get_incoming_stock_months(product.id),
                 'incoming_remaining': self._get_incoming_remaining(product.id),
+                'pending_purchase': self._get_pending_purchase(product.id),
+                'related_purchase_id':
+                self._get_related_purchase_id(product.id),
+                'related_picking_id':
+                self._get_related_picking_id(product.id),
                 'stock': product.global_real_stock
             }
             line = self.env['purchase.forecast.line'].create(vals)
@@ -341,5 +410,9 @@ class PurchaseForecastLine(models.Model):
     stock = fields.Float('Current Stock')
     incoming_months = fields.Float('Incoming Pending (Stock Months)')
     incoming_remaining = fields.Float('Incoming Pending (Remaining)')
+    related_picking_id = fields.Many2one('stock.picking', 'Related Pickig')
+    pending_purchase = fields.Float('Pending Purchases')
+    related_purchase_id = fields.Many2one('purchase.order',
+                                          'Related Purchase')
     seller_id = fields.Many2one('res.partner', 'Seller')
     harbor_id = fields.Many2one('res.harbor', 'Harbor')

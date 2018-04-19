@@ -87,10 +87,13 @@
                 <field name="stock"/>
                 <field name="incoming_months"/>
                 <field name="incoming_remaining"/>
+                <field name="pending_purchase"/>
                 <field name="purchase"/>
                 <field name="seller_id"/>
                 <field name="harbor_id"/>
-            </tree>
+
+
+
         </field>
     </record>
     <record id="purchase_forecast_line_view_form" model="ir.ui.view">
@@ -116,6 +119,18 @@
                             <field name="year3_ago"/>
                             <field name="year4_ago"/>
                             <field name="year5_ago"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="incoming_months"/>
+                            <field name="incoming_remaining"/>
+                            <field name="related_picking_id"/>
+                           
+                        </group>
+                        <group>
+                            <field name="pending_purchase"/>
+                            <field name="related_purchase_id"/>
                         </group>
                     </group>
                 </sheet>
