@@ -279,7 +279,7 @@ class PurchaseForecast(models.Model):
     @api.multi
     def get_purchase_forecast(self):
         for product in self:
-            line_vals = product._get_forecast_line_vals(self.stock_months)
+            line_vals = product._get_forecast_line_vals()
             demand = self._get_demand(line_vals)
             purchase = self._get_purchase(demand, line_vals)
             product.write({'demand': demand,
