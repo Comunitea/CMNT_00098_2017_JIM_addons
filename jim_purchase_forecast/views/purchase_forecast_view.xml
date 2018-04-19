@@ -92,6 +92,7 @@
                 <field name="seller_id"/>
                 <field name="seller_price"/>
                 <field name="harbor_id"/>
+            </tree>
         </field>
     </record>
     <record id="purchase_forecast_line_view_form" model="ir.ui.view">
