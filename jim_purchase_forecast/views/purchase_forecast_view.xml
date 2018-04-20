@@ -74,11 +74,10 @@
         <field name="name">purchase.forecast.line.view.tree</field>
         <field name="model">purchase.forecast.line</field>
         <field name="arch" type="xml">
-            <tree>
-                <!--field name="forecast_id"/-->
+            <tree editable="top">
+                <!-- <button name="%(purchase_forecast_line_view_form)d" type='action' string='Open form'/> -->
+                <button name="open_form_view" type="object" icon="fa-list"/>
                 <field name="product_id"/>
-                <!--field name="year5_ago"/>
-                <field name="year4_ago"/-->
                 <field name="year3_ago"/>
                 <field name="year2_ago"/>
                 <field name="year1_ago"/>
@@ -89,6 +88,7 @@
                 <field name="incoming_remaining"/>
                 <field name="pending_purchase"/>
                 <field name="purchase"/>
+                <field name="to_buy"/>
                 <field name="seller_id"/>
                 <field name="seller_price"/>
                 <field name="harbor_id"/>
@@ -109,6 +109,7 @@
                             <field name="sales"/>
                             <field name="stock"/>
                             <field name="purchase"/>
+                            <field name="to_buy"/>
                         </group>
                         <group>
                             <field name="year1_ago"/>
@@ -155,6 +156,10 @@
                         string="Recommended purchase"
                         domain="[('purchase','>',0)]"
                         help="Recommnded purchase >0"/>
+                <filter
+                        string="To Buy"
+                        domain="[('to_buy','>',0)]"
+                        help="To Buy >0"/>
                 <group expand="0" string="Group By">
                         <filter string="Seller" domain="[]" context="{'group_by':'seller_id'}"/>
                         <filter string="Harbor" domain="[]" context="{'group_by':'harbor_id'}"/>

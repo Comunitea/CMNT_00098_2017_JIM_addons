@@ -177,6 +177,7 @@ class PurchaseForecast(models.Model):
             line_vals2 = {
                 'demand': line_demand,
                 'purchase': line_purchase if line_purchase > 0 else 0,
+                'to_buy': line_purchase if line_purchase > 0 else 0,
                 'seller_id': line_seller_id,
                 'seller_price': line_seller_price,
                 'seller2_id': line_seller2_id,
@@ -212,6 +213,7 @@ class PurchaseForecastLine(models.Model):
     demand = fields.Float('Demand')
     sales = fields.Float('Confirmed Sales')
     purchase = fields.Float('Recommended purchase')
+    to_buy = fields.Float('To Buy')
     stock = fields.Float('Current Stock')
     incoming_months = fields.Float('Incoming Pending (Stock Months)')
     incoming_remaining = fields.Float('Incoming Pending (Remaining)')
@@ -225,3 +227,15 @@ class PurchaseForecastLine(models.Model):
     seller2_price = fields.Float('Price 2')
     harbor_id = fields.Many2one('res.harbor', 'Harbor')
     harbor2_id = fields.Many2one('res.harbor', 'Harbor 2')
+
+    @api.multi
+    def open_form_view(self):
+        self.ensure_one()
+        action_name = 'jim_purchase_forecast.action_forecast_lines'
+        view_name = 'jim_purchase_forecast.purchase_forecast_line_view_form'
+        view = self.env.ref(view_name)
+        action = self.env.ref(action_name)
+        action = action.read()[0]
+        action['views'] = [(view.id, u'form')]
+        action['res_id'] = self._context.get('active_id', False)
+        return action
