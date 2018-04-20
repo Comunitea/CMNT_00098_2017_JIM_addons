@@ -153,42 +153,56 @@ class PurchaseForecast(models.Model):
         self.ensure_one()
         self.delete_forecast_lines()
         products = self._get_products()
+        seller_id = False
+        if self.seller_id:
+            seller_id = self.seller_id.id
+
         for product in products:
             line_vals = product._get_forecast_line_vals(self.stock_months)
             line_vals['forecast_id'] = self.id
+            # ventas = line_vals['sales']
+            line = self.env['purchase.forecast.line'].create(line_vals)
 
-            # REFACTORIZADO
-            line_demand = product._get_demand(line_vals)
-            line_purchase = product._get_purchase(line_demand, line_vals)
+            #TODO IMPROVE WRITING EFFICIENT
+            if seller_id:
+                seller_line = product.seller_ids.filtered(lambda x:
+                                            x.name == seller_id)[0]
 
-            line_seller_id = product.seller_ids and product.seller_ids[0] \
+            else:
+                seller_line = product.seller_ids and product.seller_ids[0] \
+                                 and product.seller_ids[0] or False
+                seller_id = seller_line and seller_line.name or False
+            seller_price = seller_line and seller_line.price or False
+            harbor = seller_line and seller_line.name.harbor_ids and \
+                     seller_line.name.harbor_ids[0] or False
+
+            seller2_line = product.seller_ids.filtered(lambda x:
+                                            x.name != seller_id)
+            seller2_line = seller2_line and seller2_line[0] or False
+            seller2_id = seller2_line and seller2_line.name or False
+            seller2_price = seller2_line and seller2_line.price or False
+            harbor2 = seller2_line and seller2_line.name.harbor_ids and \
+                     seller2_line.name.harbor_ids[0] or False
+
+            line.demand = product._get_demand(line_vals)
+            purchase = product._get_purchase(line.demand, line_vals)
+
+            line.seller_id = product.seller_ids and product.seller_ids[0] \
                 and product.seller_ids[0].name or False
-            line_seller_price = line_seller_id and product.seller_ids[0].price
-            line_seller2_id = product.seller_ids and len(product.seller_ids)\
+            line.seller_price = line.seller_id and product.seller_ids[0].price
+            line.seller2_id = product.seller_ids and len(product.seller_ids)\
                 > 1 and product.seller_ids[1] \
                 and product.seller_ids[1].name or False
-            line_seller2_price = line_seller2_id and product.seller_ids[
+            line.seller2_price = line.seller2_id and product.seller_ids[
                 1].price
-            line_harbor_id = line_seller_id and line_seller_id.harbor_ids and\
-                line_seller_id.harbor_ids[0] or False
-            line_harbor2_id = line_seller2_id and line_seller2_id.harbor_ids \
-                and line_seller2_id.harbor_ids[0] or False
+            line.harbor_id = line.seller_id and line.seller_id.harbor_ids and\
+                line.seller_id.harbor_ids[0] or False
+            line.harbor2_id = line.seller2_id and line.seller2_id.harbor_ids \
+                and line.seller2_id.harbor_ids[0] or False
 
-            line_vals2 = {
-                'demand': line_demand,
-                'purchase': line_purchase if line_purchase > 0 else 0,
-                'to_buy': line_purchase if line_purchase > 0 else 0,
-                'seller_id': line_seller_id,
-                'seller_price': line_seller_price,
-                'seller2_id': line_seller2_id,
-                'seller2_price': line_seller2_price,
-                'harbor_id': line_harbor_id,
-                'harbor2_id': line_harbor2_id
-            }
-
-            line_vals.update(line_vals2)
-            self.env['purchase.forecast.line'].create(line_vals)
-        return
+            if purchase < 0:
+                purchase = 0
+            line.purchase = purchase
 
     @api.multi
     def show_lines(self):
