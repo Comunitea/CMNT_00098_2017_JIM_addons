@@ -183,7 +183,7 @@ msgstr "Nombre"
 #. module: jim_purchase_forecast
 #: model:ir.ui.view,arch_db:jim_purchase_forecast.add_forecast_purchase_line_wzd
 msgid "New order lines"
-msgstr "New order lines"
+msgstr "Nuevas líneas de compra"
 
 #. module: jim_purchase_forecast
 #: code:addons/jim_purchase_forecast/wizard/forecast_purchase_wizard.py:27
