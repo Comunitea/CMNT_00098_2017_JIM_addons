@@ -165,11 +165,11 @@ class PurchaseForecast(models.Model):
             if self.seller_id:
                 seller = self.seller_id
                 seller_line = product.seller_ids.filtered(lambda x:
-                                            x.name == seller_id)
+                                                          x.name == seller_id)
                 seller_line = seller_line and seller_line[0] or False
             else:
                 seller_line = product.seller_ids and product.seller_ids[0] \
-                                 and product.seller_ids[0] or False
+                              and product.seller_ids[0] or False
                 seller = seller_line and seller_line.name or False
             seller_price = seller_line and seller_line.price or False
             harbor = seller_line and seller_line.name.harbor_ids and \
@@ -177,17 +177,14 @@ class PurchaseForecast(models.Model):
                      seller_line.name.harbor_ids[0].id or False
 
             seller2_line = product.seller_ids.filtered(lambda x:
-                                            x.name != seller)
+                                                       x.name != seller)
             seller2_line = seller2_line and seller2_line[0] or False
-            seller2_id = seller2_line and seller2_line.name  and \
+            seller2_id = seller2_line and seller2_line.name and \
                          seller2_line.name.id or False
             seller2_price = seller2_line and seller2_line.price or False
             harbor2 = seller2_line and seller2_line.name.harbor_ids and \
-                     seller2_line.name.harbor_ids[0] and \
-                     seller2_line.name.harbor_ids[0].id or False
-
-            line.demand = product._get_demand(line_vals)
-            purchase = product._get_purchase(line.demand, line_vals)
+                      seller2_line.name.harbor_ids[0] and \
+                      seller2_line.name.harbor_ids[0].id or False
 
             line_vals2 = {
                 'demand': line_demand,
