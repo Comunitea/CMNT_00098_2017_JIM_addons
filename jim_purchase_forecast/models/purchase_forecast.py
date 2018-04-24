@@ -252,5 +252,5 @@ class PurchaseForecastLine(models.Model):
         action = self.env.ref(action_name)
         action = action.read()[0]
         action['views'] = [(view.id, u'form')]
-        action['res_id'] = self._context.get('active_id', False)
+        action['res_id'] = self.ids[0]
         return action
