@@ -94,6 +94,9 @@
                 <field name="seller_id"/>
                 <field name="seller_price"/>
                 <field name="harbor_id"/>
+                <field name="seller2_id"/>
+                <field name="seller2_price"/>
+                <field name="harbor2_id"/>
             </tree>
         </field>
     </record>
