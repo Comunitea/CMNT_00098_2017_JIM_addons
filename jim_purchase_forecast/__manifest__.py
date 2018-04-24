@@ -22,6 +22,7 @@
     "data": [
         'views/purchase_forecast_view.xml',
         'views/product_view.xml',
+        'views/purchase_order_line_view.xml',
         'security/ir.model.access.csv',
         'wizard/forecast_purchase_wizard.xml',
 

@@ -8,6 +8,7 @@
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
+                <field name="date"/>
                 <field name="category_ids"/>
                 <field name="stock_months"/>
                 <field name="seller_id"/>
@@ -33,6 +34,7 @@
                     <group>
                         <group string="Purchase Forecast">
                             <field name="name"/>
+                            <field name="date"/>
                             <field name="stock_months"/>
                         </group>
                         <group string="Product Filters">

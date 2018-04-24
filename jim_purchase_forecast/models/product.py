@@ -12,8 +12,8 @@ class PurchaseForecast(models.Model):
 
     _inherit = "product.product"
 
-    demand = fields.Float('Demand')
-    purchase = fields.Float('Recommended purchase')
+    demand = fields.Float('Demand', readonly=True)
+    purchase = fields.Float('Recommended purchase', readonly=True)
 
     @api.multi
     def _get_sales(self):
@@ -274,7 +274,7 @@ class PurchaseForecast(models.Model):
         incoming_months = line_vals['incoming_months']
         purchase = max(demand, ventas) - self.global_real_stock - \
             incoming_months
-        return purchase
+        return purchase if purchase>0 else 0
 
     @api.multi
     def get_purchase_forecast(self):

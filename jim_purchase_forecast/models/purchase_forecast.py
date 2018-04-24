@@ -19,6 +19,7 @@ class PurchaseForecast(models.Model):
     seller_id = fields.Many2one('res.partner', 'Seller',
                                 domain=[('supplier', '=', True)])
     harbor_id = fields.Many2one('res.harbor', 'Harbor')
+    date = fields.Date('Calculation Date', readonly=True)
 
     @api.multi
     def _get_lines_count(self):
@@ -152,6 +153,7 @@ class PurchaseForecast(models.Model):
     def create_lines(self):
         self.ensure_one()
         self.delete_forecast_lines()
+        self.date = fields.Date.today()
         products = self._get_products()
         seller_id = False
 
@@ -214,30 +216,32 @@ class PurchaseForecastLine(models.Model):
 
     _name = "purchase.forecast.line"
 
-    forecast_id = fields.Many2one('purchase.forecast', 'Forecast')
-    product_id = fields.Many2one('product.product', 'Product')
-    year1_ago = fields.Float('1 Year Ago')
-    year2_ago = fields.Float('2 Year Ago')
-    year3_ago = fields.Float('3 Year Ago')
-    year4_ago = fields.Float('4 Year Ago')
-    year5_ago = fields.Float('5 Year Ago')
-    demand = fields.Float('Demand')
-    sales = fields.Float('Confirmed Sales')
-    purchase = fields.Float('Recommended purchase')
+    forecast_id = fields.Many2one('purchase.forecast', 'Forecast',
+                                  readonly=True)
+    product_id = fields.Many2one('product.product', 'Product', readonly=True)
+    year1_ago = fields.Float('1 Year Ago', readonly=True)
+    year2_ago = fields.Float('2 Year Ago', readonly=True)
+    year3_ago = fields.Float('3 Year Ago', readonly=True)
+    year4_ago = fields.Float('4 Year Ago', readonly=True)
+    year5_ago = fields.Float('5 Year Ago', readonly=True)
+    demand = fields.Float('Demand', readonly=True)
+    sales = fields.Float('Confirmed Sales', readonly=True)
+    purchase = fields.Float('Recommended purchase', readonly=True)
     to_buy = fields.Float('To Buy')
-    stock = fields.Float('Current Stock')
-    incoming_months = fields.Float('Incoming Pending (Stock Months)')
-    incoming_remaining = fields.Float('Incoming Pending (Remaining)')
-    related_picking_id = fields.Many2one('stock.picking', 'Related Pickig')
-    pending_purchase = fields.Float('Pending Purchases')
-    related_purchase_id = fields.Many2one('purchase.order',
-                                          'Related Purchase')
-    seller_id = fields.Many2one('res.partner', 'Seller')
-    seller2_id = fields.Many2one('res.partner', 'Seller 2')
-    seller_price = fields.Float('Price 1')
-    seller2_price = fields.Float('Price 2')
-    harbor_id = fields.Many2one('res.harbor', 'Harbor')
-    harbor2_id = fields.Many2one('res.harbor', 'Harbor 2')
+    stock = fields.Float('Current Stock', readonly=True)
+    incoming_months = fields.Float('Incoming Pending (Stock Months)', readonly=True)
+    incoming_remaining = fields.Float('Incoming Pending (Remaining)', readonly=True)
+    related_picking_id = fields.Many2one('stock.picking', 'Related Pickig', readonly=True)
+    pending_purchase = fields.Float('Pending Purchases', readonly=True)
+    related_purchase_id = fields.Many2one('purchase.order', 'Related '
+                                                            'Purchase',
+                                          readonly=True)
+    seller_id = fields.Many2one('res.partner', 'Seller',readonly=True)
+    seller2_id = fields.Many2one('res.partner', 'Seller 2',readonly=True)
+    seller_price = fields.Float('Price 1',readonly=True)
+    seller2_price = fields.Float('Price 2',readonly=True)
+    harbor_id = fields.Many2one('res.harbor', 'Harbor',readonly=True)
+    harbor2_id = fields.Many2one('res.harbor', 'Harbor 2',readonly=True)
 
     @api.multi
     def open_form_view(self):
