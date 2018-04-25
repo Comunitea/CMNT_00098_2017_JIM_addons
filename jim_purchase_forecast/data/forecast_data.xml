@@ -11,9 +11,9 @@
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field eval="False" name="doall" />
-            <field eval="'sproduct.product'" name="model" />
-            <field eval="'get_purchase_forecast'" name="function" />
-            <field eval="'(False,)'" name="args" />
+            <field eval="'product.product'" name="model" />
+            <field eval="'get_all_forecast'" name="function" />
+            <field eval="'()'" name="args" />
         </record>
     </data>
 </odoo>

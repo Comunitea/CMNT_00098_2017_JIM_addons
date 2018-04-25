@@ -25,6 +25,7 @@
         'views/purchase_order_line_view.xml',
         'security/ir.model.access.csv',
         'wizard/forecast_purchase_wizard.xml',
+        'data/forecast_data.xml'
 
     ],
     "installable": True

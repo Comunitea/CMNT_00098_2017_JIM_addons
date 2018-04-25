@@ -277,10 +277,16 @@ class PurchaseForecast(models.Model):
         return purchase if purchase>0 else 0
 
     @api.multi
+    def get_all_forecast(self):
+        self.search([('type','=','product')]).get_purchase_forecast()
+
+
+    @api.multi
     def get_purchase_forecast(self):
         for product in self:
+            print product.id
             line_vals = product._get_forecast_line_vals()
-            demand = self._get_demand(line_vals)
-            purchase = self._get_purchase(demand, line_vals)
+            demand = product._get_demand(line_vals)
+            purchase = product._get_purchase(demand, line_vals)
             product.write({'demand': demand,
                            'purchase': purchase})
