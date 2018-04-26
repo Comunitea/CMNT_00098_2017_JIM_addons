@@ -42,6 +42,13 @@
             <xpath expr="//field[@name='origin']" position="after">
                 <field name="expediente" />
             </xpath>
+            <xpath expr="//page/field[@name='name']/.." position="after">
+                <page string="Histórico">
+                    <field name="purchase_order_line_ids"/>
+                </page>
+
+            </xpath>
+
         </field>
     </record>
 
