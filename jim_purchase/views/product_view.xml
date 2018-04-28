@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 2018 Comunitea Servicios Tecnológicos S.L.
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html). -->
+
+<odoo>
+    <record id="product_normal_form_view_variant_sellers" model="ir.ui.view">
+        <field name="name">product.product.form.variant_sellers</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+           <group name="inventory" position="after">
+            <separator string="Variant Vendors"/>
+                <group name="variant_suppliers" string="Variant Vendors">
+                    <field name="variant_seller_ids" nolabel="1"
+                           context="{'hide_product_id': True}"/>
+                </group>
+           </group>
+        </field>
+    </record>
+</odoo>
