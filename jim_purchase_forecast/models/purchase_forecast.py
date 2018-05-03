@@ -167,7 +167,7 @@ class PurchaseForecast(models.Model):
             if self.seller_id:
                 seller = self.seller_id
                 seller_line = product.seller_ids.filtered(lambda x:
-                                                          x.name == seller_id)
+                                                          x.name == seller)
                 seller_line = seller_line and seller_line[0] or False
             else:
                 seller_line = product.seller_ids and product.seller_ids[0] \
