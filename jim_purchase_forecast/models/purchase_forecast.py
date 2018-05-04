@@ -77,7 +77,7 @@ class PurchaseForecast(models.Model):
         res = ("", {})
         if self.seller_id:
             query = """
-                SELECT pp.id
+                SELECT DISTINCT(pp.id)
                 FROM product_product pp
                 INNER JOIN product_template pt
                     on pt.id = pp.product_tmpl_id
@@ -94,7 +94,7 @@ class PurchaseForecast(models.Model):
         res = ("", {})
         if self.harbor_id:
             query = """
-                SELECT pp.id
+                SELECT DISTINCT(pp.id)
                 FROM product_product pp
                 INNER JOIN product_template pt on pt.id = pp.product_tmpl_id
                 INNER JOIN product_supplierinfo psi

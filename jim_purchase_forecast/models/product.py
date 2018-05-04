@@ -6,7 +6,7 @@ from odoo import fields, models, api
 from datetime import datetime
 from dateutil.relativedelta import relativedelta
 import numpy as np
-
+from odoo.tools import float_is_zero
 
 class PurchaseForecast(models.Model):
 
@@ -255,15 +255,37 @@ class PurchaseForecast(models.Model):
     @api.multi
     def _get_demand(self, line_vals):
         # least-squares solution to a linear matrix equation.
-        x = np.array([0, 1, 2, 3, 4])
-        y = np.array([line_vals['year5_ago'],
-                      line_vals['year4_ago'],
-                      line_vals['year3_ago'],
-                      line_vals['year2_ago'],
-                      line_vals['year1_ago']])
-        a = np.vstack([x, np.ones(len(x))]).T
-        m, c = np.linalg.lstsq(a, y)[0]
-        demand = m * 5 + c
+        if not float_is_zero(line_vals['year5_ago'], precision_digits=2) :
+            n = 5
+        elif not float_is_zero(line_vals['year4_ago'], precision_digits=2):
+            n = 4
+        elif not float_is_zero(line_vals['year3_ago'], precision_digits=2):
+            n = 3
+        elif not float_is_zero(line_vals['year2_ago'], precision_digits=2):
+            n = 2
+        elif not float_is_zero(line_vals['year1_ago'], precision_digits=2):
+            n = 1
+        else:
+            n = 0
+
+        if n == 0:
+            demand = 0
+        elif n == 1:
+            demand = line_vals['year1_ago']
+        else:
+            x = np.arange(n)
+            years = []
+            for i in range(0, n):
+                years.append(line_vals['year'+str(n-i)+'_ago'])
+        # y = np.array([line_vals['year5_ago'],
+        #           line_vals['year4_ago'],
+        #           line_vals['year3_ago'],
+        #           line_vals['year2_ago'],
+        #           line_vals['year1_ago']])
+            y = np.array(years)
+            a = np.vstack([x, np.ones(len(x))]).T
+            m, c = np.linalg.lstsq(a, y)[0]
+            demand = m * n + c
         if demand < 0:
             demand = 0
         return demand
