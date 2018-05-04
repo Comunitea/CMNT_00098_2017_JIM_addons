@@ -147,6 +147,7 @@ class PurchaseForecast(models.Model):
         if not product_ids:
             raise exceptions.UserError(_('No products founded. No forecast \
                                           lines created'))
+        product_ids = list(set(product_ids))
         return self.env['product.product'].browse(product_ids)
 
     @api.multi
