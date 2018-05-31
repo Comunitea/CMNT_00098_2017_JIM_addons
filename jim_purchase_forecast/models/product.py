@@ -8,7 +8,7 @@ from dateutil.relativedelta import relativedelta
 import numpy as np
 from odoo.tools import float_is_zero
 
-class PurchaseForecast(models.Model):
+class ProductProduct(models.Model):
 
     _inherit = "product.product"
 
@@ -16,26 +16,62 @@ class PurchaseForecast(models.Model):
     purchase = fields.Float('Recommended purchase', readonly=True)
 
     @api.multi
-    def _get_sales(self):
+    def _get_qty_current_year(self):
         self.ensure_one()
-        query = """
-            SELECT  Sum(
-            case WHEN product_uom_qty - qty_delivered >= 0
-              THEN product_uom_qty - qty_delivered
-              ELSE 0 END)
-             FROM sale_order_line WHERE
-              product_id = %s
-              and state in ('lqdr','pending', 'progress',
-               'progress_lqdr','sale')
-            GROUP BY product_id
-        """ % (self.id)
+        qty = 0
+        today = datetime.today()
 
-        self._cr.execute(query)
+        year_today = today.year
+        date_end = today.strftime("%d-%m-%y")
+        date_start = str(year_today) + '-01-01'
+        print date_start
+        print date_end
+        company_id = self.env.user.company_id.id
+
+        # Query odoo sales from outgoings moves
+        qty2 = 0
+        query2 = """
+                SELECT sum(product_uom_qty)
+                FROM stock_move sm
+                INNER JOIN stock_picking sp on sp.id = sm.picking_id
+                INNER JOIN stock_picking_type spt on spt.id = sp.picking_type_id
+                INNER JOIN stock_location sl on sl.id = sp.location_dest_id
+                WHERE sm.product_id = %s  AND
+                      sm.date_expected >= '%s' AND sm.date_expected <= '%s' AND
+                      sp.state in ('done') AND
+                      spt.code = 'outgoing' AND sl.usage = 'customer' AND
+                      sp.partner_id not in (select partner_id from res_company)
+            """ % (self.id, date_start, date_end)
+        self._cr.execute(query2)
         qres = self._cr.fetchall()
         if qres:
-            qty = qres[0][0]
-            return qty
-        return 0
+            qty2 = qres[0][0]
+            if not qty2:
+                qty2 = 0
+        return qty2
+
+    @api.multi
+    def _get_sales(self):
+        self.ensure_one()
+        # query = """
+        #     SELECT  Sum(
+        #     case WHEN product_uom_qty - qty_delivered >= 0
+        #       THEN product_uom_qty - qty_delivered
+        #       ELSE 0 END)
+        #      FROM sale_order_line WHERE
+        #       product_id = %s
+        #       and state in ('lqdr','pending', 'progress',
+        #        'progress_lqdr','sale')
+        #     GROUP BY product_id
+        # """ % (self.id)
+        #
+        # self._cr.execute(query)
+        # qres = self._cr.fetchall()
+        # if qres:
+        #     qty = qres[0][0]
+        #     return qty
+        # return 0
+        return self.global_real_stock - self.web_global_stock
 
     @api.multi
     def get_dates(self, num_years_ago=0, stock_months=4):
@@ -79,7 +115,6 @@ class PurchaseForecast(models.Model):
             qty = qres[0][0]
             if not qty:
                 qty = 0
-        return qty
 
         # Query odoo sales from outgoings moves
         qty2 = 0
@@ -233,6 +268,7 @@ class PurchaseForecast(models.Model):
     def _get_forecast_line_vals(self, stock_months=4):
         self.ensure_one()
         ventas = self._get_sales()
+        current_year_sales = self._get_qty_current_year()
         vals = {
             'product_id': self.id,
             'year1_ago': self._get_qty_year_ago(1, stock_months),
@@ -241,6 +277,7 @@ class PurchaseForecast(models.Model):
             'year4_ago': self._get_qty_year_ago(4, stock_months),
             'year5_ago': self._get_qty_year_ago(5, stock_months),
             'sales': ventas,
+            'current_year_sales': current_year_sales,
             'incoming_months': self._get_incoming_stock_months(stock_months),
             'incoming_remaining': self._get_incoming_remaining(stock_months),
             'pending_purchase': self._get_pending_purchase(),
@@ -255,9 +292,10 @@ class PurchaseForecast(models.Model):
     @api.multi
     def _get_demand(self, line_vals):
         # least-squares solution to a linear matrix equation.
-        if not float_is_zero(line_vals['year5_ago'], precision_digits=2) :
-            n = 5
-        elif not float_is_zero(line_vals['year4_ago'], precision_digits=2):
+        #if not float_is_zero(line_vals['year5_ago'], precision_digits=2) :
+        #    n = 5
+        #elif not float_is_zero(line_vals['year4_ago'], precision_digits=2):
+        if not float_is_zero(line_vals['year4_ago'], precision_digits=2):
             n = 4
         elif not float_is_zero(line_vals['year3_ago'], precision_digits=2):
             n = 3
