@@ -42,7 +42,7 @@ class Jesie(object):
 
         counter = 0
         for t in list_of_tuples:
-            if counter < row_insert_limit:
+            if counter <= row_insert_limit:
                 values += "('{}', '{}', '{}', {}, '{}'),".format(t[0], t[1], t[2], t[3], version)
                 counter += 1
             else:
