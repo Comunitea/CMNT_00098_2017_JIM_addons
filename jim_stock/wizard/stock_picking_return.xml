@@ -8,22 +8,48 @@
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="colors">
-                        red:(qty_done - quantity + ordered_qty - quantity) != 0;
-                        green:(qty_done - quantity + ordered_qty - quantity) == 0
+                        red:(qty_done - quantity) != 0;
+                        green:(qty_done - quantity ) == 0
                     </attribute>
                 </xpath>
-                <xpath expr="//tree/field[@name='quantity']" position="after">
+                <xpath expr="//tree" position="before">
+                    <p>
+                        La Cantidad Hecha es la cantidad que ha sido validada en el picking.<br/>
+                        Cantidad es la cantidad disponible en la ubicación. Podemos devolver contra cantidad disponible, o forzar a cantidad hecha<br/>
+                        Si se fuerza a cantidad hecha sin disponible (líneas rojas), recuerda forzar disponibilidad en el albarán generado
+                    </p>
+                </xpath>
+                <xpath expr="//tree/field[@name='quantity']" position="before">
                     <field name="qty_done"/>
-                    <field name="ordered_qty"/>
+                </xpath>
+                <xpath expr="//tree/field[@name='quantity']" position="replace">
+                    <field name="quantity" string="Cantidad disponible"/>
+                </xpath>
+                <xpath expr="//tree/field[@name='product_id']" position="before">
+                    <field name="description" string="Producto"/>
+                </xpath>
+                <xpath expr="//tree/field[@name='product_id']" position="attributes">
+                    <attribute name="invisible">1</attribute>
                 </xpath>
                 <field name="location_id" position="before">
                     <field name="picking_id" invisible="1"/>
                     <field name="picking_type_id"/>
                     <field name="only_return_location"/>
                 </field>
-                <xpath expr="//button[@name='create_returns']" position="after">
-                    <button name="create_returns_from_qty_done" string="Return qty done" type="object" class="btn-primary"/>
-                    <button name="create_returns_from_ordered_qty" string="Return ordered_qty" type="object" class="btn-primary"/>
+
+                <xpath expr="//footer" position="before">
+                    <div>
+                        <field name="to_refund_all" class="'oe_inline" invisible="1"></field>
+                        <button name="set_to_true_refund" string="Para facturar todo" type="object" class="btn-primary oe_inline" attrs="{'invisible': [('to_refund_all','=',True)]}"/>
+                        <button name="set_to_false_refund" string="Sin facturar nada" type="object" class="btn-primary oe_inline" attrs="{'invisible': [('to_refund_all','=',False)]}"/>
+                    </div>
+                </xpath>
+                <xpath expr="//button[@name='create_returns']" position="before">
+                    <button name="create_returns_from_qty_done" string="Devolver cantidad hecha" type="object" class="btn-primary"/>
+                    <!--button name="create_returns_from_ordered_qty" string="Return ordered_qty" type="object" class="btn-primary"/-->
+                </xpath>
+                <xpath expr="//button[@name='create_returns']" position="attributes">
+                    <attribute name="string">Devolver cantidad disponible</attribute>
                 </xpath>
             </field>
         </record>

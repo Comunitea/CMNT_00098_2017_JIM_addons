@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+         <record model="ir.ui.view" id="purchase_manage_variant_form_with_template_sequence">
+            <field name="name">purchase_purchase_order_form_template_sequence</field>
+            <field name="model">purchase.manage.variant</field>
+            <field name="inherit_id" ref="purchase_order_variant_mgmt.purchase_manage_variant_form"/>
+            <field name="arch" type="xml">
+                <field name="product_tmpl_id" position="after">
+                        <field name="template_sequence" invisible="1" groups="jim_purchase_sequence_order_lines.group_reorder_purchase_line"/>
+                </field>
+                <field name="product_tmpl_id" position="attributes">
+                    <attribute name="readonly">context.get('default_template_sequence', False)</attribute>
+                </field>
+            </field>
+        </record>
+    </data>
+
+
+</odoo>

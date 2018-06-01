@@ -13,6 +13,7 @@ class AccountInvoice(models.Model):
         compute='_compute_global_discount_amount')
     global_discount_percentage = fields.Float('Global discount')
     notes = fields.Text()
+    show_associated = fields.Boolean(compute='_compute_show_associated')
 
     @api.multi
     def compute_early_payment_lines(self):
@@ -58,6 +59,23 @@ class AccountInvoice(models.Model):
             else:
                 invoice.global_discount_amount = 0.0
 
+    @api.multi
+    def _compute_show_associated(self):
+        def _get_parent_company(partner):
+            if not partner.is_company and partner.parent_id:
+                return _get_parent_company(partner.parent_id)
+            return partner
+        for invoice in self:
+            if invoice.partner_id != invoice.commercial_partner_id:
+                partner_parent = _get_parent_company(invoice.partner_id)
+                commercial_partner_parent = _get_parent_company(invoice.commercial_partner_id)
+                if partner_parent != commercial_partner_parent:
+                    invoice.show_associated = True
+                else:
+                    invoice.show_associated = False
+            else:
+                invoice.show_associated = False
+
 
 class AccountInvoiceLine(models.Model):
 
@@ -87,3 +105,10 @@ class AccountInvoiceLine(models.Model):
                 price, currency, qty, product=self.product_id,
                 partner=self.invoice_id.partner_id)
         return taxes['total_excluded'] if taxes else qty * price
+
+
+class AccountPaymentMode(models.Model):
+
+    _inherit = 'account.payment.mode'
+
+    report_refund_warning = fields.Text(translate=True)

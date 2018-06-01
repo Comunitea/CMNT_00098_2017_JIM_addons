@@ -1,0 +1,118 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* reconfirm_procurement_canceled_po
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-03-01 16:31+0000\n"
+"PO-Revision-Date: 2018-03-01 16:31+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.ui.view,arch_db:reconfirm_procurement_canceled_po.wzd_confirm_procurement
+msgid "Cancel"
+msgstr "Cancelar"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model,name:reconfirm_procurement_canceled_po.model_wzd_confirm_procurement
+msgid "Confirm procurement in canceled purchases"
+msgstr "Confirmar abastecimientos en pedidos de compra cancelados"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.ui.view,arch_db:reconfirm_procurement_canceled_po.wzd_confirm_procurement
+msgid "Confirm purchase order options"
+msgstr "Opciones para (re)confirmar los pedidos de compra"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model.fields,field_description:reconfirm_procurement_canceled_po.field_wzd_confirm_procurement_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model.fields,field_description:reconfirm_procurement_canceled_po.field_wzd_confirm_procurement_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model.fields,field_description:reconfirm_procurement_canceled_po.field_wzd_confirm_procurement_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model.fields,field_description:reconfirm_procurement_canceled_po.field_wzd_confirm_procurement_id
+msgid "ID"
+msgstr "ID"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model.fields,field_description:reconfirm_procurement_canceled_po.field_wzd_confirm_procurement___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model.fields,field_description:reconfirm_procurement_canceled_po.field_wzd_confirm_procurement_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model.fields,field_description:reconfirm_procurement_canceled_po.field_wzd_confirm_procurement_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model.fields,field_description:reconfirm_procurement_canceled_po.field_wzd_confirm_procurement_procurement_ids
+msgid "Procurement ids"
+msgstr "Abastecimientos"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model,name:reconfirm_procurement_canceled_po.model_purchase_order
+msgid "Purchase Order"
+msgstr "Pedido de compra"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model,name:reconfirm_procurement_canceled_po.model_purchase_order_line
+msgid "Purchase Order Line"
+msgstr "Línea pedido de compra"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.model.fields,field_description:reconfirm_procurement_canceled_po.field_wzd_confirm_procurement_purchase_ids
+msgid "Purchase ids"
+msgstr "Compras"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.ui.view,arch_db:reconfirm_procurement_canceled_po.wzd_confirm_procurement
+msgid "Purchase order"
+msgstr "Compra"
+
+#. module: reconfirm_procurement_canceled_po
+#: code:addons/reconfirm_procurement_canceled_po/models/purchase_order.py:60
+#: model:ir.ui.view,arch_db:reconfirm_procurement_canceled_po.wzd_confirm_procurement
+#, python-format
+msgid "Reconfirm canceled procurement"
+msgstr "Reconfirmar abastecimientos cancelados"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.ui.view,arch_db:reconfirm_procurement_canceled_po.wzd_confirm_procurement
+msgid "This purchases has procurement orders linked to sale orders.\n"
+"                    If you reconfirm this procurements, you'll reactivate this sale orders.\n"
+"                    If you don't reconfirm them, the sale order will not be reactivate."
+msgstr "Esta(s) órdene(s) de compra tienen abastecimientos vinculados a ordenes de venta.\n"
+"                    Si confirmas estos abastecimientos, mantienes la vinculación entre el pedido de compra y la venta (opción por defecto)\n"
+"                    Si no confirmas los abastecimientos, se desvinculará el pedido de compra de la venta que generó la compra.\n"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.ui.view,arch_db:reconfirm_procurement_canceled_po.wzd_confirm_procurement
+msgid "Not reconfirm procurement"
+msgstr "NO reconfirmar abastecimientos"
+
+#. module: reconfirm_procurement_canceled_po
+#: model:ir.ui.view,arch_db:reconfirm_procurement_canceled_po.wzd_confirm_procurement
+msgid "Reconfirm procurements"
+msgstr "Reconfirmar abastecimientos"
+

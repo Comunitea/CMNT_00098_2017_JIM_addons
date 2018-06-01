@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+   <record id="product_normal_form_view_view_forecast" model="ir.ui.view">
+        <field name="name">product_normal_form_view_view_forecast</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+               <page string="Purchase Forecast">
+                    <group>
+                        <field name="demand"/>
+                        <field name="purchase"/>
+                    </group>
+                    <div>
+                        <button string="Update Forecast" class="oe_link oe_inline" name="get_purchase_forecast" type="object"/>
+                    </div>
+               </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

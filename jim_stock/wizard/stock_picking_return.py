@@ -37,10 +37,11 @@ class StockMove(models.Model):
 class StockReturnPickingLine(models.TransientModel):
     _inherit = "stock.return.picking.line"
 
+
     qty_done = fields.Float("Quantity done", digits=dp.get_precision('Product Unit of Measure'))
     ordered_qty = fields.Float("Ordered quantity", digits=dp.get_precision('Product Unit of Measure'))
     quantity = fields.Float("Quantity available", digits=dp.get_precision('Product Unit of Measure'), required=True)
-
+    description = fields.Char("Producto")
 
 
 
@@ -53,6 +54,8 @@ class StockReturnPicking(models.TransientModel):
     only_return_location = fields.Boolean("Only return location")
     picking_type_id = fields.Many2one('stock.picking.type', 'Picking Type', )
     picking_id = fields.Many2one('stock.picking')
+    to_refund_all = fields.Boolean('To refund')
+
 
     @api.model
     def default_get(self, fields):
@@ -60,26 +63,26 @@ class StockReturnPicking(models.TransientModel):
         if res and 'product_return_moves' in res:
             new_product_return_moves = []
             product_return_moves = res['product_return_moves']
-
+            Quant = self.env['stock.quant']
             picking = self.env['stock.picking'].browse(self.env.context.get('active_id'))
             if picking:
+                print self._context
+                to_refund_all = self._context.get('to_refund_all', True)
+
                 res.update({'picking_type_id': picking.picking_type_id.return_picking_type_id.id or picking.picking_type_id.id,
-                            'picking_id': picking.id})
-
+                            'picking_id': picking.id,
+                            'to_refund_all': to_refund_all})
                 for return_move in product_return_moves:
-                    move = picking.move_lines.filtered(lambda x: x.product_id.id == return_move[2]['product_id'])
-                    new_move = return_move [2]
-                    qty_done = 0.00
-                    ordered_qty = 0.00
-                    for move_id in move:
-                        qty_done += sum([op.operation_id.qty_done for op in move_id.linked_move_operation_ids])
-                        ordered_qty += sum([op.operation_id.ordered_qty for op in move_id.linked_move_operation_ids])
-
-                    new_move.update ({'qty_done': qty_done, 'ordered_qty': ordered_qty})
-
-                    new_product_return_moves.append(
-                        (0, 0, new_move))
-
+                    new_move = return_move[2]
+                    orig_move = picking.move_lines.filtered(lambda x: x.id == new_move['move_id'])
+                    quantity = sum(quant.qty for quant in Quant.search([
+                        ('history_ids', 'in', orig_move.id),
+                        ('qty', '>', 0.0),  ('location_id', 'child_of', orig_move.location_id.id)
+                    ]).filtered(
+                        lambda quant: not quant.reservation_id or quant.reservation_id.origin_returned_move_id != orig_move))
+                    quantity = orig_move.product_uom_qty# - orig_move.product_id.uom_id._compute_quantity(quantity, orig_move.product_uom)
+                    new_move.update ({'qty_done': quantity, 'to_refund_so': to_refund_all, 'description': orig_move.product_id.display_name})
+                    new_product_return_moves.append((0, 0, new_move))
                 res.update({'product_return_moves': new_product_return_moves})
         return res
 
@@ -129,3 +132,24 @@ class StockReturnPicking(models.TransientModel):
             move.quantity = move.ordered_qty
         return self.create_returns()
 
+    def set_to_true_refund(self):
+        return self.set_to_refund(True)
+
+    def set_to_false_refund(self):
+        return self.set_to_refund(False)
+
+    def set_to_refund(self, option=False):
+        self.to_refund_all = option
+        ctx = self._context.copy()
+        ctx.update(to_refund_all=self.to_refund_all)
+        print ctx
+        action = {
+            'name': 'Reverse Transfer',
+            'type': 'ir.actions.act_window',
+            'id': 'act_stock_return_picking',
+            'res_model': 'stock.return.picking',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': ctx
+            }
+        return action

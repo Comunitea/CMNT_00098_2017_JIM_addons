@@ -33,4 +33,16 @@
         </field>
     </record>
 
+    <record id="acount_payment_mode_form_add_refund_warning" model="ir.ui.view">
+        <field name="name">account.payment.mode.form</field>
+        <field name="model">account.payment.mode</field>
+        <field name="inherit_id" ref="account_payment_mode.account_payment_mode_form"/>
+        <field name="arch" type="xml">
+            <group name="note" position="after">
+                <group string="Refund warning">
+                    <field name="report_refund_warning"/>
+                </group>
+            </group>
+        </field>
+    </record>
 </odoo>

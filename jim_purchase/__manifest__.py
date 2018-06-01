@@ -11,6 +11,7 @@
     'depends': [
         'purchase',
         'purchase_advance_payment',
+        'purchase_order_variant_mgmt',
         'jim_stock'
 
     ],
@@ -24,7 +25,7 @@
         'views/account_payment.xml',
         'wizard/product_purchase_wizard.xml',
         'wizard/purchase_invoice_wzd.xml',
-
+        'views/product_view.xml',
     ],
     "installable": True
 }

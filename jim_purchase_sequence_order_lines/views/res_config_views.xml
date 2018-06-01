@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+     <record model="ir.ui.view" id="view_purchase_configuration_template_sequence">
+        <field name="name">purchase.res.config.view.template.sequence</field>
+        <field name="model">purchase.config.settings</field>
+        <field name="inherit_id" ref="purchase.view_purchase_configuration"/>
+        <field name="arch" type="xml">
+            <field name="group_warning_purchase" position="after">
+                <field name="group_reorder_purchase_line" widget="radio"/>
+            </field>
+        </field>
+     </record>
+</odoo>

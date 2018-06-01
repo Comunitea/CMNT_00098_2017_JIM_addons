@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+
+    <record id="purchase_forecast_view_tree" model="ir.ui.view">
+        <field name="name">purchase.forecast.view.tree</field>
+        <field name="model">purchase.forecast</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="date"/>
+                <field name="category_ids"/>
+                <field name="stock_months"/>
+                <field name="seller_id"/>
+                <field name="harbor_id"/>
+                <field name="tag_ids"/>
+            </tree>
+        </field>
+    </record>
+    <record id="purchase_forecast_view_form" model="ir.ui.view">
+        <field name="name">purchase.forecast.view.form</field>
+        <field name="model">purchase.forecast</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="create_lines" type="object" string="Create Forecast Lines"/>
+                </header>
+                <sheet>
+                    <div name="button_box" class="oe_right oe_button_box">
+                        <button class="oe_stat_button" name="show_lines" type="object" icon="fa-list">
+                        <field string="Forecast Lines" name="lines_count" widget="statinfo" />
+                    </button>
+                    </div>
+
+                    <group>
+                        <group string="Purchase Forecast">
+                            <field name="name"/>
+                            <field name="date"/>
+                            <field name="stock_months"/>
+                        </group>
+                        <group string="Product Filters">
+                            <field name="category_ids" widget="many2many_tags"/>
+                            <field name="seller_id"/>
+                            <field name="harbor_id"/>
+                            <field name="tag_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    <record id="purchase_forecast_view_filter" model="ir.ui.view">
+        <field name="name">purchase.forecast.view.filter</field>
+        <field name="model">purchase.forecast</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="name"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_purchase_forecast" model="ir.actions.act_window">
+        <field name="name">Purchase Forecast</field>
+        <field name="res_model">purchase.forecast</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem name="Purchase Forecast" id="menu_purchase_forecast"
+      parent="purchase.menu_purchase_root"
+      sequence="90"
+      action="action_purchase_forecast"/>
+
+
+
+
+    <record id="purchase_forecast_line_view_tree" model="ir.ui.view">
+        <field name="name">purchase.forecast.line.view.tree</field>
+        <field name="model">purchase.forecast.line</field>
+        <field name="arch" type="xml">
+            <tree editable="top">
+                <!-- <button name="%(purchase_forecast_line_view_form)d" type='action' string='Open form'/> -->
+                <button name="open_form_view" type="object" icon="fa-list"/>
+                <field name="product_id"/>
+                <field name="year3_ago"/>
+                <field name="year2_ago"/>
+                <field name="year1_ago"/>
+                <field name="demand"/>
+                <field name="sales"/>
+                <field name="current_year_sales"/>
+                <field name="stock"/>
+                <field name="incoming_months"/>
+                <field name="incoming_remaining"/>
+                <field name="pending_purchase"/>
+                <field name="purchase"/>
+                <field name="to_buy"/>
+                <field name="seller_id"/>
+                <field name="seller_price"/>
+                <field name="harbor_id"/>
+                <field name="seller2_id"/>
+                <field name="seller2_price"/>
+                <field name="harbor2_id"/>
+            </tree>
+        </field>
+    </record>
+    <record id="purchase_forecast_line_view_form" model="ir.ui.view">
+        <field name="name">purchase.forecast.line.view.form</field>
+        <field name="model">purchase.forecast.line</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="forecast_id"/>
+                            <field name="product_id"/>
+                            <field name="demand"/>
+                            <field name="sales"/>
+                            <field name="current_year_sales"/>
+                            <field name="stock"/>
+                            <field name="purchase"/>
+                            <field name="to_buy"/>
+                        </group>
+                        <group>
+                            <field name="year1_ago"/>
+                            <field name="year2_ago"/>
+                            <field name="year3_ago"/>
+                            <field name="year4_ago"/>
+                            <!--field name="year5_ago"/-->
+                        </group>
+                        <group col="6" colspan="2" string="Sellers">
+                            <field name="seller_id"/>
+                            <field name="seller_price"/>
+                            <field name="harbor_id"/>
+                            <field name="seller2_id"/>
+                            <field name="seller2_price"/>
+                            <field name="harbor2_id"/>
+                        </group>
+
+                    </group>
+                    <group>
+                        <group>
+                            <field name="incoming_months"/>
+                            <field name="incoming_remaining"/>
+                            <field name="related_picking_id"/>
+                           
+                        </group>
+                        <group>
+                            <field name="pending_purchase"/>
+                            <field name="related_purchase_id"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+        <record id="purchase_forecast_line_view_filter" model="ir.ui.view">
+        <field name="name">purchase.forecast.line.view.filter</field>
+        <field name="model">purchase.forecast.line</field>
+        <field name="arch" type="xml">
+            <search>
+                <field name="product_id"/>
+                <field name="seller_id"/>
+                <separator />
+                <filter
+                        string="Recommended purchase"
+                        domain="[('purchase','>',0)]"
+                        help="Recommnded purchase >0"/>
+                <filter
+                        string="To Buy"
+                        domain="[('to_buy','>',0)]"
+                        help="To Buy >0"/>
+                <group expand="0" string="Group By">
+                        <filter string="Seller" domain="[]" context="{'group_by':'seller_id'}"/>
+                        <filter string="Harbor" domain="[]" context="{'group_by':'harbor_id'}"/>
+                    </group>
+            </search>
+        </field>
+    </record>
+
+     <record id="action_forecast_lines" model="ir.actions.act_window">
+            <field name="name">Purchase Forecast Lines</field>
+            <field name="res_model">purchase.forecast.line</field>
+            <field name="view_type">form</field>
+    </record>
+
+<!--      <menuitem name="Purchase Forecast Lines" id="menu_purchase_forecast_lines"
+      parent="purchase.menu_purchase_config"
+      sequence="25"
+      action="action_forecast_lines"/> -->
+</odoo>

@@ -12,7 +12,7 @@ class ResPartner(models.Model):
     default_partner_by_type = fields.Boolean("Default partner by type")
 
     @api.multi
-    @api.constrains("partner_id", "type", "default_partner_by_type")
+    @api.constrains("parent_id", "type", "default_partner_by_type")
     def _check_default_partner_by_type(self):
         """Ensure details are given if required."""
         for partner in self:

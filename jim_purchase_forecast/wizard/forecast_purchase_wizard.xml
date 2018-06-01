@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
+
+<odoo>
+
+        <record id="add_forecast_purchase_line_wzd" model="ir.ui.view">
+            <field name="name">add.forecast.purchase.line.wzd</field>
+            <field name="model">forecast.purchase.wizard</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+                <form string="Select sale order to add selected products">
+                    <group>
+                        <field name="seller_id"/>
+                        <field name="purchase_order" domain="[('state','not in',['purchase','cancel','done']), ('partner_id', '=', seller_id)]" context="{'default_partner_id': seller_id}"/>
+                    </group>
+                    <separator string="New order lines" colspan="4"/>
+                    <group>
+                        <field name="line_ids" nolabel="1">
+                            <tree string="Order lines" editable="top" delete="1" create="1">
+                                <field name="product_id"/>
+                                <field name="product_qty"/>
+                            </tree>
+                        </field>
+                    </group>
+                    <footer>
+                        <button name="add_to_purchase_order" string="Add to order" type="object" class="btn-primary"/>
+                        <button special="cancel" string="Cancel" class="btn-default"/>
+                    </footer>
+                </form>
+            </field>
+        </record>
+
+        <act_window name="Add to purchase order"
+            res_model="forecast.purchase.wizard"
+            src_model="purchase.forecast.line"
+            view_mode="form"
+            view_type="form"
+            target="new"
+            key2="client_action_multi"
+            id="action_add_forecast_purchase_line_wzd"
+            groups="purchase.group_purchase_user"/>
+
+</odoo>

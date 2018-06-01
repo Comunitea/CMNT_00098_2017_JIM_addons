@@ -10,7 +10,7 @@
                 <div class="oe_structure"/>
                 <div class="radius_border" style="margin-bottom: 10px;">
                     Obs.:
-                        <t t-if="o.partner_id != o.commercial_partner_id">
+                        <t t-if="o.show_associated">
                             Associated: <span t-field="o.partner_id.name"/>
                         </t>
                         <span t-field="o.name" t-if="o.type not in ('in_refund', 'out_refund')"/>
@@ -181,6 +181,9 @@
                     </div>
                     <div class="col-xs-5" t-if="not o.company_id.hide_fields and o.type not in ('in_refund', 'out_refund')">
                         <span>En caso de la devolución del cobro de una factura, <span t-field="o.company_id.name"/>, aplicará un recargo del 6%  en recibos y de un 10% en  pagarés.</span>
+                    </div>
+                    <div class="co-xs-5" t-if="o.payment_mode_id.report_refund_warning and 'refund' in o.type">
+                        <span t-field="o.payment_mode_id.report_refund_warning"/>
                     </div>
                 </div>
             </div>

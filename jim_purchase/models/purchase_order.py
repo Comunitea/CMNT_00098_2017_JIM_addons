@@ -18,10 +18,19 @@ class PurchaseOrderLine(models.Model):
                 line.line_volume = line.product_id.volume * line.product_qty
                 line.line_weight = line.product_id.weight * line.product_qty
 
+    @api.multi
+    def get_same_product_purchase_line_ids(self):
+        for pol in self:
+            pol_ids = self.env['purchase.order.line'].search([('product_id', '=', pol.product_id.id), ('state', '=', 'purchase')])
+            pol.purchase_order_line_ids = [(6, 0, pol_ids.ids)]
+
+
+
     line_volume = fields.Float("Volume", compute="_get_line_dimension")
     line_weight = fields.Float("Weight", compute="_get_line_dimension")
     line_info = fields.Char("Line info")
     web_global_stock = fields.Float(related="product_id.web_global_stock")
+    purchase_order_line_ids = fields.One2many('purchase.order.line', compute="get_same_product_purchase_line_ids")
 
 
     @api.depends('order_id.state', 'move_ids.state')
@@ -79,6 +88,20 @@ class PurchaseOrderLine(models.Model):
             res = super(PurchaseOrderLine,self)._onchange_quantity()
             self.price_unit = price_unit
             return res
+
+    @api.multi
+    def _prepare_stock_moves_bis(self, picking):
+        """ Prepare the stock moves data for one order line. This function returns a list of
+        dictionary ready to be used in stock.move's create()
+        """
+        self.ensure_one()
+        res = []
+        if self.product_id.type not in ['product', 'consu']:
+            return res
+        ### DROPSHIPPING CANCELADO ###
+        for procurement in self.procurement_ids.filtered(lambda p: p.state == 'cancel' and p.rule_id.id == 141):
+            procurement.reset_to_confirmed()
+        return super(PurchaseOrderLine, self)._prepare_stock_moves(picking)
 
 
 class PurchaseOrder(models.Model):
