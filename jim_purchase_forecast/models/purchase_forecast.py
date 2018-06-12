@@ -19,6 +19,7 @@ class PurchaseForecast(models.Model):
     seller_id = fields.Many2one('res.partner', 'Seller',
                                 domain=[('supplier', '=', True)])
     harbor_id = fields.Many2one('res.harbor', 'Harbor')
+    tag_ids = fields. Many2many('product.tag', string='Product Tags')
     date = fields.Date('Calculation Date', readonly=True)
 
     @api.multi
@@ -43,18 +44,36 @@ class PurchaseForecast(models.Model):
     @api.model
     def _get_demand(self, product_id):
         # least-squares solution to a linear matrix equation.
-        x = np.array([0, 1, 2, 3, 4])
-        y = np.array([product_id.year5_ago,
-                      product_id.year4_ago,
+        x = np.array([0, 1, 2, 3])
+        y = np.array([product_id.year4_ago,
                       product_id.year3_ago,
                       product_id.year2_ago,
                       product_id.year1_ago])
         a = np.vstack([x, np.ones(len(x))]).T
         m, c = np.linalg.lstsq(a, y)[0]
-        demand = m * 5 + c
+        demand = m * 4 + c
         if demand < 0:
             demand = 0
         return demand
+
+    @api.multi
+    def _query_product_tags(self):
+        res = ("", {})
+        if self.tag_ids:
+            # Los campos tag_id y product_id de la tabla de relación tienen
+            # los nombres cambiados
+            query = """
+                    SELECT pp.id
+                    FROM product_product pp
+                    INNER JOIN product_product_tag_rel pptl ON 
+                    pptl.tag_id = pp.product_tmpl_id
+                    WHERE pptl.product_id in %(tag_ids)s
+                """
+            params = {
+                'tag_ids': tuple(self.tag_ids.ids)
+            }
+            res = (query, params)
+        return res
 
     @api.multi
     def _query_product_category(self):
@@ -115,6 +134,7 @@ class PurchaseForecast(models.Model):
         query_category, map1 = self._query_product_category()
         query_seller, map2 = self._query_product_seller()
         query_harbor, map3 = self._query_product_harbor()
+        query_tags, map4 = self._query_product_tags()
 
         # Mmaking union of existing queries if exist
         intersect_separator = "\nINTERSECT\n"
@@ -131,6 +151,11 @@ class PurchaseForecast(models.Model):
             if product_query:
                 separator = intersect_separator
             product_query += separator + query_harbor
+        if query_tags:
+            separator = ''
+            if product_query:
+                separator = intersect_separator
+            product_query += separator + query_tags
 
         if not product_query:
             raise exceptions.UserError(_('You need to select one filter \
@@ -140,6 +165,7 @@ class PurchaseForecast(models.Model):
         map_dic.update(map1)
         map_dic.update(map2)
         map_dic.update(map3)
+        map_dic.update(map4)
         self._cr.execute(product_query, map_dic)
         qres = self._cr.fetchall()
 
@@ -226,7 +252,8 @@ class PurchaseForecastLine(models.Model):
     year4_ago = fields.Float('4 Year Ago', readonly=True)
     year5_ago = fields.Float('5 Year Ago', readonly=True)
     demand = fields.Float('Demand', readonly=True)
-    sales = fields.Float('Confirmed Sales', readonly=True)
+    sales = fields.Float('Pending Sales', readonly=True)
+    current_year_sales = fields.Float('Current Year Sales', readonly=True)
     purchase = fields.Float('Recommended purchase', readonly=True)
     to_buy = fields.Float('To Buy')
     stock = fields.Float('Current Stock', readonly=True)

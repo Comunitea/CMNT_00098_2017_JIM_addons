@@ -13,6 +13,7 @@
                 <field name="stock_months"/>
                 <field name="seller_id"/>
                 <field name="harbor_id"/>
+                <field name="tag_ids"/>
             </tree>
         </field>
     </record>
@@ -41,6 +42,7 @@
                             <field name="category_ids" widget="many2many_tags"/>
                             <field name="seller_id"/>
                             <field name="harbor_id"/>
+                            <field name="tag_ids" widget="many2many_tags"/>
                         </group>
                     </group>
                 </sheet>
@@ -85,6 +87,7 @@
                 <field name="year1_ago"/>
                 <field name="demand"/>
                 <field name="sales"/>
+                <field name="current_year_sales"/>
                 <field name="stock"/>
                 <field name="incoming_months"/>
                 <field name="incoming_remaining"/>
@@ -112,6 +115,7 @@
                             <field name="product_id"/>
                             <field name="demand"/>
                             <field name="sales"/>
+                            <field name="current_year_sales"/>
                             <field name="stock"/>
                             <field name="purchase"/>
                             <field name="to_buy"/>
@@ -121,7 +125,7 @@
                             <field name="year2_ago"/>
                             <field name="year3_ago"/>
                             <field name="year4_ago"/>
-                            <field name="year5_ago"/>
+                            <!--field name="year5_ago"/-->
                         </group>
                         <group col="6" colspan="2" string="Sellers">
                             <field name="seller_id"/>
