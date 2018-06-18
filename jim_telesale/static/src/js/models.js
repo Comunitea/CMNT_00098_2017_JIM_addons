@@ -22,6 +22,7 @@ TsModels.TsModel = TsModels.TsModel.extend({
         res.chained_discount = line.chained_discount || '0.00';
         res.description = line.name || '';
         res.note = line.note || '';
+        res.global_available_stock = line.global_available_stock || '0.00';
         return res
     },
 
