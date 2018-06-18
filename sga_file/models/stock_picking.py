@@ -169,6 +169,10 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def write(self, vals):
+        if 'action_done_bool' in vals:
+            for pick in self:
+                pick.message_post(
+                body="El albarán <em>%s</em> <b>ha cambiado el estado de validación automática a</b> <em>%s</em>" % (pick.name, vals['action_done_bool']))
         #print "----------------\nWrite stock picking %s\n--------------------" % vals
         if self.check_write_in_pm(vals):
             raise ValidationError("No puedes modificar operaciones si está enviado a Mecalux")

@@ -2,7 +2,7 @@
 # © 2017 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from openerp import models, api
+from odoo import models, api
 from odoo.exceptions import AccessError
 
 
@@ -16,15 +16,20 @@ class AccountInvoice(models.Model):
         # is not registered for this product. We limit to 10 the number of
         # suppliers for a product to avoid the mess that
         # could be caused for some generic products ("Miscellaneous").
-        for line in self.invoice_line_ids.filtered(lambda r: r.product_id):
+        supplierinfo_obj = self.env['product.supplierinfo']
+        for line in self.invoice_line_ids.filtered(lambda r: r.product_id
+                                                    and r.quantity > 0):
             # Do not add a contact as a supplier
             partner = self.partner_id if not self.partner_id.parent_id else \
                 self.partner_id.parent_id
-            if partner not in line.product_id.seller_ids.mapped('name') and \
+            if partner not in line.product_id.seller_ids.filtered(
+                    lambda x: x.product_id == line.product_id).mapped(
+                'name') and \
                     len(line.product_id.seller_ids) <= 10:
                 currency = partner.property_purchase_currency_id or \
                     self.env.user.company_id.currency_id
                 supplierinfo = {
+                    'product_id': line.product_id.id,
                     'name': partner.id,
                     'sequence':
                         max(line.product_id.seller_ids.mapped('sequence')) + 1
@@ -36,18 +41,19 @@ class AccountInvoice(models.Model):
                     'currency_id': currency.id,
                     'delay': 0,
                 }
-                vals = {
-                    'seller_ids': [(0, 0, supplierinfo)],
-                }
+                #vals = {
+                #    'seller_ids': [(0, 0, supplierinfo)],
+                #}
                 try:
-                    line.product_id.write(vals)
+                    supplierinfo_obj.create(supplierinfo)
                 except AccessError:  # no write access rights -> just ignore
                     break
             else:
                 currency = partner.property_purchase_currency_id or \
                     self.env.user.company_id.currency_id
                 seller_id = line.product_id.seller_ids.filtered(
-                    lambda x: x.name == partner)
+                    lambda x: x.name == partner and x.product_id ==
+                              line.product_id)
                 try:
                     seller_id.write(
                         {'price':
