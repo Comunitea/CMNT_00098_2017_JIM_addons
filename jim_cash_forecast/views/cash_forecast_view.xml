@@ -32,6 +32,7 @@
                         <field name="date"/>
                         <field name="periods"/>
                         <field name="period_type"/>
+                        <field name="received_issued"/>
                         <field name="company_id"/>
                     </group>
                     <group string="Overdue" col="8">
