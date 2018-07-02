@@ -2,7 +2,7 @@
 # Copyright 2015 Omar Castiñeira, Comunitea Servicios Tecnológicos S.L.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import models, fields
+from odoo import models, fields, api, exceptions, _
 
 
 class AccountPayment(models.Model):
@@ -11,6 +11,15 @@ class AccountPayment(models.Model):
 
     forecast_move_id = fields.Many2one('account.move', "Forecast Move",
                                     readonly=True)
+
+    @api.multi
+    def write(self, vals):
+        for payment in self:
+            if 'payment_date' in vals and payment.forecast_move_id:
+                payment.forecast_move_id.line_ids.write(
+                    {'date_maturity':vals['payment_date']})
+
+        return super(AccountPayment, self).write(vals)
 
     def create_forecast_entry(self, ):
         """ Create a journal entry corresponding to a payment, if the payment references invoice(s) they are reconciled.
