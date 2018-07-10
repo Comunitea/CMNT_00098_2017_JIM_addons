@@ -24,6 +24,10 @@ class CashForecast(models.Model):
         required=True, readonly=True
     )
     received_issued = fields.Boolean('Only received/issued payments')
+    payment_mode_ids = fields.Many2many(
+        comodel_name='account.payment.mode', string=' Payment Modes',
+        relation='cash_forecast_paymente_mode_rel',  copy=True
+    )
     previous_inputs = fields.Float('Overdue Inputs', readonly=True,
                                    copy=False,
                                    compute='_compute_previous_inputs')
@@ -111,9 +115,12 @@ class CashForecast(models.Model):
                 ('account_id.internal_type', 'in', ('payable',)))
 
         if received_issued:
-            move_line_domain.append(
-                ('received_issued', '=', True)
-            )
+            payment_mode_ids = self.payment_mode_ids.mapped('id')
+            move_line_domain.append('|')
+            move_line_domain.append(('received_issued', '=', True))
+            move_line_domain.append(('payment_mode_id', 'in',
+                                     payment_mode_ids))
+
         return move_line_domain
 
     @api.model
