@@ -65,6 +65,7 @@ class AccountPayment(models.Model):
             'payment_id': self.id,
             'journal_id': self.company_id.forecast_journal_id.id,
             'currency_id': self.currency_id != self.company_id.currency_id and self.currency_id.id or False,
+            'received_issued': True,
         }
 
         # If the journal has a currency specified, the journal item need to be expressed in this currency

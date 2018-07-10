@@ -10,7 +10,9 @@
     "category": "Purchases",
     "description": """Allow to create a  forecast account move when creating 
     advance payments on purchases """,
-    "depends": ["purchase","account_forecast"],
+    "depends": ["purchase",
+                "account_forecast",
+                "account_due_list_check_received"],
     "data": ['views/payment_view.xml'
              ],
     "installable": True,
