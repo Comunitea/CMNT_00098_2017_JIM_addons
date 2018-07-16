@@ -12,14 +12,14 @@
     'license': 'AGPL-3',
     'depends': ['account',
                 'jim_purchase',
-                'purchase_advance_payment'
-
+                'purchase_advance_payment',
+                'web_readonly_bypass'
     ],
     'contributors': [
         "Comunitea ",
     ],
     "data": [
-        'views/account_invoice.xml',
+        'views/account_payment.xml',
         'views/purchase_order.xml',
         'wizard/purchase_advance_payment_wzd.xml'
     ],
