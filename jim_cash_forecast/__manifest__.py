@@ -10,7 +10,8 @@
     'license': 'AGPL-3',
     'depends': [
         'account',
-        'purchase_advance_payment_forecast'
+        'purchase_advance_payment_forecast',
+        'account_payment_order'
     ],
     'contributors': [
         "Comunitea ",
