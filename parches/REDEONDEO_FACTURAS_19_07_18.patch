@@ -1,0 +1,13 @@
+diff --git a/addons/account/models/account.py b/addons/account/models/account.py
+index 08b27cc8ba8..bc8f323e3a8 100644
+--- a/addons/account/models/account.py
++++ b/addons/account/models/account.py
+@@ -770,7 +770,7 @@ class AccountTax(models.Model):
+ 
+         base_values = self.env.context.get('base_values')
+         if not base_values:
+-            total_excluded = total_included = base = round(price_unit * quantity, prec)
++            total_excluded = total_included = base = round(price_unit * quantity, currency.decimal_places)
+         else:
+             total_excluded, total_included, base = base_values
+ 
