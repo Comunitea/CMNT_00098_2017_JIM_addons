@@ -14,8 +14,10 @@
     'summary': '''Documentary credit customization''',
     'website': 'http://www.comunitea.com',
     'data': ['data/account_data.xml',
+             'views/account_move_view.xml',
              'views/company_view.xml'
              ],
+    "depends": ["account_due_list_check_received"],
     'installable': True,
     'auto_install': False,
 }

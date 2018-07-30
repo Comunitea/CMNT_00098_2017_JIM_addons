@@ -23,17 +23,29 @@ class CashForecast(models.Model):
         default=lambda self: self.env.user.company_id,
         required=True, readonly=True
     )
-    previous_inputs = fields.Float('Overdue Inputs', readonly=True, copy=False)
+    received_issued = fields.Boolean('Only received/issued payments')
+    payment_mode_ids = fields.Many2many(
+        comodel_name='account.payment.mode', string=' Payment Modes',
+        relation='cash_forecast_paymente_mode_rel',  copy=True
+    )
+    previous_inputs = fields.Float('Overdue Inputs', readonly=True,
+                                   copy=False,
+                                   compute='_compute_previous_inputs')
     previous_input_ids = fields.Many2many(
         comodel_name='account.move.line', string=' Overdue Journal items',
         relation='cash_forecast_previous_input_rel', readonly=True, copy=False
     )
-    previous_outputs = fields.Float('Overdue Outputs', readonly=True)
+    previous_outputs = fields.Float('Overdue Outputs', readonly=True,
+                                    copy=False,
+                                    compute = '_compute_previous_outputs'
+    )
     previous_output_ids = fields.Many2many(
         comodel_name='account.move.line', string=' Overdue Journal items',
         relation='cash_forecast_previous_output_rel', readonly=True, copy=False
     )
-    previous_balance = fields.Float('Overdue Balance', readonly=True, copy=False)
+    previous_balance = fields.Float('Overdue Balance', readonly=True,
+                                    copy=False,
+                                    compute='_compute_previous_balance')
     cash_line_ids = fields.One2many('cash.forecast.line', 'forecast_id',
                                     readonly=True, copy=False)
 
@@ -81,7 +93,8 @@ class CashForecast(models.Model):
         return res[0][2]
 
     @api.multi
-    def _get_move_line_domain(self, type, date_start, date_end):
+    def _get_move_line_domain(self, type, date_start, date_end,
+                              received_issued=False):
         self.ensure_one()
 
         move_line_domain = [
@@ -100,21 +113,31 @@ class CashForecast(models.Model):
         elif type== 'output':
             move_line_domain.append(
                 ('account_id.internal_type', 'in', ('payable',)))
+
+        if received_issued:
+            payment_mode_ids = self.payment_mode_ids.mapped('id')
+            move_line_domain.append('|')
+            move_line_domain.append(('received_issued', '=', True))
+            move_line_domain.append(('payment_mode_id', 'in',
+                                     payment_mode_ids))
+
         return move_line_domain
 
     @api.model
-    def _get_move_lines(self, type, date_start, date_end):
+    def _get_move_lines(self, type, date_start, date_end,
+                        received_issued=False):
 
         domain = self._get_move_line_domain(
-            type, date_start, date_end)
+            type, date_start, date_end, received_issued)
         return self.env['account.move.line'].search(domain)
 
 
     def _get_cash_forecast_line_vals(self, iter, prevline_id):
 
         if not prevline_id:
-            bank_account_ids = self.env['account.account'].search([(
-                'user_type_id.type', '=', 'liquidity')])
+            bank_account_ids = self.env['account.account'].search([
+                ('user_type_id.type', '=', 'liquidity'),
+                ('company_id', '=', self.company_id.id)])
             initial_balance = self.get_balance(bank_account_ids, self.date,
                                                False)
             start_date = fields.Date.from_string(
@@ -132,10 +155,12 @@ class CashForecast(models.Model):
         elif self.period_type == 'week':
             start_week = start_date - relativedelta(days=start_date.weekday())
             end_date = start_week + relativedelta(days=+6)
-
-        input_ids = self._get_move_lines('input', start_date, end_date)
+        received_issued = self.received_issued
+        input_ids = self._get_move_lines('input', start_date, end_date,
+                                         received_issued)
         inputs = sum(input_ids.mapped('amount_residual'))
-        output_ids = self._get_move_lines('output', start_date, end_date)
+        output_ids = self._get_move_lines('output', start_date, end_date,
+                                         received_issued)
         outputs = sum(output_ids.mapped('amount_residual'))
         period_balance = inputs + outputs
         final_balance = initial_balance  + period_balance
@@ -150,7 +175,6 @@ class CashForecast(models.Model):
             'output_ids': [(6, 0, output_ids.ids)],
             'period_balance': period_balance,
             'final_balance': final_balance,
-            'prevline_id': prevline_id and prevline_id.id or False
         }
         return vals
 
@@ -164,21 +188,15 @@ class CashForecast(models.Model):
             self.date) + \
                         relativedelta(days=-1)
         previous_input_ids = self._get_move_lines('input', False,
-                                                  previous_date)
-        previous_inputs = sum(self.previous_input_ids.mapped(
-            'amount_residual'))
+                                                  previous_date,
+                                                  self.received_issued)
         previous_output_ids = self._get_move_lines('output', False,
-                                                   previous_date)
-        previous_outputs = sum(self.previous_output_ids.mapped(
-            'amount_residual'))
-        previous_balance = previous_inputs + previous_outputs
+                                                   previous_date,
+                                                   self.received_issued)
         self.write(
             {
-                'previous_inputs': previous_inputs,
-                'previous_outputs': previous_outputs,
                 'previous_input_ids': [(6, 0, previous_input_ids.ids)],
                 'previous_output_ids': [(6, 0, previous_output_ids.ids)],
-                'previous_balance': previous_balance
             }
         )
         for iter in range(1, self.periods + 1):
@@ -187,6 +205,28 @@ class CashForecast(models.Model):
 
             prev_line = self.env['cash.forecast.line'].create(line_vals)
         return
+
+    @api.multi
+    @api.depends('previous_input_ids')
+    def _compute_previous_inputs(self):
+        for forecast in self:
+            forecast.previous_inputs = sum(forecast.previous_input_ids.mapped(
+                'amount_residual'))
+
+    @api.multi
+    @api.depends('previous_output_ids')
+    def _compute_previous_outputs(self):
+        for forecast in self:
+            forecast.previous_outputs = sum(forecast.previous_output_ids.mapped(
+                'amount_residual'))
+
+    @api.multi
+    @api.depends('previous_outputs', 'previous_inputs')
+    def _compute_previous_balance(self):
+        for forecast in self:
+            forecast.previous_balance = forecast.previous_inputs + \
+                                        forecast.previous_outputs
+
 
 
     def get_calculated_previous_inputs(self):
@@ -236,7 +276,7 @@ class CashForecastLine(models.Model):
     outputs = fields.Float('Outputs')
     output_ids = fields.Many2many(
         comodel_name='account.move.line', string=' Output Journal items',
-        relation='cashforecast_output_lines_rel',
+        relation='cash_forecast_output_lines_rel',
     )
     start_date = fields.Date('From', readonly=True)
     end_date = fields.Date('To', readonly=True)

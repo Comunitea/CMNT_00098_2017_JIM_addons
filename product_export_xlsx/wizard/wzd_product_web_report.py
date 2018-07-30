@@ -94,9 +94,9 @@ class WizardValuationHistory(models.TransientModel):
                         SELECT ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY date_invoice DESC) AS ordered, *
                         FROM(
                             SELECT ai.date_invoice, il.product_id, 
-                            il.price_unit  * (
+                            il.price_unit * (
                             ai.amount_untaxed_signed/ai.amount_untaxed) as price_unit, 
-                            il.quantity as quantity_imp, il.price_subtotal*
+                            il.quantity as quantity_imp, il.price_subtotal *
                             (ai.amount_untaxed_signed/ai.amount_untaxed) as 
                             price_subtotal_imp, 
                             il.arancel_percentage,  il.arancel,

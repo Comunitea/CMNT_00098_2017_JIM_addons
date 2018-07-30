@@ -32,6 +32,8 @@
                         <field name="date"/>
                         <field name="periods"/>
                         <field name="period_type"/>
+                        <field name="received_issued"/>
+                        <field name="payment_mode_ids" attrs="{'invisible':[('received_issued','=', False)]}" widget="many2many_tags"/>
                         <field name="company_id"/>
                     </group>
                     <group string="Overdue" col="8">

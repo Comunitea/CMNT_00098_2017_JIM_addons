@@ -44,7 +44,7 @@ class AccountPayment (models.Model):
 
     @api.onchange('fixed_rate_bool')
     def onchange_fixed_rate_bool(self):
-        if not self.onchange_fixed_rate_bool:
+        if not self.fixed_rate_bool:
             self.fixed_rate = self.rate
 
     @api.onchange('fixed_rate', 'amount')

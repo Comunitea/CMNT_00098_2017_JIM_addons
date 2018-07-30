@@ -29,7 +29,11 @@ class CustomerPrice(models.Model):
     @api.model
     def get_customer_price(self, partner_id, product, qty, date=False):
         today = date or time.strftime('%Y-%m-%d')
-        domain = [('partner_id', '=', partner_id),
+        if isinstance(partner_id, (int, long)):
+            partner = partner_id
+        else:
+            partner = partner_id.id
+        domain = [('partner_id', '=', partner),
                   ('product_id', '=', product.id),
                   ('min_qty', '<=', qty),
                   '|',
@@ -43,7 +47,7 @@ class CustomerPrice(models.Model):
         # Search for specific prices in templates
         if not customer_prices:
             domain = [
-                ('partner_id', '=', partner_id),
+                ('partner_id', '=', partner),
                 ('product_tmpl_id', '=', product.product_tmpl_id.id),
                 ('min_qty', '<=', qty),
                 '|',
