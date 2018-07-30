@@ -837,4 +837,14 @@ msgstr "sale.order.line.template"
 #. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.view_picking_form_jim_packs
 msgid "↳Fill qty done"
-msgstr "↳Rellenar cantidad"
+msgstr "↳Rellenar cantidad (Pedida)"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.view_picking_form_jim_packs
+msgid "↳Reset qty done"
+msgstr "↳Resetear cantidad (a 0.00)"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.view_picking_form_jim_packs
+msgid "↳Fill qty done (Reserved qty)"
+msgstr "↳Rellenar cantidad (Para ejecutar)"

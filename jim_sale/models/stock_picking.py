@@ -38,10 +38,6 @@ class StockPicking(models.Model):
         # if sale_order.invoice_shipping_on_delivery:
         #     sale_order._create_delivery_line(self.carrier_id, self.carrier_price)
 
-    def ordered_qty_to_qty_done(self):
-        for op in self.pack_operation_product_ids:
-            if op.qty_done == 0:
-                op.qty_done = op.ordered_qty
 
     def product_qty_to_qty_done(self):
         if self.state in ('assigned', 'partially_available'):

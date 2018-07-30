@@ -23,7 +23,7 @@ class ReportSaleLineJim(models.Model):
     price_unit = fields.Float(string="Precio", readonly=True)
     currency_id = fields.Many2one(related='order_line_id.currency_id')
     partner_id = fields.Many2one('res.partner', string="Cliente", readonly=True)
-    user_id = fields.Many2one('res.user', string="Comercial", readonly=True)
+    user_id = fields.Many2one('res.users', string="Comercial", readonly=True)
     order_id = fields.Many2one('sale.order', string="Order", readonly=True)
     company_id = fields.Many2one('res.company', string="Company",
                                  readonly=True)
