@@ -85,7 +85,7 @@
         <field name="view_id" ref="view_qty_split_ops"/>
         <field name="search_id" ref="view_split_ops_search"/>
     </record>
-    <record id="button_show_view_partner_valued_picking" model="ir.ui.view">
+    <record id="button_show_view_tree_ops" model="ir.ui.view">
             <field name="name">stock.picking.split_qties.form</field>
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>

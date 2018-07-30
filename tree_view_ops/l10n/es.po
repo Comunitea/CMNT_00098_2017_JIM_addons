@@ -68,7 +68,7 @@ msgstr "Producto"
 #. module: tree_view_ops
 #: model:ir.actions.server,name:tree_view_ops.action_stock_pack_operation_product_qty_qty_done
 msgid "Product_qty to qty done"
-msgstr "Rellenar cantidad realizada"
+msgstr "Rellenar cantidad"
 
 #. module: tree_view_ops
 #: model:ir.actions.act_window,name:tree_view_ops.action_open_view_split_ops
@@ -118,7 +118,7 @@ msgstr "↳Rellenar cantidad (Pedida)"
 #. module: tree_view_ops
 #: model:ir.ui.view,arch_db:tree_view_ops.view_picking_form_jim_packs
 msgid "↳Fill qty done (Reserved qty)"
-msgstr "↳Rellenar cantidad realizada"
+msgstr "↳Rellenar cantidad"
 
 #. module: tree_view_ops
 #: model:ir.ui.view,arch_db:tree_view_ops.view_picking_form_jim_packs
