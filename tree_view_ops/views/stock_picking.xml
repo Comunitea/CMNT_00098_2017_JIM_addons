@@ -20,7 +20,7 @@
                 -->
                 <xpath expr="//field[@name='pack_operation_ids']" position="after">
 
-                    <button class="oe_link oe_right" name="ordered_qty_to_qty_done" type="object" string="&#8627;Fill qty done" attrs="{'invisible': [('state', 'in', ('done', 'cancel'))]}" groups="stock.group_tracking_lot"/>
+                    <!--button class="oe_link oe_right" name="ordered_qty_to_qty_done" type="object" string="&#8627;Fill qty done" attrs="{'invisible': [('state', 'in', ('done', 'cancel'))]}" groups="stock.group_tracking_lot"/-->
 
                     <button class="oe_link oe_right" name="reserved_qty_to_qty_done" type="object" string="&#8627;Fill qty done (Reserved qty)" attrs="{'invisible': [('state', 'in', ('done', 'cancel'))]}" groups="stock.group_tracking_lot"/>
 

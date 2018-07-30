@@ -1,0 +1,127 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* tree_view_ops
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-07-30 17:35+0000\n"
+"PO-Revision-Date: 2018-07-30 17:35+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Cero"
+msgstr "Cero"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Creation"
+msgstr "Creación"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Done"
+msgstr "Realizada"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.button_show_view_partner_valued_picking
+msgid "Listado para split"
+msgstr "Listado para split"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Location"
+msgstr "Ubicación"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Orders processed Today or planned for Today"
+msgstr "Pedidos procesados hoy o planificados para hoy"
+
+#. module: tree_view_ops
+#: model:ir.model,name:tree_view_ops.model_stock_pack_operation
+msgid "Packing Operation"
+msgstr "Packing Operation"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Picking"
+msgstr "Albarán"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Product"
+msgstr "Producto"
+
+#. module: tree_view_ops
+#: model:ir.actions.server,name:tree_view_ops.action_stock_pack_operation_product_qty_qty_done
+msgid "Product_qty to qty done"
+msgstr "Rellenar cantidad realizada"
+
+#. module: tree_view_ops
+#: model:ir.actions.act_window,name:tree_view_ops.action_open_view_split_ops
+msgid "Qty done operations"
+msgstr "Operaciones"
+
+#. module: tree_view_ops
+#: model:ir.actions.server,name:tree_view_ops.action_stock_pack_operation_reset_qty_done
+msgid "Reset qty done"
+msgstr "Resetear cantidad realizada"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Scheduled"
+msgstr "Planificado"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Stock Pack Operation"
+msgstr "Operación de empaquetado"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Stock pack operations with qty done = 0"
+msgstr "Operaciones con cantidad realizada a cero"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Stock pack operations with qty done > 0"
+msgstr "Operaciones con cantidad realizada mayor que cero"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_split_ops_search
+msgid "Today"
+msgstr "Hoy"
+
+#. module: tree_view_ops
+#: model:ir.model,name:tree_view_ops.model_stock_picking
+msgid "Transfer"
+msgstr "Albarán"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_picking_form_jim_packs
+msgid "↳Fill qty done"
+msgstr "↳Rellenar cantidad (Pedida)"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_picking_form_jim_packs
+msgid "↳Fill qty done (Reserved qty)"
+msgstr "↳Rellenar cantidad realizada"
+
+#. module: tree_view_ops
+#: model:ir.ui.view,arch_db:tree_view_ops.view_picking_form_jim_packs
+msgid "↳Reset qty done"
+msgstr "↳Resetear cantidad (a 0.00)"
+
