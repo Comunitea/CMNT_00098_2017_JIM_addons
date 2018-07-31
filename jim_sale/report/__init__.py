@@ -4,3 +4,4 @@
 import report_stock_forecast
 import report_sale_line
 import report_web_product
+import report_sale_line_attributes

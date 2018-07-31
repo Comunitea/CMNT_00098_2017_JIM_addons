@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<odoo>
+    <record id="view_order_line_report_pivot_attributes" model="ir.ui.view">
+        <field name="name">report.sale.line.jim.pivot.qty.attributes</field>
+        <field name="model">report.sale.line.jim.attributes</field>
+        <field name="arch" type="xml">
+            <pivot string="Ventas x Variantes" disable_linking="False">
+                <!--field name="product_id" type="row"/>
+
+                <field name="partner_id" type="row"/-->
+                <field name="product_uom_qty" type="measure"/>
+                <!--field name="qty_delivered" type="measure"/>
+                <field name="qty_invoiced"  type="measure"/-->
+                <field name="price_subtotal"  type="measure"/>
+
+                <!--field name="state" type="row"/-->
+                <!--field name="line_delivered_state" type="col"/>
+                <field name="line_invoice_state" type="col"/-->
+
+            </pivot>
+
+        </field>
+    </record>>
+    <record id="view_order_line_report_tree_attributes" model="ir.ui.view">
+        <field name="name">report.sale.line.jim.tree.attributes</field>
+        <field name="model">report.sale.line.jim.attributes</field>
+        <field name="arch" type="xml">
+            <tree string="Sale lines">
+                <field name="product_id" widget="many2one_clickable"/>
+                <field name="product_code"/>
+                <!--field name="order_id" widget="many2one_clickable"/-->
+                <!--field name="partner_id" widget="many2one_clickable"/-->
+                <field name="attribute_names"/>
+                <field name="color"/>
+                <field name="talla"/>
+                <!--field name="qty_delivered" sum="Total Delivered"/>
+                <field name="qty_invoiced" sum="Total Invoiced"/-->
+                <field name="product_uom_qty" sum="Total"/>
+                <field name="price_unit" sum="Precio"/>
+                <field name="price_subtotal" sum="Subtotal"/>
+                <!--field name="state"/>
+                <field name="line_delivered_state"/>
+                <field name="line_invoice_state"/-->
+            </tree>
+
+        </field>
+    </record>
+
+   <record id="view_product_line_search_attributes" model="ir.ui.view">
+        <field name="name">report.sale.line.jim.search.attributes</field>
+        <field name="model">report.sale.line.jim.attributes</field>
+        <field name="arch" type="xml">
+            <search string="Analisis de lineas de venta por variantes">
+                <field name="product_id"/>
+                 <separator/>
+
+                 <separator/>
+                <!--group expand="1" string="Extended Filters">
+                    <field name="user_id"/>
+                    <field name="partner_id"/>
+                </group-->
+                <group>
+                    <filter string="Solo variantes" name="solo_variantes" domain="[('attribute_names','!=','Plantilla')]"/>
+                    <filter string="Ccolor" name="is_color" domain="[('color','!=','')]"/>
+                    <filter string="Talla" name="is_talla" domain="[('talla','!=','')]"/>
+                </group>
+                <group expand="1" string="Time Filters">
+                    <filter string="Hoy" name="thisday" domain="[('date','&gt;=',time.strftime('%%Y-%%m-%%d'))]"/>
+                    <filter string="Este mes" name="thismonth" domain="[('date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>
+                    <filter string="Este año" name="thisyear" domain="[('date','&gt;=',time.strftime('%%Y-01-01'))]"/>
+                </group>
+
+                <group expand="1" string="Group By">
+                    <filter string="Variante" name="group_attribute_names" context="{'group_by':'attribute_names'}"/>
+                    <filter string="Color" name="group_color" context="{'group_by':'color'}"/>
+                    <filter string="Talla" name="group_color" context="{'group_by':'talla'}"/>
+
+                    <separator/>
+                    <!--filter string="Comercial" name="User" context="{'group_by':'user_id'}"/>
+                    <filter string="Cliente" name="Customer" context="{'group_by':'partner_id'}"/-->
+                    <!--filter name="status" string="Status" context="{'group_by':'state'}"/-->
+                    <!--filter name="group_template_code" string="Plantilla" context="{'group_by':'template_code'}"/-->
+
+                    <separator/>
+                    <filter string="Meses" context="{'group_by':'date:month'}" help="Agrupado por meses"/>
+
+                </group>
+            </search>
+        </field>
+    </record>
+    <record id="action_order_line_report_jim_01_attributes" model="ir.actions.act_window">
+        <field name="name">Ventas por variantes</field>
+        <field name="res_model">report.sale.line.jim.attributes</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,pivot</field>
+
+        </record>
+
+
+    <menuitem name="Ventas x Variantes" action="action_order_line_report_jim_01_attributes"
+              id="menu_report_product_sale_lines_id_attributes"
+              parent="sales_team.menu_sale_report" />
+
+</odoo>
