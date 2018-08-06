@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # © 2017 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
-from openerp import models, fields, api, exceptions, _
+from odoo import models, fields, api, exceptions, _
 
 
 class ApplyGlobalDiscount(models.TransientModel):
@@ -29,4 +29,6 @@ class ApplyGlobalDiscount(models.TransientModel):
                         line.chained_discount = str(self.discount)
                 else:
                     line.chained_discount = 0
+        if self._context['active_model'] == 'account.invoice':
+            obj.compute_taxes()
         return {'type': 'ir.actions.act_window_close'}
