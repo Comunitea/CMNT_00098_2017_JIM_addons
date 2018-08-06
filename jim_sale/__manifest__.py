@@ -42,7 +42,9 @@
         'report/report_sale_line_attributes.xml',
         'report/report_web_product.xml',
         'wizard/wzd_sale_order_cancel.xml',
-        'views/pricelist.xml'
+        'views/pricelist.xml',
+        'report/sale_report_views.xml',
+        'report/account_invoice_report_views.xml'
     ],
     "installable": True
 }
