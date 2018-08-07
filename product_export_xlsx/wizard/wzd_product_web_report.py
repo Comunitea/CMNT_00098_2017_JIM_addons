@@ -114,6 +114,7 @@ class WizardValuationHistory(models.TransientModel):
                                 JOIN res_partner rp ON ai.partner_id = rp.id
                                 JOIN res_country rc ON rp.country_id = rc.id
                             WHERE pp.default_code != 'LM' 
+                                and ai.amount_untaxed != 0 
                                 and pp.id in {0} and ai.date_invoice <= '{1}'
                                 and ai.company_id = {2}
                                 and ai.type = 'in_invoice'
