@@ -11,7 +11,8 @@ class SaleOrder(models.Model):
     @api.model
     def confirm_order_from_ui(self, order_id):
         """
-        OWERWRITED in order to pass the state to pending or lqdr
+        From UI
+        it is called with bypass_risk = True in context
         """
         self.browse(order_id).action_lqdr_option()
 
@@ -52,7 +53,7 @@ class SaleOrder(models.Model):
         if product_obj.route_ids:
             vals.update({'route_id': product_obj.route_ids[0].id})
         vals.update({
-                     'chained_discount': line.get('chained_discount', '0.00')})
+            'chained_discount': line.get('chained_discount', '0.00')})
         return vals
 
     @api.model
@@ -69,8 +70,7 @@ class SaleOrder(models.Model):
                              'pricelist_id':
                              partner.property_product_pricelist.id,
                              'early_payment_discount':
-                                 res['early_payment_discount']
-                            })
+                                 res['early_payment_discount']})
         res2 = order.onchange_partner_id_warning()
         warning = False
 

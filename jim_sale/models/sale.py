@@ -133,16 +133,59 @@ class SaleOrder(models.Model):
         return True
 
     @api.multi
+    def action_confirm(self):
+        """
+        Avoid check risk in action confirm
+        """
+        ctx = self._context.copy()
+        ctx.update(bypass_risk=True)
+        self2 = self.with_context(ctx)
+        return super(SaleOrder, self2).action_confirm()
+
+    @api.model
+    def get_risk_msg(self, order_id):
+        """
+        Called before confirm_order_from_ui
+        """
+        exception_msg = ""
+        if not self.env.context.get('bypass_risk', False):
+            order = self.browse(order_id)
+            partner = order.partner_id.commercial_partner_id
+            if partner.risk_exception:
+                exception_msg = _("Financial risk exceeded.\n")
+            elif partner.risk_sale_order_limit and (
+                    (partner.risk_sale_order + order.amount_total) >
+                    partner.risk_sale_order_limit):
+                exception_msg = _(
+                    "This sale order exceeds the sales orders risk.\n")
+            elif partner.risk_sale_order_include and (
+                    (partner.risk_total + order.amount_total) >
+                    partner.credit_limit):
+                exception_msg = _(
+                    "This sale order exceeds the financial risk.\n")
+        return exception_msg
+
+    @api.multi
     def action_lqdr_option(self):
         warning_msg = []
         for order in self:
-            self.confirm_checks()
+            # Risk check
+            exception_msg = self.get_risk_msg(order.id)
+            if exception_msg:
+                partner = order.partner_id.commercial_partner_id
+                return self.env['partner.risk.exceeded.wiz'].create({
+                    'exception_msg': exception_msg,
+                    'partner_id': partner.id,
+                    'origin_reference': '%s,%s' % ('sale.order', order.id),
+                    'continue_method': 'action_lqdr_option',
+                }).action_show()
 
+            self.confirm_checks()
             if order.order_line.filtered('product_id.lqdr'):
                 order.state = 'lqdr'
                 order.lqdr_state = 'lqdr_no'
             else:
-               order.state = 'pending'
+                order.state = 'pending'
             date_order = fields.Datetime.now()
             order.confirmation_date = date_order
             order.date_order = date_order
@@ -169,6 +212,7 @@ class SaleOrder(models.Model):
                 }
             else:
                 return True
+        return
 
     @api.multi
     def action_lqdr_ok(self):

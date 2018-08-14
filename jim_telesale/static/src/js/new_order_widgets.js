@@ -381,6 +381,78 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
         current_order.set('set_promotion', true)
         this._super(avoid_load);
     },
+        // Checks risk before puting into lqdr state or pending
+    // OVERWRITED
+    confirmCurrentOrder: function() {
+        var self = this;
+        var currentOrder = this.order_model;
+        currentOrder.set('action_button', 'save')
+        if ( (currentOrder.get('erp_state')) && (currentOrder.get('erp_state') != 'draft') ){
+            alert(_t('You cant confirm an order which state is diferent than draft.'));
+            return;
+        }
+        self.saveCurrentOrder(true)
+        $.when( self.ts_model.ready2 )
+        .done(function(){
+            if (self.ts_model.last_sale_id){
+                var domain = [['id', '=', self.ts_model.last_sale_id]]
+            }
+            else{
+                var domain = [['chanel', '=', 'telesale'], ['user_id', '=', self.ts_model.get('user').id]]
+            }
+            var loaded = self.ts_model.fetch('sale.order', ['id', 'name'], domain)
+                .then(function(orders){
+                    if (orders[0]) {
+                        //CHECK RISK
+                        (new Model('sale.order')).call('get_risk_msg',[orders[0].id])
+                        .fail(function(unused, event){
+                            //don't show error popup if it fails
+                            self.ts_model.last_sale_id = false
+                        })
+                        .done(function(msg){
+                            
+                            var skip = true;
+                            if (msg){
+                                var skip = confirm(msg)
+                            }
+                            // IF NO MSG OR SKIP MSG WE CONFIRM THE ORDER
+                            if (skip){
+                                (new Model('sale.order')).call('confirm_order_from_ui',[orders[0].id], {'context': {'bypass_risk': true}})
+                                .fail(function(unused, event){
+                                  //don't show error popup if it fails
+                                   self.ts_model.last_sale_id = false
+                                })
+                                .done(function(res){
+                                    // LOAD THE ORDER
+                                    var my_id = orders[0].id
+                                    $.when( self.ts_widget.new_order_screen.order_widget.load_order_from_server(my_id) )
+                                        .done(function(){
+                                            self.ts_model.last_sale_id = false
+                                        })
+                                        .fail(function(){
+                                            self.ts_model.last_sale_id = false
+                                    });
+                                });
+
+                            }
+                            // IF RISK AND NOT SKIPPED, NO CONFIRM, BUT LOAD THE ORDER AGAIN
+                            else {
+                                var my_id = orders[0].id
+                                $.when( self.ts_widget.new_order_screen.order_widget.load_order_from_server(my_id) )
+                                    .done(function(){
+                                        self.ts_model.last_sale_id = false
+                                    })
+                                    .fail(function(){
+                                        self.ts_model.last_sale_id = false
+                                });
+                            }
+
+                        });
+
+                    }
+                });
+         });
+    },
 
 });
 

@@ -19,7 +19,8 @@
         'telesale',
         'sale_early_payment_discount',
         'web_tree_many2one_clickable',
-        'web_ir_actions_act_window_message'
+        'web_ir_actions_act_window_message',
+        'partner_sale_risk'
     ],
     'contributors': [
         "Comunitea ",
