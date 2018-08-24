@@ -11,7 +11,8 @@ class ProductProduct(BaseExtClass):
         return self.product_tmpl_id.type == "product" and \
                self.tag_ids and \
                self.default_code and \
-               self.default_code.find('False') == -1
+               self.default_code.find('False') == -1 and \
+               self.name.find('(copia)') == -1
 
     fields_to_watch = ('id', 'default_code', 'name', 'barcode', 'description', 'web_global_stock',
                        'product_brand_id', 'attribute_line_ids', 'tag_ids', 'active', 'type', 'force_web')
