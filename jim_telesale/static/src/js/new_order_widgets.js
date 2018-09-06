@@ -301,7 +301,7 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
 var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
     no_more_clicks: function(){
         this._super();
-        this.$('.proforma-butto').attr('disabled','disabled');
+        this.$('.proforma-button').attr('disabled','disabled');
         this.$('.print-alm-button').attr('disabled','disabled');
     },
     renderElement: function(){
