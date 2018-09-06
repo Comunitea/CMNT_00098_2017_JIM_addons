@@ -299,11 +299,16 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
 });
 
 var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
+    no_more_clicks: function(){
+        this._super();
+        this.$('.proforma-butto').attr('disabled','disabled');
+        this.$('.print-alm-button').attr('disabled','disabled');
+    },
     renderElement: function(){
         var self=this;
         this._super();
-        this.$('.proforma-button').click(function (){ self.promoCurrentOrder() });
-        this.$('.print-alm-button').click(function (){ self.printAlmOrder() });
+        this.$('.proforma-button').click(function (){ self.no_more_clicks(); self.promoCurrentOrder() });
+        this.$('.print-alm-button').click(function (){ self.no_more_clicks(); self.printAlmOrder() });
     },
      doPrintAlm: function(erp_id){
             this.do_action({
