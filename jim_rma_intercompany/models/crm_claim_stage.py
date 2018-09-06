@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
+# © 2017 Comunitea
 # Copyright 2015-2017 Odoo S.A.
 # Copyright 2017 Vicent Cubells <vicent.cubells@tecnativa.com>
+
 # License LGPL-3.0 or later (http://www.gnu.org/licenses/lgpl).
 
 from odoo import fields, models
