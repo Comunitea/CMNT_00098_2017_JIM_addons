@@ -39,6 +39,7 @@ var GridWidget = GridWidgetSuper.include({
         var line_cid = updated_cell['line_cid']
 
         updated_cell['discount'] = '0.00'  // Server return float, now always string.
+        updated_cell['discount'] = cell['chained_discount']
         if (line_cid){
             var line_model = this.get_line_model_by_cid(line_cid);
             if (line_model){
