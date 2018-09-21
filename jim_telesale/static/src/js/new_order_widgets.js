@@ -301,14 +301,19 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
 var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
     no_more_clicks: function(){
         this._super();
-        this.$('.proforma-button').attr('disabled','disabled');
-        this.$('.print-alm-button').attr('disabled','disabled');
+        this.$('.proforma-button').prop('disabled', true);
+        this.$('.print-alm-button').prop('disabled', true);
+    },
+    enable_more_clicks: function(){
+        this._super();
+        this.$('.proforma-button').prop('disabled', false);
+        this.$('.print-alm-button').prop('disabled', false);
     },
     renderElement: function(){
         var self=this;
         this._super();
-        this.$('.proforma-button').click(function (){ self.no_more_clicks(); self.promoCurrentOrder() });
-        this.$('.print-alm-button').click(function (){ self.no_more_clicks(); self.printAlmOrder() });
+        this.$('.proforma-button').click(function (){ self.no_more_clicks(); self.promoCurrentOrder();});
+        this.$('.print-alm-button').click(function (){ self.no_more_clicks(); self.printAlmOrder();});
     },
      doPrintAlm: function(erp_id){
             this.do_action({
@@ -321,6 +326,7 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                 report_type: 'qweb-pdf',
                 type: 'ir.actions.report.xml'
             });
+            this.enable_more_clicks();
         },
     printAlmOrder: function() {
         var self = this;
@@ -346,6 +352,7 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
         var currentOrder = this.order_model;
         if ( (currentOrder.get('erp_state')) && (currentOrder.get('erp_state') != 'draft') ){
             alert(_t('You cant set proform state to an order which state is diferent than draft.'));
+            self.enable_more_clicks();
             return;
         }
         self.saveCurrentOrder(true)
@@ -394,6 +401,7 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
         currentOrder.set('action_button', 'save')
         if ( (currentOrder.get('erp_state')) && (currentOrder.get('erp_state') != 'draft') ){
             alert(_t('You cant confirm an order which state is diferent than draft.'));
+            self.enable_more_clicks();
             return;
         }
         self.saveCurrentOrder(true)
