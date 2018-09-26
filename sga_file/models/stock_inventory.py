@@ -127,9 +127,11 @@ class StockInventorySGA(models.Model):
         company_no_stock_ids = \
             self.env['res.company'].sudo().search(
                 [('no_stock', '=', True)]).ids
-        sga_file = self.env['sga.file'].browse(file_id)
-        sga_file_name = sga_file.name
-        sga_file = open(sga_file.sga_file, 'r')
+        sga_file_obj = self.env['sga.file'].browse(file_id)
+
+        sga_file_name = sga_file_obj.name
+        log_name = u"{}.log".format(sga_file_name)
+        sga_file = open(sga_file_obj.sga_file, 'r')
         sga_file_lines = sga_file.readlines()
 
         sga_file.close()
@@ -139,6 +141,8 @@ class StockInventorySGA(models.Model):
         not_in_odoo = []
         line_number = 0
         cont = len(sga_file_lines)
+        line_count = 0
+        sga_file_obj.write_log("Numero de lineas: {}".format(cont), log_name)
         for line in sga_file_lines:
             cont-=1
 
@@ -188,12 +192,15 @@ class StockInventorySGA(models.Model):
                     'pending_qty': mec_qty,
                     'notes': 'Articulo no encontrado en odoo %s'%product_code, }
                 self.env['stock.inventory.issue'].create(issue_vals)
+                str_1 = "Line %s (%s) . Ref: %s. Qties: Mcx = %s NO ENCONTRADO EN ODOO" % ('%05d' % cont, '%05d' % line_count, '{0: >16}'.format(product_code), '%010d' % mec_qty)
+                sga_file_obj.write_log(str_1, log_name, False)
                 continue
             if len(product_id)>1:
-                issue_vals = {'notes': 'Código duplicado: %s'%product_code,
+                issue_vals = {'notes': 'Codigo duplicado: %s'%product_code,
                               }
                 self.env['stock.inventory.issue'].create(issue_vals)
-                print "%s: %s Codigo duplicado en ODOO"%(product_code, mec_qty)
+                str = "%s: %s Codigo duplicado en ODOO"%(product_code, mec_qty)
+                sga_file_obj.write_log("{}".format(str), log_name, False)
                 continue
             product_company_id = product_id.company_id
             if product_company_id.id in company_no_stock_ids:
@@ -203,7 +210,10 @@ class StockInventorySGA(models.Model):
             reg_qty_done = 0.00
             qty_to_reg = mec_qty - odoo_qty
             if qty_to_reg != 0:
-                print "Lineas %s. Referencia: %s Odoo qty = %s Mcx qty = %s"%(cont, product_id.default_code, odoo_qty, mec_qty)
+                line_count += 1
+                str_1 = "Line %s (%s) . Ref: %s. QTies: Odoo = %s Mcx = %s"%('%05d'%cont, '%05d'%line_count, '{0: >16}'.format(product_id.default_code), '%010d'%odoo_qty, '%010d'%mec_qty)
+                print str_1
+                sga_file_obj.write_log("---- {}".format(str_1), log_name, False)
             original_qty = qty_to_reg
             if qty_to_reg > 0:
                 qty_to_reg, new_inventory, reg_qty = self.reg_stock(product_id,
@@ -229,14 +239,17 @@ class StockInventorySGA(models.Model):
                       'product_id': product_id.id,
                       'notes': 'No es posible regularizar',}
                 self.env['stock.inventory.issue'].create(issue_vals)
-
+                sga_file_obj.write_log("Numero de lineas: {}".format(issue_vals), log_name, False)
             ## TODO DE MOMENTO NO HACEMOS EL action_done, pendiente de confirmar que es automatico
             ##action_done = True if self.env['ir.config_parameter'].get_param('inventary_auto') == u'True' else False
             ##if action_done:
             ##    for stock_inv in inventories:
             ##        stock_inv.sudo().action_done()
-        inventories = list(set(inventories))
-        print "Inventarios %s"%inventories
+        if inventories:
+            inventories = list(set(inventories))
+            print "Inventarios %s"%inventories
+            sga_file_obj.write_log("Inventarios creados con {}".format(inventories), log_name, False)
+
         return inventories
 
     def new_inv_line(self, product_id, qty, inventory_id, mecalux_stock=0.00):
@@ -331,7 +344,7 @@ class StockInventorySGA(models.Model):
         if self.location_id.barcode != 'PLS':
             raise ValidationError ("Solo para almacén de Palas")
 
-        if not self.line_ids:
+        if self.line_ids:
             self.env['sga.file'].create_global_PST()
         else:
             raise ValidationError("Si quieres selccionar productos, debes hacerlo desde la vista tree de productos")

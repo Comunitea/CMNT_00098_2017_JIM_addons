@@ -331,17 +331,23 @@ class MecaluxFileHeader(models.Model):
                         int(mec_date[4:6]),
                         int(mec_date[6:8]))
 
-    def write_log(self, str_log):
+    def write_log(self, str_log, log_name=False, header_line=True):
 
-        log_name = u"%04d%02d%02d.log" % (datetime.now().year, datetime.now().month, datetime.now().day)
+        if not log_name:
+            log_name = u"%04d%02d%02d.log" % (datetime.now().year, datetime.now().month, datetime.now().day)
+
         log_path = u'%s/%s/%s'%(self.get_global_path(), 'log', log_name)
 
-        header = u'%s ' % datetime.now()
-        if self:
-            header += u'\n       %s ' % self.name
+        if not header_line:
+            header = ''
+        elif self:
+            header = u'{} . {}\n   >'.format(datetime.now(), self.name)
+        else:
+            header = u'{}\n   >'.format(datetime.now())
 
         if not os.path.exists(log_path):
             self.touch_file(log_path)
+
         f = open(log_path, 'a')
         if f:
             str_log = u'%s >> %s\r' %(header, str_log)
@@ -511,8 +517,10 @@ class MecaluxFileHeader(models.Model):
                 if file_type:
                     if file_code != file_type:
                         continue
+
                 sga_file = self.check_sga_name(name, path)
                 if sga_file:
+                    print "\n----------- Importo fichero: {} {}\n".format(sga_file.name, file_code)
                     pool_id = sga_file.import_file_from_mecalux(file_code=file_code)
                 if file_type:
                     pool_ids.append(pool_id)

@@ -9,10 +9,10 @@
             <div name="button_box" position="inside">
                     <button class="oe_stat_button"
                             name="action_open_purchases_valued_ops"
-                            icon="fa-dollar-sign"
+                            icon="fa-eur"
                             type="object"
                             attrs="{'invisible':[('pack_operation_ids', '=', [])]}"
-                            string="Show valued ops">
+                            string="Movimientos valorados">
                     </button>
                 </div>
             <field name="priority" position="after">
