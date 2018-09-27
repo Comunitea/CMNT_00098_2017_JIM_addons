@@ -123,7 +123,6 @@ class StockInventorySGA(models.Model):
         return new_sga_file
 
     def import_inventory_STO(self, file_id):
-
         company_no_stock_ids = \
             self.env['res.company'].sudo().search(
                 [('no_stock', '=', True)]).ids
@@ -142,11 +141,15 @@ class StockInventorySGA(models.Model):
         line_number = 0
         cont = len(sga_file_lines)
         line_count = 0
-        sga_file_obj.write_log("Numero de lineas: {}".format(cont), log_name)
+        inserts=0
+        hora_inicio = datetime.now()
+        str = "\nNumero de lineas a procesar: {}\nHora inicio: {}".format(cont, hora_inicio)
+        sga_file_obj.write_log(str, log_name, False)
+
+        str_to_write=''
+
         for line in sga_file_lines:
             cont-=1
-
-
             if len(line) < 420:
                 continue
             # POR RENDIMIENTO LO HAGO AL PRINCIPIO Y GENERICO
@@ -187,68 +190,93 @@ class StockInventorySGA(models.Model):
 
             product_id = self.env['product.product'].search([('default_code', '=', product_code)])
             line_number += 1
+
+            if (line_number%100==0) and str_to_write != '':
+                sga_file_obj.write_log(str_to_write, log_name, False)
+                str_to_write = ''
+            ## PROBLEMAS
+            # NO ENCUENTRO EL PRODUCTO
             if not product_id:
                 issue_vals = {
                     'pending_qty': mec_qty,
                     'notes': 'Articulo no encontrado en odoo %s'%product_code, }
                 self.env['stock.inventory.issue'].create(issue_vals)
-                str_1 = "Line %s (%s) . Ref: %s. Qties: Mcx = %s NO ENCONTRADO EN ODOO" % ('%05d' % cont, '%05d' % line_count, '{0: >16}'.format(product_code), '%010d' % mec_qty)
-                sga_file_obj.write_log(str_1, log_name, False)
+                str = "Line %s (%s) . Ref: %s. Qties: Mcx = %s NO ENCONTRADO EN ODOO" % ('%05d' % cont, '%05d' % line_count, '{0: >16}'.format(product_code), '%010d' % mec_qty)
+                str_to_write = '{}\n{}'.format(str_to_write, str)
+                #sga_file_obj.write_log(str_1, log_name, False)
                 continue
-            if len(product_id)>1:
+
+            # ENCUENTRO 2 PRODUCTOS CON EL MISMO CODIGO
+            if len(product_id) > 1:
                 issue_vals = {'notes': 'Codigo duplicado: %s'%product_code,
                               }
                 self.env['stock.inventory.issue'].create(issue_vals)
                 str = "%s: %s Codigo duplicado en ODOO"%(product_code, mec_qty)
-                sga_file_obj.write_log("{}".format(str), log_name, False)
-                continue
+                str_to_write = '{}\n{}'.format(str_to_write, str)
+                # sga_file_obj.write_log(str_1, log_name, False)
+
+            # eL PRODUCTO ES DE UNA COMPAÑIA QUE NO CUENTA STOCK
             product_company_id = product_id.company_id
             if product_company_id.id in company_no_stock_ids:
-                print "%s con compañia que no cuenta stock"%(product_code)
+                str = "%s con compañia que no cuenta stock"%(product_code)
+                str_to_write = '{}\n{}'.format(str_to_write, str)
                 continue
+
             odoo_qty = product_id.compute_global_qty(location_id=location_id.id)
             reg_qty_done = 0.00
             qty_to_reg = mec_qty - odoo_qty
+
             if qty_to_reg != 0:
                 line_count += 1
-                str_1 = "Line %s (%s) . Ref: %s. QTies: Odoo = %s Mcx = %s"%('%05d'%cont, '%05d'%line_count, '{0: >16}'.format(product_id.default_code), '%010d'%odoo_qty, '%010d'%mec_qty)
-                print str_1
-                sga_file_obj.write_log("---- {}".format(str_1), log_name, False)
+                str = "Line %s (%s) . Ref: %s. QTies: Odoo = %s Mcx = %s"%('%05d'%cont, '%05d'%line_count, '{0: >16}'.format(product_id.default_code), '%010d'%odoo_qty, '%010d'%mec_qty)
+                str_to_write = '{}\n{}'.format(str_to_write, str)
+
             original_qty = qty_to_reg
+
             if qty_to_reg > 0:
+                inserts +=1
                 qty_to_reg, new_inventory, reg_qty = self.reg_stock(product_id,
                                                          location_id, product_company_id,
                                                          qty_to_reg, mec_qty, True)
-
                 reg_qty_done += reg_qty
                 if new_inventory:
                     inventories.append(new_inventory)
 
             if qty_to_reg != 0:
+                inserts += 1
                 qty_to_reg, new_inventory, reg_qty = self.reg_stock(product_id,
                                                                     location_id, product_company_id,
                                                                     qty_to_reg, mec_qty, False)
-
                 reg_qty_done += reg_qty
                 if new_inventory:
                     inventories.append(new_inventory)
 
+            # PROBLEMA NO SE PUEDE REGULARIZAR
             if qty_to_reg != 0.00:
                 issue_vals = {
                       'pending_qty': original_qty - reg_qty_done,
                       'product_id': product_id.id,
                       'notes': 'No es posible regularizar',}
                 self.env['stock.inventory.issue'].create(issue_vals)
-                sga_file_obj.write_log("Numero de lineas: {}".format(issue_vals), log_name, False)
+                str = "Numero de lineas: {}".format(issue_vals), log_name, False
+                str_to_write = '{}\n{}'.format(str_to_write, str)
+
             ## TODO DE MOMENTO NO HACEMOS EL action_done, pendiente de confirmar que es automatico
             ##action_done = True if self.env['ir.config_parameter'].get_param('inventary_auto') == u'True' else False
             ##if action_done:
             ##    for stock_inv in inventories:
             ##        stock_inv.sudo().action_done()
+
+        if str_to_write:
+            sga_file_obj.write_log(str_to_write, log_name, False)
+
         if inventories:
             inventories = list(set(inventories))
-            print "Inventarios %s"%inventories
             sga_file_obj.write_log("Inventarios creados con {}".format(inventories), log_name, False)
+
+        print "FIN"
+        end_str = "\nNumero de lineas a crear: {}\nHora fin: {} Tiempo empleado: {}".format(inserts, datetime.now(), datetime.now() - hora_incio)
+        sga_file_obj.write_log(end_str, log_name, False)
 
         return inventories
 

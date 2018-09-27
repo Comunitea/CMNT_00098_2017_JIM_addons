@@ -268,7 +268,7 @@ class MecaluxFileHeader(models.Model):
                             int(sga_filename[11:13]),
                             int(sga_filename[13:15]),
                             int(sga_filename[15:17]),
-                            int(sga_filename[17:19]),
+                            max(59, int(sga_filename[17:19])),
                             )
         except:
             return False
@@ -333,24 +333,35 @@ class MecaluxFileHeader(models.Model):
 
     def write_log(self, str_log, log_name=False, header_line=True):
 
+        def new_line(cadena):
+            if cadena[-1] != '\n' and len(cadena) > 1:
+                cadena = '{}\n'.format(cadena)
+            return cadena
+
+        if len(str_log)<= 1 and not header_line:
+            return True
+
         if not log_name:
             log_name = u"%04d%02d%02d.log" % (datetime.now().year, datetime.now().month, datetime.now().day)
 
-        log_path = u'%s/%s/%s'%(self.get_global_path(), 'log', log_name)
+        log_path = u'%s/%s'%('../../var/log/mecalux/', log_name)
 
         if not header_line:
             header = ''
         elif self:
-            header = u'{} . {}\n   >'.format(datetime.now(), self.name)
+            header = u'{} . {}\n'.format(datetime.now(), self.name)
         else:
-            header = u'{}\n   >'.format(datetime.now())
-
+            header = u'{}\n'.format(datetime.now())
         if not os.path.exists(log_path):
             self.touch_file(log_path)
-
         f = open(log_path, 'a')
         if f:
-            str_log = u'%s >> %s\r' %(header, str_log)
+            if header_line and header != '':
+                str_log = u'%s >> %s\n' %(header, str_log)
+            else:
+                str_log = '{}'.format(new_line(str_log))
+
+
             f.write(str_log.encode(ENCODE))
             f.close()
 
@@ -509,7 +520,7 @@ class MecaluxFileHeader(models.Model):
 
         res_file = False
         global_path = u'%s/%s' %(self.get_global_path(), folder)
-        self.write_log("Buscando ficheros en >> %s" % global_path)
+        #self.write_log("Buscando ficheros en >> %s" % global_path)
         pool_ids = []
         for path, directories, files in os.walk(global_path, topdown=False):
             for name in files:
@@ -520,7 +531,8 @@ class MecaluxFileHeader(models.Model):
 
                 sga_file = self.check_sga_name(name, path)
                 if sga_file:
-                    print "\n----------- Importo fichero: {} {}\n".format(sga_file.name, file_code)
+                    str = "\n-------- Importando fichero: {} de tipo {}\n".format(sga_file.name, file_code)
+                    self.write_log(str)
                     pool_id = sga_file.import_file_from_mecalux(file_code=file_code)
                 if file_type:
                     pool_ids.append(pool_id)
@@ -593,7 +605,10 @@ class MecaluxFileHeader(models.Model):
                 cont += 1
                 model_str = ''
                 var_str = ''
-                new_sga_file.write_log('--> Modelo %s'%model)
+                try:
+                    new_sga_file.write_log('    Modelo: {} >> {}'.format(model, model.name), header_line=False)
+                except:
+                    new_sga_file.write_log('    Modelo: {}'.format(model), header_line=False)
 
                 for val in sgavar.sga_file_var_ids:
 
@@ -670,7 +685,8 @@ class MecaluxFileHeader(models.Model):
 
         if not new_sga_file:
             raise ValidationError("Error. Revisa el fichero del log para mas detalles")
-        new_sga_file.write_log('Compruebo fichero ...')
+        hora_inicio=datetime.now()
+        new_sga_file.write_log('    Fichero {}\n    Hora inicio: {}'.format(new_sga_file.name, datetime.now()), header_line=False)
 
         if new_sga_file:
             f = open(new_sga_file.sga_file, 'a')
@@ -694,7 +710,7 @@ class MecaluxFileHeader(models.Model):
 
             else:
                 raise ValidationError("Error al escribir los datos en %s" % new_sga_file.sga_file)
-
+        new_sga_file.write_log('    Hora fin: {}. Tiempo empleado: {}'.format(datetime.now(), datetime.now()-hora_inicio), header_line=False)
         return new_sga_file
 
     def odoo_to_mecalux(self, value, length_in, type, default=False, fillchar=False):
