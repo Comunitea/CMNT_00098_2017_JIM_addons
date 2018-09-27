@@ -337,34 +337,37 @@ class MecaluxFileHeader(models.Model):
             if cadena[-1] != '\n' and len(cadena) > 1:
                 cadena = '{}\n'.format(cadena)
             return cadena
+        try:
+            if len(str_log)<= 1 and not header_line:
+                return True
 
-        if len(str_log)<= 1 and not header_line:
-            return True
+            if not log_name:
+                log_name = u"%04d%02d%02d.log" % (datetime.now().year, datetime.now().month, datetime.now().day)
 
-        if not log_name:
-            log_name = u"%04d%02d%02d.log" % (datetime.now().year, datetime.now().month, datetime.now().day)
+            log_path = u'%s/%s'%('../../var/log/mecalux/', log_name)
 
-        log_path = u'%s/%s'%('../../var/log/mecalux/', log_name)
-
-        if not header_line:
-            header = ''
-        elif self:
-            header = u'{} . {}\n'.format(datetime.now(), self.name)
-        else:
-            header = u'{}\n'.format(datetime.now())
-        if not os.path.exists(log_path):
-            self.touch_file(log_path)
-        f = open(log_path, 'a')
-        if f:
-            if header_line and header != '':
-                str_log = u'%s >> %s\n' %(header, str_log)
+            if not header_line:
+                header = ''
+            elif self:
+                header = u'{} . {}\n'.format(datetime.now(), self.name)
             else:
-                str_log = '{}'.format(new_line(str_log))
+                header = u'{}\n'.format(datetime.now())
+            if not os.path.exists(log_path):
+                self.touch_file(log_path)
+            f = open(log_path, 'a')
+            if f:
+                if header_line and header != '':
+                    str_log = u'%s >> %s\n' %(header, str_log)
+                else:
+                    str_log = '{}'.format(new_line(str_log))
 
 
-            f.write(str_log.encode(ENCODE))
-            f.close()
+                f.write(str_log.encode(ENCODE))
+                f.close()
 
+
+        except:
+            print "Error al escribir el log"
         return True
 
     def get_global_path(self):

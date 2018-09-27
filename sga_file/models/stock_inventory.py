@@ -123,6 +123,7 @@ class StockInventorySGA(models.Model):
         return new_sga_file
 
     def import_inventory_STO(self, file_id):
+
         company_no_stock_ids = \
             self.env['res.company'].sudo().search(
                 [('no_stock', '=', True)]).ids
@@ -218,7 +219,7 @@ class StockInventorySGA(models.Model):
             # eL PRODUCTO ES DE UNA COMPAÑIA QUE NO CUENTA STOCK
             product_company_id = product_id.company_id
             if product_company_id.id in company_no_stock_ids:
-                str = "%s con compañia que no cuenta stock"%(product_code)
+                str = "%s con company que no cuenta stock"%(product_code)
                 str_to_write = '{}\n{}'.format(str_to_write, str)
                 continue
 
@@ -228,7 +229,7 @@ class StockInventorySGA(models.Model):
 
             if qty_to_reg != 0:
                 line_count += 1
-                str = "Line %s (%s) . Ref: %s. QTies: Odoo = %s Mcx = %s"%('%05d'%cont, '%05d'%line_count, '{0: >16}'.format(product_id.default_code), '%010d'%odoo_qty, '%010d'%mec_qty)
+                str = "Linea %s (%s) . Ref: %s. QTies: Odoo = %s Mcx = %s"%('%05d'%cont, '%05d'%line_count, '{0: >16}'.format(product_id.default_code), '%010d'%odoo_qty, '%010d'%mec_qty)
                 str_to_write = '{}\n{}'.format(str_to_write, str)
 
             original_qty = qty_to_reg
@@ -275,7 +276,7 @@ class StockInventorySGA(models.Model):
             sga_file_obj.write_log("Inventarios creados con {}".format(inventories), log_name, False)
 
         print "FIN"
-        end_str = "\nNumero de lineas a crear: {}\nHora fin: {} Tiempo empleado: {}".format(inserts, datetime.now(), datetime.now() - hora_incio)
+        end_str = "\nNumero de lineas a crear: {}\nHora fin: {} Tiempo empleado: {}".format(inserts, datetime.now(), datetime.now() - hora_inicio)
         sga_file_obj.write_log(end_str, log_name, False)
 
         return inventories
