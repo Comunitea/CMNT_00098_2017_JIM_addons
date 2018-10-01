@@ -334,10 +334,12 @@ class MecaluxFileHeader(models.Model):
     def write_log(self, str_log, log_name=False, header_line=True):
 
         def new_line(cadena):
-            if cadena[-1] != '\n' and len(cadena) > 1:
+            if len(cadena)> 1 and cadena[-1] != '\n':
                 cadena = '{}\n'.format(cadena)
             return cadena
+
         try:
+
             if len(str_log)<= 1 and not header_line:
                 return True
 
