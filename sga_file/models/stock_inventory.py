@@ -150,14 +150,14 @@ class StockInventorySGA(models.Model):
         sga_file_obj.write_log(str, log_name, False)
 
         str_to_write=''
-
+        force_write_log = False
         for line in sga_file_lines:
 
             try:
                 cont-=1
                 if len(line) < 420:
                     continue
-                print "STO LINE: [Linea %s] [LEN: %s] [%s]" % (line_number, len(line), line.replace("  ", "").strip())
+
                 # POR RENDIMIENTO LO HAGO AL PRINCIPIO Y GENERICO
                 # Warehouse code
                 st = 0
@@ -170,11 +170,6 @@ class StockInventorySGA(models.Model):
                     if not warehouse_id.sga_integrated:
                         raise ValidationError("Solo almacenes con gestion SGA")
 
-
-                #
-                #     if not warehouse_id:
-                #         raise ValidationError("Codigo de almacen no encontrado")
-                #     location_id = warehouse_id.lot_stock_id
 
                 # Product code
                 st = en
@@ -197,39 +192,47 @@ class StockInventorySGA(models.Model):
                 product_id = self.env['product.product'].search([('default_code', '=', product_code)])
                 line_number += 1
 
-                if (line_number%100==0) and str_to_write != '':
+
+                if force_write_log or (line_number%100==0) and str_to_write != '':
                     sga_file_obj.write_log(str_to_write, log_name, False)
                     str_to_write = ''
+                    force_write_log = False
                 ## PROBLEMAS
                 # NO ENCUENTRO EL PRODUCTO
                 if not product_id:
-                    print "Producto no encontrado: Linea %s Codigo %s"%()
+                    print "Producto no encontrado: Linea %s Codigo %s"%(line.replace("  ", "").strip(), product_code)
                     issue_vals = {
                         'pending_qty': mec_qty,
                         'notes': 'Articulo no encontrado en odoo %s'%product_code, }
                     self.env['stock.inventory.issue'].create(issue_vals)
-                    str = "Line %s (%s) . Ref: %s. Qties: Mcx = %s NO ENCONTRADO EN ODOO" % ('%05d' % cont, '%05d' % line_count, '{0: >16}'.format(product_code), '%010d' % mec_qty)
+                    str = "Error %s (%s) . Ref: %s. Qties: Mcx = %s NO ENCONTRADO EN ODOO" % ('%05d' % cont, '%05d' % line_count, '{0: >16}'.format(product_code), '%010d' % mec_qty)
                     str_to_write = '{}\n{}'.format(str_to_write, str)
+                    force_write_log = True
                     #sga_file_obj.write_log(str_1, log_name, False)
                     continue
 
                 # ENCUENTRO 2 PRODUCTOS CON EL MISMO CODIGO
                 if len(product_id) > 1:
-                    print "Codigo duplicado: Linea %s Codigo %s" % ()
+                    print "Codigo duplicado: Linea %s Codigo %s" %(line.replace("  ", "").strip(), product_code)
                     issue_vals = {'notes': 'Codigo duplicado: %s'%product_code,
                                   }
                     self.env['stock.inventory.issue'].create(issue_vals)
-                    str = "%s: %s Codigo duplicado en ODOO"%(product_code, mec_qty)
+
+                    str = "Error %s (%s) . Ref: %s. Qties: Mcx = %s DUPLICADO EN ODOO" % (
+                    '%05d' % cont, '%05d' % line_count, '{0: >16}'.format(product_code), '%010d' % mec_qty)
                     str_to_write = '{}\n{}'.format(str_to_write, str)
+                    force_write_log = True
                     # sga_file_obj.write_log(str_1, log_name, False)
                     continue
 
                 # eL PRODUCTO ES DE UNA COMPAÑIA QUE NO CUENTA STOCK
                 product_company_id = product_id.company_id
                 if product_company_id.id in company_no_stock_ids:
-                    print "No stock product company: Linea %s Codigo %s" % ()
-                    str = "%s con company que no cuenta stock"%(product_code)
+                    print "No stock product company: Linea %s Codigo %s" % (line.replace("  ", "").strip(), product_code)
+                    str = "Error %s (%s) . Ref: %s. Qties: Mcx = %s COMPAÑIA SIN STOCK" % (
+                        '%05d' % cont, '%05d' % line_count, '{0: >16}'.format(product_code), '%010d' % mec_qty)
                     str_to_write = '{}\n{}'.format(str_to_write, str)
+                    force_write_log = True
                     continue
 
                 odoo_qty = product_id.compute_global_qty(location_id=location_id.id)
@@ -263,14 +266,16 @@ class StockInventorySGA(models.Model):
 
                 # PROBLEMA NO SE PUEDE REGULARIZAR
                 if qty_to_reg != 0.00:
-                    print "No se puede regularizar: Linea %s Codigo %s" % ()
+                    print "No se puede regularizar: Linea %s Codigo %s" % (line.replace("  ", "").strip(), product_code)
                     issue_vals = {
                           'pending_qty': original_qty - reg_qty_done,
                           'product_id': product_id.id,
                           'notes': 'No es posible regularizar',}
                     self.env['stock.inventory.issue'].create(issue_vals)
-                    str = "Numero de lineas: {}".format(issue_vals), log_name, False
+                    str = "Error %s (%s) . Ref: %s. Qties: Mcx = %s No es posible regularizar la cantidad %s" % (
+                        '%05d' % cont, '%05d' % line_count, '{0: >16}'.format(product_code), '%010d' % mec_qty, '%010d' % qty_to_reg)
                     str_to_write = '{}\n{}'.format(str_to_write, str)
+                    force_write_log = True
                     continue
 
                 ## TODO DE MOMENTO NO HACEMOS EL action_done, pendiente de confirmar que es automatico
@@ -278,12 +283,19 @@ class StockInventorySGA(models.Model):
                 ##if action_done:
                 ##    for stock_inv in inventories:
                 ##        stock_inv.sudo().action_done()
-                print "-------------OK [Codigo: %s] [Cantidades: Odoo: %s, Mecalux: %s] "%(product_code, odoo_qty, mec_qty)
+
+                line_before = "STO line: [Linea %s] [LEN: %s] [%s]\n-------------OK [Codigo: %s] [Cantidades: Odoo: %s, Mecalux: %s] " % (
+                line_number, len(line), line.replace("  ", "").strip(), product_code, odoo_qty, mec_qty)
+
+
+
             except:
+                print "-------------ULTIMA OK:"
+                print line_before
                 print "-------------ERROR EN LA LINEA %s" %line
                 sga_file_obj.write_log("\n-----------------\n     ERROR:\n     {}\n".format(line), log_name, False)
                 sga_file_obj.write_log("\n    ULTIMA: {}\n-----------------".format(str_to_write),log_name, False)
-
+                force_write_log = True
 
         if str_to_write:
             sga_file_obj.write_log(str_to_write, log_name, False)
