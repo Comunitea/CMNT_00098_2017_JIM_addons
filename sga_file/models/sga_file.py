@@ -240,11 +240,56 @@ class MecaluxFileHeader(models.Model):
 
     @api.model
     def archive_sga_files(self):
-        try:
-            res = True
-        except:
-            res = False
-        return res
+        import subprocess
+        def create_month_dir(dir, frommonth=u'201801', move=True):
+
+            start_date = '{}{}'.format(frommonth, u'01')
+            str_from = datetime.strptime(start_date, '%Y%m%d')
+            while str_from < (datetime.now() -timedelta(days=62)):
+                dir_name = '{}{}{}'.format(dir, '%04d' % str_from.year, '%02d' % str_from.month)
+                if not os.path.exists(dir_name):
+                    os.makedirs(dir_name)
+                patt = '%04d%02d' % (str_from.year, str_from.month)
+
+                str_from_1 = '{}{}'.format(dir,'?????{}*'.format(patt))
+                str_from_2 = '{}{}'.format(dir,'{}??.*'.format(patt))
+                str_to = '{}/'.format(dir_name)
+                for str_from_ in [str_from_1, str_from_2]:
+                    if move:
+                        order = '{} {} {}'.format(command_move, str_from_, str_to)
+                        print order
+                        subprocess.call(order, shell=True)
+                    else:
+                        order = '{} {}'.format(command_remove, str_from_)
+                        print order
+                        subprocess.call(order, shell=True)
+
+                print dir_name
+                str_from += timedelta(days=31)
+                str_from -= timedelta(str_from.day-1)
+
+
+        command_move = 'mv'
+        command_remove = 'rm'
+
+        #archive_files(delete=False)
+
+        icp = self.env['ir.config_parameter']
+        path = icp.get_param('path_files', 'path_files')
+        log_path = '../../var/log/mecalux/'
+        path_archive =  '{}/{}/'.format(path, 'archive')
+        error_archive = '{}/{}/'.format(path, 'error')
+        temp_archive =  '{}/{}/'.format(path, 'temp')
+        path_to_delete = [temp_archive]
+        paths_to_archive = [log_path, error_archive, path_archive]
+        for path in paths_to_archive:
+            create_month_dir(path, move=True)
+
+        for path in path_to_delete:
+            create_month_dir(path, move=False)
+
+        return True
+
 
     @api.model
     def get_sga_type(self, sga_filename):
