@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import pyodbc
+# import pyodbc
 from datetime import datetime
 import logging
 
