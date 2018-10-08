@@ -83,7 +83,8 @@ var ProductCatalogWidget = Catalog.ProductCatalogWidget.include({
         this._super();
         var line_model = this.get_line_model_by_cid(line_cid);
         if (line_model){
-            line_model.set('discount', line_vals.chained_discount || 0.0);
+            line_model.set('discount', line_vals.discount || 0.0);
+            line_model.set('chained_discount', line_vals.chained_discount || '0.0');
         }
     },
 
