@@ -27,6 +27,7 @@
         'static/src/xml/order_history_template.xml',
         'static/src/xml/popups_template.xml',
         'static/src/xml/customer_list_template.xml',
+        'static/src/xml/product_catalog_template.xml',
     ],
     "installable": True
 }
