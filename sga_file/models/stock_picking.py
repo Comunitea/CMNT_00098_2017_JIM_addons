@@ -81,7 +81,7 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def get_shipping_city(self):
-        for pick in self.sudo():
+        for pick in self:
             if pick.move_lines and pick.move_lines[0].move_dest_IC_id and pick.move_lines[0].move_dest_IC_id.picking_id:
                 pick_dest = pick.move_lines[0].move_dest_IC_id.picking_id
             else:
