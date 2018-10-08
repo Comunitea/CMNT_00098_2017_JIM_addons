@@ -3,8 +3,8 @@ odoo.define('jim_telesale.product_catalog_widgets', function (require) {
 
 var Catalog = require('telesale.ProductCatalog');
 var TsModels = require('telesale.models');
-// var core = require('web.core');
-// var _t = core._t;
+var core = require('web.core');
+var _t = core._t;
 
 var ProductCatalogWidget = Catalog.ProductCatalogWidget.include({
 
