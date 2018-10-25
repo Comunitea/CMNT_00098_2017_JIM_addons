@@ -125,8 +125,21 @@ class ProductProduct(models.Model):
             [(p['id'], p['outgoing_qty'])
              for p in self.with_context(ctx).sudo().read(['outgoing_qty'])])
         global_real_stock = qty_available_d
+
+        moves_v_domain = [
+            ('procurement_id.sale_line_id.route_id.virtual_type', '=', True),
+            ('state', 'in',
+             ('waiting', 'confirmed', 'assigned', 'partially_available'))]
+        if len(self) == 1:
+            moves_v_domain.append(('product_id', '=', self.id))
+        else:
+            moves_v_domain.append(('product_id', 'in', self.ids))
+        moves_v = self.env['stock.move'].read_group(
+            moves_v_domain,
+            ['product_id', 'product_qty'], ['product_id'])
+        dict_v = dict([(x['product_id'][0], x['product_qty']) for x in moves_v])
         global_available_stock = dict(
-            [(p, qty_available_d[p] - outgoing_qty_d[p])
+            [(p, qty_available_d[p] - outgoing_qty_d[p] + dict_v.get(p, 0))
              for p in qty_available_d.keys()])
 
         company_real_stock = dict([(x.id, 0) for x in self])
