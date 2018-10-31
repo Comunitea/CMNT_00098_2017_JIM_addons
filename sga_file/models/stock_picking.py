@@ -81,7 +81,7 @@ class StockPickingSGA(models.Model):
 
     @api.multi
     def get_shipping_city(self):
-        for pick in self:
+        for pick in self.sudo():
             last_move = pick.move_lines[0]
             move = last_move
             while last_move:
