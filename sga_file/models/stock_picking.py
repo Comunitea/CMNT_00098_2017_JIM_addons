@@ -82,6 +82,19 @@ class StockPickingSGA(models.Model):
     @api.multi
     def get_shipping_city(self):
         for pick in self:
+            last_move = pick.move_lines[0]
+            move = last_move
+            while last_move:
+                move = last_move
+                last_move = last_move.move_dest_id or last_move.move_dest_IC_id
+            pick_dest = move.picking_id
+            partner = pick.partner_id
+            pick.shipping_city = partner.state_id and partner.state_id.name or partner.country_id and partner.country_id.name or 'Sin definir'
+            pick.shipping_partner_name = partner.name or "Sin nombre"
+
+    @api.multi
+    def get_shipping_city2(self):
+        for pick in self:
             if pick.move_lines and pick.move_lines[0].move_dest_IC_id and pick.move_lines[0].move_dest_IC_id.picking_id:
                 pick_dest = pick.move_lines[0].move_dest_IC_id.picking_id
             else:
@@ -121,7 +134,7 @@ class StockPickingSGA(models.Model):
     delivery_inst = fields.Char("Avisos para la entrega (SGA)", size=255)
     verify_stock = fields.Selection([('1', 'True'), ('0', 'False')], 'Verifica stock', default='0')
     sga_company = fields.Char(related="partner_id.name")
-    sga_state = fields.Selection ([('NI', 'Sin integracion'),
+    sga_state = fields.Selection ([('NI', 'Sin integracigiton'),
                                    ('NE', 'No exportado'),
                                    ('PM', 'Pendiente Mecalux'),
                                    ('EE', 'Error en exportacion'),
