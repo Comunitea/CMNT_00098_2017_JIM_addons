@@ -155,6 +155,10 @@ class StockPicking(models.Model):
 
     @api.multi
     def do_transfer(self):
+        user_id = self.env.user
+        ctx = self._context.copy()
+        ctx.update(user_name= user_id.name)
+        self = self.with_context(ctx)
         self.ensure_one()
         # Si es de una compra intercompañía llamamos al do_transfer de la venta relacionada anterior
         if self.purchase_id.intercompany:
@@ -166,6 +170,7 @@ class StockPicking(models.Model):
                 #self.intercompany_picking_process(picking)
                 picking.action_assign()
                 self.propagate_op_qty(picking)
+
                 picking.do_transfer()
         #Si es entrega a cliente buscar lineas en albaranes de compra intercompañia
         if self.picking_type_id.code == 'outgoing':
@@ -182,10 +187,12 @@ class StockPicking(models.Model):
                         ic_purchase_picking.pack_operation_product_ids\
                             .filtered(lambda x: x.qty_done > 0)
                     if ops_to_do:
+
                         ic_purchase_picking.do_transfer()
 
+        message = "El usuario <em>{}</em> ha validado el albarán {}<ul><li>Último estado: {}</li><li>Hora de validacion: {}</li>".format(self._context.get('user_name', user_id.name), self.name, self.state, fields.Datetime.now())
         res = super(StockPicking, self).do_transfer()
-
+        self.message_post(message)
         # Propaga la aignacion movimientos realizado a la compra IC y albaŕn
         #  de salida si debe hacerlo
 
