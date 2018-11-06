@@ -61,9 +61,7 @@ class WizardValuationHistory(models.TransientModel):
                   self.stock_field, 'standard_price')
         read = []
         inc = 250
-        print "Numero de registros a exportar: %s\nBuscando ..."%limit
         while offset <= limit:
-            print "Recuperando %s de %s"%(offset, limit)
 
             product_dict = prod_ctx.search_read(domain, fields, offset=offset, limit=inc)
             new_dict = {x.pop('id'): x for x in product_dict}
@@ -141,8 +139,7 @@ class WizardValuationHistory(models.TransientModel):
                          'num_lineas': arancel[8]})
             read.extend(new_dict.values())
             offset += inc
-        #print "Generando XLS ..."
-        #product['ids'] = self.env['product.product'].search(domain).ids
+
         return {'type': 'ir.actions.report.xml',
                 'report_name': 'product_web_xls',
                 'datas': {'form': read, 'stock_field': self.stock_field, 'valued': self.valued}}

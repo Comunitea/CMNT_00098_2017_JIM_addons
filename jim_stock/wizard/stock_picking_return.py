@@ -66,7 +66,6 @@ class StockReturnPicking(models.TransientModel):
             Quant = self.env['stock.quant']
             picking = self.env['stock.picking'].browse(self.env.context.get('active_id'))
             if picking:
-                print self._context
                 to_refund_all = self._context.get('to_refund_all', True)
 
                 res.update({'picking_type_id': picking.picking_type_id.return_picking_type_id.id or picking.picking_type_id.id,
@@ -142,7 +141,6 @@ class StockReturnPicking(models.TransientModel):
         self.to_refund_all = option
         ctx = self._context.copy()
         ctx.update(to_refund_all=self.to_refund_all)
-        print ctx
         action = {
             'name': 'Reverse Transfer',
             'type': 'ir.actions.act_window',

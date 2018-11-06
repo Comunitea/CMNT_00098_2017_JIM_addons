@@ -257,14 +257,11 @@ class MecaluxFileHeader(models.Model):
                 for str_from_ in [str_from_1, str_from_2]:
                     if move:
                         order = '{} {} {}'.format(command_move, str_from_, str_to)
-                        print order
                         subprocess.call(order, shell=True)
                     else:
                         order = '{} {}'.format(command_remove, str_from_)
-                        print order
                         subprocess.call(order, shell=True)
 
-                print dir_name
                 str_from += timedelta(days=31)
                 str_from -= timedelta(str_from.day-1)
 
@@ -555,7 +552,6 @@ class MecaluxFileHeader(models.Model):
                 self.write_log("-- ERROR >> %s\n--------------\n%s\n----------------------\n" %(self.sga_file, process))
         except:
             proc_error = True
-            print "Error en %s"%self.sga_file
             self.write_log("-- ERROR >> %s\n--------------\n%s\n----------------------\n" % (self.sga_file, "Error de archivo. No se puede mover"))
 
         if not process:
