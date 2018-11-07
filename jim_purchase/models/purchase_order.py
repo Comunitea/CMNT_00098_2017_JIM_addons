@@ -165,6 +165,27 @@ class PurchaseOrder(models.Model):
         return res
 
 
+    @api.multi
+    def action_view_picking(self):
+        ## Sobre escribo toda la función para que recupere todos los alabranes en vez no coger los cancelados
+        pick_ids = self.env['stock.picking']
+        for order in self:
+            for line in order.order_line:
+                moves = line.move_ids | line.move_ids.mapped('returned_move_ids')
+                pick_ids |= moves.mapped('picking_id')
+        action = self.env.ref('stock.action_picking_tree')
+        result = action.read()[0]
+        result.pop('id', None)
+        result['context'] = {}
+        pick_ids = sum([pick_ids.ids], [])
+        if len(pick_ids) > 1:
+            result['domain'] = "[('id','in',[" + ','.join(map(str, pick_ids)) + "])]"
+        elif len(pick_ids) == 1:
+            res = self.env.ref('stock.view_picking_form', False)
+            result['views'] = [(res and res.id or False, 'form')]
+            result['res_id'] = pick_ids and pick_ids[0] or False
+        return result
+
 class AccountInvoice(models.Model):
 
     _inherit = 'account.invoice'
