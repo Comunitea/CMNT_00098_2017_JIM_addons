@@ -205,15 +205,16 @@ class SaleOrderLine(models.Model):
 
     @api.multi
     def unlink(self):
+        templates = self.mapped('template_line')
+        res = super(SaleOrderLine, self).unlink()
         if not self._context.get('unlink_template_line', False):
-            templates = self.mapped('template_line').filtered(lambda x: not x.order_lines)
-            if templates:
+            templates_tu = templates.filtered(lambda x: not x.order_lines)
+            if templates_tu:
                 ctx = self._context.copy()
                 ctx.update(unlink_product_line=True)
-                templates.with_context(ctx).unlink()
-        return super(SaleOrderLine, self).unlink()
+                templates_tu.with_context(ctx).unlink()
 
-
+        return res
 
 class SaleOrder(models.Model):
 
