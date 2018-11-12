@@ -2,84 +2,149 @@
 <odoo>
     <data>
         <report
-            string="RMA"
-            id="action_report_picking_CRM"
-            model="crm.claim"
-            report_type="qweb-pdf"
-            name="jim_rma_intercompany.report_crm_claim"
-            file="crm_claim.rma_report"
+                string="RMA"
+                id="action_report_picking_CRM"
+                model="crm.claim"
+                report_type="qweb-pdf"
+                name="jim_rma_intercompany.report_crm_claim"
+                file="crm_claim.rma_report"
         />
 
         <template id="report_crm_claim">
             <t t-call="report.html_container">
                 <t t-foreach="docs" t-as="o">
-                    <t t-call="stock.external_layout_barcode_right">
-                        <div class="page">
-                            <br/>
+                    <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
+                    <t t-set="company" t-value="o.company_id"/>
+                    <t t-call="report.external_layout_header"/>
 
 
-                            <br/>
-                            <h1 t-field="o.code" class="mt0"/>
-                            <table class="table table-condensed">
-                            <thead>
-                                <tr>
-                                    <th t-if="o.name"><strong>Origen</strong></th>
-                                    <th><strong>Estado</strong></th>
-                                    <th><strong>Fecha</strong></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td t-if="o.name">
-                                        <span t-field="o.name"/>
-                                    </td>
-                                    <td>
-                                        <span t-field="o.stage_id"/>
-                                    </td>
-                                    <td>
-                                        <span t-field="o.create_date"/>
-                                    </td>
-
-                                </tr>
-                            </tbody>
-                            </table>
-                            <br/>
-                            <br/>
-                            <table class="table table-condensed" t-if="o.claim_line_ids">
-                              <thead>
-                                <tr>
-                                    <th><strong>Artículo</strong></th>
-                                    <th class="text-right"><strong>Cantidad</strong></th>
-                                    <th class="text-right"><strong>PVP</strong></th>
-                                    <th class="text-right"><strong>Destino</strong></th>
-                                </tr>
-                              </thead>
-                            <tbody>
-                            <tr t-foreach="o.claim_line_ids" t-as="line">
 
 
-                                <td>
-                                    <span t-field="line.product_id"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-field="line.product_returned_quantity"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-field="line.unit_sale_price"/>
-                                </td>
-                                <td class="text-right">
-                                    <span t-field="line.location_dest_id"/>
-                                </td>
-
-
-                    </tr>
-                  </tbody>
-                </table>
+                    <div class="page">
+                        <div class="col-xs-6 pull-left mt8">
+                            <h2 t-field="o.code" class="mt0"/>
+                            <hr/>
                             <p t-field="o.description"/>
                         </div>
-                    </t>
-                 </t>
-             </t>
+                        <div class="col-xs-4 pull-right mt8">
+                            <span t-field="o.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'
+                                style="border-bottom: 1px solid black; display:inline-block;"/>
+                        </div>
+
+
+                            <table class="table table-condensed">
+                                <thead>
+                                    <tr>
+                                        <th t-if="o.name">
+                                            <strong>Origen</strong>
+                                        </th>
+                                        <th>
+                                            <strong>Estado</strong>
+                                        </th>
+                                        <th>
+                                            <strong>Fecha</strong>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td t-if="o.name">
+                                            <span t-field="o.name"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.stage_id"/>
+                                        </td>
+                                        <td>
+                                            <span t-field="o.create_date"/>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="table table-condensed" t-if="o.claim_line_ids">
+                                <thead>
+                                    <tr>
+                                        <th>
+                                            <strong>Artículo</strong>
+                                        </th>
+                                        <th class="text-right">
+                                            <strong>Destino</strong>
+                                        </th>
+                                        <th class="text-right">
+                                            <strong>Cantidad</strong>
+                                        </th>
+
+                                        <th class="text-right">
+                                            <strong>PVP</strong>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="o.claim_line_ids" t-as="line">
+
+
+                                        <td>
+                                            <span t-field="line.product_id"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="line.location_dest_id"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="line.product_returned_quantity"/>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-field="line.unit_sale_price" t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+
+                                    </tr>
+                                </tbody>
+                            </table>
+
+
+                            <div class="col-xs-4 pull-right" style="page-break-inside:avoid">
+                                <table class="table table-condensed">
+                                    <tr class="border-black">
+                                        <td>
+                                            <strong>Total</strong>
+                                        </td>
+                                        <td class="text-right">
+                                            <span t-esc="o.amount"
+                                                  t-options='{"widget": "monetary", "display_currency": o.currency_id}'/>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                    </div>
+                     <div class="footer">
+                        <div class="text-center" style="border-top: 1px solid black;">
+                            <ul t-if="not company.custom_footer" class="list-inline">
+                                <t t-set="company" t-value="company.sudo()"/>
+                                <li t-if="company.phone">Phone: <span t-field="company.phone"/></li>
+
+                                <li t-if="company.fax and company.phone">&amp;bull;</li>
+                                <li t-if="company.fax">Fax: <span t-field="company.fax"/></li>
+
+                                <li t-if="company.email and company.fax or company.email and company.phone">&amp;bull;</li>
+                                <li t-if="company.email">Email: <span t-field="company.email"/></li>
+
+                                <li t-if="company.website and company.email or company.website and company.fax or company.website and company.phone">&amp;bull;</li>
+                                <li t-if="company.website">Website: <span t-field="company.website"/></li>
+                            </ul>
+
+                            <ul class="list-inline">
+                                <li>Page:</li>
+                                <li><span class="page"/></li>
+                                <li>/</li>
+                                <li><span class="topage"/></li>
+                            </ul>
+                        </div>
+                    </div>
+                </t>
+
+
+            </t>
         </template>
     </data>
 </odoo>
