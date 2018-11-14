@@ -69,3 +69,4 @@ class purchase_order(models.Model):
                                       or False
             vals['purchase_line_IC'] = line.id
         return vals
+
