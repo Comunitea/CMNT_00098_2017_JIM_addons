@@ -15,7 +15,38 @@
                 <t t-foreach="docs" t-as="o">
                     <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})"/>
                     <t t-set="company" t-value="o.company_id"/>
-                    <t t-call="report.external_layout_header"/>
+                    <!--div class="col-xs-4 pull-right mt8">
+                            <span t-field="o.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'
+                                style="border-bottom: 0px solid black; display:inline-block;"/>
+                    </div-->
+                    <div class="header">
+                        <div class="row">
+                            <div class="col-xs-3">
+                                <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
+                            </div>
+                            <div class="col-xs-9 text-right" style="margin-top:20px;" t-field="company.rml_header1"/>
+                        </div>
+                        <div class="row zero_min_height">
+                            <div class="col-xs-12">
+                                <div style="border-bottom: 1px solid black;"></div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-6 pull-left mt8" name="company_address">
+                                <span t-field="company.partner_id"
+                                    t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'
+                                    style="border-bottom: 1px solid black; display:inline-block;"/>
+                            </div>
+                            <div class="col-xs-4 pull-right mt8">
+                                <strong><span t-field="o.claim_type.name"/></strong>
+                                <span t-field="o.partner_id"
+                                    t-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'
+                                    style="border-bottom: 1px solid black; display:inline-block;"/>
+                            </div>
+
+                        </div>
+                    </div>
 
 
 
@@ -26,11 +57,6 @@
                             <hr/>
                             <p t-field="o.description"/>
                         </div>
-                        <div class="col-xs-4 pull-right mt8">
-                            <span t-field="o.partner_id"
-                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'
-                                style="border-bottom: 1px solid black; display:inline-block;"/>
-                        </div>
 
 
                             <table class="table table-condensed">
@@ -38,6 +64,9 @@
                                     <tr>
                                         <th t-if="o.name">
                                             <strong>Origen</strong>
+                                        </th>
+                                        <th t-if="o.claim_id">
+                                            <strong>Nº</strong>
                                         </th>
                                         <th>
                                             <strong>Estado</strong>
@@ -52,6 +81,9 @@
                                         <td t-if="o.name">
                                             <span t-field="o.name"/>
                                         </td>
+                                        <th t-if="o.claim_id">
+                                            <span t-field="o.claim_id.code"/>
+                                        </th>
                                         <td>
                                             <span t-field="o.stage_id"/>
                                         </td>
@@ -89,7 +121,7 @@
                                             <span t-field="line.product_id"/>
                                         </td>
                                         <td class="text-right">
-                                            <span t-field="line.location_dest_id"/>
+                                            <span t-field="line.location_dest_id.name"/>
                                         </td>
                                         <td class="text-right">
                                             <span t-field="line.product_returned_quantity"/>
