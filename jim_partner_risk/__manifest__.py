@@ -10,7 +10,8 @@
     'license': 'AGPL-3',
     'depends': [
         'partner_financial_risk',
-        'partner_sale_risk'
+        'partner_sale_risk',
+        'jim_sale'
     ],
     'contributors': [
         "Comunitea ",
@@ -20,6 +21,7 @@
     ],
     "data": [
         'views/res_partner.xml',
+        'views/sale_view.xml',
     ],
     "installable": True
 }
