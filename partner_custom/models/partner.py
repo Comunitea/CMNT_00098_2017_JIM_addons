@@ -19,13 +19,13 @@ class ResPartner(models.Model):
 
     @api.model
     def create(self, vals):
-        if vals.get('type', 'contact') not in ('contact', 'invoice', 'other'):
+        if vals.get('type', 'contact') == 'delivery':
             vals['customer'] = False
         return super(ResPartner, self).create(vals)
 
     @api.multi
     def write(self, vals):
-        if vals.get('type', 'contact') not in ('contact', 'invoice', 'other'):
+        if vals.get('type', 'contact') == 'delivery':
             vals['customer'] = False
         return super(ResPartner, self).write(vals)
 
