@@ -17,6 +17,18 @@ class ResPartner(models.Model):
     invoice_in_paper = fields.Boolean()
     legacy_code = fields.Char()
 
+    @api.model
+    def create(self, vals):
+        if vals.get('type', 'contact') not in ('contact', 'invoice', 'other'):
+            vals['customer'] = False
+        return super(ResPartner, self).create(vals)
+
+    @api.multi
+    def write(self, vals):
+        if vals.get('type', 'contact') not in ('contact', 'invoice', 'other'):
+            vals['customer'] = False
+        return super(ResPartner, self).write(vals)
+
     @api.depends('email')
     def _compute_email_score(self):
         for partner in self.filtered('email'):
