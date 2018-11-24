@@ -115,7 +115,7 @@ class StockPickingSGA(models.Model):
     delivery_inst = fields.Char("Avisos para la entrega (SGA)", size=255)
     verify_stock = fields.Selection([('1', 'True'), ('0', 'False')], 'Verifica stock', default='0')
     sga_company = fields.Char(related="partner_id.name")
-    sga_state = fields.Selection ([('NI', 'Sin integracigiton'),
+    sga_state = fields.Selection ([('NI', 'Sin integracion'),
                                    ('NE', 'No exportado'),
                                    ('PM', 'Pendiente Mecalux'),
                                    ('EE', 'Error en exportacion'),
