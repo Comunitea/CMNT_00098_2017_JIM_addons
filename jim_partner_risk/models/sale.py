@@ -68,11 +68,9 @@ class SaleOrderLine(models.Model):
                 if move.location_dest_id.usage == "customer":
                     if not move.origin_returned_move_id:
                         qty += move.product_uom._compute_quantity(move.product_uom_qty, line.product_uom)
-                        #print "Resto del albaran cancelado {}".format(move.picking_id.name)
                 elif move.location_dest_id.usage != "customer" and move.to_refund_so:
                     qty -= move.product_uom._compute_quantity(move.product_uom_qty, line.product_uom)
-                    #print "Resto del albaran cancelado {}".format(move.picking_id.name)
-            line.cancelled_qty = qty
+                line.cancelled_qty = qty
 
     price_total_cancelled = fields.Monetary(compute='_compute_amount_cancelled', string='Cancelled amount', readonly=True, store=True)
     cancelled_qty = fields.Float('Cancelled Quantity', compute='_get_cancelled_qty', digits=dp.get_precision('Product Unit of Measure'), store=True)
