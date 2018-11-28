@@ -11,8 +11,11 @@
             </xpath>
             <field name="invoice_id" position="after">
                 <field name="stage_sequence" invisible="1"/>
+                <field name="currency_id" invisible="1"/>
+                <field name="amount"/>
                 <field name="invoice_status"/>
                 <field name="picking_status"/>
+
 
             </field>
             <field name="priority" position="after">

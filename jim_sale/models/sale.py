@@ -79,7 +79,7 @@ class SaleOrder(models.Model):
                 else:
                     early_discs = self.env['account.early.payment.discount'].\
                         search([('partner_id', '=', False),
-                                ('payment_term_id', '=', self.payment_term_id.id)])
+                                ('payment_term_id', '=', partner.property_payment_term_id.id)])
                     if early_discs:
                         early_payment_discount = early_discs[
                             0].early_payment_discount

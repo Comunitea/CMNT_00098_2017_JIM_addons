@@ -66,6 +66,7 @@ class ProcurementOrder(models.Model):
                 else:
                     def_ml_IC = ml_IC
                 vals['move_purchase_IC_id'] = def_ml_IC.id
+
         return vals
 
     @api.multi

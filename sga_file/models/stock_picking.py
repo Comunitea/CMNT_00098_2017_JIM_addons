@@ -79,27 +79,21 @@ class StockPickingSGA(models.Model):
             pick.account_code = ref
         return ref
 
+
     @api.multi
     def get_shipping_city(self):
-        for pick in self.sudo():
-            if pick.move_lines and pick.move_lines[0].move_dest_IC_id and pick.move_lines[0].move_dest_IC_id.picking_id:
-                pick_dest = pick.move_lines[0].move_dest_IC_id.picking_id
+        for pick in self:
+            if pick.move_lines and (pick.move_lines[0].move_dest_IC_id or pick.move_lines[0].move_dest_id):
+                pick_dest = pick.move_lines[0].move_dest_id.picking_id or pick.move_lines[0].move_dest_IC_id.picking_id
             else:
                 pick_dest = pick
 
             if pick_dest.sale_id and pick_dest.sale_id.partner_shipping_id:
                 partner = pick_dest.sale_id.partner_shipping_id
-                #city = pick_dest.sale_id.partner_shipping_id.state_id and pick_dest.sale_id.partner_shipping_id.state_id.name or pick_dest.sale_id.partner_shipping_id.country_id.name
-                #name = pick_dest.sale_id.partner_shipping_id.name
             else:
                 partner = pick_dest.partner_id
-                #city = pick_dest.partner_id.state_id and pick_dest.partner_id.state_id.name or pick_dest.partner_id.country_id.name
-                #name = pick_dest.partner_id.name
-
-            city = partner.state_id and partner.state_id.name or partner.country_id and partner.country_id.name or 'Sin definir'
-            name = partner.name
-            pick.shipping_city = city
-            pick.shipping_partner_name = name
+            pick.shipping_city = partner.state_id and partner.state_id.name or partner.country_id and partner.country_id.name or 'Sin definir'
+            pick.shipping_partner_name = partner.name or "Sin nombre"
 
     def _get_action_done_bool(self):
         return True if self.env['ir.config_parameter'].get_param('picking_auto') == u'True' else False
@@ -172,7 +166,6 @@ class StockPickingSGA(models.Model):
             for pick in self:
                 pick.message_post(
                 body="El albarán <em>%s</em> <b>ha cambiado el estado de validación automática a</b> <em>%s</em>" % (pick.name, vals['action_done_bool']))
-        #print "----------------\nWrite stock picking %s\n--------------------" % vals
         if self.check_write_in_pm(vals):
             raise ValidationError("No puedes modificar operaciones si está enviado a Mecalux")
 
@@ -302,7 +295,6 @@ class StockPickingSGA(models.Model):
             op.qty_done = op.product_qty
 
         if action_done_bool:
-            #print "Auto validación de Mecalux: True"
             all_done = True
             do_transfer = True
             op_not_done = self.pack_operation_product_ids.filtered(lambda x: x.qty_done != x.product_qty)
@@ -313,7 +305,6 @@ class StockPickingSGA(models.Model):
             if all_done:
                 self.action_done()
                 self.message_post(body="El albarán <em>%s</em> <b>ha sido validado por Mecalux</b>. Todas las operaciones OK" % (self.name))
-                #print "Todas las cantidades OK"
                 sga_state = 'MT'
 
             else:

@@ -108,10 +108,22 @@ class PurchaseOrder(models.Model):
 
     _inherit = 'purchase.order'
 
+    @api.model
+    def _default_picking_type(self):
+        type_obj = self.env['stock.picking.type']
+        domain_wh = [('partner_id', '=', self.env.user.company_id.partner_id.id)]
+        warehouse_id = self.env['stock.warehouse'].search(domain_wh)
+        types = warehouse_id and warehouse_id.in_type_id
+        if not types:
+            return super(PurchaseOrder, self)._default_picking_type()
+        return types[:1]
+
     order_volume = fields.Float("Volume", compute="_compute_dimensions")
     order_weight = fields.Float("Weight", compute="_compute_dimensions")
     expediente = fields.Char("Expediente")
-
+    picking_type_id = fields.Many2one('stock.picking.type',
+                                      'Picking Type', required=True,
+                                      default=_default_picking_type)
 
     @api.depends('order_line.line_volume', 'order_line.line_weight')
     def _compute_dimensions(self):
@@ -164,6 +176,36 @@ class PurchaseOrder(models.Model):
             res['partner_id'] = self.group_id.partner_id.id
         return res
 
+
+    @api.multi
+    def action_view_picking(self):
+        ## Sobre escribo toda la función para que recupere todos los alabranes en vez no coger los cancelados
+        pick_ids = self.env['stock.picking']
+        for order in self:
+            for line in order.order_line:
+                moves = line.move_ids | line.move_ids.mapped('returned_move_ids')
+                pick_ids |= moves.mapped('picking_id')
+        action = self.env.ref('stock.action_picking_tree')
+        result = action.read()[0]
+        result.pop('id', None)
+        result['context'] = {}
+        pick_ids = sum([pick_ids.ids], [])
+        if len(pick_ids) > 1:
+            result['domain'] = "[('id','in',[" + ','.join(map(str, pick_ids)) + "])]"
+        elif len(pick_ids) == 1:
+            res = self.env.ref('stock.view_picking_form', False)
+            result['views'] = [(res and res.id or False, 'form')]
+            result['res_id'] = pick_ids and pick_ids[0] or False
+        return result
+
+    @api.depends('order_line.date_planned')
+    def _compute_date_planned(self):
+        for order in self:
+            min_date = False
+            for line in order.order_line:
+                if not min_date or line.date_planned < min_date:
+                    min_date = line.date_planned
+            order.date_planned = min_date or order.date_order
 
 class AccountInvoice(models.Model):
 

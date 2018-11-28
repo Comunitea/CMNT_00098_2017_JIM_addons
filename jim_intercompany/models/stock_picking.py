@@ -74,6 +74,7 @@ class StockPicking(models.Model):
     orig_sale_id = fields.Many2one('sale.order', 'Origen', compute=_compute_orig_sale, multi=True)
     orig_sale_str = fields.Char('Sale order', compute=_compute_orig_sale, multi=True)
     ready = fields.Boolean('Revision Ready', default=False, readonly=True)
+    unreserve_done = fields.Boolean('Unreserve done', default=False, copy=False)
 
     @api.model
     def _prepare_values_extra_move(self, op, product, remaining_qty):
@@ -94,7 +95,7 @@ class StockPicking(models.Model):
 
     @api.multi
     def action_cancel(self):
-        for picking in  self:
+        for picking in self:
             if picking.picking_type_id.code == 'outgoing':
                 ic_purchases = self.env['purchase.order'].search([('group_id', '=', picking.group_id.id),
                                                                   ('intercompany', '=', True)])
@@ -112,7 +113,7 @@ class StockPicking(models.Model):
                 for sale in ic_sale:
                     sale_pickings = sale.picking_ids.filtered(lambda x: x.state != 'done')
                     sale_pickings.action_cancel()
-
+        self.write({'unreserve_done': False})
         res = super(StockPicking, self).action_cancel()
 
 
@@ -155,6 +156,10 @@ class StockPicking(models.Model):
 
     @api.multi
     def do_transfer(self):
+        user_id = self.env.user
+        ctx = self._context.copy()
+        ctx.update(user_name= user_id.name)
+        self = self.with_context(ctx)
         self.ensure_one()
         # Si es de una compra intercompañía llamamos al do_transfer de la venta relacionada anterior
         if self.purchase_id.intercompany:
@@ -166,6 +171,7 @@ class StockPicking(models.Model):
                 #self.intercompany_picking_process(picking)
                 picking.action_assign()
                 self.propagate_op_qty(picking)
+
                 picking.do_transfer()
         #Si es entrega a cliente buscar lineas en albaranes de compra intercompañia
         if self.picking_type_id.code == 'outgoing':
@@ -184,8 +190,9 @@ class StockPicking(models.Model):
                     if ops_to_do:
                         ic_purchase_picking.do_transfer()
 
+        message = "El usuario <em>{}</em> ha validado el albarán {}<ul><li>Último estado: {}</li><li>Hora de validacion: {}</li>".format(self._context.get('user_name', user_id.name), self.name, self.state, fields.Datetime.now())
         res = super(StockPicking, self).do_transfer()
-
+        self.message_post(message)
         # Propaga la aignacion movimientos realizado a la compra IC y albaŕn
         #  de salida si debe hacerlo
 
@@ -225,6 +232,13 @@ class StockPicking(models.Model):
     @api.multi
     def check_received_qty(self):
         pass
+
+    def do_ic_unreserve(self):
+        #SOLO SE DEBEN DE DESRESERVAR LA 1ª VEZ DESDE MULTICOMPAÑIA.
+        if self.unreserve_done:
+            return
+        self.unreserve_done = True
+        self.do_unreserve()
 
 
 class StockMove(models.Model):
@@ -268,10 +282,9 @@ class StockMove(models.Model):
             'group_id': picking.group_id.id,
             'company_id': picking.company_id.id,
             'extra_move': True,
-            'purchase_line_id':product_move.purchase_line_id.id or False
+            'purchase_line_id':product_move.purchase_line_id.id or False,
         }
         return vals
-
 
     def propagate_new_moves(self):
 
@@ -331,6 +344,34 @@ class StockMove(models.Model):
 
     def propagate_assign_IC(self):
 
+        # solo movimientos hechos
+        moves_done = self.sudo().filtered(lambda x: x.state == 'done')
+
+        #miro si el albaran de destino viene de una venta autogenerada > ICOP de Preparación a ICC
+        previous_IC_sale = moves_done.mapped('move_dest_id.picking_id.sale_id').auto_generated
+
+        #Busco albarán de salida
+        pick_dest_IC = moves_done.mapped('move_dest_IC_id.picking_id')
+
+        #busco el alabrán de salida de la compra intercompañia
+        pick_purchase_IC = moves_done.mapped('move_dest_id.move_purchase_IC_id.picking_id')
+        if pick_purchase_IC and pick_purchase_IC.state != 'done':
+            #HAGO do_ic_unreserve ya que los albaranes de compra ICP solo se deben de  desreservar la primera vez.
+            pick_purchase_IC.do_ic_unreserve()
+
+        if pick_dest_IC and previous_IC_sale:
+
+            mov_to_force = self.env['stock.move']
+            mov_to_force |= moves_done.filtered(
+                lambda move: move.move_dest_id.move_purchase_IC_id and move.move_dest_id.move_purchase_IC_id.state in (
+                'waiting', 'confirmed')).mapped('move_dest_id.move_purchase_IC_id')
+            mov_to_force |= moves_done.filtered(
+                lambda move: move.move_dest_IC_id.state in ('waiting', 'confirmed')).mapped('move_dest_IC_id')
+            if mov_to_force:
+                mov_to_force.force_assign()
+
+    def propagate_assign_IC_old(self):
+
         previous_IC_sale = \
             self.mapped('move_dest_id.picking_id.sale_id.auto_generated')
 
@@ -360,7 +401,6 @@ class StockMove(models.Model):
                             move.move_dest_id.move_purchase_IC_id.state in (
                                     'waiting', 'confirmed'):
                         move.move_dest_id.move_purchase_IC_id.sudo().force_assign()
-
 
     @api.multi
     def action_cancel(self):
@@ -430,3 +470,7 @@ class StockMove(models.Model):
                 new_move).move_dest_id.move_purchase_IC_id.move_dest_id.id})
 
         return new_move
+
+    @api.multi
+    def force_assign(self):
+        return super(StockMove, self).force_assign()

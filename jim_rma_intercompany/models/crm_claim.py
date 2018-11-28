@@ -68,6 +68,11 @@ class CrmClaim(models.Model):
         for claim in self:
             claim.stage_sequence = get_default(claim.stage_id)
 
+    @api.multi
+    def _compute_amount(self):
+        for claim in self:
+            claim.amount = sum(line.return_value for line in claim.claim_line_ids)
+
 
     def _get_invoice_ids(self):
         """ Search all stock_picking associated with this claim.
@@ -95,13 +100,13 @@ class CrmClaim(models.Model):
     ic = fields.Boolean('Intercompany RMA')
     pick = fields.Boolean('Pick the product in the store', default=True)
     ref = fields.Char(related='partner_id.ref')
-
+    amount = fields.Monetary(compute='_compute_amount')
     invoice_status = fields.Selection([
         ('invoiced', 'Fully Invoiced'),
         ('to invoice', 'To Invoice'),
         ('no', 'Nothing to Invoice')
     ], string='Invoice Status', compute='_get_invoiced', store=True, readonly=True)
-
+    currency_id = fields.Many2one(related="partner_id.currency_id")
     picking_status = fields.Selection([
         ('all done', 'All processed'),
             ('to do', 'To process'),

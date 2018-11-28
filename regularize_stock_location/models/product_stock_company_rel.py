@@ -52,7 +52,6 @@ class ProductStockComapnyRel(models.Model):
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         sql = """CREATE or REPLACE VIEW %s as (%s FROM %s)""" % (self._table, self._select(), self._from() )
-        print sql
         self.env.cr.execute(sql)
 
 

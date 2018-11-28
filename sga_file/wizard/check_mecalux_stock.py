@@ -54,10 +54,8 @@ class WizCheckMecaluxStock(models.TransientModel):
             pick_ids = picks.ids
         else:
             return []
-        #print "------------- Albaranes pendientes: {} \n {}".format(len(pick_ids), pick_ids)
+
         domain = [('picking_id', 'in', pick_ids)]
-        #product_ids = [item['product_id'][0] for item in self.env['stock.move'].sudo().search_read(domain, ['id', 'product_id'])]
         product_ids = self.env['stock.move'].sudo().search(domain).mapped('product_id').sorted(lambda x:x.id)
-        #print "------------- Productos no incluidos: {} \n {}".format(len(product_ids), product_ids.ids)
         return product_ids or []
 

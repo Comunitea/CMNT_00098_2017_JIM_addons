@@ -9,6 +9,7 @@
             <field name="arch" type="xml">
                 <field name="sequence" position="after">
                     <field name="no_stock"/>
+                    <field name="virtual_type"/>
                 </field>
             </field>
         </record>

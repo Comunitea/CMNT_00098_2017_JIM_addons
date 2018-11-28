@@ -290,9 +290,6 @@ class StockInventorySGA(models.Model):
 
 
             except:
-                print "-------------ULTIMA OK:"
-                print line_before
-                print "-------------ERROR EN LA LINEA %s" %line
                 sga_file_obj.write_log("\n-----------------\n     ERROR:\n     {}\n".format(line), log_name, False)
                 sga_file_obj.write_log("\n    ULTIMA: {}\n-----------------".format(str_to_write),log_name, False)
                 force_write_log = True
@@ -304,7 +301,6 @@ class StockInventorySGA(models.Model):
             inventories = list(set(inventories))
             sga_file_obj.write_log("Inventarios creados con {}".format(inventories), log_name, False)
 
-        print "FIN"
         end_str = "\nNumero de lineas a crear: {}\nHora fin: {} Tiempo empleado: {}".format(inserts, datetime.now(), datetime.now() - hora_inicio)
         sga_file_obj.write_log(end_str, log_name, False)
 
