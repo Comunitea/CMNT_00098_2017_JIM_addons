@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-import pyodbc
+try:
+    import pyodbc
+except ImportError:
+    print("################### IMPORT ERROR: pyodbc #########################")
 from datetime import datetime
 import logging
 
