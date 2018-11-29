@@ -58,7 +58,8 @@ class AccountPayment(models.Model):
                                                                debit,
                                                                -amount_currency, move.id, False)
         counterpart_aml_dict.update(self._get_counterpart_move_line_vals(self.invoice_ids))
-        counterpart_aml_dict.update({'currency_id': currency_id})
+        counterpart_aml_dict.update({'currency_id': currency_id,
+                                     'received_issued': True})
         aml_obj.create(counterpart_aml_dict)
 
         if not self.currency_id != self.company_id.currency_id:
@@ -82,7 +83,7 @@ class AccountPayment(models.Model):
             'payment_id': self.id,
             'journal_id': self.company_id.forecast_journal_id.id,
             'currency_id': self.currency_id != self.company_id.currency_id and self.currency_id.id or False,
-            'received_issued': True,
+            #'received_issued': True,
         }
 
         # If the journal has a currency specified, the journal item need to be expressed in this currency
