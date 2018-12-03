@@ -121,7 +121,7 @@
                                             <span t-field="line.product_id"/>
                                         </td>
                                         <td class="text-right">
-                                            <span t-field="line.location_dest_id.name"/>
+                                            <span t-field="line.location_dest_id.display_name"/>
                                         </td>
                                         <td class="text-right">
                                             <span t-field="line.product_returned_quantity"/>

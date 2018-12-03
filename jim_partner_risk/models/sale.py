@@ -15,19 +15,18 @@ class SaleOrder(models.Model):
         for order in self:
             order.price_total_cancelled = sum(line.price_total_cancelled for line in order.order_line)
 
+
     @api.multi
     def _get_default_cancelled_order_in_risk(self):
         cancelled_order_in_risk = self.env['ir.config_parameter'].get_param('cancelled_order_in_risk', '0') == '1'
         for order in self:
             order.cancelled_order_in_risk = cancelled_order_in_risk
 
-
     price_total_cancelled = fields.Monetary(compute='_compute_amount_cancelled', string='Cancelled amount', readonly=True, store=True)
     cancelled_order_in_risk = fields.Boolean('Qty cancelled', compute="_get_default_cancelled_order_in_risk")
 
-
     @api.multi
-    @api.depends('state', 'partner_id.risk_sale_order_include', 'order_line.invoice_lines.invoice_id.amount_total', 'invoice_status', 'price_total_cancelled', 'order_line.price_total_cancelled')
+    @api.depends('state', 'order_line.invoice_lines.invoice_id.amount_total', 'order_line.price_total_cancelled')
     def _compute_invoice_amount(self):
         super(SaleOrder, self)._compute_invoice_amount()
         if self.env['ir.config_parameter'].get_param('cancelled_order_in_risk', '0') == '0':
@@ -62,19 +61,16 @@ class SaleOrderLine(models.Model):
         """
         if self._table == "sale_order_line_template":
             return
+
         for line in self:
             qty = 0.00
             for move in line.procurement_ids.mapped('move_ids').filtered(lambda r: r.state == 'cancel' and not r.scrapped):
                 if move.location_dest_id.usage == "customer":
                     if not move.origin_returned_move_id:
                         qty += move.product_uom._compute_quantity(move.product_uom_qty, line.product_uom)
-                        #print "Resto del albaran cancelado {}".format(
-                        # move.picking_id.name)
                 elif move.location_dest_id.usage != "customer" and move.to_refund_so:
                     qty -= move.product_uom._compute_quantity(move.product_uom_qty, line.product_uom)
-                    #print "Resto del albaran cancelado {}".format(
-                    # move.picking_id.name)
-            line.cancelled_qty = qty
+                line.cancelled_qty = qty
 
     price_total_cancelled = fields.Monetary(compute='_compute_amount_cancelled', string='Cancelled amount', readonly=True, store=True)
     cancelled_qty = fields.Float('Cancelled Quantity', compute='_get_cancelled_qty', digits=dp.get_precision('Product Unit of Measure'), store=True)
