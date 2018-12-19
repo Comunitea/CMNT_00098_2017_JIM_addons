@@ -103,7 +103,8 @@ class SaleOrderLine(models.Model):
     _inherit = 'sale.order.line'
 
     @api.model
-    def ts_product_id_change(self, product_id, partner_id, pricelist_id):
+    def ts_product_id_change(self, product_id, partner_id, pricelist_id, 
+                             get_stock=True):
         """
         Get available stock in each call to product_id_change from
         telesale interface.
@@ -113,7 +114,9 @@ class SaleOrderLine(models.Model):
                                                               pricelist_id)
         if product_id:
             product = self.env['product.product'].browse(product_id)
-            res.update({'global_available_stock':
-                        product.global_available_stock,
+            stock = 0.0
+            if get_stock:
+                stock = product.global_available_stock
+            res.update({'global_available_stock': stock,
                         'chained_discount': str(res.get('discount', 0.0))})
         return res

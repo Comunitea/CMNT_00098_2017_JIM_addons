@@ -14,12 +14,29 @@ class AccountPayment(models.Model):
 
     @api.multi
     def write(self, vals):
+        res = super(AccountPayment, self).write(vals)
         for payment in self:
             if 'payment_date' in vals and payment.forecast_move_id:
                 payment.forecast_move_id.line_ids.write(
                     {'date_maturity':vals['payment_date']})
 
-        return super(AccountPayment, self).write(vals)
+            if 'amount_company_currency' in vals and payment.forecast_move_id:
+                ctx = self._context.copy()
+                ctx.update(check_move_validity=False)
+                for line in payment.forecast_move_id.with_context(
+                        ctx).line_ids:
+                    if line.debit > 0:
+                        line.debit = vals['amount_company_currency']
+                        if self.company_id.currency_id.id != \
+                                self.currency_id.id:
+                            line.amount_currency = vals['amount']
+                    if line.credit > 0:
+                        line.credit = vals['amount_company_currency']
+                        if self.company_id.currency_id.id != \
+                                self.currency_id.id:
+                            line.amount_currency = -vals['amount']
+
+        return res
 
     def create_forecast_entry(self, ):
         """ Create a journal entry corresponding to a payment, if the payment references invoice(s) they are reconciled.
@@ -41,7 +58,8 @@ class AccountPayment(models.Model):
                                                                debit,
                                                                -amount_currency, move.id, False)
         counterpart_aml_dict.update(self._get_counterpart_move_line_vals(self.invoice_ids))
-        counterpart_aml_dict.update({'currency_id': currency_id})
+        counterpart_aml_dict.update({'currency_id': currency_id,
+                                     'received_issued': True})
         aml_obj.create(counterpart_aml_dict)
 
         if not self.currency_id != self.company_id.currency_id:
@@ -65,7 +83,7 @@ class AccountPayment(models.Model):
             'payment_id': self.id,
             'journal_id': self.company_id.forecast_journal_id.id,
             'currency_id': self.currency_id != self.company_id.currency_id and self.currency_id.id or False,
-            'received_issued': True,
+            #'received_issued': True,
         }
 
         # If the journal has a currency specified, the journal item need to be expressed in this currency
