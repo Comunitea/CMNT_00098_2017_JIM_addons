@@ -68,5 +68,6 @@ class purchase_order(models.Model):
             vals['move_dest_IC_id'] = line.procurement_ids[0].move_dest_id.id \
                                       or False
             vals['purchase_line_IC'] = line.id
+        vals['name'] = line.name or line.product_id and line.product_id.display_name
         return vals
 
