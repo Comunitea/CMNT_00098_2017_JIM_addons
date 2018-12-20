@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- © 2017 Comunitea
+     License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
+    delivery_report -->
+<odoo>
+        <!--borramos documentos que heredan para que non tener problemas -->
+
+        <template id="report_mrporder_custom" inherit_id="mrp.report_mrporder">
+            <xpath expr="//table[@t-if='o.move_raw_ids']" position="after">
+                <div class="radius_border_min">
+                    Obs:
+                    <span t-field="o.note"/>
+                </div>
+            </xpath>
+        </template>
+</odoo>

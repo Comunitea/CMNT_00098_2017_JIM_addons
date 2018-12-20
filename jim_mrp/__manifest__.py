@@ -19,6 +19,8 @@
     ],
     "data": [
         'views/mrp_production.xml',
+        'report/mrp_production.xml',
+
     ],
     "installable": True
 }

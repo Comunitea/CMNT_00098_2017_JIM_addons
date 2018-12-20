@@ -20,6 +20,7 @@ class MrpProduction(models.Model):
     web_global_stock = fields.Float('Web stock', readonly=True,
                                     digits=dp.get_precision
                                     ('Product Unit of Measure'))
+    note = fields.Text()
 
     @api.multi
     def refresh_stock(self):
