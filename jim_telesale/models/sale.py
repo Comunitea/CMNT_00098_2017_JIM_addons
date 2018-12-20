@@ -8,6 +8,16 @@ import time
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
+
+
+    @api.model
+    def ts_act_qty_available(self, order_id):
+        order = self.env['sale.order'].browse(order_id)
+        res = order.check_sale_stock()
+        return res
+
+
+
     @api.model
     def confirm_order_from_ui(self, order_id):
         """

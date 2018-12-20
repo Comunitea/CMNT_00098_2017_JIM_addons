@@ -88,6 +88,11 @@ var GridWidget = GridWidgetSuper.include({
         this.$('.add-discount').bind('change', function(event){
              self.check_chained_discount(this);
         });
+        this.$('.add-qty').unbind();
+        this.$('.add-qty').bind('change', function(event){
+             self.check_float(this);
+             //self.call_product_uom_change(this);
+        });
     },
 
 

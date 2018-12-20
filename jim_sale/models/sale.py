@@ -319,6 +319,25 @@ class SaleOrder(models.Model):
                 pickings.write({'partner_id': vals['partner_shipping_id']})
         return super(SaleOrder, self).write(vals)
 
+    @api.multi
+    def check_sale_stock(self):
+        self.ensure_one
+        message = ''
+        for line in self.order_line:
+            if line.global_available_stock != line.product_id.web_global_stock:
+               line.write({'global_available_stock': line.product_id.global_available_stock})
+            if line.global_available_stock < line.product_uom_qty:
+                message = "{}\n{}: Stock: {} / Pedido: {}".format(message, line.name, line.global_available_stock, line.product_uom_qty)
+        if message:
+            title = ("Productos sin stock:")
+            message = "Listado: {}".format(message)
+            warning = {
+                'type': 'ir.actions.act_window.message',
+                'title': title,
+                'message': message,
+            }
+            return warning
+        return False
 
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
@@ -385,6 +404,9 @@ class SaleOrderLine(models.Model):
             })
         return vals
 
+    @api.onchange()
+    def product_uom_change(self):
+        return super(SaleOrderLine, self).product_uom_change()
 
 
 class SaleOrderLineTemplate(models.Model):
@@ -420,3 +442,4 @@ class SaleOrderLineTemplate(models.Model):
                  'qty_invoiced')
     def _compute_invoice_status(self):
         return False
+

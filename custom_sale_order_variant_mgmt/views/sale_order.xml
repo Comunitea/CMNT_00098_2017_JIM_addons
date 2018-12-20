@@ -38,7 +38,7 @@
             <field name="arch" type="xml">
                 <tree editable="top"
 
-                decoration-danger = 'qty_delivered &gt; 0 and qty_invoiced != qty_delivered'
+                decoration-danger = "qty_delivered &gt; 0 and qty_invoiced != qty_delivered or global_available_stock &lt; 0 and state not in ('sale' ,'done', 'cancel')"
                 decoration-success = 'qty_delivered &gt; 0 and qty_invoiced == qty_delivered'>
                     <field name="company_id" invisible="1"/>
                     <field name="partner_id" invisible="1"/>

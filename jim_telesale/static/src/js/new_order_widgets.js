@@ -91,6 +91,9 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         if (key == 'pvp'){
             this.refresh('chained_discount');
         }
+        if (key == 'qty'){
+            return;
+        }
 
         this._super(key);
 
@@ -303,17 +306,20 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
         this._super();
         this.$('.proforma-button').prop('disabled', true);
         this.$('.print-alm-button').prop('disabled', true);
+        this.$('.act-qty-available').prop('disabled', true);
     },
     enable_more_clicks: function(){
         this._super();
         this.$('.proforma-button').prop('disabled', false);
         this.$('.print-alm-button').prop('disabled', false);
+        this.$('.act-qty-available').prop('disabled', false);
     },
     renderElement: function(){
         var self=this;
         this._super();
         this.$('.proforma-button').click(function (){ self.no_more_clicks(); self.promoCurrentOrder();});
         this.$('.print-alm-button').click(function (){ self.no_more_clicks(); self.printAlmOrder();});
+        this.$('.act-qty-available').click(function (){ self.no_more_clicks(); self.actQtyAvailable();});
     },
      doPrintAlm: function(erp_id){
             this.do_action({
@@ -382,11 +388,44 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                                 self.ts_model.last_sale_id = false
                             });
                           });
-
                     }
                 });
          });
     },
+
+    //actQtyAvailable
+    actQtyAvailable: function(){
+
+        var self = this;
+        var current_order = self.ts_model.get('selectedOrder')
+        var order_id = self.ts_model.get('selectedOrder').get('erp_id')
+        if (!order_id){return}
+
+        (new Model('sale.order')).call('ts_act_qty_available',[order_id])
+            .fail(function(unused, event){
+              //don't show error popup if it fails
+               self.enable_more_clicks();
+            })
+            .done(function(res){
+                // LOAD THE ORDER
+                self.ts_model.get('selectedOrder').destroy();
+                $.when(self.ts_widget.new_order_screen.order_widget.load_order_from_server(order_id))
+                    .done(function(){
+                    self.ts_model.last_sale_id = false
+                    self.ts_model.ready3.resolve()
+                    })
+                .fail(function(){
+                    self.ts_model.last_sale_id = false
+                    self.ts_model.ready3.reject()
+                    });
+
+                });
+
+
+    },
+
+
+
     // Allways apply promotion when apply to server
     saveCurrentOrder: function(avoid_load) {
         var current_order = this.ts_model.get('selectedOrder')

@@ -105,6 +105,9 @@
 
 }
 
+.telesale #bottompart .act-qty-available {
+    background: #ffb31e;
+}
 .telesale #bottompart .proforma-button {
     background: #ffb31e;
 }

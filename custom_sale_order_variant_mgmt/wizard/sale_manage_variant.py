@@ -43,7 +43,7 @@ class SaleManageVariant(models.TransientModel):
             sum_qty = 0
             for line in template.order_lines:
                 sum_qty += line.product_uom_qty
-                line.product_uom_change()  # Update prices depend of qty
+                #line.product_uom_change()  # Update prices depend of qty
                 line._onchange_discount()  # Update variant pricelist discount.
             # Get total qty
             template.product_uom_qty = sum_qty

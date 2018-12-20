@@ -27,6 +27,20 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
+                <xpath expr="//button[@name='recalculate_prices']" position="before">
+                     <button name="check_sale_stock"
+                                string="Actualizar stocks"
+                                attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"
+                                type="object" colspan="4" class="btn-default"/>
+                </xpath>
+                <!--field name="order_line" position="after">
+                    <div class="btn-group">
+                        <button name="check_sale_stock"q
+                                string="Actualizar stocks"
+                                attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"
+                                type="object" colspan="4" class="btn-default"/>
+                    </div>
+                </field-->
                 <field name="state" position="attributes">
                     <attribute name="statusbar_visible">draft,sent,lqdr,pending,progress,sale</attribute>
                 </field>
