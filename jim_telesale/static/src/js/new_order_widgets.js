@@ -397,10 +397,13 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
     actQtyAvailable: function(){
 
         var self = this;
+        var currentOrder = this.order_model;
         var current_order = self.ts_model.get('selectedOrder')
         var order_id = self.ts_model.get('selectedOrder').get('erp_id')
         if (!order_id){return}
-
+        self.saveCurrentOrder(true)
+        $.when(self.ts_model.ready2)
+        .done(function(){
         (new Model('sale.order')).call('ts_act_qty_available',[order_id])
             .fail(function(unused, event){
               //don't show error popup if it fails
@@ -420,6 +423,7 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                     });
 
                 });
+        })
 
 
     },
