@@ -38,6 +38,8 @@
                 <field name="state"/>
                 <field name="line_delivered_state"/>
                 <field name="line_invoice_state"/>
+                <field name="color_id"/>
+                <field name="size_id"/>
             </tree>
 
         </field>

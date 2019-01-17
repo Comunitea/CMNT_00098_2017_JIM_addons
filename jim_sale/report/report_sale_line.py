@@ -45,6 +45,10 @@ class ReportSaleLineJim(models.Model):
     ])
     date = fields.Datetime(string="Fecha", readonly=True)
 
+    color_id = fields.Many2one('product.attribute.value', 'Color',
+                               readonly=True)
+    size_id = fields.Many2one('product.attribute.value', 'Size',
+                               readonly=True)
 
     def _select(self):
         select_str = """            
@@ -73,7 +77,18 @@ class ReportSaleLineJim(models.Model):
                         WHEN l.qty_invoiced = 0 THEN 'NF'
                         WHEN l.qty_to_invoice = qty_delivered THEN 'F'
                         ELSE 'NF1'
-                    END as line_invoice_state                                       
+                    END as line_invoice_state,
+                     (SELECT pav.id FROM product_attribute_value pav INNER JOIN product_attribute_value_product_product_rel pavppr
+				on pavppr.product_attribute_value_id = pav.id
+				INNER JOIN  product_attribute pa on pav.attribute_id = pa.id 
+				WHERE pavppr.product_product_id = product_id and pa.is_color = True LIMIT 1)
+		        as color_id,
+			    (SELECT pav.id FROM product_attribute_value pav INNER JOIN product_attribute_value_product_product_rel pavppr
+				on pavppr.product_attribute_value_id = pav.id
+				INNER JOIN  product_attribute pa on pav.attribute_id = pa.id 
+				WHERE pavppr.product_product_id = product_id and pa.is_color = False LIMIT 1)
+		        as size_id
+                                                           
         """
         return select_str
 
@@ -95,7 +110,9 @@ class ReportSaleLineJim(models.Model):
                     so.state,
                     so.user_id,
                     so.date_order,
-                    so.id
+                    so.id,
+                    color_id, 
+                    size_id
                     
                     
         """
