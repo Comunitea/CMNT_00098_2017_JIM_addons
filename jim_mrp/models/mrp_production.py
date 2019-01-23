@@ -54,6 +54,23 @@ class MrpProduction(models.Model):
             res.with_context(ctx).refresh_stock()
         return res
 
+    @api.multi
+    def set_done_production(self):
+        ctx = self._context.copy()
+        for production in self:
+            if production.availability!='assigned':
+                production.action_assign()
+            if production.availability == 'assigned':
+                ctx.update(active_id=production.id)
+                new_wzd = self.env['mrp.product.produce'].with_context(ctx).create({})
+                new_wzd.do_produce()
+        for production in self.filtered(lambda x: x.state == 'progress'):
+            production.button_mark_done()
+
+
+
+
+
 
 class StockMove(models.Model):
     _inherit = 'stock.move'
