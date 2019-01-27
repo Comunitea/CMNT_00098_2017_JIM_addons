@@ -343,7 +343,6 @@ class StockMove(models.Model):
         return res
 
     def propagate_assign_IC(self):
-
         # solo movimientos hechos
         moves_done = self.sudo().filtered(lambda x: x.state == 'done')
 
@@ -368,7 +367,7 @@ class StockMove(models.Model):
             mov_to_force |= moves_done.filtered(
                 lambda move: move.move_dest_IC_id.state in ('waiting', 'confirmed')).mapped('move_dest_IC_id')
             if mov_to_force:
-                mov_to_force.force_assign()
+                mov_to_force.sudo().force_assign()
 
     def propagate_assign_IC_old(self):
 
