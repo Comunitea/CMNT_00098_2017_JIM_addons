@@ -10,6 +10,7 @@
     'license': 'AGPL-3',
     'depends': [
         'account_banking_mandate',
+        'account_invoice_refund_link'
     ],
     'contributors': [
         "Comunitea ",
