@@ -69,10 +69,10 @@ class Partner(BaseExtClass):
         # El filtro de notificaciones viene hecho ya en "is_notifiable", de forma que aquí llegarán IC's o
         # direcciones de entrega
         if self.commercial_partner_id.id == self.id: # Se trata de un IC
+            pricelist_list = []
+            valid = 'Y'
             if self.group_companies_ids: # Si está asignado a alguna empresa del grupo
                 # Recorremos la lista de compañías a las que puede tener acceso el IC para averiguar sus tarifas
-                pricelist_list = []
-                valid = 'Y'
                 for company in self.group_companies_ids:
                     if self.env.user.company_id.id == company.id:
                         pricelist = self.property_product_pricelist
