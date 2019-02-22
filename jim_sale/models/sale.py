@@ -310,13 +310,18 @@ class SaleOrder(models.Model):
 
     @api.multi
     def write(self, vals):
+        if 'partner_shipping_id' in vals:
+            for order in self.filtered(lambda x: x.partner_shipping_id):
+                message = "Se ha modificado la dirección de envío <a href=# data-oe-model=res.partner data-oe-id=%d>%s</a>" %(order.partner_shipping_id.id, order.partner_shipping_id.name)
+                order.message_post(body=message)
         for sale in self:
             if 'partner_shipping_id' in vals and sale.procurement_group_id:
                 sale.procurement_group_id.partner_id = vals['partner_shipping_id']
-                pickings = self.env['stock.picking'].search(
-                    [('group_id', '=', sale.procurement_group_id.id),
-                     ('partner_id', '=', sale.partner_shipping_id.id)])
+                pickings = self.env['stock.picking'].search([('group_id', '=', sale.procurement_group_id.id), ('partner_id', '=', sale.partner_shipping_id.id)])
                 pickings.write({'partner_id': vals['partner_shipping_id']})
+                message = "Se ha modificado la dirección de envío <a href=# data-oe-model=res.partner data-oe-id=%d>%s</a>. " \
+                          "Se cambiará en los albaranes no hechos" % (order.partner_shipping_id.id, order.partner_shipping_id.name)
+                order.message_post(body=message)
         return super(SaleOrder, self).write(vals)
 
     @api.multi
