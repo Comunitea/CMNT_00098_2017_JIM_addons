@@ -81,7 +81,11 @@ class Partner(BaseExtClass):
                         pricelist_id = pricelist_obj.sudo()._get_partner_pricelist(
                             self.id, company.id)
                         pricelist = pricelist_obj.browse(pricelist_id)
-                    pricelist_list.append(str(company.id) + ',' + pricelist.legacy_code or str(pricelist.id + 1000))
+                    if pricelist.legacy_code:
+                        pricelist_code = pricelist.legacy_code
+                    else:
+                        pricelist_code = str(pricelist.id + 1000)
+                    pricelist_list.append(str(company.id) + ',' + pricelist_code)
                     if not unlink and self.active:
                         if pricelist.name == 'SIN PRECIO':
                             valid = 'P'
