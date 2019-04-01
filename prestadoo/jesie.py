@@ -71,7 +71,6 @@ class Jesie(object):
             values += "('{}', '{}', '{}', {}, '{}'),".format(t[0], t[1], t[2], t[3], version)
             counter += 1
             if counter >= row_insert_limit:
-                Console.debug("***** Counter: {}".format(counter))
                 counter = 0
                 values = values[:-1]
                 Jesie.__execute_query(statement + values, ())
