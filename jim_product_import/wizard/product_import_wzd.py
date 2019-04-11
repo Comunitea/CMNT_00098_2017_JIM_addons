@@ -34,9 +34,6 @@ class Binary(http.Controller):
          return request.make_response(filecontent,
                             [('Content-Type', 'application/octet-stream'),
                              ('Content-Disposition', content_disposition(filename))])
-
-
-         import ipdb; ipdb.set_trace()
          file = base64.b64decode(self.import_file)
          book = xlrd.open_workbook(filename)
          sh = book.sheet_by_index(0)
@@ -52,6 +49,7 @@ class Binary(http.Controller):
              return request.make_response(filecontent,
                             [('Content-Type', 'application/octet-stream'),
                              ('Content-Disposition', content_disposition(filename))])
+
 class ProductImportWzd(models.TransientModel):
     _name = 'product.import.wzd'
 
@@ -129,7 +127,6 @@ class ProductImportWzd(models.TransientModel):
         workbook.save(stream)
         stream.seek(0)
         data = stream.read()
-        import ipdb; ipdb.set_trace()
         return {
             'type': 'ir.actions.act_url',
             'url': '/web/binary/download_document?filename=./Errores.xls&filecontent={}'.format(data),
