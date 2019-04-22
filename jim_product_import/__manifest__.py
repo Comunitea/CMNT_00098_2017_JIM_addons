@@ -12,6 +12,7 @@
     ],
     'data': [
         'wizard/product_import_wzd_view.xml',
+        'wizard/product_check_barcodes_view.xml',
     ],
     'installable': True,
 }

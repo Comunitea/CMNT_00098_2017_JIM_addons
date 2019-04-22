@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_product_check_barcodes_form" model="ir.ui.view">
+        <field name="name">view.product.check.barcodes.wzd.form</field>
+        <field name="model">product.check.barcodes</field>
+        <field name="arch" type="xml">
+            <form string="Reimportar códigos de barras">
+                <div name="help">
+                    <h2>Selecciona un fichero para importar</h2>
+                </div>
+                <group>
+                    <field name="name" string="Nombre de la importación"/>
+                    <field name="file" string ="Fichero" filename="filename"/>
+                </group>
+                <footer>
+                    <button name="check_barcodes" type="object" class="btn-primary" string="Comprobar códigos"/>
+                    <button special="cancel" string="Cancel" class="oe_link"/>
+                </footer> 
+            </form>
+        </field>
+    </record>
+
+   
+    <record id="action_check_barcodes" model="ir.actions.act_window">
+        <field name="name">Import Products</field>
+        <field name="res_model">product.check.barcodes</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_action_check_barcodes" name="Reimportar codigos" action="action_check_barcodes" parent="sale.prod_config_main" sequence="99" />
+
+</odoo>
