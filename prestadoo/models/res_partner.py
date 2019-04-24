@@ -6,7 +6,7 @@ class Partner(BaseExtClass):
     _inherit = "res.partner"
 
     fields_to_watch = ('id', 'name', 'vat', 'email', 'web_password', 'property_product_pricelist', 'active', 'type',
-                       'parent_id', 'street', 'zip', 'city', 'country_id', 'company_id')
+                       'parent_id', 'street', 'zip', 'city', 'country_id', 'company_id', 'group_companies_ids')
 
     def is_notifiable(self):
         # En res.partner se almacenan tanto las empresas, como empresas "hijas" (del mismo grupo), como contactos y
@@ -18,6 +18,7 @@ class Partner(BaseExtClass):
         #       * sea empresa (is_company == True)
         #       * sea cliente (customer == True)
         #       * tenga correo y contraseña
+        #   - En el campo 'group_companies_ids' se indique que el cliente tiene acceso web para alguna empresa del grupo
         #
         # Si cumple los requisitos, notificamos si commercial_partner_id == id, es decir, se trata de un registro de
         # tipo "empresa padre"; en caso contrario, puede ser un contacto, una dirección de envío, una dirección de
@@ -29,7 +30,7 @@ class Partner(BaseExtClass):
 
             if self.commercial_partner_id.id == self.id:
                 self.fields_to_watch = ('id', 'name', 'vat', 'email', 'web_password', 'property_product_pricelist',
-                                        'active', 'type', 'parent_id', 'company_id')
+                                        'active', 'type', 'parent_id', 'company_id', 'group_companies_ids')
                 return True
             else:
                 self.fields_to_watch = ('name', 'active', 'type', 'parent_id', 'street', 'zip', 'city', 'country_id',
@@ -65,26 +66,34 @@ class Partner(BaseExtClass):
                 </pocustomeraddress>
             """
 
-        # Comprobamos que la compañía sea Jim Sports, si no, habrá que buscar la tarifa
-        if self.env.user.company_id.id == 1:
-            pricelist = self.property_product_pricelist
-        else:
-            pricelist_obj = self.env['product.pricelist']
-            pricelist_id = pricelist_obj.sudo()._get_partner_pricelist(
-                self.id, 1)
-            pricelist = pricelist_obj.browse(pricelist_id)
-
-        if not unlink and self.active:
-            if pricelist.name == 'SIN PRECIO':
-                valid = 'P'
-            else:
-                valid = 'Y'
-        else:
-            valid = 'N'
-
         # El filtro de notificaciones viene hecho ya en "is_notifiable", de forma que aquí llegarán IC's o
         # direcciones de entrega
-        if self.commercial_partner_id.id == self.id:
+        if self.commercial_partner_id.id == self.id: # Se trata de un IC
+            pricelist_list = []
+            valid = 'Y'
+            if self.group_companies_ids: # Si está asignado a alguna empresa del grupo
+                # Recorremos la lista de compañías a las que puede tener acceso el IC para averiguar sus tarifas
+                for company in self.group_companies_ids:
+                    if self.env.user.company_id.id == company.id:
+                        pricelist = self.property_product_pricelist
+                    else:
+                        pricelist_obj = self.env['product.pricelist']
+                        pricelist_id = pricelist_obj.sudo()._get_partner_pricelist(
+                            self.id, company.id)
+                        pricelist = pricelist_obj.browse(pricelist_id)
+                    if pricelist.legacy_code:
+                        pricelist_code = pricelist.legacy_code
+                    else:
+                        pricelist_code = str(pricelist.id + 1000)
+                    pricelist_list.append(str(company.id) + ',' + pricelist_code)
+                    if not unlink and self.active:
+                        if pricelist.name == 'SIN PRECIO':
+                            valid = 'P'
+                    else:
+                        valid = 'N'
+            else:
+                valid = 'N'
+
             self.xml = pocustomer.format(
                     self.ref or self.id,                   # CardCode
                     self.name,                             # CardName
@@ -93,11 +102,16 @@ class Partner(BaseExtClass):
                     self.email,                            # E_Mail
                     self.web_password,                     # Password
                     valid,                                 # validFor
-                    pricelist.legacy_code or 1000 + pricelist.id)  # ListNum
+                    ';'.join(pricelist_list))              # ListNum
 
             self.obj_type = '2'
 
-        else:
+        else: # Se trata de una dirección
+            if not unlink and self.active:
+                valid = 'Y'
+            else:
+                valid = 'N'
+
             self.xml = pocustomeraddress.format(
                     self.parent_id.ref or self.parent_id.id,    # CardCode
                     self.legacy_code or '#' + str(self.id),     # LineNum

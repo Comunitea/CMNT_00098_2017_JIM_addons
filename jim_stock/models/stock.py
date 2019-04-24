@@ -29,7 +29,7 @@ class StockPicking (models.Model):
         res = super(StockPicking, self)._get_label_data()
         res['total_bultos'] = self.pick_packages
         res['total_kilos'] = self.pick_weight
-        res.pop('peso_bulto', False)
+        res['peso_bulto'] = self.pick_weight
         return res
 
     @api.multi

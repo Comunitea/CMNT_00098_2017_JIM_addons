@@ -11,7 +11,9 @@
     'depends': [
         'purchase_advance_payment',
         'purchase_order_variant_mgmt',
-        'jim_stock'
+        'jim_stock',
+        'purchase_early_payment_discount',
+        'sale_early_payment_discount'
 
     ],
     'contributors': [

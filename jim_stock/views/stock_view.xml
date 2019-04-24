@@ -148,7 +148,7 @@
             <field name="arch" type="xml">
                 <button name="action_generate_carrier_label" position="attributes">
                     <attribute name="states"></attribute>
-                    <attribute name="attrs">{'invisible': ['|', ('carrier_tracking_ref', '!=', False), ('state', '!=', 'done')]}</attribute>
+                    <attribute name="attrs">{'invisible': ['|', '|', ('carrier_tracking_ref', '!=', False), ('state', '!=', 'done'), ('picking_type_code', '!=', 'outgoing')]}</attribute>
                 </button>
             </field>
         </record>
