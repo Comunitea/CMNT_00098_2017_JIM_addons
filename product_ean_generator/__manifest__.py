@@ -13,6 +13,7 @@
     'summary': '''Set ean code from last''',
     'website': 'http://www.comunitea.com',
     'data': ['views/product_template.xml',
+             'views/ir_sequence.xml',
              'data/ean_sequence.xml'],
     'installable': True,
     'auto_install': False,

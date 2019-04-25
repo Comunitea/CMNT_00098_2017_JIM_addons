@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <record model="ir.ui.view" id="sequence_view_limit">
+            <field name="name">sequence.form.view.limit</field>
+            <field name="model">ir.sequence</field>
+            <field name="inherit_id" ref="base.sequence_view"/>
+            <field name="arch" type="xml">
+                <field name="number_next_actual" position="after">
+                    <field name="upper_limit"/>
+
+                </field>
+            </field>
+        </record>
+
+
+    </data>
+</odoo>
