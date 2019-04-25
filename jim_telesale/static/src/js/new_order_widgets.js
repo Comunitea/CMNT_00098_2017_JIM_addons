@@ -101,13 +101,13 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
             var value = this.$('.col-'+key).val();
             // Case name not valid
             var template_obj = this.get_template();
-          
+
             // Get product from model
             if (template_obj){
                 var description = template_obj.display_name;
                 this.model.set('description', description);
             }
-            
+
         }
 
     },
@@ -150,6 +150,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
 
             self.refresh('qty');
             self.$('.col-qty').select();
+            return result
         });
     },
 
@@ -350,7 +351,7 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                 var currentOrder = self.ts_model.get('selectedOrder')
                 self.doPrint(currentOrder.get('erp_id'));
             });
-        }   
+        }
     },
 
     promoCurrentOrder: function() {
@@ -466,7 +467,7 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                             self.ts_model.last_sale_id = false
                         })
                         .done(function(msg){
-                            
+
                             var skip = true;
                             if (msg){
                                 var skip = confirm(msg)

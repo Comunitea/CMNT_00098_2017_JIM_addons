@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <template id="assets" inherit_id="telesale.assets" priority="100">
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/js_addons/static/js/telesale.js"></script>
+        </xpath>
+    </template>
+
+</odoo>

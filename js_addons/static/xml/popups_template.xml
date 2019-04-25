@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<templates id="js_addons.template_popups" inherit_id="telesale_manage_variants.template_popups">
+
+    <t t-extend="Grid-Widget">
+        <t t-jquery=".grid-cell" t-operation="append">
+            <div class="col-xs-12" t-if="cell.discontinued">
+                <br/><p><b>¡ATENCIÓN! VARIANTE DESCATALOGADA</b></p>
+            </div>
+        </t>
+    </t>
+
+</templates>
