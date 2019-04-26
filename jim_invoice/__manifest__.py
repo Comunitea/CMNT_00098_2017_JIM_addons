@@ -11,7 +11,8 @@
     'depends': [
         'account_payment_partner',
         'sale',
-        'purchase'
+        'purchase',
+        'account_financial_report_qweb'
     ],
     'contributors': [
         "Comunitea ",
