@@ -13,6 +13,6 @@ class GeneralLedgerReportWizard(models.TransientModel):
 
         if self.company_id:
             res['domain']['partner_ids'] += [
-                ('company_id', '=', self.company_id.id)
+                '|', ('company_id', 'child_of', self.company_id.id), ('company_id', '=', False)
                 ]
         return res
