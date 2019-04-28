@@ -11,7 +11,8 @@ class IrSequence(models.Model):
 
     upper_limit = fields.Integer(string='Limit', help="Upper limit for this sequence")
 
-    def _next_do(self):
-        if self.implementation == 'standard' and self.upper_limit>0 and self.upper_limit < self.number_next_actual:
-             raise ValidationError('Limit sequence')
-        return super(IrSequence, self)._next_do()
+    #def _next_do(self):
+    #    if self.implementation == 'standard' and self.upper_limit>0 and
+    #    self.upper_limit < self.number_next_actual:
+    #         raise ValidationError('Limit sequence')
+    #    return super(IrSequence, self)._next_do()
