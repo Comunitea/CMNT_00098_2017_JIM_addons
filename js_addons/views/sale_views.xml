@@ -17,8 +17,8 @@
                 <attribute name="decoration-it">discontinued_line == True</attribute>
             </xpath>
 
-            <xpath expr="//field[@name='template_lines']/tree" position="before">
-                <p class="text-danger">Las líneas grises y en cursiva indican que el producto está descatalogado (o una de sus variantes, ver líneas)</p>
+            <xpath expr="//field[@name='template_lines']" position="before">
+                <p class="dicontinued-warning text-danger">Las líneas grises y en cursiva indican que el producto está descatalogado (o una de sus variantes, ver líneas)</p>
             </xpath>
         </field>
     </record>
