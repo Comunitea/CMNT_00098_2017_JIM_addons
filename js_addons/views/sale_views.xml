@@ -18,7 +18,7 @@
             </xpath>
 
             <xpath expr="//field[@name='template_lines']" position="before">
-                <p class="dicontinued-warning text-danger">Las líneas grises y en cursiva indican que el producto está descatalogado (o una de sus variantes, ver líneas)</p>
+                <p class="form-warning text-danger">Las líneas grises y en cursiva indican que el producto está descatalogado (o una de sus variantes, ver líneas)</p>
             </xpath>
         </field>
     </record>

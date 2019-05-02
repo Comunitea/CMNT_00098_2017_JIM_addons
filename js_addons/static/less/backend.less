@@ -1,20 +1,47 @@
 /*
  * JS ADDONS - CUSTOM BACKEND STYLES
+ * AUTHOR: JIM SPORTS
+ * DESCRIPTION: CORRECCIONES DE PRESENTACIÓN EN BACKEND
  */
 
+ /* ################# BOTONES ENCIMA DE LÍNEAS (TREE) EN FORMULARIO ################# */
+
 div.tab-content.nav.nav-tabs .tab-pane > div.oe_button_box,
-div.tab-content.nav.nav-tabs .tab-pane > div.btn-group{
+div.tab-content.nav.nav-tabs .tab-pane > div.btn-group {
     margin-top: 10px;
 }
 
-div.tab-content.nav.nav-tabs .tab-pane > p.dicontinued-warning{
+/* ################# TEXTO DE INFORMACIÓN EN FORMULARIO ################# */
+
+div.tab-content.nav.nav-tabs .tab-pane > p.form-warning {
     margin-top: 16px;
 }
 
-button.btn + button.btn:not(.o_form_invisible):not(:last-child){
-    margin-right: 5px;
+/* ################# ESPACIOS ENTRE BOTONES (TODOS) ################# */
+
+button.btn + button.btn:not(.o_form_invisible):not(:last-child) {
+    margin-right: 3px;
 }
 
-.btn-group > button.btn{
+.btn-group > button.btn,
+.oe_button_box > button.btn {
     margin-right: 0 !important;
+}
+
+/* ################# BARRA DE BOTONES (ENCIMA FORMULARIO) ################# */
+
+.o_form_view > header button.btn.btn-sm {
+    padding: 2px 6px;
+    margin: 3px 0;
+}
+
+/* ################# BOTONES EN LÍNEA (FORMULARIOS) ################# */
+
+.o_form_field.oe_inline {
+    margin-right: 4px;
+}
+
+.o_form_field.oe_inline + .btn {
+    line-height: inherit;
+    padding: 3px 6px;
 }
