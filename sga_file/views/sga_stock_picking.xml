@@ -106,7 +106,7 @@
                 <xpath expr="//button[@name='do_new_transfer']" position="replace">
                 </xpath>
                 <xpath expr="//div[@name='button_box']" position="inside">
-                    <button name="do_new_transfer" icon="fa-check-square-o" states="draft,partially_available,assigned" string="Validar"
+                    <button name="do_new_transfer" icon="fa-check" states="draft,partially_available,assigned" string="Validar"
                             groups="stock.group_stock_user" type="object" class="oe_stat_button"/>
                 </xpath>
 
