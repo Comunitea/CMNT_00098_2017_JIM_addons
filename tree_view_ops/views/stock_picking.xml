@@ -93,7 +93,7 @@
                 <div name="button_box" position="inside">
                     <button class="oe_stat_button"
                             name="action_open_view_split_ops"
-                            icon="fa-dollar-sign"
+                            icon="fa-usd"
                             type="object"
                             attrs="{'invisible':[('pack_operation_product_ids', '=', [])]}"
                             string="Listado para split">
