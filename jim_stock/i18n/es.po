@@ -435,3 +435,9 @@ msgstr "Ancho"
 #: model:ir.model,name:jim_stock.model_stock_return_picking_line
 msgid "stock.return.picking.line"
 msgstr "stock.return.picking.line"
+
+#. module: jim_stock
+#: code:addons/jim_stock/models/stock.py:31
+#, python-format
+msgid "Please set the number of packages."
+msgstr "Establezca el número de paquetes para generar la etiqueta."
