@@ -150,6 +150,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
 
             self.refresh('qty');
             self.$('.col-qty').select();
+            return result 
         });
     },
 
