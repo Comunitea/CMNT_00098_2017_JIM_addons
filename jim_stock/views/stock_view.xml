@@ -150,7 +150,11 @@
                     <attribute name="states"></attribute>
                     <attribute name="attrs">{'invisible': ['|', '|', ('carrier_tracking_ref', '!=', False), ('state', '!=', 'done'), ('picking_type_code', '!=', 'outgoing')]}</attribute>
                 </button>
+                <field name="carrier_tracking_ref" position="attributes">
+                    <attribute name="attrs"></attribute>
+                </field>
             </field>
         </record>
+
     </data>
 </odoo>
