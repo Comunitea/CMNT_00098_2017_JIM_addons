@@ -151,7 +151,10 @@ class StockInventorySGA(models.Model):
 
         str_to_write=''
         force_write_log = False
+        limit = self._context.get('sto_limit', False)
         for line in sga_file_lines:
+            if limit and line_number > limit:
+                break
 
             try:
                 cont-=1
@@ -238,6 +241,9 @@ class StockInventorySGA(models.Model):
                 odoo_qty = product_id.compute_global_qty(location_id=location_id.id)
                 reg_qty_done = 0.00
                 qty_to_reg = mec_qty - odoo_qty
+                line_before = "STO linea  %s / %s [LEN: %s] >> OK >> Codigo: %s Cantidades: Odoo: %s, Mecalux: %s " % (
+                line_number, cont, len(line), product_code, odoo_qty, mec_qty)
+                print line_before
 
                 if qty_to_reg != 0:
                     line_count += 1
@@ -245,24 +251,16 @@ class StockInventorySGA(models.Model):
                     str_to_write = '{}\n{}'.format(str_to_write, str)
 
                 original_qty = qty_to_reg
-
+                ## como no hay pallatium nunca fuerzo compañia y solo hago una llamada
                 if qty_to_reg > 0:
                     inserts +=1
                     qty_to_reg, new_inventory, reg_qty = self.reg_stock(product_id,
                                                              location_id, product_company_id,
-                                                             qty_to_reg, mec_qty, True)
+                                                             qty_to_reg, mec_qty, False)
                     reg_qty_done += reg_qty
                     if new_inventory:
                         inventories.append(new_inventory)
 
-                if qty_to_reg != 0:
-                    inserts += 1
-                    qty_to_reg, new_inventory, reg_qty = self.reg_stock(product_id,
-                                                                        location_id, product_company_id,
-                                                                        qty_to_reg, mec_qty, False)
-                    reg_qty_done += reg_qty
-                    if new_inventory:
-                        inventories.append(new_inventory)
 
                 # PROBLEMA NO SE PUEDE REGULARIZAR
                 if qty_to_reg != 0.00:
@@ -283,11 +281,6 @@ class StockInventorySGA(models.Model):
                 ##if action_done:
                 ##    for stock_inv in inventories:
                 ##        stock_inv.sudo().action_done()
-
-                line_before = "STO line: [Linea %s] [LEN: %s] [%s]\n-------------OK [Codigo: %s] [Cantidades: Odoo: %s, Mecalux: %s] " % (
-                line_number, len(line), line.replace("  ", "").strip(), product_code, odoo_qty, mec_qty)
-
-
 
             except:
                 sga_file_obj.write_log("\n-----------------\n     ERROR:\n     {}\n".format(line), log_name, False)
@@ -351,6 +344,32 @@ class StockInventorySGA(models.Model):
         return inventory
 
     def reg_stock(self, product_id, location_id, company_id, qty_to_reg, mec_qty, force_company = False):
+
+        if not product_id or not location_id or not company_id:
+            return 0.00, False
+
+        ctx = self._context.copy()
+
+        #Menos en Odoo: Si hay en palla negativos se pone a cero
+        if qty_to_reg > 0 :
+            company_id = product_id.company_id
+            inventory_id = self.get_inventory_for(product_id, location_id, company_id)
+            ctx.update({'with_company': company_id.id})
+            new_inv_line = self.with_context(ctx).new_inv_line(product_id, 0.0, inventory_id, mec_qty)
+            new_inv_line.product_qty = new_inv_line.theoretical_qty + qty_to_reg
+            return 0.00, inventory_id.id, qty_to_reg
+
+        #Hay mas en Odoo que mecalux
+        elif qty_to_reg < 0:
+            inventory_id = self.get_inventory_for(product_id, location_id, company_id)
+            ctx.update({'with_company': company_id.id})
+            new_inv_line = self.with_context(ctx).new_inv_line(product_id, 0.0, inventory_id, mec_qty)
+            new_inv_line.product_qty = new_inv_line.theoretical_qty + qty_to_reg
+            return 0.00, inventory_id.id, qty_to_reg
+
+
+
+    def reg_stock1(self, product_id, location_id, company_id, qty_to_reg, mec_qty, force_company = False):
 
         if not product_id or not location_id or not company_id:
             return 0.00, False
