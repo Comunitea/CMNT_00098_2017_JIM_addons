@@ -244,15 +244,11 @@ class StockInventorySGA(models.Model):
                 line_before = "STO linea  %s / %s [LEN: %s] >> OK >> Codigo: %s Cantidades: Odoo: %s, Mecalux: %s " % (
                 line_number, cont, len(line), product_code, odoo_qty, mec_qty)
                 print line_before
-
+                original_qty = qty_to_reg
                 if qty_to_reg != 0:
                     line_count += 1
                     str = "Linea %s (%s) . Ref: %s. QTies: Odoo = %s Mcx = %s"%('%05d'%cont, '%05d'%line_count, '{0: >16}'.format(product_id.default_code), '%010d'%odoo_qty, '%010d'%mec_qty)
                     str_to_write = '{}\n{}'.format(str_to_write, str)
-
-                original_qty = qty_to_reg
-                ## como no hay pallatium nunca fuerzo compañia y solo hago una llamada
-                if qty_to_reg > 0:
                     inserts +=1
                     qty_to_reg, new_inventory, reg_qty = self.reg_stock(product_id,
                                                              location_id, product_company_id,
@@ -261,20 +257,19 @@ class StockInventorySGA(models.Model):
                     if new_inventory:
                         inventories.append(new_inventory)
 
-
-                # PROBLEMA NO SE PUEDE REGULARIZAR
-                if qty_to_reg != 0.00:
-                    print "No se puede regularizar: Linea %s Codigo %s" % (line.replace("  ", "").strip(), product_code)
-                    issue_vals = {
-                          'pending_qty': original_qty - reg_qty_done,
-                          'product_id': product_id.id,
-                          'notes': 'No es posible regularizar',}
-                    self.env['stock.inventory.issue'].create(issue_vals)
-                    str = "Error %s (%s) . Ref: %s. Qties: Mcx = %s No es posible regularizar la cantidad %s" % (
-                        '%05d' % cont, '%05d' % line_count, '{0: >16}'.format(product_code), '%010d' % mec_qty, '%010d' % qty_to_reg)
-                    str_to_write = '{}\n{}'.format(str_to_write, str)
-                    force_write_log = True
-                    continue
+                    # PROBLEMA NO SE PUEDE REGULARIZAR
+                    if qty_to_reg != 0.00:
+                        print "No se puede regularizar: Linea %s Codigo %s" % (line.replace("  ", "").strip(), product_code)
+                        issue_vals = {
+                              'pending_qty': original_qty - reg_qty_done,
+                              'product_id': product_id.id,
+                              'notes': 'No es posible regularizar',}
+                        self.env['stock.inventory.issue'].create(issue_vals)
+                        str = "Error %s (%s) . Ref: %s. Qties: Mcx = %s No es posible regularizar la cantidad %s" % (
+                            '%05d' % cont, '%05d' % line_count, '{0: >16}'.format(product_code), '%010d' % mec_qty, '%010d' % qty_to_reg)
+                        str_to_write = '{}\n{}'.format(str_to_write, str)
+                        force_write_log = True
+                        continue
 
                 ## TODO DE MOMENTO NO HACEMOS EL action_done, pendiente de confirmar que es automatico
                 ##action_done = True if self.env['ir.config_parameter'].get_param('inventary_auto') == u'True' else False
