@@ -150,6 +150,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
 
             self.refresh('qty');
             self.$('.col-qty').select();
+            return result 
         });
     },
 
@@ -253,7 +254,7 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
                     // self.order_model.set('limit_credit', self.ts_model.my_round(partner_obj.credit_limit,2));
                     // self.order_model.set('customer_debt', self.ts_model.my_round(partner_obj.credit,2));
 
-                    self.order_model.set('comercial', partner_obj.user_id ? partner_obj.user_id[1] : "");
+                    self.order_model.set('comercial', partner_obj.user_id ? partner_obj.user_id[1] : (self.ts_model.get('user') ? self.ts_model.get('user').name : ""));
                     var partner_shipp_obj = self.ts_model.db.get_partner_by_id(result.partner_shipping_id);
                     var shipp_addr =self.ts_model.getComplexName(partner_shipp_obj);
                     self.order_model.set('shipp_addr', shipp_addr);

@@ -27,6 +27,8 @@ class StockPicking (models.Model):
 
     def _get_label_data(self):
         res = super(StockPicking, self)._get_label_data()
+        if self.pick_packages <= 0:
+            raise UserError(_('Please set the number of packages.'))
         res['total_bultos'] = self.pick_packages
         res['total_kilos'] = self.pick_weight
         res['peso_bulto'] = self.pick_weight
