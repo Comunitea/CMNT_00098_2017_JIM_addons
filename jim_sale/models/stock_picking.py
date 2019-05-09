@@ -7,6 +7,7 @@ from odoo import api, fields, models, _
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
+    scheduled_order = fields.Boolean('Scheduled Order')
 
     def show_packs_in_pick(self):
         ids = []
@@ -57,4 +58,3 @@ class StockPicking(models.Model):
                 order.message_post(body=message)
 
         return super(StockPicking, self).write(vals)
-

@@ -51,6 +51,8 @@ class SaleOrder(models.Model):
                 'pending': [('readonly', False)],
                 'sale': [('readonly', False)], })
     company_id = fields.Many2one(readonly=True, states={'draft': [('readonly', False)], 'sent': [('readonly', False)]})
+    scheduled_order = fields.Boolean('Scheduled Order')
+
     @api.model
     def create_web(self, vals):
         partner = self.env['res.partner'].browse(vals['partner_id'])
@@ -140,7 +142,10 @@ class SaleOrder(models.Model):
         ctx = self._context.copy()
         ctx.update(bypass_risk=True)
         self2 = self.with_context(ctx)
-        return super(SaleOrder, self2).action_confirm()
+        res =  super(SaleOrder, self2).action_confirm()
+        for order in self:
+            order.picking_ids.write({'scheduled_order': order.scheduled_order})
+        return res
 
     @api.model
     def get_risk_msg(self, order_id):

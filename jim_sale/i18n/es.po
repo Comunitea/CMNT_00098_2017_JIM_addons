@@ -1,14 +1,14 @@
 # Translation of Odoo Server.
 # This file contains the translation of the following modules:
-#   * jim_sale
+#	* jim_sale
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-10-09 17:03+0000\n"
-"PO-Revision-Date: 2017-11-22 09:50+0100\n"
-"Last-Translator: Jesús Ventosinos Mayor <jesus@comunitea.com>\n"
+"POT-Creation-Date: 2019-05-09 10:26+0000\n"
+"PO-Revision-Date: 2019-05-09 10:26+0000\n"
+"Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,10 +23,9 @@ msgid "#Prices"
 msgstr "#Precios"
 
 #. module: jim_sale
-#: model:ir.actions.act_window,name:jim_sale.product_pricelist_item_fixed_price_action
-#: model:ir.ui.menu,name:jim_sale.product_pricelist_item_fixed_price_menu
-msgid "Fixed prices"
-msgstr "Precios fijos"
+#: model:ir.ui.view,arch_db:jim_sale.view_order_form_add_states
+msgid "Actualizar stocks"
+msgstr "Actualizar stocks"
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_account_payment_term_prepayment
@@ -132,6 +131,13 @@ msgid "Cliente"
 msgstr "Cliente"
 
 #. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_account_invoice_report_color_id
+#: model:ir.model.fields,field_description:jim_sale.field_report_sale_line_jim_color_id
+#: model:ir.model.fields,field_description:jim_sale.field_sale_report_color_id
+msgid "Color"
+msgstr "Color"
+
+#. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_report_sale_line_jim_user_id
 #: model:ir.ui.view,arch_db:jim_sale.view_product_line_search
 msgid "Comercial"
@@ -141,6 +147,7 @@ msgstr "Comercial"
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_company_id
 #: model:ir.model.fields,field_description:jim_sale.field_report_sale_line_jim_company_id
 #: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_company_id
+#: model:ir.model.fields,field_description:jim_sale.field_sale_history_company_id
 msgid "Company"
 msgstr "Compañía"
 
@@ -162,6 +169,7 @@ msgstr "Confirmación de cancelación de pedidos con albaranes asociados"
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_apply_global_discount_create_uid
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_create_uid
+#: model:ir.model.fields,field_description:jim_sale.field_sale_history_create_uid
 #: model:ir.model.fields,field_description:jim_sale.field_wzd_sale_order_cancel_create_uid
 msgid "Created by"
 msgstr "Creado por"
@@ -169,6 +177,7 @@ msgstr "Creado por"
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_apply_global_discount_create_date
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_create_date
+#: model:ir.model.fields,field_description:jim_sale.field_sale_history_create_date
 #: model:ir.model.fields,field_description:jim_sale.field_wzd_sale_order_cancel_create_date
 msgid "Created on"
 msgstr "Creado en"
@@ -204,6 +213,18 @@ msgid "Customer Prices"
 msgstr "Precios de cliente"
 
 #. module: jim_sale
+#: code:addons/jim_sale/models/sale.py:212
+#, python-format
+msgid "Customer warning"
+msgstr "Customer warning"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_sale_history_date
+#: model:ir.model.fields,help:jim_sale.field_sale_history_date
+msgid "Date"
+msgstr "Fecha"
+
+#. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_apply_global_discount_discount
 msgid "Discount(%)"
 msgstr "Descuento(%)"
@@ -213,6 +234,7 @@ msgstr "Descuento(%)"
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_display_name
 #: model:ir.model.fields,field_description:jim_sale.field_report_sale_line_jim_display_name
 #: model:ir.model.fields,field_description:jim_sale.field_report_web_product_jim_display_name
+#: model:ir.model.fields,field_description:jim_sale.field_sale_history_display_name
 #: model:ir.model.fields,field_description:jim_sale.field_wzd_sale_order_cancel_display_name
 msgid "Display Name"
 msgstr "Nombre mostrado"
@@ -303,9 +325,28 @@ msgid "Fecha"
 msgstr "Fecha"
 
 #. module: jim_sale
+#: code:addons/jim_sale/models/sale.py:157
+#, python-format
+msgid "Financial risk exceeded.\n"
+""
+msgstr "Financial risk exceeded.\n"
+""
+
+#. module: jim_sale
+#: model:ir.actions.act_window,name:jim_sale.product_pricelist_item_fixed_price_action
+#: model:ir.ui.menu,name:jim_sale.product_pricelist_item_fixed_price_menu
+msgid "Fixed prices"
+msgstr "Precios fijos"
+
+#. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_sale_order_route_id
 msgid "Force Route"
 msgstr "Ruta del pedido"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.view_picking_internal_search_scheduled_order
+msgid "From Scheduled Order"
+msgstr "Desde pedido programación"
 
 #. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.view_customer_price_filter
@@ -323,6 +364,7 @@ msgstr "Hoy"
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_id
 #: model:ir.model.fields,field_description:jim_sale.field_report_sale_line_jim_id
 #: model:ir.model.fields,field_description:jim_sale.field_report_web_product_jim_id
+#: model:ir.model.fields,field_description:jim_sale.field_sale_history_id
 #: model:ir.model.fields,field_description:jim_sale.field_wzd_sale_order_cancel_id
 msgid "ID"
 msgstr "ID"
@@ -331,6 +373,11 @@ msgstr "ID"
 #: model:ir.model.fields,field_description:jim_sale.field_report_stock_forecast_in_qty
 msgid "Incoming qty"
 msgstr "Cantidad entrante"
+
+#. module: jim_sale
+#: model:ir.model,name:jim_sale.model_account_invoice_report
+msgid "Invoices Statistics"
+msgstr "Estadísticas de facturas"
 
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_delivery_carrier_lqdr
@@ -372,6 +419,7 @@ msgstr "Pedido LQDR"
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price___last_update
 #: model:ir.model.fields,field_description:jim_sale.field_report_sale_line_jim___last_update
 #: model:ir.model.fields,field_description:jim_sale.field_report_web_product_jim___last_update
+#: model:ir.model.fields,field_description:jim_sale.field_sale_history___last_update
 #: model:ir.model.fields,field_description:jim_sale.field_wzd_sale_order_cancel___last_update
 msgid "Last Modified on"
 msgstr "Última modificación en"
@@ -379,6 +427,7 @@ msgstr "Última modificación en"
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_apply_global_discount_write_uid
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_write_uid
+#: model:ir.model.fields,field_description:jim_sale.field_sale_history_write_uid
 #: model:ir.model.fields,field_description:jim_sale.field_wzd_sale_order_cancel_write_uid
 msgid "Last Updated by"
 msgstr "Última actualización por"
@@ -386,6 +435,7 @@ msgstr "Última actualización por"
 #. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_apply_global_discount_write_date
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_write_date
+#: model:ir.model.fields,field_description:jim_sale.field_sale_history_write_date
 #: model:ir.model.fields,field_description:jim_sale.field_wzd_sale_order_cancel_write_date
 msgid "Last Updated on"
 msgstr "Última actualización en"
@@ -482,10 +532,10 @@ msgid "Package in tree"
 msgstr "Paquetes en árbol"
 
 #. module: jim_sale
-#: code:addons/jim_sale/models/stock_picking.py:20
+#: code:addons/jim_sale/models/stock.py:21
 #, python-format
 msgid "Packing List"
-msgstr "Lista de paquetes"
+msgstr "Packing List"
 
 #. module: jim_sale
 #: model:ir.model,name:jim_sale.model_res_partner
@@ -546,6 +596,7 @@ msgid "Pricelist"
 msgstr "Tarifa"
 
 #. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.product_pricelist_item_tre_editable
 #: model:ir.ui.view,arch_db:jim_sale.product_pricelist_items
 msgid "Pricelist Items"
 msgstr "Elementos de tarifa"
@@ -559,6 +610,7 @@ msgstr "Listas de precios"
 #. module: jim_sale
 #: model:ir.model,name:jim_sale.model_product_product
 #: model:ir.model.fields,field_description:jim_sale.field_customer_price_product_id
+#: model:ir.model.fields,field_description:jim_sale.field_sale_history_product_id
 msgid "Product"
 msgstr "Producto"
 
@@ -571,6 +623,16 @@ msgstr "Precios variantes"
 #: model:ir.ui.view,arch_db:jim_sale.product_pricelist_items
 msgid "Product Pricing"
 msgstr "Precios de productos"
+
+#. module: jim_sale
+#: model:ir.ui.view,arch_db:jim_sale.sale_history_tree
+msgid "Product Sales"
+msgstr "Product Sales"
+
+#. module: jim_sale
+#: model:ir.actions.act_window,name:jim_sale.sale_history_action
+msgid "Product Sales History"
+msgstr "Product Sales History"
 
 #. module: jim_sale
 #: model:ir.model,name:jim_sale.model_product_template
@@ -599,6 +661,11 @@ msgstr "Proforma"
 #: selection:report.sale.line.jim,state:0
 msgid "Progress LQDR"
 msgstr "LQDR en proceso"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_sale_history_qty
+msgid "Quantity"
+msgstr "Cantidad"
 
 #. module: jim_sale
 #: selection:report.sale.line.jim,state:0
@@ -646,6 +713,11 @@ msgid "Sale lines"
 msgstr "Lineas de venta"
 
 #. module: jim_sale
+#: model:ir.ui.menu,name:jim_sale.sale_history_menu
+msgid "Sales History"
+msgstr "Sales History"
+
+#. module: jim_sale
 #: model:ir.actions.act_window,name:jim_sale.action_order_line_report_jim_01
 msgid "Sales Lines Analysis"
 msgstr "Analisis de líneas de ventas"
@@ -665,6 +737,26 @@ msgstr "Pedido de venta"
 #: model:ir.model,name:jim_sale.model_sale_order_line
 msgid "Sales Order Line"
 msgstr "Línea de pedido de venta"
+
+#. module: jim_sale
+#: model:ir.model,name:jim_sale.model_sale_report
+msgid "Sales Orders Statistics"
+msgstr "Estadísticas pedidos de venta"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_sale_order_scheduled_order
+#: model:ir.model.fields,field_description:jim_sale.field_stock_picking_scheduled_order
+#: model:ir.ui.view,arch_db:jim_sale.sale_order_view_search_inherit_quotation
+#: model:ir.ui.view,arch_db:jim_sale.view_sales_order_filter_custom
+msgid "Scheduled Order"
+msgstr "Pedido programación"
+
+#. module: jim_sale
+#: model:ir.model.fields,field_description:jim_sale.field_account_invoice_report_size_id
+#: model:ir.model.fields,field_description:jim_sale.field_report_sale_line_jim_size_id
+#: model:ir.model.fields,field_description:jim_sale.field_sale_report_size_id
+msgid "Size"
+msgstr "Tamaño"
 
 #. module: jim_sale
 #: model:ir.actions.act_window,name:jim_sale.action_customer_prices_partner
@@ -704,6 +796,11 @@ msgid "Stock Level forecast"
 msgstr "Previsión del nivel de stock"
 
 #. module: jim_sale
+#: model:ir.model,name:jim_sale.model_stock_move
+msgid "Stock Move"
+msgstr "Movimiento de existencias"
+
+#. module: jim_sale
 #: model:ir.model.fields,field_description:jim_sale.field_report_sale_line_jim_price_subtotal
 #: model:ir.ui.view,arch_db:jim_sale.view_order_line_report_tree
 msgid "Subtotal"
@@ -729,6 +826,22 @@ msgstr "Precios plantillas"
 #: model:ir.model.fields,help:jim_sale.field_customer_price_price
 msgid "The price to purchase a product"
 msgstr "El precio al que se compra un producto"
+
+#. module: jim_sale
+#: code:addons/jim_sale/models/sale.py:166
+#, python-format
+msgid "This sale order exceeds the financial risk.\n"
+""
+msgstr "This sale order exceeds the financial risk.\n"
+""
+
+#. module: jim_sale
+#: code:addons/jim_sale/models/sale.py:161
+#, python-format
+msgid "This sale order exceeds the sales orders risk.\n"
+""
+msgstr "This sale order exceeds the sales orders risk.\n"
+""
 
 #. module: jim_sale
 #: model:ir.ui.view,arch_db:jim_sale.view_product_line_search
@@ -825,6 +938,11 @@ msgid "report.stock.forecast"
 msgstr "report.stock.forecast"
 
 #. module: jim_sale
+#: model:ir.model,name:jim_sale.model_sale_history
+msgid "sale.history"
+msgstr "sale.history"
+
+#. module: jim_sale
 #: model:ir.model,name:jim_sale.model_sale_manage_variant
 msgid "sale.manage.variant"
 msgstr "sale.manage.variant"
@@ -834,17 +952,3 @@ msgstr "sale.manage.variant"
 msgid "sale.order.line.template"
 msgstr "sale.order.line.template"
 
-#. module: jim_sale
-#: model:ir.ui.view,arch_db:jim_sale.view_picking_form_jim_packs
-msgid "↳Fill qty done"
-msgstr "↳Rellenar cantidad (Pedida)"
-
-#. module: jim_sale
-#: model:ir.ui.view,arch_db:jim_sale.view_picking_form_jim_packs
-msgid "↳Reset qty done"
-msgstr "↳Resetear cantidad (a 0.00)"
-
-#. module: jim_sale
-#: model:ir.ui.view,arch_db:jim_sale.view_picking_form_jim_packs
-msgid "↳Fill qty done (Reserved qty)"
-msgstr "↳Rellenar cantidad (Para ejecutar)"
