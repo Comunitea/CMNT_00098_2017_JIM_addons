@@ -183,11 +183,19 @@
             </div>
             <div class="col-xs-1 fullheight">
                   <div class="row semiheight">
-                    <div class="col-xs-12 fullheight">
+                    <div class="col-xs-6 fullheight">
                       <div class="fullheight centerinside fullwidth">
                         <div class="centerthis">
-                          <label for="shipp_addr">Neutral Doc:</label>
+                          <label for="shipp_addr">D.N:</label>
                           <input onclick="this.select()" class="checkboxFive" type="checkbox" id='neutral' name="neutral" tabIndex="-1"/>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-xs-6 fullheight">
+                      <div class="fullheight centerinside fullwidth">
+                        <div class="centerthis">
+                          <label for="scheduled_order">P.P:</label>
+                          <input onclick="this.select()" class="checkboxFive" type="checkbox" id='scheduled_order' name="scheduled_order" tabIndex="-1"/>
                         </div>
                       </div>
                     </div>

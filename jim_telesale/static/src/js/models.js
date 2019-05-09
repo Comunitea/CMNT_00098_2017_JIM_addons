@@ -31,6 +31,7 @@ TsModels.TsModel = TsModels.TsModel.extend({
         TsModelSuper.prototype.build_order.call(this, order_obj, order_model, order_lines);
         order_model.set('neutral', order_obj.neutral_document);
         order_model.set('epd', order_obj.early_payment_discount);
+        order_model.set('scheduled_order', order_obj.scheduled_order);
     }
 });
 
@@ -72,6 +73,7 @@ TsModels.Order.prototype.initialize = function(options){
     this.set({
         neutral:  false,
         epd: 0,
+        scheduled_order: false,
     });
     return _initialize2_.call(this, options);
 }
@@ -80,9 +82,11 @@ TsModels.Order.prototype.initialize = function(options){
 var _exportJSON2_ = TsModels.Order.prototype.exportAsJSON;
 TsModels.Order.prototype.exportAsJSON = function(){
     var res = _exportJSON2_.call(this, {});
-    var neutral_document = this.get('neutral')
-    var early_payment_discount = this.get('epd')
-    var to_add = {neutral: neutral_document,epd: early_payment_discount}
+    var to_add = {
+        neutral: this.get('neutral'),
+        epd: this.get('epd'),
+        scheduled_order: this.get('scheduled_order')
+    }
     res = $.extend(res, to_add)
     return res
 }

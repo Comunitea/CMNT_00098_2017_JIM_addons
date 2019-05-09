@@ -77,12 +77,12 @@
                     </group>
                 </xpath>
                 <xpath expr="//field[@name='partner_shipping_id']" position="after">
-
                         <label for="route_id" states="draft,sent,proforma,lqdr,pending"/>
                         <div>
                             <field name="route_id" class="oe_inline" states="draft,sent,proforma,lqdr,pending"/>
                             <button name="apply_route_to_order_lines" string="Applicar a las lineas" type="object" icon="fa-indent" class="oe_inline" states="draft,sent,proforma,lqdr,pending"/>
                         </div>
+                        <field name="scheduled_order"/>
 
                 </xpath>
                 <xpath expr="//field[@name='partner_id']" position="attributes">
@@ -116,9 +116,23 @@
                 <filter name="sales" position="after">
                     <filter string="LQDR order" name="lqdr" domain="[('state','=','lqdr')]"/>
                     <filter string="Pending Approval" name="lqdr" domain="[('state','=','pending')]"/>
+                    <filter string="Scheduled Order" name="scheduled_order" domain="[('scheduled_order','=',True)]"/>
                 </filter>
             </field>
         </record>
+
+
+         <record id="view_sales_order_filter_custom" model="ir.ui.view">
+            <field name="name">view.sales.order.filter</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sale.view_sales_order_filter"/>
+            <field name="arch" type="xml">
+                <filter name="my_sale_orders_filter" position="after">
+                     <filter name="scheduled_order" string="Scheduled Order" domain="[('scheduled_order', '=' , True)]"/>
+                </filter>
+            </field>
+        </record>
+        
 
          <record id="sale.action_quotations" model="ir.actions.act_window">
             <field name="domain">[('state', 'in', ('draft', 'sent', 'cancel'))]</field>
