@@ -36,6 +36,8 @@ class jsUpdatePrices(http.Controller):
             # Realizamos un bucle para descargar las imágenes y guardar los resultados
             for order in purchases:
 
+                print("######################### UPDATING ORDER [" + str(order.name) + "] #########################")
+
                 # Realizamos un bucle para recorrer las lineas del pedido
                 for line in order.order_line:
 
@@ -55,8 +57,10 @@ class jsUpdatePrices(http.Controller):
                         # Si no estamos en modo test
                         if not test_mode:
 
-                            # Actualizamos el precio
                             line.product_id_change()
+                            line.template_line.product_id_change()
+
+                            print("LINE [" + str(line.product_id.name) + "] : " + str(line.price_unit) + " | " + str(line.product_qty * line.price_unit))
 
                         if (line.price_unit != old_price):
 
