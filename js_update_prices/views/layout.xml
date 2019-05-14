@@ -15,7 +15,7 @@
             <div class="oe_structure o_report_layout_background">
                 <div style="padding-top: 50px">
                     <h1 style="margin-top: 0">Script para modificación de precios</h1>
-                    <p>Este script actualiza los precios de los productos en los pedidos de compra.</p>
+                    <p>Este script actualiza los precios de los productos en los pedidos de venta.</p>
 
                     <form method="GET" action="/js_update_prices/run">
                         <div class="checkbox">

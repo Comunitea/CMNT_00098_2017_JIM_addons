@@ -12,7 +12,7 @@ class jsUpdatePrices(http.Controller):
     @http.route([
         '/js_update_prices/run'
     ], type='http', auth='user')
-    def run(self, tmode=0, order='', **kw):
+    def run(self, order='', tmode=0, **kw):
 
         # Solo pueden acceder usuarios con permisos de configuración (Administración/Ajustes)
         if request.env.user.has_group('base.group_system'):
@@ -23,46 +23,49 @@ class jsUpdatePrices(http.Controller):
 
             # Hacemos uso de request para acceder al modelo de los pedidos
             if (order != ''):
-                purchases = request.env['sale.order'].sudo().search([
+                sales = request.env['sale.order'].sudo().search([
                     ('name', '=', order)
                 ], order='id')
             else:
-                purchases = request.env['sale.order'].sudo().search([
+                sales = request.env['sale.order'].sudo().search([
                     ('state', '=', 'draft')
                 ], order='id')
 
             #import web_pdb; web_pdb.set_trace()
 
             # Realizamos un bucle para descargar las imágenes y guardar los resultados
-            for order in purchases:
+            for order in sales:
 
                 print("######################### UPDATING ORDER [" + str(order.name) + "] #########################")
 
                 # Realizamos un bucle para recorrer las lineas del pedido
                 for line in order.order_line:
 
-                    numLines += 1
+                    print("LINE [" + str(line.product_id.name) + "] : " + str(line.price_unit) + " | " + str(line.price_subtotal))
 
-                    # Buscamos los precios de compra
-                    supplier_prices = request.env['product.supplierinfo'].sudo().search([
-                        ('company_id', '=', line.company_id.id),
-                        ('product_id', '=', line.product_id.id)
-                    ], order='sequence')
+                    numLines += 1
 
                     # Si la linea no está facturada actualizamos el importe
                     if (line.state == 'sale' and (line.invoice_status == 'no' or line.invoice_status == 'to invoice')):
 
                         old_price = line.price_unit
+                        price_unit = order.pricelist_id.get_product_price(line.product_id, 1, order.partner_id)
+                        price_subtotal = order.pricelist_id.get_product_price(line.product_id, line.product_qty, order.partner_id)
+                        price_total = price_subtotal
 
-                        # Si no estamos en modo test
-                        if not test_mode:
+                        if (line.price_unit != price_unit):
 
-                            line.product_id_change()
-                            line.template_line.product_id_change()
+                            # Si no estamos en modo test
+                            if not test_mode:
 
-                            print("LINE [" + str(line.product_id.name) + "] : " + str(line.price_unit) + " | " + str(line.product_qty * line.price_unit))
+                                # Actualizamos el precio
+                                line.write({
+                                    'price_unit': price_unit,
+                                    'price_subtotal': price_subtotal,
+                                    'price_total': price_total
+                                })
 
-                        if (line.price_unit != old_price):
+                                #line.template_line.product_id_change()
 
                             # Guardamos la linea en el listado
                             debug_processed.append({
@@ -70,7 +73,7 @@ class jsUpdatePrices(http.Controller):
                                 'name': line.name,
                                 'quantity': line.product_qty,
                                 'old_price': old_price,
-                                'new_price': line.price_unit
+                                'new_price': price_unit
                             })
 
             # Pasamos los resultados a la vista
