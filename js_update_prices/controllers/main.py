@@ -70,7 +70,7 @@ class jsUpdatePrices(http.Controller):
                             # Guardamos la linea en el listado
                             debug_processed.append({
                                 'id': line.id,
-                                'name': line.product_id.name,
+                                'name': line.product_id.name_get()[0][1],
                                 'quantity': line.product_qty,
                                 'old_price': old_price,
                                 'new_price': price_unit
