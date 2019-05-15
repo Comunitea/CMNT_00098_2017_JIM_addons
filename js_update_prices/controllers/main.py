@@ -41,7 +41,10 @@ class jsUpdatePrices(http.Controller):
                 # Realizamos un bucle para recorrer las lineas del pedido
                 for line in order.order_line:
 
-                    print("LINE [" + str(line.product_id.name) + "] : " + str(line.price_unit) + " | " + str(line.price_subtotal))
+                    # A veces el nombre de la línea no coincide con el producto, por eso lo actualizamos
+                    line.name = line.product_id.name_get()[0][1]
+
+                    print("LINE [" + str(line.name) + "] : " + str(line.price_unit) + " | " + str(line.price_subtotal))
 
                     numLines += 1
 
@@ -51,7 +54,6 @@ class jsUpdatePrices(http.Controller):
                         old_price = line.price_unit
                         price_unit = order.pricelist_id.get_product_price(line.product_id, 1, order.partner_id)
                         price_subtotal = order.pricelist_id.get_product_price(line.product_id, line.product_qty, order.partner_id)
-                        price_total = price_subtotal
 
                         if (line.price_unit != price_unit):
 
@@ -62,7 +64,7 @@ class jsUpdatePrices(http.Controller):
                                 line.write({
                                     'price_unit': price_unit,
                                     'price_subtotal': price_subtotal,
-                                    'price_total': price_total
+                                    'price_total': price_subtotal
                                 })
 
                                 #line.template_line.product_id_change()
@@ -70,7 +72,7 @@ class jsUpdatePrices(http.Controller):
                             # Guardamos la linea en el listado
                             debug_processed.append({
                                 'id': line.id,
-                                'name': line.product_id.name_get()[0][1],
+                                'name': line.name,
                                 'quantity': line.product_qty,
                                 'old_price': old_price,
                                 'new_price': price_unit
