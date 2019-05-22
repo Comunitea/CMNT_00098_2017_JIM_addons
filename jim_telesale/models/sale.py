@@ -105,7 +105,7 @@ class SaleOrder(models.Model):
     def get_head_order_vals(self, order):
         res = super(SaleOrder, self).get_head_order_vals(order)
         res.update(neutral_document=order.get('neutral', False))
-        res.update(early_payment_discount=order.get('epd', False))
+        res.update(scheduled_order=order.get('scheduled_order', False))
         return res
 
 

@@ -14,5 +14,27 @@
                 </tree>
             </field>
         </record>
+
+        <record id="view_picking_form_scheduled_order" model="ir.ui.view">
+            <field name="name">stock.picking.form.scheduled_order</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_form"/>
+            <field name="arch" type="xml">
+                <field name="location_dest_id" position="after">
+                     <field name="scheduled_order"/>
+                </field>
+            </field>
+        </record>
+
+        <record id="view_picking_internal_search_scheduled_order" model="ir.ui.view">
+            <field name="name">stock.picking.search.scheduled_order</field>
+            <field name="model">stock.picking</field>
+            <field name="inherit_id" ref="stock.view_picking_internal_search"/>
+            <field name="arch" type="xml">
+                <filter name="done" position="after">
+                    <filter name="scheduled_order" string="From Scheduled Order" domain="[('scheduled_order','=',True)]"/>
+                </filter>
+            </field>
+        </record>
     </data>
 </odoo>

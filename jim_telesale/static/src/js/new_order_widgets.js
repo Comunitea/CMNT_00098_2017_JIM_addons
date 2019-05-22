@@ -209,15 +209,24 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
         var self=this;
         this._super();
         this.$('#neutral').blur(_.bind(this.set_neutral_value, this, 'neutral'))
+        this.$('#scheduled_order').blur(_.bind(this.set_scheduled_order, this, 'scheduled_order'))
         var current_order = this.ts_model.get('selectedOrder')
         var neutral_document = current_order.get('neutral');
         if (neutral_document) {
             this.$('#neutral').prop('checked', true);
         }
+        var scheduled_order = current_order.get('scheduled_order');
+        if (scheduled_order) {
+            this.$('#scheduled_order').prop('checked', true);
+        }
         this.$('#epd').blur(_.bind(this.set_epd_value, this, 'epd'))
         var early_payment_discount = current_order.get('epd');
     },
     set_neutral_value: function(key) {
+        var value = this.$('#' + key).is(':checked');
+        this.order_model.set(key, value);
+    },
+    set_scheduled_order: function(key) {
         var value = this.$('#' + key).is(':checked');
         this.order_model.set(key, value);
     },
@@ -254,7 +263,7 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
                     // self.order_model.set('limit_credit', self.ts_model.my_round(partner_obj.credit_limit,2));
                     // self.order_model.set('customer_debt', self.ts_model.my_round(partner_obj.credit,2));
 
-                    self.order_model.set('comercial', partner_obj.user_id ? partner_obj.user_id[1] : "");
+                    self.order_model.set('comercial', partner_obj.user_id ? partner_obj.user_id[1] : (self.ts_model.get('user') ? self.ts_model.get('user').name : ""));
                     var partner_shipp_obj = self.ts_model.db.get_partner_by_id(result.partner_shipping_id);
                     var shipp_addr =self.ts_model.getComplexName(partner_shipp_obj);
                     self.order_model.set('shipp_addr', shipp_addr);

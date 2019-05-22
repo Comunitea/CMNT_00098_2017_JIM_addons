@@ -16,6 +16,13 @@
                 <field name="attribute_value_ids" position="replace">
                     <field name="attribute_names"/>
                 </field>
+                <field name="price" position="attributes">
+                    <attribute name="invisible">0</attribute>
+                </field>
+                <field name="lst_price" position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </field>
+
             </field>
         </record>
 

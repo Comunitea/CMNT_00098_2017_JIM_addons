@@ -16,6 +16,7 @@ var OrderWidget = NewOrderWidgets.OrderWidget.include({
         var res = this._super();
         res.push('neutral_document')
         res.push('early_payment_discount')
+        res.push('scheduled_order')
         return res
     },
 });

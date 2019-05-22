@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+      <record id="product_search_stock_at_date" model="ir.ui.view">
+            <field name="name">product.search.qty.at.date</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_search_form_view"/>
+            <field name="arch" type="xml">
+                <field name="pricelist_id" position="before">
+                    <field name="at_date" context="{'force_at_date': self}" filter_domain="[]" groups="product.group_sale_pricelist"/>
+
+                </field>
+            </field>
+        </record>
+
+        <record id="view_stock_product_tree_stock_at_date" model="ir.ui.view">
+            <field name="name">product.stock.tree.inherit.stock.at.date</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_product_tree_view"/>
+            <field name="arch" type="xml">
+                <field name="price" position="after">
+                    <field name="at_date" invisible="1"/>
+
+                </field>
+            </field>
+        </record>
+</odoo>

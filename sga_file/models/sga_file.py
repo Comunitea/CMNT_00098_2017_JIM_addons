@@ -239,7 +239,7 @@ class MecaluxFileHeader(models.Model):
             return filename
 
     @api.model
-    def archive_sga_files(self):
+    def archive_sga_files(self, create=False):
         import subprocess
         def create_month_dir(dir, frommonth=u'201801', move=True):
 
@@ -562,11 +562,16 @@ class MecaluxFileHeader(models.Model):
     def sga_process_file_xmlrpc(self):
         return self.process_sga_files()
 
+    def process_sga_files_limited(self, limit):
+        ctx = self._context.copy()
+        ctx.update(sto_limit=limit)
+        return self.with_context(ctx).process_sga_files()
+
     def process_sga_files(self, file_type=False, folder=ODOO_READ_FOLDER):
 
         res_file = False
         global_path = u'%s/%s' %(self.get_global_path(), folder)
-        #self.write_log("Buscando ficheros en >> %s" % global_path)
+        print "Buscando ficheros en >> %s" % global_path
         pool_ids = []
         for path, directories, files in os.walk(global_path, topdown=False):
             for name in files:
@@ -579,6 +584,7 @@ class MecaluxFileHeader(models.Model):
                 if sga_file:
                     str = "\n-------- Importando fichero: {} de tipo {}\n".format(sga_file.name, file_code)
                     self.write_log(str)
+                    print str
                     pool_id = sga_file.import_file_from_mecalux(file_code=file_code)
                 if file_type:
                     pool_ids.append(pool_id)
