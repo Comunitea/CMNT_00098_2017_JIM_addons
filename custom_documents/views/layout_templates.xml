@@ -64,9 +64,8 @@
                     <div class="col-xs-6" style="height: 100px;">
 
                         <strong>Shipping address:</strong>
-                        <div t-if="o.partner_shipping_id.default_contact_person">A/A: <span t-field="o.partner_shipping_id.default_contact_person"/></div>
                         <div t-field="o.partner_shipping_id"
-                            t-options='{"widget": "contact", "fields": ["address", "name", "phone", "mobile", "fax"], "no_marker": True, "phone_icons": True, "min_name": True}'/>
+                            t-options='{"widget": "contact", "fields": ["address", "name", "phone", "mobile", "fax", "default_contact_person"], "no_marker": True, "phone_icons": True, "min_name": True}'/>
                     </div>
                     <div class="col-xs-6" style="height: 100px;">
                          <strong>Billing address:</strong>
@@ -77,9 +76,8 @@
                 <t t-if="o.partner_shipping_id == o.partner_id">
                     <div class="col-xs-6 col-xs-offset-6" style="height: 100px;">
                          <strong>Shipping and Billing address:</strong>
-                        <div t-if="o.partner_shipping_id.default_contact_person">A/A: <span t-field="o.partner_shipping_id.default_contact_person"/></div>
                         <div t-field="o.partner_id"
-                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true, "min_name": True}' />
+                                t-field-options='{"widget": "contact", "fields": ["address", "name", "default_contact_person"], "no_marker": true, "min_name": True}' />
                     </div>
                 </t>
             </div>
@@ -155,14 +153,13 @@
                 <t>
                     <div class="col-xs-6 col-xs-offset-6" style="height: 100px;">
                         <strong>Shipping address:</strong>
-                        <div t-if="o.partner_id.default_contact_person">A/A: <span t-field="o.partner_id.default_contact_person"/></div>
                         <t t-if="o.location_id.usage == 'supplier'">
                             <div t-field="o.sale_id.partner_shipping_id"
-                                    t-field-options='{"widget": "contact", "fields": ["address", "name", "phone", "mobile"], "no_marker": true, "phone_icons": True, "min_name": True, "parent_phone": True}' />
+                                    t-field-options='{"widget": "contact", "fields": ["address", "name", "phone", "mobile", "default_contact_person"], "no_marker": true, "phone_icons": True, "min_name": True, "parent_phone": True}' />
                         </t>
                         <t t-if="o.location_id.usage != 'supplier'">
                             <div t-field="o.partner_id"
-                                    t-field-options='{"widget": "contact", "fields": ["address", "name", "phone", "mobile"], "no_marker": true, "phone_icons": True, "min_name": True, "parent_phone": True}' />
+                                    t-field-options='{"widget": "contact", "fields": ["address", "name", "phone", "mobile", "default_contact_person"], "no_marker": true, "phone_icons": True, "min_name": True, "parent_phone": True}' />
                         </t>
 
                     </div>
