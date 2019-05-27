@@ -32,8 +32,8 @@ class StockPicking (models.Model):
         if self.pick_packages <= 0:
             raise UserError(_('Please set the number of packages.'))
         res['total_bultos'] = self.pick_packages
-        res['total_kilos'] = self.pick_weight
-        res['peso_bulto'] = self.pick_weight
+        res['total_kilos'] = self.pick_weight or 1.0
+        res['peso_bulto'] = self.pick_weight or 1.0
         res['cliente_atencion'] = self.partner_id.default_contact_person and \
             unidecode(self.partner_id.default_contact_person) or \
             unidecode(self.partner_id.name)
