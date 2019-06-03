@@ -11,7 +11,7 @@ class Contact(models.AbstractModel):
 
     @api.model
     def value_to_html(self, value, options):
-        res = super(Contact,self).value_to_html(value, options)
+        res = super(Contact, self).value_to_html(value, options)
         if options.get('min_name', False):
             if not value.exists():
                 return False
@@ -34,6 +34,7 @@ class Contact(models.AbstractModel):
                 'country_id': value.country_id.display_name,
                 'website': value.website,
                 'email': value.email,
+                'default_contact_person': value.default_contact_person,
                 'fields': opf,
                 'object': value,
                 'options': options

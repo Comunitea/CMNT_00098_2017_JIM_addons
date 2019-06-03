@@ -3,11 +3,13 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import fields, models, api, _
 from odoo.exceptions import UserError
-
-import odoo.addons.decimal_precision as dp
-
 import time
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
+try:
+    from unidecode import unidecode
+except (ImportError, IOError) as err:
+    _logger.debug(err)
+
 
 class StockPicking (models.Model):
     _inherit = "stock.picking"
@@ -30,8 +32,11 @@ class StockPicking (models.Model):
         if self.pick_packages <= 0:
             raise UserError(_('Please set the number of packages.'))
         res['total_bultos'] = self.pick_packages
-        res['total_kilos'] = self.pick_weight
-        res['peso_bulto'] = self.pick_weight
+        res['total_kilos'] = self.pick_weight or 1.0
+        res['peso_bulto'] = self.pick_weight or 1.0
+        res['cliente_atencion'] = self.partner_id.default_contact_person and \
+            unidecode(self.partner_id.default_contact_person) or \
+            unidecode(self.partner_id.name)
         return res
 
     @api.multi
@@ -47,6 +52,7 @@ class StockPicking (models.Model):
             DEFAULT_SERVER_DATETIME_FORMAT)
         self_date_context = self.with_context(create_date=create_date)
         return super(StockPicking, self_date_context).do_transfer()
+
 
 class StockLocation(models.Model):
     _inherit = "stock.location"
@@ -82,6 +88,7 @@ class StockQuantPackage(models.Model):
                                    compute="_compute_package_volume",
                                    digits=(10, 6))
 
+
 class StockQuant(models.Model):
 
     _inherit = 'stock.quant'
@@ -94,6 +101,7 @@ class StockQuant(models.Model):
         if self._context.get('create_date', False):
             self.env.cr.execute("update stock_quant set create_date='%s' where id=%s" % (self._context['create_date'], res.id))
         return res
+
 
 class StockMove(models.Model):
 
