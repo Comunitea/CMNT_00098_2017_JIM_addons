@@ -37,6 +37,9 @@ class StockPicking (models.Model):
         res['cliente_atencion'] = self.partner_id.default_contact_person and \
             unidecode(self.partner_id.default_contact_person) or \
             unidecode(self.partner_id.name)
+        if self.neutral_document:
+            res.pop('nombre_remitente')
+            res.pop('direccion_remitente')
         return res
 
     @api.multi
