@@ -24,8 +24,6 @@ class ProductProduct(models.Model):
         year_today = today.year
         date_end = today.strftime("%d-%m-%y")
         date_start = str(year_today) + '-01-01'
-        print date_start
-        print date_end
         company_id = self.env.user.company_id.id
 
         # Query odoo sales from outgoings moves
@@ -96,8 +94,6 @@ class ProductProduct(models.Model):
         self.ensure_one()
         qty = 0
         date_start, date_end = self.get_dates(num_years_ago, stock_months)
-        print date_start
-        print date_end
         company_id = self.env.user.company_id.id
 
         # Query sale hystory
@@ -344,7 +340,6 @@ class ProductProduct(models.Model):
     @api.multi
     def get_purchase_forecast(self):
         for product in self:
-            print product.id
             line_vals = product._get_forecast_line_vals()
             demand = product._get_demand(line_vals)
             purchase = product._get_purchase(demand, line_vals)
