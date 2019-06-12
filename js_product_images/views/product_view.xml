@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Backend CSS -->
+    <template id="js_website_images_assets_backend" inherit_id="web.assets_backend" name="JS Website Images CSS Backend">
+        <xpath expr="." position="inside">
+            <link href="/js_product_images/static/less/backend.less" rel="stylesheet" type="text/less" />
+        </xpath>
+    </template>
+
+    <!-- Backend Product View -->
+    <record id="product_template_form_view" model="ir.ui.view">
+        <field name="name">product.template.product.images.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook[last()]" position="inside">
+                <page string="Images" groups="product.group_product_variant">
+                    <field name="product_image_ids" mode="kanban" context="{'default_name': name, 'default_product_tmpl_id': active_id}">
+                        <kanban string="Product Images">
+                            <field name="image" />
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_global_click">
+                                        <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                        <div class="o_kanban_image">
+                                            <img t-if="record.image.raw_value" t-att-src="'data:image/png;base64,'+record.image.raw_value"/>
+                                        </div>
+                                        <div class="oe_kanban_details">
+                                            <field name="name" />
+                                            <div class="product_image_tags">
+                                                <field name="product_attributes_values" widget="many2many_tags" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Backend Image Add/Edit -->
+    <record id="view_product_image_form" model="ir.ui.view">
+        <field name="name">product.image.form</field>
+        <field name="model">product.image</field>
+        <field name="arch" type="xml">
+            <form string="Product Images">
+                <sheet>
+                    <field name="product_tmpl_id" invisible="1"/>
+                    <field name="image" widget="image" class="oe_avatar" required="True" options="{'size': [160, 120]}"/>
+                    <div class="oe_title">
+                        <label class="oe_edit_only" for="name" string="Image Description (alt text)"/>
+                        <h1><field name="name" placeholder="alt image text" required="True"/></h1>
+                    </div>
+                    <div class="oe_other">
+                        <label class="oe_edit_only" for="product_attributes" string="Attributes Applied" />
+                        <div><field name="product_attributes_values" widget="many2many_tags" options="{ 'no_create_edit':True, 'no_quick_create': True }" /></div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+</odoo>
