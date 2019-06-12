@@ -8,7 +8,7 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 try:
     from unidecode import unidecode
 except (ImportError, IOError) as err:
-    _logger.debug(err)
+    pass
 
 
 class StockPicking (models.Model):
@@ -37,6 +37,12 @@ class StockPicking (models.Model):
         res['cliente_atencion'] = self.partner_id.default_contact_person and \
             unidecode(self.partner_id.default_contact_person) or \
             unidecode(self.partner_id.name)
+        if self.neutral_document:
+            res['nombre_remitente'] = unidecode(self.sale_id.partner_id.name or '')
+            res['direccion_remitente'] = unidecode(self.sale_id.partner_id.street or '')
+            res['codPostal_remitente'] = unidecode(self.sale_id.partner_id.zip or '')
+            res['poblacion_remitente'] = unidecode(self.sale_id.partner_id.city or '')
+            res['tipoVia_remitente'] = 'CL'
         return res
 
     @api.multi
