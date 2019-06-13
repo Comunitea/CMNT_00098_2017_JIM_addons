@@ -65,7 +65,8 @@
 
     <record id="purchase_order_form_variant_mgmt_visible" model="ir.ui.view">
         <field name="model">purchase.order</field>
-        <field name="inherit_id" ref="purchase_order_variant_mgmt.purchase_order_form_variant_mgmt"/>
+        <field name="inherit_id" ref="purchase_order_variant_mgmt.purchase_order_form"/>
+        <!--<field name="inherit_id" ref="purchase_order_variant_mgmt.purchase_order_form_variant_mgmt"/> HAY QUE HACER UN BUILDOUT PARA ESTO-->
         <field name="arch" type="xml">
             <xpath expr="//button[@name='%(purchase_order_variant_mgmt.action_purchase_manage_variant)d']" position="attributes">
                 <attribute name="states">draft,sent,purchase</attribute>

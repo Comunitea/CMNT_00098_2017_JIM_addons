@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- CONFIGURACIÓN DE TIPOS -->
+
+    <record id="js_categorization_types" model="ir.actions.act_window">
+        <field name="name">Tipos de Categorización</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">js_categorization.type</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Pulsa aquí para crear un nuevo tipo
+          </p><p>
+            Los tipos definen que parámetros se aplican al producto
+          </p>
+        </field>
+    </record>
+
+    <!-- CONFIGURACIÓN DE PARÁMETROS -->
+
+    <record id="js_categorization_params_form" model="ir.ui.view">
+        <field name="name">js_categorization.param.form</field>
+        <field name="model">js_categorization.param</field>
+        <field name="arch" type="xml">
+            <form string="parameter">
+                <sheet>
+                    <div class="oe_title" name="title">
+                        <h1>
+                            <field name="name" placeholder="Nombre"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <label for="type_id" string="Tipo"/>
+                            <div>
+                                <field name="type_id"/>
+                            </div>
+                            <label for="value_ids" string="Valores"/>
+                            <div>
+                                <field name="value_ids" widget="many2many_tags"/>
+                            </div>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="js_categorization_params_tree" model="ir.ui.view">
+        <field name="name">js_categorization.param.tree</field>
+        <field name="model">js_categorization.param</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="type_id"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="js_categorization_params" model="ir.actions.act_window">
+        <field name="name">Parámetros de Categorización</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">js_categorization.param</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Pulsa aquí para crear un nuevo parámetro
+          </p><p>
+            Estos parámetros se podrán rellenar después en la ficha del producto
+          </p>
+        </field>
+    </record>
+
+    <!-- CONFIGURACIÓN DE VALORES -->
+
+    <record id="js_categorization_values" model="ir.actions.act_window">
+        <field name="name">Valores de Categorización</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">js_categorization.value</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Pulsa aquí para crear un nuevo valor
+          </p><p>
+            Estos valores se podrán seleccionar después en la ficha del producto
+          </p>
+        </field>
+    </record>
+
+    <!-- ACCIONES DE MENÚ -->
+
+    <menuitem id="menu_js_categorization" name="Categorización" parent="stock.menu_product_in_config_stock" sequence="90" />
+    <!--<menuitem id="menu_js_categorization_settings" name="Configurador" parent="menu_js_categorization" action="js_categorization_settings"/>-->
+    <menuitem id="menu_js_categorization_types" name="Tipos" parent="menu_js_categorization" action="js_categorization_types" sequence="1" />
+    <menuitem id="menu_js_categorization_params" name="Parámetros" parent="menu_js_categorization" action="js_categorization_params" sequence="2" />
+    <menuitem id="menu_js_categorization_values" name="Valores" parent="menu_js_categorization" action="js_categorization_values" sequence="3" />
+
+</odoo>

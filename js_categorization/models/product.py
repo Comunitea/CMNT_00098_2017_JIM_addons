@@ -1,10 +1,18 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 
+GENERAL_CATEGORY_VALUES = [
+    ('draft', 'Draft'),
+    ('confirmed', 'confirmed'),
+    ('done', 'Done')
+]
+
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    general_category = fields.Selection(['GENERAL', 'COMPLEMENTO DEPORTIVO'], 'General Category')
+    # self.env['ir.config_parameter'].get_param('js_categorization.general_categories')
+
+    general_category = fields.Selection(GENERAL_CATEGORY_VALUES, 'General Category')
 
 # class ProductProduct(models.Model):
     # _inherit = "product.product"
