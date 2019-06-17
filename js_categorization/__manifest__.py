@@ -4,16 +4,18 @@
     "version": "10.0.1.0",
     "license": "AGPL-3",
     "author": "Jim Sports",
-    "category": "Generic",
+    "category": "Inventory",
     "website": "https://jimsports.com",
     "depends": [
         "base",
         "product"
     ],
     "data": [
+        "security/res.groups.xml",
         "security/ir.model.access.csv",
-        "views/categorization.xml",
-        "views/product_template.xml"
+        "views/product.xml",
+        "views/categorization.xml"
+
     ],
     "installable": True
 }

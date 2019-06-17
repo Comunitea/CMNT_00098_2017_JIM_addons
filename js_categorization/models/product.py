@@ -1,21 +1,32 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 
-GENERAL_CATEGORY_VALUES = [
-    ('draft', 'Draft'),
-    ('confirmed', 'confirmed'),
-    ('done', 'Done')
-]
-
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    # self.env['ir.config_parameter'].get_param('js_categorization.general_categories')
+    categorization_type = fields.Many2one('js_categorization.type', string="Type", required=False)
 
-    general_category = fields.Selection(GENERAL_CATEGORY_VALUES, 'General Category')
+    @api.multi
+    def new_field_modal(self):
+    	return {
+            'name': 'Categorization Field',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'js_categorization.field',
+            'type': 'ir.actions.act_window',
+            'target': 'new'
+        }
 
-# class ProductProduct(models.Model):
-    # _inherit = "product.product"
+class ProductProduct(models.Model):
+    _inherit = "product.product"
 
-#
-    # discontinued_product = fields.Boolean('Discontinued', default=False, help="If checked, the variant will not be sold in main company")
+    @api.multi
+    def new_field_modal(self):
+    	return {
+            'name': 'Categorization Field',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'js_categorization.field',
+            'type': 'ir.actions.act_window',
+            'target': 'new'
+        }

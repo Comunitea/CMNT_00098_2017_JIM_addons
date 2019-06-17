@@ -20,27 +20,28 @@
 
     <!-- CONFIGURACIÓN DE PARÁMETROS -->
 
-    <record id="js_categorization_params_form" model="ir.ui.view">
-        <field name="name">js_categorization.param.form</field>
-        <field name="model">js_categorization.param</field>
+    <record id="js_categorization_fields_form" model="ir.ui.view">
+        <field name="name">js_categorization.field.form</field>
+        <field name="model">js_categorization.field</field>
         <field name="arch" type="xml">
-            <form string="parameter">
+            <form string="Categorization Field">
                 <sheet>
-                    <div class="oe_title" name="title">
-                        <h1>
-                            <field name="name" placeholder="Nombre"/>
-                        </h1>
-                    </div>
                     <group>
-                        <group>
-                            <label for="type_id" string="Tipo"/>
-                            <div>
-                                <field name="type_id"/>
-                            </div>
-                            <label for="value_ids" string="Valores"/>
-                            <div>
-                                <field name="value_ids" widget="many2many_tags"/>
-                            </div>
+                        <group string="Field Info">
+                            <field name="id" invisible="1"/>
+                            <field name="categorization_type"/>
+                            <field name="name" attrs="{ 'readonly': [('id','!=',False)] }"/>
+                            <field name="field_description"/>
+                            <field name="model_id" options="{'no_open': True, 'no_create': True}"/>
+                            <field name="ttype"/>
+                            <field name="ref_model_id" options="{'no_open': True, 'no_create': True}" attrs="{ 'required': [('ttype','in',['many2one','many2many'])], 'invisible': [('ttype','not in',['many2one','many2many'])] }"/>
+                            <field name="related"/>
+                        </group>
+
+                        <group string="Other Options">
+                            <field name="required"/>
+                            <field name="translate"/>
+                            <field name="copy"/>
                         </group>
                     </group>
                 </sheet>
@@ -48,29 +49,30 @@
         </field>
     </record>
 
-    <record id="js_categorization_params_tree" model="ir.ui.view">
-        <field name="name">js_categorization.param.tree</field>
-        <field name="model">js_categorization.param</field>
+    <record id="js_categorization_fields_tree" model="ir.ui.view">
+        <field name="name">js_categorization.field.tree</field>
+        <field name="model">js_categorization.field</field>
         <field name="arch" type="xml">
             <tree string="parameters">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
-                <field name="type_id"/>
+                <field name="field_description"/>
+                <field name="ttype"/>
+                <field name="categorization_type"/>
             </tree>
         </field>
     </record>
 
-    <record id="js_categorization_params" model="ir.actions.act_window">
-        <field name="name">Parámetros de Categorización</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">js_categorization.param</field>
+    <record id="js_categorization_fields" model="ir.actions.act_window">
+        <field name="name">Categorization Fields</field>
+        <field name="res_model">js_categorization.field</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">
-            Pulsa aquí para crear un nuevo parámetro
+            Pulsa aquí para crear un nuevo campo
           </p><p>
-            Estos parámetros se podrán rellenar después en la ficha del producto
+            También puedes crearlos desde la ficha del producto, en la pestaña "Categorización"
           </p>
         </field>
     </record>
@@ -95,9 +97,8 @@
     <!-- ACCIONES DE MENÚ -->
 
     <menuitem id="menu_js_categorization" name="Categorización" parent="stock.menu_product_in_config_stock" sequence="90" />
-    <!--<menuitem id="menu_js_categorization_settings" name="Configurador" parent="menu_js_categorization" action="js_categorization_settings"/>-->
-    <menuitem id="menu_js_categorization_types" name="Tipos" parent="menu_js_categorization" action="js_categorization_types" sequence="1" />
-    <menuitem id="menu_js_categorization_params" name="Parámetros" parent="menu_js_categorization" action="js_categorization_params" sequence="2" />
+    <menuitem id="menu_js_categorization_fields_tree" name="Campos" parent="menu_js_categorization" action="js_categorization_fields" sequence="1" />
+    <menuitem id="menu_js_categorization_types" name="Tipos" parent="menu_js_categorization" action="js_categorization_types" sequence="2" />
     <menuitem id="menu_js_categorization_values" name="Valores" parent="menu_js_categorization" action="js_categorization_values" sequence="3" />
 
 </odoo>
