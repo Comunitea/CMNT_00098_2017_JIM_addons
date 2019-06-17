@@ -414,9 +414,6 @@ class SaleOrderLine(models.Model):
             })
         return vals
 
-    @api.onchange()
-    def product_uom_change(self):
-        return super(SaleOrderLine, self).product_uom_change()
 
 
 class SaleOrderLineTemplate(models.Model):
