@@ -27,6 +27,13 @@ class StockPicking (models.Model):
     returned_picking_id = fields.Many2one('stock.picking')
     force_date = fields.Datetime('Forzar fecha de entrada')
 
+    def action_generate_carrier_label(self):
+        if self.neutral_document:
+            action = self.check_zipcode(self.sale_id.partner_id)
+            if action:
+                return action
+        return super(StockPicking, self).action_generate_carrier_label()
+
     def _get_label_data(self):
         res = super(StockPicking, self)._get_label_data()
         if self.pick_packages <= 0:
