@@ -8,6 +8,7 @@
     "website": "https://jimsports.com",
     "depends": [
         "base",
+        "stock",
         "product"
     ],
     "data": [
