@@ -9,10 +9,11 @@ class ProductTemplate(models.Model):
     @api.multi
     def new_field_modal(self):
     	return {
-            'name': 'Categorization Field',
+            'name': 'Categrization Field',
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'js_categorization.field',
+            'context': { 'default_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id },
             'type': 'ir.actions.act_window',
             'target': 'new'
         }
@@ -27,6 +28,7 @@ class ProductProduct(models.Model):
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'js_categorization.field',
+            'context': { 'default_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id },
             'type': 'ir.actions.act_window',
             'target': 'new'
         }

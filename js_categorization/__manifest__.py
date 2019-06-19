@@ -14,8 +14,9 @@
         "security/res.groups.xml",
         "security/ir.model.access.csv",
         "views/product.xml",
-        "views/categorization.xml"
-
+        "views/categorization.xml",
+        "data/module_data.xml",
+        "views/assets.xml"
     ],
     "installable": True
 }

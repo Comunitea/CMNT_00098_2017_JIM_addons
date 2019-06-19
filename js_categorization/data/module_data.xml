@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="generic_type" model="js_categorization.type">
+            <field name="name">Genérica</field>
+            <field name="sequence">1</field>
+        </record>
+    </data>
+</odoo>

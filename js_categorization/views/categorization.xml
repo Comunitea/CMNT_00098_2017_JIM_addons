@@ -18,6 +18,17 @@
         </field>
     </record>
 
+    <record id="js_categorization_types_tree" model="ir.ui.view">
+        <field name="name">js_categorization.type.tree</field>
+        <field name="model">js_categorization.type</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
     <!-- CONFIGURACIÓN DE PARÁMETROS -->
 
     <record id="js_categorization_fields_form" model="ir.ui.view">
@@ -30,18 +41,21 @@
                         <group string="Field Info">
                             <field name="id" invisible="1"/>
                             <field name="categorization_type"/>
-                            <field name="name" attrs="{ 'readonly': [('id','!=',False)] }"/>
                             <field name="field_description"/>
-                            <field name="model_id" options="{'no_open': True, 'no_create': True}"/>
-                            <field name="ttype"/>
-                            <field name="ref_model_id" options="{'no_open': True, 'no_create': True}" attrs="{ 'required': [('ttype','in',['many2one','many2many'])], 'invisible': [('ttype','not in',['many2one','many2many'])] }"/>
+                            <field name="name" attrs="{ 'readonly': [('id','!=',False)] }"/>
+                            <field name="model_id" options="{'no_open': True, 'no_create': True}" invisible="context.get('default_model_id', False)"/>
+                            <field name="ttype" attrs="{ 'readonly': [('id','!=',False)] }"/>
+                            <field name="selection_vals" widget="many2many_tags" attrs="{ 'required': [('ttype','in',['many2one', 'many2many'])], 'invisible': [('ttype','not in',['many2one', 'many2many'])] }"/>
                             <field name="related"/>
                         </group>
 
                         <group string="Other Options">
                             <field name="required"/>
                             <field name="translate"/>
+                            <field name="readonly"/>
+                            <field name="index"/>
                             <field name="copy"/>
+                            <field name="store"/>
                         </group>
                     </group>
                 </sheet>
@@ -56,10 +70,24 @@
             <tree string="parameters">
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
+                <field name="model_id"/>
                 <field name="field_description"/>
                 <field name="ttype"/>
                 <field name="categorization_type"/>
             </tree>
+        </field>
+    </record>
+
+    <record id="js_categorization_fields_search" model="ir.ui.view">
+        <field name="name">js_categorization.field.search</field>
+        <field name="model">js_categorization.field</field>
+        <field name="arch" type="xml">
+            <search string="Categorization Field">
+                <field name="name" string="Name" />
+                <field name="field_description" string="Label" />
+                <filter string="Producto" name="product_filter" domain="[('model_id.model','=','product.template')]"/>
+                <filter string="Variante" name="variant_filter" domain="[('model_id.model','=','product.product')]"/>
+            </search>
         </field>
     </record>
 
