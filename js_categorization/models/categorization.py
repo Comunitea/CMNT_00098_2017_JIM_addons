@@ -85,6 +85,7 @@ class CategorizationField(models.Model):
                 return { 'warning': { 'title': _("Warning"), 'message': _("Relation not valid on selected model!") }}
             self.relation = field.comodel_name
             self.readonly = True
+            self.store = False
             self.copy = False
 
     @api.model
@@ -183,16 +184,22 @@ class CategorizationField(models.Model):
 
     @api.multi
     def write(self, values):
-        # If not updating sequence
-        if not (values.get('sequence') and len(values) == 1):
-            # Check restrictions before write
-            self._checkFieldRestrictions(values)
-            # Write model base field
-            self.env['ir.model.fields'].sudo().write(values)
-        # Write categorization field
-        if super(CategorizationField, self).write(values):
-            # Write fileds to XML
-            self._createFieldsXml()
+        try:
+            # If not updating sequence
+            if not (values.get('sequence') and len(values) == 1):
+                # Check restrictions before write
+                self._checkFieldRestrictions(values)
+                # Write model base field
+                self.env['ir.model.fields'].sudo().write(values)
+            # Write categorization field
+            if super(CategorizationField, self).write(values):
+                # Write to database
+                self.env.cr.commit()
+                # Write fileds to XML
+                self._createFieldsXml()
+        except:
+            # Not make changes in db
+            self.env.cr.rollback()
 
     @api.multi
     def unlink(self):
