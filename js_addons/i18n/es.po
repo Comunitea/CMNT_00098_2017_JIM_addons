@@ -1,0 +1,56 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* js_addons
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 11.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-02-14 15:54+0000\n"
+"PO-Revision-Date: 2019-02-14 16:57+0100\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.2.1\n"
+"Last-Translator: \n"
+"Language: es\n"
+
+#. module: js_addons
+#: model:ir.model,name:js_addons.model_res_partner
+msgid "Contact"
+msgstr "Contacto"
+
+#. module: js_addons
+#: model:ir.model.fields,field_description:js_addons.field_product_product_discontinued_product
+#: model:ir.model.fields,field_description:js_addons.field_product_template_discontinued_product
+#: model:ir.ui.view,arch_db:js_addons.js_addons_product_template_search_view
+msgid "Discontinued"
+msgstr "Descatalogado"
+
+#. module: js_addons
+#: model:ir.model.fields,help:js_addons.field_product_template_discontinued_product
+msgid "If checked, the product will not be sold in main company"
+msgstr "Si está marcado el producto no se vende en la compañía principal"
+
+#. module: js_addons
+#: model:ir.model.fields,help:js_addons.field_product_product_discontinued_product
+msgid "If checked, the variant will not be sold in main company"
+msgstr "Si está marcado la variante no se vende en la compañía principal"
+
+#. module: js_addons
+#: model:ir.model,name:js_addons.model_product_product
+msgid "Product"
+msgstr "Variante"
+
+#. module: js_addons
+#: model:ir.model,name:js_addons.model_product_template
+msgid "Product Template"
+msgstr "Producto"
+
+#. module: js_addons
+#: model:ir.model.fields,field_description:js_addons.field_res_partner_group_companies_ids
+#: model:ir.model.fields,field_description:js_addons.field_res_users_group_companies_ids
+msgid "Web Access"
+msgstr "Acceso Web"
