@@ -162,7 +162,7 @@ class CategorizationField(models.Model):
     @api.model
     def create(self, values):
         try:
-            # If is relational field set relation to js_categorization value
+            # If is relational field set relation to js_categorization.value
             if values.get('ttype') in ('many2one', 'many2many'):
                 values.update({'relation': 'js_categorization.value'})
             # Check restrictions before create
