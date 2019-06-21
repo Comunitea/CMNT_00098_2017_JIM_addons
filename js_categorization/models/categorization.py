@@ -48,9 +48,7 @@ class CategorizationField(models.Model):
     sequence = fields.Integer(help="Determine the display order", default=100)
     categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', string='Cat. Type', default=_get_type_default, required=True)
     name = fields.Char(copy=False)
-    field_description = fields.Char(string='Field Label')
     model_id = fields.Many2one(domain=_set_mod_default)
-    ttype = fields.Selection(string='Field Type')
     selection_vals = fields.Many2many('js_categorization.value', string='Values')
     rel_field = fields.Many2one('ir.model.fields', string='Related Field')
 

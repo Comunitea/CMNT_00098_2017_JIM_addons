@@ -41,10 +41,10 @@
                         <group string="Field Info">
                             <field name="id" invisible="1"/>
                             <field name="categorization_type" help="Categorization Template Type"/>
-                            <field name="field_description" help="Field display name"/>
+                            <field name="field_description" string="Field Label" help="Field display name"/>
                             <field name="name" help="Field database name" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                             <field name="model_id" help="Create field for this model" options="{ 'no_open': True, 'no_create': True }" invisible="context.get('default_model_id', False)"/>
-                            <field name="ttype" help="Field data type" attrs="{ 'readonly': [('id', '!=', False)] }"/>
+                            <field name="ttype" string="Field Type" help="Field data type" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                             <field name="selection_vals" widget="many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['many2one', 'many2many'])], 'invisible': [('ttype', 'not in', ['many2one', 'many2many'])] }"/>
                             <field name="related" help="Field value is related to other field. Ex: categ_id.name"/>
                         </group>
@@ -71,8 +71,8 @@
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="model_id"/>
-                <field name="field_description"/>
-                <field name="ttype"/>
+                <field name="field_description" string="Field Label"/>
+                <field name="ttype" string="Field Type"/>
                 <field name="categorization_type"/>
             </tree>
         </field>
