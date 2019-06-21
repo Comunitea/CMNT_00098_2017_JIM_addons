@@ -13,7 +13,7 @@
                     </div>
 
                     <div class="oe_button_box">
-                        <button name="new_field_modal" type="object" class="oe_highlight" string="New Field"/>
+                        <button name="new_field_modal" type="object" class="oe_highlight" string="New Field" groups="js_categorization.group_manage_categorization"/>
                     </div>
 
                     <div id="categorization_fields">
@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="oe_button_box">
-                        <button name="new_field_modal" type="object" class="oe_highlight" string="New Field"/>
+                        <button name="new_field_modal" type="object" class="oe_highlight" string="New Field" groups="js_categorization.group_manage_categorization"/>
                     </div>
 
                     <div id="categorization_fields">
