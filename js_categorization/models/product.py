@@ -16,6 +16,7 @@ class ProductTemplate(models.Model):
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'product.product',
+            'res_id': self.product_variant_id.id,
             'type': 'ir.actions.act_window'
         }
 
@@ -33,6 +34,17 @@ class ProductTemplate(models.Model):
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
+
+    @api.multi
+    def edit_product(self):
+    	return {
+            'name': 'Product Template',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'product.template',
+            'res_id': self.product_tmpl_id.id,
+            'type': 'ir.actions.act_window'
+        }
 
     @api.multi
     def new_field_modal(self):

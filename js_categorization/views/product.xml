@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- PRODUCT TEMPLATE CATEGORIZATION TAB -->
+
     <record id="categorization_product_form_view" model="ir.ui.view">
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_only_form_view"/>
@@ -13,7 +15,7 @@
                     </div>
 
                     <div id="categorization_actions" class="oe_button_box">
-                        <button name="edit_unique_variant" type="object" class="oe_highlight" string="Edit Variant" attrs="{ 'invisible': [('product_variant_count', '&gt;', 1)] }"/>
+                        <button name="edit_unique_variant" type="object" class="btn-info" string="Edit Variant" attrs="{ 'invisible': [('product_variant_count', '&gt;', 1)] }"/>
                         <button name="new_field_modal" type="object" class="oe_highlight" string="New Field" groups="js_categorization.group_manage_categorization"/>
                     </div>
 
@@ -24,6 +26,8 @@
             </xpath>
         </field>
     </record>
+
+    <!-- PRODUCT VARIANT CATEGORIZATION TAB -->
 
     <record id="categorization_variant_form_view" model="ir.ui.view">
         <field name="model">product.product</field>
@@ -37,6 +41,7 @@
                     </div>
 
                     <div id="categorization_actions" class="oe_button_box">
+                        <button name="edit_product" type="object" class="btn-info" string="Edit Product"/>
                         <button name="new_field_modal" type="object" class="oe_highlight" string="New Field" groups="js_categorization.group_manage_categorization"/>
                     </div>
 
@@ -48,6 +53,8 @@
         </field>
     </record>
 
+    <!-- PRODUCT SEARCH -->
+
     <record id="categorization_product_search_by_field" model="ir.ui.view">
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_search_view"/>
@@ -55,6 +62,8 @@
             <xpath expr="//search" position="inside"/>
         </field>
     </record>
+
+    <!-- VARIANT ONLY SEARCH -->
 
     <record id="categorization_variant_search_by_field" model="ir.ui.view">
         <field name="model">product.product</field>
