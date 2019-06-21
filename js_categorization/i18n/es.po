@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-21 08:43+0000\n"
-"PO-Revision-Date: 2019-06-21 10:50+0200\n"
+"POT-Creation-Date: 2019-06-21 09:14+0000\n"
+"PO-Revision-Date: 2019-06-21 11:16+0200\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -29,6 +29,7 @@ msgid "Can not update/delete %s type because is managed by the module!"
 msgstr "No se pudo crear/actualizar la plantilla %s porque está administrada por el módulo!"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_delivery_carrier_categorization_type
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_categorization_type
 #: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_type
 #: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_type
@@ -73,6 +74,11 @@ msgstr "Valores de Categorización"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "Copied"
+msgstr "Copiar"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
 msgid "Create field for this model"
 msgstr "Crear campo para este modelo"
 
@@ -91,13 +97,13 @@ msgid "Created on"
 msgstr "Creada el"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:60
+#: code:addons/js_categorization/models/categorization.py:62
 #, python-format
 msgid "Date"
 msgstr "Fecha"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:61
+#: code:addons/js_categorization/models/categorization.py:63
 #, python-format
 msgid "Decimal"
 msgstr "Decimal"
@@ -116,7 +122,7 @@ msgid "Display Name"
 msgstr "Nombre a mostrar"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:193
+#: code:addons/js_categorization/models/categorization.py:196
 #, python-format
 msgid ""
 "Error creating the field \n"
@@ -126,7 +132,7 @@ msgstr ""
 "%s"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:232
+#: code:addons/js_categorization/models/categorization.py:235
 #, python-format
 msgid ""
 "Error deleting the field \n"
@@ -136,7 +142,7 @@ msgstr ""
 "%s"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:211
+#: code:addons/js_categorization/models/categorization.py:214
 #, python-format
 msgid ""
 "Error updating the field \n"
@@ -194,11 +200,16 @@ msgstr "ID"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "Indexed"
+msgstr "Indexado"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
 msgid "Indexed field for faster searchs"
 msgstr "Campo indexado para búsquedas más rápidas"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:63
+#: code:addons/js_categorization/models/categorization.py:65
 #, python-format
 msgid "Integer"
 msgstr "Entero"
@@ -230,7 +241,7 @@ msgid "Last Updated on"
 msgstr "Actualizada por última vez el"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:59
+#: code:addons/js_categorization/models/categorization.py:61
 #, python-format
 msgid "Long Text"
 msgstr "Texto Largo"
@@ -246,13 +257,13 @@ msgid "Model"
 msgstr "Modelo"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:62
+#: code:addons/js_categorization/models/categorization.py:64
 #, python-format
 msgid "Monetary"
 msgstr "Moneda"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:65
+#: code:addons/js_categorization/models/categorization.py:67
 #, python-format
 msgid "Multiselect"
 msgstr "Multi-selección"
@@ -307,15 +318,25 @@ msgid "Push here to create a new value"
 msgstr "Pulsa aquí para crear un nuevo valor"
 
 #. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "Readonly"
+msgstr "Solo lectura"
+
+#. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_rel_field
 msgid "Related Field"
 msgstr "Campo Relacionado"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:84
+#: code:addons/js_categorization/models/categorization.py:86
 #, python-format
 msgid "Relation not valid on selected model!"
 msgstr "¡La relación no es válida en el modelo seleccionado!"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "Required"
+msgstr "Requerido"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
@@ -323,7 +344,7 @@ msgid "Saved on database"
 msgstr "Guardado en la base de datos"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:64
+#: code:addons/js_categorization/models/categorization.py:66
 #, python-format
 msgid "Select"
 msgstr "Selección"
@@ -335,7 +356,12 @@ msgid "Sequence"
 msgstr "Secuencia"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:58
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "Stored"
+msgstr "Almacenado"
+
+#. module: js_categorization
+#: code:addons/js_categorization/models/categorization.py:60
 #, python-format
 msgid "Text"
 msgstr "Texto"
@@ -357,13 +383,13 @@ msgstr "Estos valores se podrán seleccionar después en los campos de categoriz
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
-msgid "Translate text type fields"
-msgstr "Traducir los campos de tipo texto"
+msgid "Translate"
+msgstr "Traducible"
 
 #. module: js_categorization
-#: model:ir.model.fields,field_description:js_categorization.field_delivery_carrier_categorization_type
-msgid "Type"
-msgstr "Tipo Dato"
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "Translate text type fields"
+msgstr "Traducir los campos de tipo texto"
 
 #. module: js_categorization
 #: sql_constraint:js_categorization.type:0
@@ -402,7 +428,7 @@ msgid "Variant"
 msgstr "Variante"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:84
+#: code:addons/js_categorization/models/categorization.py:86
 #, python-format
 msgid "Warning"
 msgstr "Atención"

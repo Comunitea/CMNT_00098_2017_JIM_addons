@@ -45,10 +45,12 @@ class CategorizationField(models.Model):
     def _get_type_default(self):
         return self.env.ref('js_categorization.generic_type').id
 
-    name = fields.Char(copy=False)
     sequence = fields.Integer(help="Determine the display order", default=100)
     categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', string='Cat. Type', default=_get_type_default, required=True)
+    name = fields.Char(copy=False)
+    field_description = fields.Char(string='Field Label')
     model_id = fields.Many2one(domain=_set_mod_default)
+    ttype = fields.Selection(string='Field Type')
     selection_vals = fields.Many2many('js_categorization.value', string='Values')
     rel_field = fields.Many2one('ir.model.fields', string='Related Field')
 
@@ -152,7 +154,8 @@ class CategorizationField(models.Model):
         # Save XML to database
         categorization_product_view.arch_base = xee.tostring(pdoc, pretty_print=True)
         categorization_variant_view.arch_base = xee.tostring(vdoc, pretty_print=True)
-        categorization_search_view.arch_base = xee.tostring(sdoc, pretty_print=True)
+        categorization_product_search.arch_base = xee.tostring(psea, pretty_print=True)
+        categorization_variant_search.arch_base = xee.tostring(vsea, pretty_print=True)
 
     @api.model
     def _resetXml(self):
