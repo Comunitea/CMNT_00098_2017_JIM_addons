@@ -29,6 +29,23 @@
         </field>
     </record>
 
+    <record id="js_categorization_fields_form" model="ir.ui.view">
+        <field name="name">js_categorization.type.form</field>
+        <field name="model">js_categorization.type</field>
+        <field name="context" type="{ '_restrict_generic': True }">
+        <field name="arch" type="xml">
+            <form string="Categorization Field">
+                <sheet>
+                    <group>
+                        <group string="Type">
+                            <field name="name"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <!-- CONFIGURACIÓN DE PARÁMETROS -->
 
     <record id="js_categorization_fields_form" model="ir.ui.view">

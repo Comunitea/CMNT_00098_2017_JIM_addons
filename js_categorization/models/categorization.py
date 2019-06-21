@@ -20,22 +20,20 @@ class CategorizationType(models.Model):
 
     @api.model
     def _check_restrictions(self):
-        if self.id == self.env.ref('js_categorization.generic_type').id:
+        if self._context.get('_restrict_generic') and self.id == self.env.ref('js_categorization.generic_type').id:
             raise AccessError(_('Can not update/delete %s type because is managed by the module!') % (self.name))
 
     @api.multi
     def write(self, values):
-        for record in self:
-            # Only update sequence in module types
-            if len(values) > 1 or not values.get('sequence'):
-                record._check_restrictions()
+        # Only update sequence in module types
+        if len(values) > 1 or not values.get('sequence'):
+            self._check_restrictions()
         return super(CategorizationType, self).write(values)
 
     @api.multi
     def unlink(self):
-        for record in self:
-            record._check_restrictions()
-            super(CategorizationType, record).unlink()
+        self._check_restrictions()
+        super(CategorizationType, self).unlink()
 
 class CategorizationField(models.Model):
     _name = 'js_categorization.field'
@@ -100,7 +98,6 @@ class CategorizationField(models.Model):
     @api.model
     def _createFieldsXml(self):
         # import web_pdb; web_pdb.set_trace()
-        categorization_generic_type = self.env.ref('js_categorization.generic_type')
         categorization_product_view = self.env.ref('js_categorization.categorization_product_form_view').sudo()
         categorization_variant_view = self.env.ref('js_categorization.categorization_variant_form_view').sudo()
         categorization_product_search = self.env.ref('js_categorization.categorization_product_search_by_field').sudo()
@@ -136,7 +133,7 @@ class CategorizationField(models.Model):
                 pdoc_field_group.set('string', type.name)
                 vdoc_field_group.set('string', type.name)
                 # Put condition to hide field if other type is selected (generic excluded)
-                if (type.id != categorization_generic_type.id):
+                if (type.id != self.env.ref('js_categorization.generic_type').id):
                     pdoc_field_group.set('attrs', "{ 'invisible': [('categorization_type', '!=', %d)] }" % (type.id))
                     vdoc_field_group.set('attrs', "{ 'invisible': [('categorization_type', '!=', %d)] }" % (type.id))
                 # Create fields XML
