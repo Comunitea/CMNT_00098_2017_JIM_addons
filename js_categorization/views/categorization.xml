@@ -4,16 +4,16 @@
     <!-- CONFIGURACIÓN DE TIPOS -->
 
     <record id="js_categorization_types" model="ir.actions.act_window">
-        <field name="name">Tipos de Categorización</field>
+        <field name="name">Categorization Types</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">js_categorization.type</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">
-            Pulsa aquí para crear un nuevo tipo
+            Push here to create a new type
           </p><p>
-            Los tipos definen que parámetros se aplican al producto
+            The types are parameters groups aplied to the product
           </p>
         </field>
     </record>
@@ -40,22 +40,22 @@
                     <group>
                         <group string="Field Info">
                             <field name="id" invisible="1"/>
-                            <field name="categorization_type"/>
-                            <field name="field_description"/>
-                            <field name="name" attrs="{ 'readonly': [('id','!=',False)] }"/>
-                            <field name="model_id" options="{'no_open': True, 'no_create': True}" invisible="context.get('default_model_id', False)"/>
-                            <field name="ttype" attrs="{ 'readonly': [('id','!=',False)] }"/>
-                            <field name="selection_vals" widget="many2many_tags" attrs="{ 'required': [('ttype','in',['many2one', 'many2many'])], 'invisible': [('ttype','not in',['many2one', 'many2many'])] }"/>
-                            <field name="related"/>
+                            <field name="categorization_type" help="Categorization Template Type"/>
+                            <field name="field_description" help="Field display name"/>
+                            <field name="name" help="Field database name" attrs="{ 'readonly': [('id', '!=', False)] }"/>
+                            <field name="model_id" help="Create field for this model" options="{ 'no_open': True, 'no_create': True }" invisible="context.get('default_model_id', False)"/>
+                            <field name="ttype" help="Field data type" attrs="{ 'readonly': [('id', '!=', False)] }"/>
+                            <field name="selection_vals" widget="many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['many2one', 'many2many'])], 'invisible': [('ttype', 'not in', ['many2one', 'many2many'])] }"/>
+                            <field name="related" help="Field value is related to other field. Ex: categ_id.name"/>
                         </group>
 
                         <group string="Other Options">
-                            <field name="required"/>
-                            <field name="translate"/>
-                            <field name="readonly"/>
-                            <field name="index"/>
-                            <field name="copy"/>
-                            <field name="store"/>
+                            <field name="required" help="Field is mandatory"/>
+                            <field name="translate" help="Translate text type fields" attrs="{ 'invisible': [('ttype', 'not in', ['char', 'text'])] }"/>
+                            <field name="readonly" help="Only display value" attrs="{ 'invisible': [('related', '=', False)] }"/>
+                            <field name="index" help="Indexed field for faster searchs"/>
+                            <field name="copy" help="Value copied when model registry is duplicated"/>
+                            <field name="store" help="Saved on database"/>
                         </group>
                     </group>
                 </sheet>
@@ -85,8 +85,8 @@
             <search string="Categorization Field">
                 <field name="name" string="Name" />
                 <field name="field_description" string="Label" />
-                <filter string="Producto" name="product_filter" domain="[('model_id.model','=','product.template')]"/>
-                <filter string="Variante" name="variant_filter" domain="[('model_id.model','=','product.product')]"/>
+                <filter string="Product" name="product_filter" domain="[('model_id.model','=','product.template')]"/>
+                <filter string="Variant" name="variant_filter" domain="[('model_id.model','=','product.product')]"/>
             </search>
         </field>
     </record>
@@ -98,9 +98,9 @@
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">
-            Pulsa aquí para crear un nuevo campo
+            Push here to create a new field
           </p><p>
-            También puedes crearlos desde la ficha del producto, en la pestaña "Categorización"
+            Also can be created from product sheet, on "Categorization" tab
           </p>
         </field>
     </record>
@@ -115,18 +115,18 @@
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">
-            Pulsa aquí para crear un nuevo valor
+            Push here to create a new value
           </p><p>
-            Estos valores se podrán seleccionar después en la ficha del producto
+            This values can be selected later in the product categorization fields
           </p>
         </field>
     </record>
 
     <!-- ACCIONES DE MENÚ -->
 
-    <menuitem id="menu_js_categorization" name="Categorización" parent="stock.menu_product_in_config_stock" sequence="90" />
-    <menuitem id="menu_js_categorization_fields_tree" name="Campos" parent="menu_js_categorization" action="js_categorization_fields" sequence="1" />
-    <menuitem id="menu_js_categorization_types" name="Tipos" parent="menu_js_categorization" action="js_categorization_types" sequence="2" />
-    <menuitem id="menu_js_categorization_values" name="Valores" parent="menu_js_categorization" action="js_categorization_values" sequence="3" />
+    <menuitem id="menu_js_categorization" name="Categorization" parent="stock.menu_product_in_config_stock" sequence="90" />
+    <menuitem id="menu_js_categorization_fields_tree" name="Fields" parent="menu_js_categorization" action="js_categorization_fields" sequence="1" />
+    <menuitem id="menu_js_categorization_types" name="Types" parent="menu_js_categorization" action="js_categorization_types" sequence="2" />
+    <menuitem id="menu_js_categorization_values" name="Values" parent="menu_js_categorization" action="js_categorization_values" sequence="3" />
 
 </odoo>
