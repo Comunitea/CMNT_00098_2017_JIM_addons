@@ -13,6 +13,7 @@
                     </div>
 
                     <div class="oe_button_box">
+                        <button name="edit_unique_variant" type="object" class="oe_highlight" string="Variant" attrs="{ 'invisible': [('product_variant_count', '&gt;', 1)] }"/>
                         <button name="new_field_modal" type="object" class="oe_highlight" string="New Field" groups="js_categorization.group_manage_categorization"/>
                     </div>
 

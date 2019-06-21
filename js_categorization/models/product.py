@@ -10,6 +10,16 @@ class ProductTemplate(models.Model):
     categorization_type = fields.Many2one('js_categorization.type', string="Cat. Type", default=_get_type_default, required=True)
 
     @api.multi
+    def edit_unique_variant(self):
+    	return {
+            'name': 'Product Variant',
+            'view_type': 'form',
+            'view_mode': 'form',
+            'res_model': 'product.product',
+            'type': 'ir.actions.act_window'
+        }
+
+    @api.multi
     def new_field_modal(self):
     	return {
             'name': 'Categrization Field',

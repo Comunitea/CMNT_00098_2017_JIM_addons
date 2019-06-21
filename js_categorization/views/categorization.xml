@@ -46,13 +46,13 @@
                             <field name="model_id" help="Create field for this model" options="{ 'no_open': True, 'no_create': True }" invisible="context.get('default_model_id', False)"/>
                             <field name="ttype" string="Field Type" help="Field data type" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                             <field name="selection_vals" widget="many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['many2one', 'many2many'])], 'invisible': [('ttype', 'not in', ['many2one', 'many2many'])] }"/>
-                            <field name="related" string="Related Field" help="Field value is related to other field. Ex: categ_id.name"/>
+                            <field name="related" string="Related Field" help="Field value is related to other field. Ex: categ_id.name" attrs="{ 'readonly': [('model_id', '=', False)] }"/>
                         </group>
 
                         <group string="Other Options">
                             <field name="required" string="Required" help="Field is mandatory"/>
-                            <field name="translate" string="Translate" help="Translate text type fields" attrs="{ 'invisible': [('ttype', 'not in', ['char', 'text'])] }"/>
-                            <field name="readonly" string="Readonly" help="Only display value" attrs="{ 'invisible': [('related', '=', False)] }"/>
+                            <field name="translate" string="Translate" help="Translate text type fields" attrs="{ 'readonly': [('ttype', 'not in', ['char', 'text'])] }"/>
+                            <field name="readonly" string="Readonly" help="Only display value" attrs="{ 'readonly': [('related', '=', False)] }"/>
                             <field name="index" string="Indexed" help="Indexed field for faster searchs"/>
                             <field name="copy" string="Copied" help="Value copied when model registry is duplicated"/>
                             <field name="store" string="Stored" help="Saved on database"/>

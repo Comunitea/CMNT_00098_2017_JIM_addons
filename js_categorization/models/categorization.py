@@ -13,6 +13,11 @@ class CategorizationType(models.Model):
     name = fields.Char(required=True, translate=False)
     sequence = fields.Integer(help="Determine the display order", default=10)
 
+    @api.onchange('name')
+    def name_capitalize(self):
+        if self.name:
+            self.name = str(self.name).capitalize()
+
     @api.model
     def _check_restrictions(self):
         if self.id == self.env.ref('js_categorization.generic_type').id:
@@ -64,6 +69,11 @@ class CategorizationField(models.Model):
             ('many2one', _('Select')), # Special selection for categorization values
             ('many2many', _('Multiselect')) # Special multi-selection for categorization values
         ]
+
+    @api.onchange('name')
+    def name_to_upper(self):
+        if self.name:
+            self.name = str(self.name).upper()
 
     @api.onchange('field_description')
     def _set_name_from_label(self):
@@ -237,3 +247,8 @@ class CategorizationValue(models.Model):
     _description = "Categorization Values"
     _sql_constraints = [('categorization_value_unique', 'unique(name)', 'Value must be unique in categorization!')]
     name = fields.Char(required=True, translate=True)
+
+    @api.onchange('name')
+    def name_to_lower(self):
+        if self.name:
+            self.name = str(self.name).lower()
