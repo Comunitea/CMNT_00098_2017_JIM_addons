@@ -108,7 +108,7 @@
     <!-- CONFIGURACIÓN DE VALORES -->
 
     <record id="js_categorization_values" model="ir.actions.act_window">
-        <field name="name">Valores de Categorización</field>
+        <field name="name">Categorization Values</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">js_categorization.value</field>
         <field name="view_type">form</field>

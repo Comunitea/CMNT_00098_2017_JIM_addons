@@ -93,22 +93,27 @@ class CategorizationField(models.Model):
         categorization_generic_type = self.env.ref('js_categorization.generic_type')
         categorization_product_view = self.env.ref('js_categorization.categorization_product_form_view').sudo()
         categorization_variant_view = self.env.ref('js_categorization.categorization_variant_form_view').sudo()
-        categorization_search_view = self.env.ref('js_categorization.categorization_search_by_field').sudo()
+        categorization_product_search = self.env.ref('js_categorization.categorization_product_search_by_field').sudo()
+        categorization_variant_search = self.env.ref('js_categorization.categorization_variant_search_by_field').sudo()
         # Parse XML string
         parser = xee.XMLParser(remove_blank_text=True)
         pdoc = xee.fromstring(categorization_product_view.arch_base, parser=parser)
         vdoc = xee.fromstring(categorization_variant_view.arch_base, parser=parser)
-        sdoc = xee.fromstring(categorization_search_view.arch_base, parser=parser)
+        psea = xee.fromstring(categorization_product_search.arch_base, parser=parser)
+        vsea = xee.fromstring(categorization_variant_search.arch_base, parser=parser)
         # Get fields container
         pdoc_categorization_section = pdoc.find('.//div[@id="categorization_fields"]/group')
         vdoc_categorization_section = vdoc.find('.//div[@id="categorization_fields"]/group')
         # Remove all sub-elements (childs)
         pdoc_categorization_section.clear()
         vdoc_categorization_section.clear()
-        sdoc.clear()
+        psea.clear()
+        vsea.clear()
         # Create search view xpath attrs, sdoc have a base xpath
-        sdoc.set('expr', "//search")
-        sdoc.set('position', "inside")
+        psea.set('expr', "//search")
+        psea.set('position', "inside")
+        vsea.set('expr', "//search")
+        vsea.set('position', "inside")
         # Regenerate fields XML for each type
         for type in self.env['js_categorization.type'].search([]):
             # Get fields for this type
@@ -126,7 +131,7 @@ class CategorizationField(models.Model):
                     vdoc_field_group.set('attrs', "{ 'invisible': [('categorization_type', '!=', %d)] }" % (type.id))
                 # Create fields XML
                 for field in fields_for_type:
-                    if field.model_id.model == 'product.template': # If is a product template
+                    if field.model_id.model == 'product.template':
                         doc_field_input = xee.SubElement(pdoc_field_group, 'field')
                     else: # If is a product variant
                         doc_field_input = xee.SubElement(vdoc_field_group, 'field')
@@ -138,7 +143,10 @@ class CategorizationField(models.Model):
                         doc_field_input.set('options', "{'no_open': True, 'no_create': True}")
                         doc_field_input.set('domain', "[('id', 'in', %s)]" % (str(field.selection_vals.ids)))
                     if field.index: # If is indexed field
-                        doc_field_search = xee.SubElement(sdoc, 'field')
+                        if field.model_id.model == 'product.template':
+                            doc_field_search = xee.SubElement(psea, 'field')
+                        else: # If is a product variant
+                            doc_field_search = xee.SubElement(vsea, 'field')
                         doc_field_search.set('name', field.name)
                         doc_field_search.set('string', field.field_description)
         # Save XML to database
@@ -148,13 +156,13 @@ class CategorizationField(models.Model):
 
     @api.model
     def _resetXml(self):
-        for view in ('categorization_search_by_field', 'categorization_product_form_view', 'categorization_variant_form_view'):
+        for view in ('categorization_product_search_by_field', 'categorization_variant_search_by_field', 'categorization_product_form_view', 'categorization_variant_form_view'):
             # Get view object
             categorization_view = self.env.ref('js_categorization.' + view).sudo()
             # Get and parse view XML
             doc = xee.fromstring(categorization_view.arch_base)
             # In search view clear all doc and set xpath
-            if (view == 'categorization_search_by_field'):
+            if (view in ('categorization_product_search_by_field', 'categorization_variant_search_by_field')):
                 doc.clear()
                 doc.set('expr', "//search")
                 doc.set('position', "inside")
