@@ -18,23 +18,6 @@ class CategorizationType(models.Model):
         if self.name:
             self.name = str(self.name).capitalize()
 
-    @api.model
-    def _check_restrictions(self):
-        if self._context.get('_restrict_generic') and self.id == self.env.ref('js_categorization.generic_type').id:
-            raise AccessError(_('Can not update/delete %s type because is managed by the module!') % (self.name))
-
-    @api.multi
-    def write(self, values):
-        # Only update sequence in module types
-        if len(values) > 1 or not values.get('sequence'):
-            self._check_restrictions()
-        return super(CategorizationType, self).write(values)
-
-    @api.multi
-    def unlink(self):
-        self._check_restrictions()
-        super(CategorizationType, self).unlink()
-
 class CategorizationField(models.Model):
     _name = 'js_categorization.field'
     _description = 'Categorization Fields'
@@ -46,7 +29,10 @@ class CategorizationField(models.Model):
         return [('id', 'in', model_ids.ids)]
 
     def _get_type_default(self):
-        return self.env.ref('js_categorization.generic_type').id
+        try:
+            return self.env.ref('js_categorization.generic_type').id
+        except:
+            return None
 
     sequence = fields.Integer(help="Determine the display order", default=100)
     categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', string='Cat. Type', default=_get_type_default, required=True)
@@ -68,10 +54,10 @@ class CategorizationField(models.Model):
             ('many2many', _('Multiselect')) # Special multi-selection for categorization values
         ]
 
-    @api.onchange('name')
+    @api.onchange('field_description')
     def name_to_upper(self):
-        if self.name:
-            self.name = str(self.name).upper()
+        if self.field_description:
+            self.field_description = str(self.field_description).upper()
 
     @api.onchange('field_description')
     def _set_name_from_label(self):
@@ -88,12 +74,17 @@ class CategorizationField(models.Model):
         if self.related:
             try:
                 field = self._related_field()
-            except UserError as e:
-                return { 'warning': { 'title': _("Warning"), 'message': _("Relation not valid on selected model!") }}
-            self.relation = field.comodel_name
-            self.readonly = True
-            self.store = False
-            self.copy = False
+                self.relation = field.comodel_name
+                self.readonly = True
+                self.store = False
+                self.copy = False
+            except:
+                return {
+                    'warning': {
+                        'title': _("Warning"),
+                        'message': _("Relation not valid on selected model!")
+                    }
+                }
 
     @api.model
     def _createFieldsXml(self):

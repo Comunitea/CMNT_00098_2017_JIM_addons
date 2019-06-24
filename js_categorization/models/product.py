@@ -5,7 +5,10 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     def _get_type_default(self):
-        return self.env.ref('js_categorization.generic_type').id
+        try:
+            return self.env.ref('js_categorization.generic_type').id
+        except:
+            return None
 
     categorization_type = fields.Many2one('js_categorization.type', string="Cat. Type", default=_get_type_default, required=True)
 
