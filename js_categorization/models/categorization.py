@@ -111,7 +111,7 @@ class CategorizationField(models.Model):
         categorization_types.insert(0, (False, _('Generic')))
         for type in categorization_types:
             # Get fields for this type
-            fields_for_type = self.env['js_categorization.field'].search([('categorization_type', '=', type[1])])
+            fields_for_type = self.env['js_categorization.field'].search([('categorization_type', '=', type[0])])
             # If have fields
             if len(fields_for_type):
                 # Create fields group

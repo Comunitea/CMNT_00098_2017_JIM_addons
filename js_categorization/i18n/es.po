@@ -214,6 +214,13 @@ msgid "Fields"
 msgstr "Campos"
 
 #. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.categorization_product_form_view
+#: model:ir.ui.view,arch_db:js_categorization.categorization_variant_form_view
+#, python-format
+msgid "Generic"
+msgstr "Genérica"
+
+#. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_id
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_type_id
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_value_id
