@@ -190,43 +190,51 @@ class CategorizationField(models.Model):
 
     @api.multi
     def write(self, values):
-        try:
-            # If not updating sequence
-            if not (values.get('sequence') or len(values) > 1):
+        # Reset XML to make changes
+        self._resetXml()
+        # Loop records
+        for record in self:
+            try:
                 # Write model base field
-                self.env['ir.model.fields'].sudo().write(values)
-            # Write categorization field
-            if super(CategorizationField, self).write(values):
-                # Write to database
-                self.env.cr.commit()
-                # Write fileds to XML
-                self._createFieldsXml()
-        except Exception, e:
-            # Not make changes in db
-            self.env.cr.rollback()
-            raise UserError(_('Error updating the field \n%s') % (e))
+                if not (values.get('sequence') and len(values) == 1):
+                    custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record.name), ('state', '=', 'manual')])
+                    custom_field.ensure_one()
+                    custom_field.write(values)
+                # Write categorization field
+                if super(CategorizationField, record).write(values):
+                    # Write to database
+                    self.env.cr.commit()
+            except Exception, e:
+                # Not make changes in db
+                self.env.cr.rollback()
+                raise UserError(_('Error updating the field \n%s') % (e))
+        # Write fields to XML
+        self._createFieldsXml()
         return True
 
     @api.multi
     def unlink(self):
-        try:
-            # Reset XML before unlink field
-            self._resetXml()
-            # Save name to unlink base field
-            record_name = self.name
-            # Delete categorization field
-            if super(CategorizationField, self).unlink():
-                # Unlink model base field
-                self.env['ir.model.fields'].sudo().search([('name', '=', record_name)]).with_context(_force_unlink=True).unlink()
-                # Write to database
-                self.env.cr.commit()
-                # Write fileds to XML
-                self._createFieldsXml()
-        except Exception, e:
-            # Not make changes in db
-            self.env.cr.rollback()
-            self._createFieldsXml()
-            raise UserError(_('Error deleting the field \n%s') % (e))
+        # Reset XML to make changes
+        self._resetXml()
+        # Loop records
+        for record in self:
+            try:
+                # Save name to unlink base field
+                record_name = record.name
+                # Delete categorization field
+                if super(CategorizationField, record).unlink():
+                    # Unlink model base field
+                    custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record_name), ('state', '=', 'manual')])
+                    custom_field.ensure_one()
+                    custom_field.with_context(_force_unlink=True).unlink()
+                    # Write to database
+                    self.env.cr.commit()
+            except Exception, e:
+                # Not make changes in db
+                self.env.cr.rollback()
+                raise UserError(_('Error deleting the field \n%s') % (e))
+        # Write fields to XML
+        self._createFieldsXml()
         return True
 
 class CategorizationValue(models.Model):
