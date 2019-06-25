@@ -28,14 +28,8 @@ class CategorizationField(models.Model):
         model_ids = self.env['ir.model'].sudo().search([('model', 'in', ['product.template',  'product.product'])])
         return [('id', 'in', model_ids.ids)]
 
-    def _get_type_default(self):
-        try:
-            return self.env.ref('js_categorization.generic_type').id
-        except:
-            return None
-
     sequence = fields.Integer(help="Determine the display order", default=100)
-    categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', string='Cat. Type', default=_get_type_default, required=True)
+    categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', string='Cat. Type', required=False)
     name = fields.Char(copy=False)
     model_id = fields.Many2one(domain=_set_mod_default)
     selection_vals = fields.Many2many('js_categorization.value', string='Values')
@@ -113,20 +107,23 @@ class CategorizationField(models.Model):
         vsea.set('expr', "//search")
         vsea.set('position', "inside")
         # Regenerate fields XML for each type
-        for type in self.env['js_categorization.type'].search([]):
+        categorization_types = [(type.id, type.name) for type in self.env['js_categorization.type'].search([])]
+        categorization_types.insert(0, (False, _('Generic')))
+        for type in categorization_types:
             # Get fields for this type
-            fields_for_type = self.env['js_categorization.field'].search([('categorization_type', '=', type.name)])
+            fields_for_type = self.env['js_categorization.field'].search([('categorization_type', '=', type[1])])
             # If have fields
             if len(fields_for_type):
                 # Create fields group
                 pdoc_field_group = xee.SubElement(pdoc_categorization_section, 'group')
                 vdoc_field_group = xee.SubElement(vdoc_categorization_section, 'group')
-                pdoc_field_group.set('string', type.name)
-                vdoc_field_group.set('string', type.name)
-                # Put condition to hide field if other type is selected (generic excluded)
-                if (type.id != self.env.ref('js_categorization.generic_type').id):
-                    pdoc_field_group.set('attrs', "{ 'invisible': [('categorization_type', '!=', %d)] }" % (type.id))
-                    vdoc_field_group.set('attrs', "{ 'invisible': [('categorization_type', '!=', %d)] }" % (type.id))
+                if type[1]:
+                    pdoc_field_group.set('string', type[1])
+                    vdoc_field_group.set('string', type[1])
+                # Put condition to hide field if type is selected
+                if (type[0] != False):
+                    pdoc_field_group.set('attrs', "{ 'invisible': [('categorization_type', '!=', %d)] }" % (type[0]))
+                    vdoc_field_group.set('attrs', "{ 'invisible': [('categorization_type', '!=', %d)] }" % (type[0]))
                 # Create fields XML
                 for field in fields_for_type:
                     if field.model_id.model == 'product.template':

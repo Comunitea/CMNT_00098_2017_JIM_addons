@@ -4,13 +4,7 @@ from odoo import api, fields, models, _
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    def _get_type_default(self):
-        try:
-            return self.env.ref('js_categorization.generic_type').id
-        except:
-            return None
-
-    categorization_type = fields.Many2one('js_categorization.type', string="Cat. Type", default=_get_type_default, required=True)
+    categorization_type = fields.Many2one('js_categorization.type', string="Cat. Type", required=False)
 
     @api.multi
     def edit_unique_variant(self):
