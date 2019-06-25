@@ -182,17 +182,17 @@ class CategorizationField(models.Model):
                 self.env.cr.commit()
                 # Write fileds to XML
                 self._createFieldsXml()
-                return result
         except Exception, e:
             # Not make changes in db
             self.env.cr.rollback()
             raise UserError(_('Error creating the field \n%s') % (e))
+        return result
 
     @api.multi
     def write(self, values):
         try:
             # If not updating sequence
-            if not (values.get('sequence') and len(values) == 1):
+            if not (values.get('sequence') or len(values) > 1):
                 # Write model base field
                 self.env['ir.model.fields'].sudo().write(values)
             # Write categorization field
@@ -205,6 +205,7 @@ class CategorizationField(models.Model):
             # Not make changes in db
             self.env.cr.rollback()
             raise UserError(_('Error updating the field \n%s') % (e))
+        return True
 
     @api.multi
     def unlink(self):
@@ -226,6 +227,7 @@ class CategorizationField(models.Model):
             self.env.cr.rollback()
             self._createFieldsXml()
             raise UserError(_('Error deleting the field \n%s') % (e))
+        return True
 
 class CategorizationValue(models.Model):
     _name = 'js_categorization.value'
