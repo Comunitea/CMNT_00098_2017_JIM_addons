@@ -49,9 +49,9 @@ class CategorizationField(models.Model):
         ]
 
     @api.onchange('field_description')
-    def name_to_upper(self):
+    def _name_to_upper(self):
         if self.field_description:
-            self.field_description = str(self.field_description).upper()
+            self.field_description = self.field_description.upper()
 
     @api.onchange('field_description')
     def _set_name_from_label(self):
