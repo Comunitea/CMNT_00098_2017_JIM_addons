@@ -542,7 +542,7 @@ class StockPickingSGA(models.Model):
                         'carrier_id': carrier_id,
                         'operator': operator,
                         'date_done': date_done}
-                if carrier.carrier_type == 'SEUR':
+                if carrier.carrier_type == 'seur':
                     vals['seur_service_code'] = carrier.seur_service_code
                     vals['seur_product_code'] = carrier.seur_product_code
                 pick.write(vals)
