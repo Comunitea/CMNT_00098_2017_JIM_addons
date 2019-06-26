@@ -9,7 +9,7 @@ class CategorizationType(models.Model):
     _name = 'js_categorization.type'
     _description = "Categorization Types"
     _sql_constraints = [('categorization_type_unique', 'unique(name)', 'Type must be unique in categorization!')]
-    _order = 'sequence, name, id'
+    _order = 'id, sequence'
     name = fields.Char(required=True, translate=False)
     sequence = fields.Integer(help="Determine the display order", default=10)
 
@@ -22,7 +22,7 @@ class CategorizationField(models.Model):
     _name = 'js_categorization.field'
     _description = 'Categorization Fields'
     _inherit = 'ir.model.fields'
-    _order = 'sequence, field_description, id'
+    _order = 'id, sequence'
 
     def _set_mod_default(self):
         model_ids = self.env['ir.model'].sudo().search([('model', 'in', ['product.template',  'product.product'])])
