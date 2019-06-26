@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- CONFIGURACIÓN DE TIPOS -->
+
+    <record id="js_categorization_types" model="ir.actions.act_window">
+        <field name="name">Categorization Types</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">js_categorization.type</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Push here to create a new type
+          </p><p>
+            The types are parameters groups aplied to the product
+          </p>
+        </field>
+    </record>
+
+    <record id="js_categorization_types_tree" model="ir.ui.view">
+        <field name="name">js_categorization.type.tree</field>
+        <field name="model">js_categorization.type</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="js_categorization_types_form" model="ir.ui.view">
+        <field name="name">js_categorization.type.form</field>
+        <field name="model">js_categorization.type</field>
+        <field name="context">{ '_restrict_generic_type': True }</field>
+        <field name="arch" type="xml">
+            <form string="Categorization Type">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- CONFIGURACIÓN DE PARÁMETROS -->
+
+    <record id="js_categorization_fields_form" model="ir.ui.view">
+        <field name="name">js_categorization.field.form</field>
+        <field name="model">js_categorization.field</field>
+        <field name="arch" type="xml">
+            <form string="Categorization Field">
+                <sheet>
+                    <group>
+                        <group string="Field Info">
+                            <field name="id" invisible="1"/>
+                            <field name="categorization_type" help="Categorization Template Type"/>
+                            <field name="field_description" string="Field Label" help="Field display name"/>
+                            <field name="name" help="Field database name" attrs="{ 'readonly': [('id', '!=', False)] }"/>
+                            <field name="model_id" help="Create field for this model" options="{ 'no_open': True, 'no_create': True }" invisible="context.get('default_model_id', False)"/>
+                            <field name="ttype" string="Field Type" help="Field data type" attrs="{ 'readonly': [('id', '!=', False)] }"/>
+                            <field name="selection_vals" widget="many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['many2one', 'many2many'])], 'invisible': [('ttype', 'not in', ['many2one', 'many2many'])] }"/>
+                            <field name="related" string="Related Field" help="Field value is related to other field. Ex: categ_id.name" attrs="{ 'readonly': [('model_id', '=', False)] }"/>
+                        </group>
+
+                        <group string="Other Options">
+                            <field name="required" string="Required" help="Field is mandatory"/>
+                            <field name="translate" string="Translate" help="Translate text type fields" attrs="{ 'readonly': [('ttype', 'not in', ['char', 'text'])] }"/>
+                            <field name="readonly" string="Readonly" help="Only display value" attrs="{ 'readonly': [('related', '=', False)] }"/>
+                            <field name="index" string="Indexed" help="Indexed field for faster searchs"/>
+                            <field name="copy" string="Copied" help="Value copied when model registry is duplicated"/>
+                            <field name="store" string="Stored" help="Saved on database"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="js_categorization_fields_tree" model="ir.ui.view">
+        <field name="name">js_categorization.field.tree</field>
+        <field name="model">js_categorization.field</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="field_description" string="Field Label"/>
+                <field name="ttype" string="Field Type"/>
+                <field name="categorization_type"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="js_categorization_fields_search" model="ir.ui.view">
+        <field name="name">js_categorization.field.search</field>
+        <field name="model">js_categorization.field</field>
+        <field name="arch" type="xml">
+            <search string="Categorization Field">
+                <field name="name" string="Name" />
+                <field name="field_description" string="Label" />
+                <filter string="Product" name="product_filter" domain="[('model_id.model','=','product.template')]"/>
+                <filter string="Variant" name="variant_filter" domain="[('model_id.model','=','product.product')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="js_categorization_fields" model="ir.actions.act_window">
+        <field name="name">Categorization Fields</field>
+        <field name="res_model">js_categorization.field</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Push here to create a new field
+          </p><p>
+            Also can be created from product sheet, on "Categorization" tab
+          </p>
+        </field>
+    </record>
+
+    <!-- CONFIGURACIÓN DE VALORES -->
+
+    <record id="js_categorization_values" model="ir.actions.act_window">
+        <field name="name">Categorization Values</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">js_categorization.value</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Push here to create a new value
+          </p><p>
+            This values can be selected later in the product categorization fields
+          </p>
+        </field>
+    </record>
+
+    <!-- ACCIONES DE MENÚ -->
+
+    <menuitem id="menu_js_categorization" name="Categorization" parent="stock.menu_product_in_config_stock" sequence="90" />
+    <menuitem id="menu_js_categorization_fields_tree" name="Fields" parent="menu_js_categorization" action="js_categorization_fields" sequence="1" />
+    <menuitem id="menu_js_categorization_types" name="Types" parent="menu_js_categorization" action="js_categorization_types" sequence="2" />
+    <menuitem id="menu_js_categorization_values" name="Values" parent="menu_js_categorization" action="js_categorization_values" sequence="3" />
+
+</odoo>
