@@ -1334,3 +1334,11 @@ msgstr "report.custom_documents.report_picking_grouped_invoice"
 msgid "t-if=\"o.company_id.show_discount\""
 msgstr "t-if=\"o.company_id.show_discount\""
 
+
+#. module: custom_documents
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_ean_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_document
+#: model:ir.ui.view,arch_db:custom_documents.custom_delivery_report_unrated_with_ean_document
+msgid "<strong style=\"margin-left: 5px;\">Tracking ref:</strong>"
+msgstr "<strong style=\"margin-left: 5px;\">Referencia de seguimiento:</strong>"
