@@ -38,9 +38,15 @@ class StockPicking (models.Model):
         res = super(StockPicking, self)._get_label_data()
         if self.pick_packages <= 0:
             raise UserError(_('Please set the number of packages.'))
-        res['total_bultos'] = self.pick_packages
-        res['total_kilos'] = self.pick_weight or 1.0
-        res['peso_bulto'] = self.pick_weight or 1.0
+
+        # Si son varios bultos hay que dividir el peso
+        peso_total = self.pick_weight or 1.00
+        total_bultos = self.pick_packages or 1
+        peso_bulto = round(peso_total / total_bultos, 2)
+
+        res['total_bultos'] = total_bultos
+        res['total_kilos'] = peso_total
+        res['peso_bulto'] = peso_bulto
         res['cliente_atencion'] = self.partner_id.default_contact_person and \
             unidecode(self.partner_id.default_contact_person) or \
             unidecode(self.partner_id.name)
