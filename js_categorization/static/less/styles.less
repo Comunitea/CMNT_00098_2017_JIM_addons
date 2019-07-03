@@ -1,4 +1,52 @@
-/* FIX FORM FIELDS STYLES */
+// Vertical position of table fields
+.o_main .o_notebook table.o_group{
+    td:not(.o_td_label){
+        vertical-align: middle;
+    }
+}
+
+// Custom btn
+.btn-none{
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 0;
+    outline:none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent;
+
+    .o_form_field_percent_pie{
+        font-size: small;
+        margin-bottom: 0;
+
+        .o_pie{
+            width: 42px;
+            height: 42px;
+            margin-left: 0;
+
+            .o_pie_value{
+                width: 34px;
+                height: 34px;
+            }
+        }
+
+        .o_pie[data-value^='100'] .o_pie_value{
+            background-color: #90ff75;
+            font-size: 20px;
+        }
+    }
+}
+
+/* CATEGORIZATION */
+
+#categorization_header{
+    padding: 4px 13px;
+
+    .label{
+        margin-bottom: 2px;
+        font-size: 84%;
+    }
+}
 
 #categorization_actions button{
     margin-left: 10px;
