@@ -32,7 +32,7 @@ class CategorizationField(models.Model):
         return [('id', 'in', model_ids.ids)]
 
     sequence = fields.Integer(default=100)
-    categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', required=False)
+    categorization_type = fields.Many2many('js_categorization.type', ondelete='restrict', required=False)
     name = fields.Char(copy=False)
     model_id = fields.Many2one(domain=_set_mod_filter)
     selection_vals = fields.Many2many('js_categorization.value', string='Values')
