@@ -242,9 +242,3 @@ class CategorizationValue(models.Model):
     _description = "Categorization Values"
     _sql_constraints = [('categorization_value_unique', 'unique(name)', 'Value must be unique in categorization!')]
     name = fields.Char(required=True, translate=True)
-
-    @api.onchange('name')
-    def name_to_lower(self):
-        if self.name:
-            # Lowercase name
-            self.name = self.name.lower()
