@@ -99,9 +99,6 @@
         <field name="name">Products Categorizated</field>
         <field name="model">product.template.categorization</field>
         <field name="arch" type="xml">
-            <header groups="js_categorization.group_manage_categorization">
-                <button name="recalculate_categorization_btn" type="object" class="btn-danger" string="Re-calculate Categorization"/>
-            </header>
             <tree string="products" create="false" edit="false">
                 <field name="product_id"/>
                 <field name="categorization_template"/>
@@ -122,7 +119,27 @@
         </field>
     </record>
 
-    <!-- ACTIONS -->
+    <!-- TREE ACTIONS -->
+
+    <record id="categorization_recalculate" model="ir.actions.server">
+        <field name="name">Re-calculate Categorization Percent</field>
+        <field name="model_id" ref="model_product_template_categorization"/>
+        <field name="state">code</field>
+        <field name="code">
+            for record in records:
+                record.product_id.calculate_categorization_percent()
+        </field>
+    </record>
+
+    <record model="ir.values" id="ir_values_categorization_recalculate_button">
+        <field name="name">Re-calculate Categorization Percent</field>
+        <field name="model">product.template.categorization</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server,' + str(ref('categorization_recalculate'))" />
+        <field name="key">action</field>
+    </record>
+
+    <!-- MENU ACTIONS -->
 
     <record id="categorization_products" model="ir.actions.act_window">
         <field name="name">Products Categorizated</field>
@@ -140,7 +157,7 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <!-- MENU -->
+    <!-- MENU LINKS -->
 
     <menuitem id="menu_js_categorization_products" name="Products" parent="menu_js_categorization" action="categorization_products" sequence="4" />
     <menuitem id="menu_js_categorization_variants" name="Variants" parent="menu_js_categorization" action="categorization_variants" sequence="5" />

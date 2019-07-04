@@ -6,11 +6,6 @@
     "author": "Jim Sports",
     "category": "Inventory",
     "website": "https://jimsports.com",
-    "depends": [
-        "base",
-        "stock",
-        "product"
-    ],
     "data": [
         "security/res.groups.xml",
         "security/ir.model.access.csv",
@@ -18,6 +13,11 @@
         "views/product.xml",
         "views/assets.xml",
         "wizards/select_variant_wizard_view.xml"
+    ],
+    "depends": [
+        "base",
+        "stock",
+        "product"
     ],
     "installable": True
 }

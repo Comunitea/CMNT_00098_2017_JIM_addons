@@ -150,6 +150,7 @@ class CategorizationField(models.Model):
         categorization_variant_view.arch_base = xee.tostring(vdoc, pretty_print=True)
         categorization_product_search.arch_base = xee.tostring(psea, pretty_print=True)
         categorization_variant_search.arch_base = xee.tostring(vsea, pretty_print=True)
+        return True
 
     @api.model
     def _resetXml(self):

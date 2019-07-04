@@ -51,3 +51,21 @@ button.btn ~ button.btn:not(:last-child) {
 div.oe_button_box > button.btn.oe_stat_button > * {
     vertical-align: middle;
 }
+
+/* ################# KANBAN ################# */
+
+.o_kanban_view{
+    & > div[class^='oe_kanban_color']{
+        height: 100%;
+    }
+
+    .o_kanban_record{
+        .o_kanban_primary_left{
+            display: table;
+
+            .btn{
+                margin-bottom: 3px;
+            }
+        }
+    }
+}

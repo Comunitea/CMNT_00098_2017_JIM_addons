@@ -7,14 +7,12 @@ odoo.define('js_categorization.web_kanban_gauge', function (require) {
 
     var JsPercentPie = PercentPie.extend({
         render_value: function(){
-            this._super();
-
+            this._super.apply(this, arguments);
             var value = this.get_value();
-            var $o_pie = this.$el.find('.o_pie');
-            $o_pie.attr('data-value', value);
+            this.$el.find('.o_pie').attr('data-value', value);
 
             if (value == 100){
-                $o_pie.find('span').text(_t('All Filled'));
+                this.$el.find('span').text(_t('All Filled'));
                 this.$pie_value.html('<i class="fa fa-check"></i>');
             }
         }
