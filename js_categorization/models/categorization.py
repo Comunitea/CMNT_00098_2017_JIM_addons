@@ -195,10 +195,10 @@ class CategorizationField(models.Model):
                     custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record.name), ('state', '=', 'manual')])
                     custom_field.ensure_one() # One record expected, if more abort
                     custom_field.write(values)
-                    # Write categorization field
-                    super(CategorizationField, record).write(values)
-                    # Write to database
-                    self.env.cr.commit()
+                # Write categorization field
+                super(CategorizationField, record).write(values)
+                # Write to database
+                self.env.cr.commit()
             except Exception, exception:
                 # Not make changes in db
                 self.env.cr.rollback()
