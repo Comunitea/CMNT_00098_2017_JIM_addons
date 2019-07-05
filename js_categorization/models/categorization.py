@@ -25,7 +25,13 @@ class CategorizationField(models.Model):
         # Set domain to this ids
         return [('id', 'in', model_ids.ids)]
 
-    sequence = fields.Integer(default=100)
+    def _set_next_sequence(self):
+        # Get higher sequence number
+        higher_sequence = self.search([], limit=1, order='sequence DESC').sequence
+        # Return next number or 1
+        return higher_sequence + 1 if higher_sequence else 1
+
+    sequence = fields.Integer(default=_set_next_sequence)
     categorization_type = fields.Many2many('js_categorization.type', ondelete='restrict', required=False)
     name = fields.Char(copy=False)
     model_id = fields.Many2one(domain=_set_mod_filter)
