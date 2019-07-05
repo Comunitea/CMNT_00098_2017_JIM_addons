@@ -27,7 +27,7 @@
                     <field name="product_id" readonly="1" class="label label-default" options="{ 'no_open': True }"/>
                 </header>
                 <sheet>
-                    <div class="pull-left">
+                    <div id="template_selection_wrapper">
                         <label for="categorization_template"/>
                         <field name="categorization_template" options="{'no_open': True, 'no_create': True}"/>
                     </div>
@@ -60,7 +60,9 @@
                     <field name="variant_id" readonly="1" class="label label-default" options="{ 'no_open': True }"/>
                 </header>
                 <sheet>
-                    <field name="categorization_template" invisible="1"/>
+                    <div id="template_selection_wrapper">
+                        <field name="categorization_template" invisible="1"/>
+                    </div>
 
                     <div id="categorization_actions" class="oe_button_box" invisible="not context.get('default_variant_id')">
                         <button name="edit_template" type="object" class="btn-warning" string="Product Template" attrs="{ 'invisible': [('variant_id', '=', False)] }"/>

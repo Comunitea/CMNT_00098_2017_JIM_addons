@@ -48,35 +48,47 @@
     }
 }
 
+#template_selection_wrapper{
+    float: left;
+    margin-left: 0.5%;
+    margin-top: 0.5%;
+}
+
 #categorization_actions button{
     margin-left: 10px;
 }
 
 #categorization_fields{
-    tbody td{
-        vertical-align: middle;
-        border-bottom: 1px solid #DDD;
-        padding: 4px !important;
+    table.o_group{
+        width: 49%;
+        margin-right: 0.5%;
+        margin-left: 0.5%;
 
-        label{
-            font-variant: all-small-caps;
+        tbody td{
             vertical-align: middle;
-            margin-bottom: 4px;
-            line-height: 1em;
+            border-bottom: 1px solid #DDD;
+            padding: 4px !important;
+
+            label{
+                font-variant: all-small-caps;
+                vertical-align: middle;
+                margin-bottom: 4px;
+                line-height: 1em;
+            }
+
+            .o_form_field{
+                margin-bottom: 0 !important;
+            }
+
+            .o_horizontal_separator{
+                margin-bottom: 15px;
+            }
         }
 
-        .o_form_field{
-            margin-bottom: 0 !important;
+        span.o_form_field{
+            margin-bottom: 0;
+            line-height: normal;
         }
-
-        .o_horizontal_separator{
-            margin-bottom: 15px;
-        }
-    }
-
-    span.o_form_field{
-        margin-bottom: 0;
-        line-height: normal;
     }
 }
 
@@ -91,7 +103,7 @@
         .o_form_field_many2one{
             border: 1px solid #ccc;
             border-radius: 4px;
-            padding: 0 2px;
+            padding: 0 4px 0 0;
             color: #1f1f1f;
 
             & > .o_form_input_dropdown > .o_form_input {
