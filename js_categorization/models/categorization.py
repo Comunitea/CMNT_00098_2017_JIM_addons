@@ -17,7 +17,7 @@ class CategorizationField(models.Model):
     _name = 'js_categorization.field'
     _description = 'Categorization Fields'
     _inherit = 'ir.model.fields'
-    _order = 'id, sequence'
+    _order = 'sequence, id'
 
     def _set_mod_filter(self):
         # Get model ids for fields
@@ -65,8 +65,7 @@ class CategorizationField(models.Model):
                 # Set relation
                 field = self._related_field()
                 self.relation = field.comodel_name
-                # Set defaults
-                self.translate = False
+                self.translate = field.translate
                 self.readonly = True
                 self.store = False
                 self.copy = False
