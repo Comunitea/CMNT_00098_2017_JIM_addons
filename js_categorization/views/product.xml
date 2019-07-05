@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
+<odoo noupdate="1">
 
     <!-- PRODUCT FORM BUTTON -->
 
@@ -19,6 +19,7 @@
     <!-- PRODUCTS CATEGORIZATION FORM -->
 
     <record id="categorization_product_form_view" model="ir.ui.view">
+        <field name="name">Product Categorization</field>
         <field name="model">product.template.categorization</field>
         <field name="arch" type="xml">
             <form string="Categorization" create="false">
@@ -51,6 +52,7 @@
     <!-- VARIANTS CATEGORIZATION FORM -->
 
     <record id="categorization_variant_form_view" model="ir.ui.view">
+        <field name="name">Variant Categorization</field>
         <field name="model">product.product.categorization</field>
         <field name="arch" type="xml">
             <form string="Categorization" create="false">

@@ -20,7 +20,7 @@ class ProductTemplate(models.Model):
             variants_categorization = self.env['product.product.categorization'].search([('variant_id', 'in', record.product_variant_ids._ids)])
             # Loop categorization fields
             for field in categorization_fields:
-                # If field have type, and categorization_type is distinct of product template categorization type
+                # If field not have type, and categorization_type is distinct of product template categorization type
                 if not field.categorization_type or field.categorization_type == product_categorization.categorization_template:
                     # If field is for product
                     if field.model_id.model == 'product.template.categorization':
@@ -145,9 +145,9 @@ class ProductCategorization(models.Model):
                     if variants_categorization:
                         super(VariantCategorization, variants_categorization).write({ field.name: False })
         # Save and go to variant
-        if super(ProductCategorization, self).write(values):
-            self.product_id.calculate_categorization_percent()
-            return self.with_context(default_product_id=self.product_id.id).edit_variant()
+        super(ProductCategorization, self).write(values)
+        self.product_id.calculate_categorization_percent()
+        return self.with_context(default_product_id=self.product_id.id).edit_variant()
 
 class VariantCategorization(models.Model):
     _name = 'product.product.categorization'

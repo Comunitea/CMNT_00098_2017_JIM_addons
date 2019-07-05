@@ -79,3 +79,25 @@
         line-height: normal;
     }
 }
+
+// Unificar la vista de los campos
+
+.o_form_view.o_form_editable{
+    #categorization_fields{
+        .o_form_field_many2one{
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 2px 4px;
+            color: #1f1f1f;
+
+            & > .o_form_input_dropdown > .o_form_input {
+                border-style: none;
+            }
+        }
+
+        .o_form_field_many2manytags > .o_form_field_many2one{
+            border-style: none;
+            padding: 0;
+        }
+    }
+}

@@ -6,16 +6,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-07-04 10:48+0000\n"
-"PO-Revision-Date: 2019-07-04 12:49+0200\n"
-"Last-Translator: <>\n"
+"POT-Creation-Date: 2019-07-05 07:11+0000\n"
+"PO-Revision-Date: 2019-07-05 09:21+0200\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: \n"
-"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Poedit 2.2.3\n"
+"Last-Translator: \n"
+"Language: es\n"
 
 #. module: js_categorization
 #: model:ir.actions.act_window,help:js_categorization.js_categorization_fields
@@ -113,13 +113,13 @@ msgid "Created on"
 msgstr "Creado en"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:46
+#: code:addons/js_categorization/models/categorization.py:40
 #, python-format
 msgid "Date"
 msgstr "Fecha"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:47
+#: code:addons/js_categorization/models/categorization.py:41
 #, python-format
 msgid "Decimal"
 msgstr "Decimal"
@@ -197,7 +197,7 @@ msgid "Filled fields"
 msgstr "Valores asignados"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:114
+#: code:addons/js_categorization/models/categorization.py:109
 #, python-format
 msgid "Generic"
 msgstr "Genérica"
@@ -223,7 +223,7 @@ msgid "Indexed field for faster searchs"
 msgstr "Campo indexado para búsquedas más rápidas"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:49
+#: code:addons/js_categorization/models/categorization.py:43
 #, python-format
 msgid "Integer"
 msgstr "Entero"
@@ -264,7 +264,7 @@ msgid "Last Updated on"
 msgstr "Última actualización en"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:45
+#: code:addons/js_categorization/models/categorization.py:39
 #, python-format
 msgid "Long Text"
 msgstr "Texto Largo"
@@ -285,13 +285,13 @@ msgid "Models"
 msgstr "Modelos"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:48
+#: code:addons/js_categorization/models/categorization.py:42
 #, python-format
 msgid "Monetary"
 msgstr "Moneda"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:51
+#: code:addons/js_categorization/models/categorization.py:45
 #, python-format
 msgid "Multiselect"
 msgstr "Multi-selección"
@@ -333,7 +333,7 @@ msgid "Product Categorization"
 msgstr "Categorización de Producto"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:106
+#: code:addons/js_categorization/models/categorization.py:101
 #, python-format
 msgid "Product Categorization Fields"
 msgstr "Campos de Categorización (Producto)"
@@ -406,7 +406,7 @@ msgid "Related Variant"
 msgstr "Variante Relacionada"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:82
+#: code:addons/js_categorization/models/categorization.py:77
 #, python-format
 msgid "Relation not valid on selected model!"
 msgstr "¡La relación no es válida en el modelo seleccionado!"
@@ -428,7 +428,7 @@ msgid "Saved on database"
 msgstr "Guardado en la base de datos"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:50
+#: code:addons/js_categorization/models/categorization.py:44
 #, python-format
 msgid "Select"
 msgstr "Selección"
@@ -461,7 +461,7 @@ msgid "Template"
 msgstr "Plantilla"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:44
+#: code:addons/js_categorization/models/categorization.py:38
 #, python-format
 msgid "Text"
 msgstr "Texto"
@@ -533,7 +533,7 @@ msgid "Variant Categorization"
 msgstr "Categorización de Variante"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:110
+#: code:addons/js_categorization/models/categorization.py:105
 #, python-format
 msgid "Variant Categorization Fields"
 msgstr "Campos de Categorización (Variante)"
@@ -564,15 +564,10 @@ msgid "View Variant"
 msgstr "Ver Variante"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:81
+#: code:addons/js_categorization/models/categorization.py:76
 #, python-format
 msgid "Warning"
 msgstr "Atención"
-
-#. module: js_categorization
-#: model:ir.model,name:js_categorization.model_gotoproduct_wizard
-msgid "gotoproduct.wizard"
-msgstr "gotoproduct.wizard"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_tree

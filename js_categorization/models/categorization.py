@@ -13,12 +13,6 @@ class CategorizationType(models.Model):
     name = fields.Char(required=True, translate=False)
     sequence = fields.Integer(help="Determine the display order", default=10)
 
-    @api.onchange('name')
-    def name_capitalize(self):
-        if self.name:
-            # Capitalize name
-            self.name = self.name.capitalize()
-
 class CategorizationField(models.Model):
     _name = 'js_categorization.field'
     _description = 'Categorization Fields'
@@ -72,6 +66,7 @@ class CategorizationField(models.Model):
                 field = self._related_field()
                 self.relation = field.comodel_name
                 # Set defaults
+                self.translate = False
                 self.readonly = True
                 self.store = False
                 self.copy = False
@@ -119,7 +114,7 @@ class CategorizationField(models.Model):
                 # Create fields group
                 pdoc_field_group = xee.SubElement(pdoc_categorization_section, 'group')
                 vdoc_field_group = xee.SubElement(vdoc_categorization_section, 'group')
-                # Put condition to hide field if type is selected
+                # Put condition to hide field if other type is selected
                 if type[0]:
                     pdoc_field_group.set('attrs', "{ 'invisible': [('categorization_template', '!=', %s)] }" % (type[0]))
                     vdoc_field_group.set('attrs', "{ 'invisible': [('categorization_template', '!=', %s)] }" % (type[0]))
@@ -200,8 +195,8 @@ class CategorizationField(models.Model):
                     custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record.name), ('state', '=', 'manual')])
                     custom_field.ensure_one() # One record expected, if more abort
                     custom_field.write(values)
-                # Write categorization field
-                if super(CategorizationField, record).write(values):
+                    # Write categorization field
+                    super(CategorizationField, record).write(values)
                     # Write to database
                     self.env.cr.commit()
             except Exception, exception:
@@ -222,13 +217,13 @@ class CategorizationField(models.Model):
                 # Save name to unlink base field
                 record_name = record.name
                 # Delete categorization field
-                if super(CategorizationField, record).unlink():
-                    # Unlink model base field
-                    custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record_name), ('state', '=', 'manual')])
-                    custom_field.ensure_one() # One record expected, if more abort
-                    custom_field.with_context(_force_unlink=True).unlink()
-                    # Write to database
-                    self.env.cr.commit()
+                super(CategorizationField, record).unlink()
+                # Unlink model base field
+                custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record_name), ('state', '=', 'manual')])
+                custom_field.ensure_one() # One record expected, if more abort
+                custom_field.with_context(_force_unlink=True).unlink()
+                # Write to database
+                self.env.cr.commit()
             except Exception, exception:
                 # Not make changes in db
                 self.env.cr.rollback()
