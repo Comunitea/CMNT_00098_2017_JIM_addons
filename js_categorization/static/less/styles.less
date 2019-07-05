@@ -61,7 +61,7 @@
         label{
             font-variant: all-small-caps;
             vertical-align: middle;
-            margin-bottom: 2px;
+            margin-bottom: 4px;
             line-height: 1em;
         }
 
@@ -84,10 +84,14 @@
 
 .o_form_view.o_form_editable{
     #categorization_fields{
+        .o_form_input, .o_form_textarea{
+            padding: 4px 8px;
+        }
+
         .o_form_field_many2one{
             border: 1px solid #ccc;
             border-radius: 4px;
-            padding: 2px 4px;
+            padding: 0 2px;
             color: #1f1f1f;
 
             & > .o_form_input_dropdown > .o_form_input {
@@ -95,9 +99,13 @@
             }
         }
 
-        .o_form_field_many2manytags > .o_form_field_many2one{
-            border-style: none;
-            padding: 0;
+        .o_form_field_many2manytags{
+            padding: 0 4px;
+
+            & > .o_form_field_many2one{
+                border-style: none;
+                padding: 0;
+            }
         }
     }
 }
