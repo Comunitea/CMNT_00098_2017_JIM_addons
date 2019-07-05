@@ -102,8 +102,8 @@ class ProductCategorization(models.Model):
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'js_categorization.field',
-            'context': { 'default_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id },
             'type': 'ir.actions.act_window',
+            'context': { 'default_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id },
             'target': 'new'
         }
 
@@ -176,8 +176,8 @@ class VariantCategorization(models.Model):
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'js_categorization.field',
-            'context': { 'default_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id },
             'type': 'ir.actions.act_window',
+            'context': { 'default_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id },
             'target': 'new'
         }
 
