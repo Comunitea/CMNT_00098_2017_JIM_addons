@@ -65,7 +65,7 @@
                             <field name="model_id" help="Create field for this model" options="{ 'no_open': True, 'no_create': True }" invisible="context.get('default_model_id', False)" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                             <field name="ttype" string="Field Type" help="Field data type"/>
                             <field name="selection_vals" widget="many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['many2one', 'many2many'])], 'invisible': [('ttype', 'not in', ['many2one', 'many2many'])] }"/>
-                            <field name="related" string="Related Field" help="Field value is related to other field. Ex: product_id.xxx" attrs="{ 'readonly': [('id', '!=', False)] }"/>
+                            <field name="related" string="Related Field" help="Field value is related to other field" placeholder="product_id.xxx" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                         </group>
 
                         <group string="Other Options">
