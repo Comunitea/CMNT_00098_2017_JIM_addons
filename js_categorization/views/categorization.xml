@@ -57,7 +57,7 @@
                             <field name="id" invisible="1"/>
                             <field name="domain" invisible="1"/>
                             <field name="model_id" invisible="1"/>
-                            <field name="categorization_type" widget="many2many_tags" help="Categorization Template Type"/>
+                            <field name="categorization_type" help="Categorization Template Type"/>
                             <field name="field_description" string="Field Label" help="Field display name" default_focus="1"/>
                             <field name="name" help="Field database name" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                             <field name="model_id" help="Create field for this model" options="{ 'no_open': True, 'no_create': True }" invisible="context.get('default_model_id', False)" attrs="{ 'readonly': [('id', '!=', False)] }"/>

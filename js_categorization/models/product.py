@@ -21,7 +21,7 @@ class ProductTemplate(models.Model):
             # Loop categorization fields
             for field in categorization_fields:
                 # If field not have type, and categorization_type is distinct of product template categorization type
-                if not field.categorization_type or field.categorization_type == product_categorization.categorization_template:
+                if not field.categorization_type or product_categorization.categorization_template.id == field.categorization_type.id:
                     # If field is for product
                     if field.model_id.model == 'product.template.categorization':
                         custom_fields += 1 # Add field to the counter
@@ -153,7 +153,7 @@ class ProductCategorization(models.Model):
             product_categorization = self.env['product.template.categorization'].search([('product_id', '=', self.product_id.id)])
             variants_categorization = self.env['product.product.categorization'].search([('product_id', 'in', self.product_id.product_variant_ids._ids)])
             for field in categorization_fields:
-                if field.categorization_type and values.get('categorization_template', self.categorization_template.id) not in field.categorization_type:
+                if field.categorization_type and values.get('categorization_template', self.categorization_template.id) != field.categorization_type.id:
                     if product_categorization:
                         super(ProductCategorization, product_categorization).write({ field.name: False })
                     if variants_categorization:

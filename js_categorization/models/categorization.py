@@ -33,7 +33,7 @@ class CategorizationField(models.Model):
         return higher_sequence + 1 if higher_sequence else 1
 
     sequence = fields.Integer(default=_set_next_sequence)
-    categorization_type = fields.Many2many('js_categorization.type', ondelete='restrict', required=False)
+    categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', required=False)
     name = fields.Char(copy=False)
     model_id = fields.Many2one(domain=_set_mod_filter)
     selection_vals = fields.Many2many('js_categorization.value', string='Values')
@@ -145,8 +145,8 @@ class CategorizationField(models.Model):
                 vdoc_field_group = xee.SubElement(vdoc_categorization_section, 'group')
                 # Put condition to hide field if other type is selected
                 if type[0]:
-                    pdoc_field_group.set('attrs', "{ 'invisible': [('categorization_template', '!=', %s)] }" % (type[0]))
-                    vdoc_field_group.set('attrs', "{ 'invisible': [('categorization_template', '!=', %s)] }" % (type[0]))
+                    pdoc_field_group.set('attrs', "{ 'invisible': [('categorization_template', '!=', %s)] }" % type[0])
+                    vdoc_field_group.set('attrs', "{ 'invisible': [('categorization_template', '!=', %s)] }" % type[0])
                 # If have name, set it
                 if type[1]:
                     pdoc_field_group.set('string', type[1])
@@ -161,9 +161,9 @@ class CategorizationField(models.Model):
                         doc_field_search = xee.SubElement(vsea, 'field')
                     doc_field_input.set('name', field.name)
                     doc_field_input.set('string', field.field_description)
-                    if field.ttype == 'js_many2many': # If is many2many field
+                    if field.ttype in ('many2many', 'js_many2many'):
                         doc_field_input.set('widget', 'many2many_tags')
-                    if field.ttype in ('many2one', 'js_many2many'): # If is many2one or many2many field
+                    if field.ttype in ('many2one', 'many2many', 'js_many2one', 'js_many2many'):
                         doc_field_input.set('options', "{ 'no_open': True, 'no_create': True }")
                     #if field.index: # If is indexed field
                     doc_field_search.set('name', field.name)
@@ -192,7 +192,7 @@ class CategorizationField(models.Model):
 
     @api.model
     def _transformValues(self, values):
-        if values.get('ttype', '').startswith('js_'):
+        if values.get('ttype', False) and values['ttype'].startswith('js_'):
             values['ttype'] = values['ttype'].replace('js_', '')
         return values
 

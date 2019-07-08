@@ -2,11 +2,11 @@ odoo.define('js_categorization.form_widgets', function (require) {
     "use strict";
 
     var core = require('web.core');
-    var PercentPie = core.form_widget_registry.get('percentpie');
+    var FieldPercentPie = core.form_widget_registry.get('percentpie');
 
-    var JsPercentPie = PercentPie.extend({
+    var JsPercentPie = FieldPercentPie.extend({
         render_value: function(){
-            this._super.apply(this, arguments);
+            this._super();
             var value = this.get_value();
             this.$el.find('.o_pie').attr('data-value', value);
 
