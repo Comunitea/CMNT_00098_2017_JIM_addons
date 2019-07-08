@@ -62,6 +62,12 @@ class ProductTemplate(models.Model):
             'target': 'new'
         }
 
+    @api.multi
+    def write(self, values):
+        res = super(ProductTemplate, self).write(values)
+        self.calculate_categorization_percent()
+        return res
+
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
@@ -84,6 +90,12 @@ class ProductProduct(models.Model):
             'context': { 'default_product_id': self.id },
             'target': 'new'
         }
+
+    @api.multi
+    def write(self, values):
+        res = super(ProductProduct, self).write(values)
+        self.product_tmpl_id.calculate_categorization_percent()
+        return res
 
 class ProductCategorization(models.Model):
     _name = 'product.template.categorization'
