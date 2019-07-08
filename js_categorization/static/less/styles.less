@@ -1,25 +1,123 @@
-/* FIX FORM FIELDS STYLES */
+// Vertical position of table fields
+.o_main .o_notebook table.o_group{
+    td:not(.o_td_label){
+        vertical-align: middle;
+    }
+}
+
+// Custom btn
+.btn-none{
+    border: none;
+    background: none;
+    padding: 0;
+    font-size: 0;
+    outline:none !important;
+    box-shadow: none !important;
+    -webkit-tap-highlight-color: transparent;
+
+    .o_form_field_percent_pie{
+        font-size: small;
+        margin-bottom: 0;
+
+        .o_pie{
+            width: 42px;
+            height: 42px;
+            margin-left: 0;
+
+            .o_pie_value{
+                width: 34px;
+                height: 34px;
+            }
+        }
+
+        .o_pie[data-value^='100'] .o_pie_value{
+            background-color: #90ff75;
+            font-size: 20px;
+        }
+    }
+}
+
+/* CATEGORIZATION */
+
+#categorization_header{
+    padding: 4px 13px;
+
+    .label{
+        margin-bottom: 2px;
+        font-size: 84%;
+    }
+}
+
+#template_selection_wrapper{
+    float: left;
+    margin-left: 0.5%;
+    margin-top: 0.5%;
+}
 
 #categorization_actions button{
     margin-left: 10px;
 }
 
 #categorization_fields{
-    tbody td{
-        min-height: 30px;
-        vertical-align: middle;
+    table.o_group{
+        width: 49%;
+        margin-right: 0.5%;
+        margin-left: 0.5%;
 
-        label{
-            line-height: 30px;
+        tbody td{
+            vertical-align: middle;
+            border-bottom: 1px solid #DDD;
+            padding: 4px !important;
+
+            label{
+                font-variant: all-small-caps;
+                vertical-align: middle;
+                margin-bottom: 4px;
+                line-height: 1em;
+            }
+
+            .o_form_field{
+                margin-bottom: 0 !important;
+            }
+
+            .o_horizontal_separator{
+                margin-bottom: 15px;
+            }
         }
 
-        .o_horizontal_separator{
-            margin-bottom: 15px;
+        span.o_form_field{
+            margin-bottom: 0;
+            line-height: normal;
         }
     }
+}
 
-    span.o_form_field{
-        margin-bottom: 0;
-        line-height: normal;
+// Unificar la vista de los campos
+
+.o_form_view.o_form_editable{
+    #categorization_fields{
+        .o_form_input, .o_form_textarea{
+            padding: 4px 8px;
+        }
+
+        .o_form_field_many2one{
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            padding: 0 4px 0 0;
+            color: #1f1f1f;
+
+            & > .o_form_input_dropdown > .o_form_input {
+                border-style: none;
+            }
+        }
+
+        .o_form_field_many2manytags{
+            padding: 0 4px;
+
+            & > .o_form_field_many2one{
+                border-style: none;
+                padding: 0;
+            }
+        }
     }
 }

@@ -55,13 +55,17 @@
                     <group>
                         <group string="Field Info">
                             <field name="id" invisible="1"/>
-                            <field name="categorization_type" help="Categorization Template Type"/>
-                            <field name="field_description" string="Field Label" help="Field display name"/>
+                            <field name="domain" invisible="1"/>
+                            <field name="model_id" invisible="1"/>
+                            <field name="relation" invisible="1"/>
+                            <field name="relation_table" invisible="1"/>
+                            <field name="categorization_type" widget="many2many_tags" help="Categorization Template Type"/>
+                            <field name="field_description" string="Field Label" help="Field display name" default_focus="1"/>
                             <field name="name" help="Field database name" attrs="{ 'readonly': [('id', '!=', False)] }"/>
-                            <field name="model_id" help="Create field for this model" options="{ 'no_open': True, 'no_create': True }" invisible="context.get('default_model_id', False)"/>
-                            <field name="ttype" string="Field Type" help="Field data type" attrs="{ 'readonly': [('id', '!=', False)] }"/>
-                            <field name="selection_vals" widget="many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['many2one', 'many2many'])], 'invisible': [('ttype', 'not in', ['many2one', 'many2many'])] }"/>
-                            <field name="related" string="Related Field" help="Field value is related to other field. Ex: categ_id.name" attrs="{ 'readonly': [('model_id', '=', False)] }"/>
+                            <field name="model_id" help="Create field for this model" options="{ 'no_open': True, 'no_create': True }" invisible="context.get('default_model_id', False)" attrs="{ 'readonly': [('id', '!=', False)] }"/>
+                            <field name="ttype" string="Field Type" help="Field data type"/>
+                            <field name="selection_vals" widget="many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['js_many2one', 'js_many2many'])], 'invisible': [('ttype', 'not in', ['js_many2one', 'js_many2many'])] }"/>
+                            <field name="related" string="Related Field" help="Field value is related to other field" placeholder="product_id.xxx" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                         </group>
 
                         <group string="Other Options">
@@ -100,8 +104,8 @@
             <search string="Categorization Field">
                 <field name="name" string="Name" />
                 <field name="field_description" string="Label" />
-                <filter string="Product" name="product_filter" domain="[('model_id.model','=','product.template')]"/>
-                <filter string="Variant" name="variant_filter" domain="[('model_id.model','=','product.product')]"/>
+                <filter string="Product" name="product_filter" domain="[('model_id.model','=','product.template.categorization')]"/>
+                <filter string="Variant" name="variant_filter" domain="[('model_id.model','=','product.product.categorization')]"/>
             </search>
         </field>
     </record>
@@ -140,8 +144,8 @@
     <!-- ACCIONES DE MENÚ -->
 
     <menuitem id="menu_js_categorization" name="Categorization" parent="stock.menu_product_in_config_stock" sequence="90" />
-    <menuitem id="menu_js_categorization_fields_tree" name="Fields" parent="menu_js_categorization" action="js_categorization_fields" sequence="1" />
-    <menuitem id="menu_js_categorization_types" name="Types" parent="menu_js_categorization" action="js_categorization_types" sequence="2" />
-    <menuitem id="menu_js_categorization_values" name="Values" parent="menu_js_categorization" action="js_categorization_values" sequence="3" />
+    <menuitem id="menu_js_categorization_fields_tree" name="Fields" parent="menu_js_categorization" action="js_categorization_fields" sequence="1" groups="js_categorization.group_manage_categorization" />
+    <menuitem id="menu_js_categorization_types" name="Types" parent="menu_js_categorization" action="js_categorization_types" sequence="2" groups="js_categorization.group_manage_categorization" />
+    <menuitem id="menu_js_categorization_values" name="Values" parent="menu_js_categorization" action="js_categorization_values" sequence="3" groups="js_categorization.group_manage_categorization" />
 
 </odoo>
