@@ -148,8 +148,6 @@ class ProductCategorization(models.Model):
     def write(self, values):
         # If categorization template changed, empty not applicable fields
         # We did this instead of delete asociated categorization to avoid fill generic fields again
-        print("################### CAT TEMPLATE: " + str(self.categorization_template.id))
-        print("################### NEW TEMPLATE: " + str(values.get('categorization_template')))
         if self.categorization_template.id != values.get('categorization_template'):
             categorization_fields = self.env['js_categorization.field'].sudo().search([])
             product_categorization = self.env['product.template.categorization'].search([('product_id', '=', self.product_id.id)])
