@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-06-21 13:27+0000\n"
-"PO-Revision-Date: 2019-06-21 15:28+0200\n"
+"POT-Creation-Date: 2019-07-08 07:04+0000\n"
+"PO-Revision-Date: 2019-07-08 09:10+0200\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,18 +23,11 @@ msgid "Also can be created from product sheet, on \"Categorization\" tab"
 msgstr "También se pueden crear desde la ficha del producto, en la pestaña \"Categorización\""
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:24
-#, python-format
-msgid "Can not update/delete %s type because is managed by the module!"
-msgstr "No se pudo crear/actualizar la plantilla %s porque está administrada por el módulo!"
-
-#. module: js_categorization
-#: model:ir.model.fields,field_description:js_categorization.field_delivery_carrier_categorization_type
-#: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_categorization_type
-#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_type
-#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_type
-msgid "Cat. Type"
-msgstr "Plantilla"
+#: model:ir.ui.view,arch_db:js_categorization.categorization_product_form_view
+#: model:ir.ui.view,arch_db:js_categorization.categorization_select_variant_wizard_view
+#: model:ir.ui.view,arch_db:js_categorization.categorization_variant_form_view
+msgid "Cancel"
+msgstr "Cancelar"
 
 #. module: js_categorization
 #: model:ir.ui.menu,name:js_categorization.menu_js_categorization
@@ -56,8 +49,20 @@ msgid "Categorization Fields"
 msgstr "Campos de Categorización"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_delivery_carrier_categorization_percent_filled
+#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_percent_filled
+#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_percent_filled
+msgid "Categorization Percent Completed"
+msgstr "Porcentaje Completado de Categorización"
+
+#. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
 msgid "Categorization Template Type"
+msgstr "Plantilla de Categorización"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_types_form
+msgid "Categorization Type"
 msgstr "Plantilla de Categorización"
 
 #. module: js_categorization
@@ -73,6 +78,11 @@ msgid "Categorization Values"
 msgstr "Valores de Categorización"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_categorization_type
+msgid "Categorization type"
+msgstr "Tipos categorización (Plantillas)"
+
+#. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
 msgid "Copied"
 msgstr "Copiar"
@@ -83,83 +93,51 @@ msgid "Create field for this model"
 msgstr "Crear campo para este modelo"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_gotoproduct_wizard_create_uid
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_create_uid
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_type_create_uid
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_value_create_uid
+#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_create_uid
+#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_create_uid
 msgid "Created by"
-msgstr "Creada por"
+msgstr "Creado por"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_gotoproduct_wizard_create_date
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_create_date
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_type_create_date
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_value_create_date
+#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_create_date
+#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_create_date
 msgid "Created on"
-msgstr "Creada el"
+msgstr "Creado en"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:65
+#: code:addons/js_categorization/models/categorization.py:46
 #, python-format
 msgid "Date"
 msgstr "Fecha"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:66
+#: code:addons/js_categorization/models/categorization.py:47
 #, python-format
 msgid "Decimal"
 msgstr "Decimal"
 
 #. module: js_categorization
-#: model:ir.model.fields,help:js_categorization.field_js_categorization_field_sequence
 #: model:ir.model.fields,help:js_categorization.field_js_categorization_type_sequence
 msgid "Determine the display order"
-msgstr "Determina el orden en el que se muestran"
+msgstr "Determina el orden de visualización"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_gotoproduct_wizard_display_name
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_display_name
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_type_display_name
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_value_display_name
+#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_display_name
+#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_display_name
 msgid "Display Name"
-msgstr "Nombre a mostrar"
-
-#. module: js_categorization
-#: model:ir.ui.view,arch_db:js_categorization.categorization_variant_form_view
-msgid "Edit Product"
-msgstr "Editar Producto"
-
-#. module: js_categorization
-#: model:ir.ui.view,arch_db:js_categorization.categorization_product_form_view
-msgid "Edit Variant"
-msgstr "Editar Variante"
-
-#. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:204
-#, python-format
-msgid ""
-"Error creating the field \n"
-"%s"
-msgstr ""
-"Error creando el campo \n"
-"%s"
-
-#. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:243
-#, python-format
-msgid ""
-"Error deleting the field \n"
-"%s"
-msgstr ""
-"Error eliminando el campo \n"
-"%s"
-
-#. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:222
-#, python-format
-msgid ""
-"Error updating the field \n"
-"%s"
-msgstr ""
-"Error actualizando el campo \n"
-"%s"
+msgstr "Nombre mostrado"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
@@ -175,7 +153,7 @@ msgstr "Etiqueta"
 #. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_name
 msgid "Field Name"
-msgstr "Nombre"
+msgstr "Nombre de campo"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
@@ -205,8 +183,13 @@ msgstr "El campo es obligatorio"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
-msgid "Field value is related to other field. Ex: categ_id.name"
-msgstr "El valor del campo está en otro campo. Ej: categ_id.name"
+msgid "Field value is related to other field"
+msgstr "El valor está relacionado con otro campo"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "product_id.xxx"
+msgstr "product_id.xxx"
 
 #. module: js_categorization
 #: model:ir.ui.menu,name:js_categorization.menu_js_categorization_fields_tree
@@ -214,9 +197,23 @@ msgid "Fields"
 msgstr "Campos"
 
 #. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.categorization_template_and_product_form_view
+msgid "Filled fields"
+msgstr "Valores asignados"
+
+#. module: js_categorization
+#: code:addons/js_categorization/models/categorization.py:134
+#, python-format
+msgid "Generic"
+msgstr "Genérica"
+
+#. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_gotoproduct_wizard_id
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_id
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_type_id
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_value_id
+#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_id
+#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_id
 msgid "ID"
 msgstr "ID"
 
@@ -231,7 +228,7 @@ msgid "Indexed field for faster searchs"
 msgstr "Campo indexado para búsquedas más rápidas"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:68
+#: code:addons/js_categorization/models/categorization.py:49
 #, python-format
 msgid "Integer"
 msgstr "Entero"
@@ -242,28 +239,37 @@ msgid "Label"
 msgstr "Etiqueta"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_gotoproduct_wizard___last_update
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field___last_update
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_type___last_update
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_value___last_update
+#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization___last_update
+#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization___last_update
 msgid "Last Modified on"
-msgstr "Modificada por última vez el"
+msgstr "Última modificación en"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_gotoproduct_wizard_write_uid
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_write_uid
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_type_write_uid
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_value_write_uid
+#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_write_uid
+#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_write_uid
 msgid "Last Updated by"
-msgstr "Actualizada por última vez por"
+msgstr "Última actualización por"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_gotoproduct_wizard_write_date
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_write_date
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_type_write_date
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_value_write_date
+#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_write_date
+#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_write_date
 msgid "Last Updated on"
-msgstr "Actualizada por última vez el"
+msgstr "Última actualización en"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:64
+#: code:addons/js_categorization/models/categorization.py:45
 #, python-format
 msgid "Long Text"
 msgstr "Texto Largo"
@@ -279,13 +285,18 @@ msgid "Model"
 msgstr "Modelo"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:67
+#: model:ir.model,name:js_categorization.model_ir_model
+msgid "Models"
+msgstr "Modelos"
+
+#. module: js_categorization
+#: code:addons/js_categorization/models/categorization.py:48
 #, python-format
 msgid "Monetary"
 msgstr "Moneda"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:70
+#: code:addons/js_categorization/models/categorization.py:51
 #, python-format
 msgid "Multiselect"
 msgstr "Multi-selección"
@@ -317,12 +328,46 @@ msgstr "Otras Opciones"
 #: model:ir.model,name:js_categorization.model_product_product
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_search
 msgid "Product"
-msgstr "Variante"
+msgstr "Producto"
+
+#. module: js_categorization
+#: model:ir.model,name:js_categorization.model_js_categorization_product
+#: model:ir.model,name:js_categorization.model_product_categorization
+#: model:ir.model,name:js_categorization.model_product_template_categorization
+msgid "Product Categorization"
+msgstr "Categorización de Producto"
+
+#. module: js_categorization
+#: code:addons/js_categorization/models/categorization.py:126
+#, python-format
+msgid "Product Categorization Fields"
+msgstr "Campos de Categorización (Producto)"
 
 #. module: js_categorization
 #: model:ir.model,name:js_categorization.model_product_template
+#: model:ir.ui.view,arch_db:js_categorization.categorization_variant_form_view
 msgid "Product Template"
-msgstr "Producto"
+msgstr "Plantilla de producto"
+
+#. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_gotoproduct_wizard_product_variant
+msgid "Product Variant"
+msgstr "Variantes de producto"
+
+#. module: js_categorization
+#: sql_constraint:product.template.categorization:0
+msgid "Product must be unique in categorization!"
+msgstr "¡El producto debe ser único en la categorización!"
+
+#. module: js_categorization
+#: model:ir.ui.menu,name:js_categorization.menu_js_categorization_products
+msgid "Products"
+msgstr "Productos"
+
+#. module: js_categorization
+#: model:ir.actions.act_window,name:js_categorization.categorization_products
+msgid "Products Categorizated"
+msgstr "Productos Categorizados"
 
 #. module: js_categorization
 #: model:ir.actions.act_window,help:js_categorization.js_categorization_fields
@@ -340,18 +385,33 @@ msgid "Push here to create a new value"
 msgstr "Pulsa aquí para crear un nuevo valor"
 
 #. module: js_categorization
+#: model:ir.actions.server,name:js_categorization.categorization_recalculate
+msgid "Re-calculate Categorization Percent"
+msgstr "Re-calcular Porcentaje Categorización"
+
+#. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
 msgid "Readonly"
-msgstr "Solo lectura"
+msgstr "Sólo lectura"
 
 #. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_rel_field
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
 msgid "Related Field"
-msgstr "Campo Relacionado"
+msgstr "Campo relacionado"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:94
+#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_product_id
+msgid "Related Product"
+msgstr "Producto Relaccionado"
+
+#. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_product_id
+msgid "Related Variant"
+msgstr "Variante Relacionada"
+
+#. module: js_categorization
+#: code:addons/js_categorization/models/categorization.py:82
 #, python-format
 msgid "Relation not valid on selected model!"
 msgstr "¡La relación no es válida en el modelo seleccionado!"
@@ -362,12 +422,18 @@ msgid "Required"
 msgstr "Requerido"
 
 #. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.categorization_product_form_view
+#: model:ir.ui.view,arch_db:js_categorization.categorization_variant_form_view
+msgid "Save"
+msgstr "Guardar"
+
+#. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
 msgid "Saved on database"
 msgstr "Guardado en la base de datos"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:69
+#: code:addons/js_categorization/models/categorization.py:50
 #, python-format
 msgid "Select"
 msgstr "Selección"
@@ -384,7 +450,23 @@ msgid "Stored"
 msgstr "Almacenado"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:63
+#: model:ir.ui.view,arch_db:js_categorization.categorization_select_variant_wizard_view
+msgid "Switch"
+msgstr "Cambiar"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.categorization_product_form_view
+msgid "Switch to Variant"
+msgstr "Cambiar a Variante"
+
+#. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_categorization_template
+#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_categorization_template
+msgid "Template"
+msgstr "Plantilla"
+
+#. module: js_categorization
+#: code:addons/js_categorization/models/categorization.py:44
 #, python-format
 msgid "Text"
 msgstr "Texto"
@@ -392,7 +474,7 @@ msgstr "Texto"
 #. module: js_categorization
 #: model:ir.model.fields,help:js_categorization.field_js_categorization_field_model_id
 msgid "The model this field belongs to"
-msgstr "El modelo al que hace referencia este campo"
+msgstr "El modelo al que pertenece este campo."
 
 #. module: js_categorization
 #: model:ir.actions.act_window,help:js_categorization.js_categorization_types
@@ -407,7 +489,7 @@ msgstr "Estos valores se podrán seleccionar después en los campos de categoriz
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
 msgid "Translate"
-msgstr "Traducible"
+msgstr "Traducir"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
@@ -451,7 +533,43 @@ msgid "Variant"
 msgstr "Variante"
 
 #. module: js_categorization
-#: code:addons/js_categorization/models/categorization.py:94
+#: model:ir.model,name:js_categorization.model_product_product_categorization
+msgid "Variant Categorization"
+msgstr "Categorización de Variante"
+
+#. module: js_categorization
+#: code:addons/js_categorization/models/categorization.py:130
+#, python-format
+msgid "Variant Categorization Fields"
+msgstr "Campos de Categorización (Variante)"
+
+#. module: js_categorization
+#: sql_constraint:product.product.categorization:0
+msgid "Variant must be unique in categorization!"
+msgstr "¡La variante debe ser única en la categorización!"
+
+#. module: js_categorization
+#: model:ir.ui.menu,name:js_categorization.menu_js_categorization_variants
+msgid "Variants"
+msgstr "Variantes"
+
+#. module: js_categorization
+#: model:ir.actions.act_window,name:js_categorization.categorization_variants
+msgid "Variants Categorizated"
+msgstr "Variantes Categorizadas"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.categorization_products_tree
+msgid "View Product"
+msgstr "Ver Producto"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.categorization_variants_tree
+msgid "View Variant"
+msgstr "Ver Variante"
+
+#. module: js_categorization
+#: code:addons/js_categorization/models/categorization.py:81
 #, python-format
 msgid "Warning"
 msgstr "Atención"
@@ -461,3 +579,13 @@ msgstr "Atención"
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_types_tree
 msgid "parameters"
 msgstr "Parámetros"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.categorization_products_tree
+msgid "products"
+msgstr "productos"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.categorization_variants_tree
+msgid "variants"
+msgstr "variantes"
