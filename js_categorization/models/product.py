@@ -40,7 +40,9 @@ class ProductTemplate(models.Model):
             if custom_fields:
                 # Calculate and save percent
                 categorization_percent = int((filled_fields/custom_fields) * 100)
-            record.categorization_percent_filled = categorization_percent
+            # We use super here to allow write value inside product.template.write() method
+            super(ProductTemplate, record).write({ 'categorization_percent_filled': categorization_percent })
+            # record.categorization_percent_filled = categorization_percent
 
     @api.multi
     def categorization_modal(self):
@@ -225,7 +227,7 @@ class VariantCategorization(models.Model):
     def write(self, values):
         # Save and go to variant
         super(VariantCategorization, self).write(values)
-        self.product_id.product_tmpl_id.calculate_categorization_percent()
+        self.product_tmpl_id.calculate_categorization_percent()
         return self.env['product.template.categorization'].with_context(default_product_id=self.product_id.product_tmpl_id.id).edit_variant()
 
     @api.multi
