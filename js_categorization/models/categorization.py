@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessError, UserError
+from odoo.exceptions import AccessError, UserError, ValidationError
 from unidecode import unidecode
 import lxml.etree as xee
 import re
@@ -83,6 +83,26 @@ class CategorizationField(models.Model):
                     }
                 }
 
+    @api.onchange('selection_vals')
+    def _onchange_selection_vals(self):
+        # Sync domain with selection_vals
+        if self.selection_vals:
+            self.domain = "[('id', 'in', %s)]" % self.selection_vals.ids
+        else:
+            self.domain = '[]'
+
+    @api.onchange('name', 'ttype', 'model_id', 'relation')
+    def _onchange_ttype(self):
+        special_values_model = 'js_categorization.value'
+        # Call super overrided method first
+        super(CategorizationField, self)._onchange_ttype()
+        # If is relational field set relation to js_categorization.value
+        self.relation = special_values_model if self.ttype in ('many2one', 'many2many') else False
+        # If is many2many override relation_table name, Odoo by default creates
+        # the table starting with x_modelname and wee need different tables for each field
+        if self.name and self.model_id and self.ttype == 'many2many':
+            self.relation_table = "%s_%s_rel" % (self.name, special_values_model.replace('.', '_'))
+
     @api.model
     def createFieldsXml(self):
         # import web_pdb; web_pdb.set_trace()
@@ -109,7 +129,7 @@ class CategorizationField(models.Model):
         vsea.clear()
         vsea.set('string', _("Variant Categorization Fields"))
         vsea_field_search = xee.SubElement(vsea, 'field')
-        vsea_field_search.set('name', 'variant_id')
+        vsea_field_search.set('name', 'product_id')
         # Regenerate fields XML for each type
         for type in list([(False, _('Generic'))] + [(type.id, type.name) for type in self.env['js_categorization.type'].search([])]):
             # Get fields for this type
@@ -140,8 +160,7 @@ class CategorizationField(models.Model):
                     if field.ttype == 'many2many': # If is many2many field
                         doc_field_input.set('widget', 'many2many_tags')
                     if field.ttype in ('many2one', 'many2many'): # If is many2one or many2many field
-                        doc_field_input.set('options', "{'no_open': True, 'no_create': True}")
-                        doc_field_input.set('domain', "[('id', 'in', %s)]" % (str(field.selection_vals.ids)))
+                        doc_field_input.set('options', "{ 'no_open': True, 'no_create': True }")
                     #if field.index: # If is indexed field
                     doc_field_search.set('name', field.name)
                     doc_field_search.set('string', field.field_description)
@@ -170,9 +189,6 @@ class CategorizationField(models.Model):
     @api.model
     def create(self, values):
         try:
-            # If is relational field set relation to js_categorization.value
-            if values.get('ttype') in ('many2one', 'many2many'):
-                values.update({'relation': 'js_categorization.value'})
             # Create base field for the model
             self.env['ir.model.fields'].sudo().create(values)
             # Create categorization field
@@ -180,11 +196,12 @@ class CategorizationField(models.Model):
             if result:
                 # Write to database
                 self.env.cr.commit()
-                # Write fileds to XML
+                # Write fields to XML
                 self.createFieldsXml()
         except Exception, exception:
             # Not make changes in db
             self.env.cr.rollback()
+            # Handle error
             raise exception
         return result
 
@@ -207,6 +224,7 @@ class CategorizationField(models.Model):
             except Exception, exception:
                 # Not make changes in db
                 self.env.cr.rollback()
+                # Handle error
                 raise exception
         # Write fields to XML
         self.createFieldsXml()
@@ -232,6 +250,7 @@ class CategorizationField(models.Model):
             except Exception, exception:
                 # Not make changes in db
                 self.env.cr.rollback()
+                # Handle error
                 raise exception
         # Write fields to XML
         self.createFieldsXml()
