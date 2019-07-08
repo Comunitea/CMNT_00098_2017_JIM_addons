@@ -36,7 +36,6 @@ class CategorizationField(models.Model):
     name = fields.Char(copy=False)
     model_id = fields.Many2one(domain=_set_mod_filter)
     selection_vals = fields.Many2many('js_categorization.value', string='Values')
-    rel_field = fields.Many2one('ir.model.fields', string='Related Field')
 
     @api.model
     def _get_field_types(self):
@@ -47,8 +46,10 @@ class CategorizationField(models.Model):
             ('float', _('Decimal')),
             ('monetary', _('Monetary')),
             ('integer', _('Integer')),
-            ('many2one', _('Select')), # Special selection for categorization values
-            ('many2many', _('Multiselect')) # Special multi-selection for categorization values
+            ('many2one', _('Many2one')),
+            ('many2many', _('Many2many')),
+            ('js_many2one', _('Select')), # Special selection for categorization values
+            ('js_many2many', _('Multiselect')) # Special multi-selection for categorization values
         ]
 
     @api.onchange('field_description')
@@ -72,6 +73,7 @@ class CategorizationField(models.Model):
                 field = self._related_field()
                 self.relation = field.comodel_name
                 self.translate = field.translate
+                self.ttype = field.type
                 self.readonly = True
                 self.store = False
                 self.copy = False
@@ -97,10 +99,11 @@ class CategorizationField(models.Model):
         # Call super overrided method first
         super(CategorizationField, self)._onchange_ttype()
         # If is relational field set relation to js_categorization.value
-        self.relation = special_values_model if self.ttype in ('many2one', 'many2many') else False
+        if self.ttype in ('js_many2one', 'js_many2many'):
+            self.relation = special_values_model
         # If is many2many override relation_table name, Odoo by default creates
         # the table starting with x_modelname and wee need different tables for each field
-        if self.name and self.model_id and self.ttype == 'many2many':
+        if self.name and self.model_id and self.ttype == 'js_many2many':
             self.relation_table = "%s_%s_rel" % (self.name, special_values_model.replace('.', '_'))
 
     @api.model
@@ -157,9 +160,9 @@ class CategorizationField(models.Model):
                         doc_field_search = xee.SubElement(vsea, 'field')
                     doc_field_input.set('name', field.name)
                     doc_field_input.set('string', field.field_description)
-                    if field.ttype == 'many2many': # If is many2many field
+                    if field.ttype == 'js_many2many': # If is many2many field
                         doc_field_input.set('widget', 'many2many_tags')
-                    if field.ttype in ('many2one', 'many2many'): # If is many2one or many2many field
+                    if field.ttype in ('many2one', 'js_many2many'): # If is many2one or many2many field
                         doc_field_input.set('options', "{ 'no_open': True, 'no_create': True }")
                     #if field.index: # If is indexed field
                     doc_field_search.set('name', field.name)
@@ -187,10 +190,16 @@ class CategorizationField(models.Model):
             categorization_view.arch_base = xee.tostring(doc)
 
     @api.model
+    def _transformValues(self, values):
+        if values.get('ttype', '').startswith('js_'):
+            values['ttype'] = values['ttype'].replace('js_', '')
+        return values
+
+    @api.model
     def create(self, values):
         try:
             # Create base field for the model
-            self.env['ir.model.fields'].sudo().create(values)
+            self.env['ir.model.fields'].sudo().create(self._transformValues(values))
             # Create categorization field
             result = super(CategorizationField, self).create(values)
             if result:
@@ -216,7 +225,7 @@ class CategorizationField(models.Model):
                 if not (values.get('sequence') and len(values) == 1):
                     custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record.name), ('state', '=', 'manual')])
                     custom_field.ensure_one() # One record expected, if more abort
-                    custom_field.write(values)
+                    custom_field.write(self._transformValues(values))
                 # Write categorization field
                 super(CategorizationField, record).write(values)
                 # Write to database
