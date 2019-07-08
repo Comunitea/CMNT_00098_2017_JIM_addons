@@ -183,8 +183,13 @@ msgstr "El campo es obligatorio"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
-msgid "Field value is related to other field. Ex: product_id.xxx"
-msgstr "El valor está relacionado con otro campo. Ej: product_id.xxx o variant_id.xxx"
+msgid "Field value is related to other field"
+msgstr "El valor está relacionado con otro campo"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "product_id.xxx"
+msgstr "product_id.xxx"
 
 #. module: js_categorization
 #: model:ir.ui.menu,name:js_categorization.menu_js_categorization_fields_tree
