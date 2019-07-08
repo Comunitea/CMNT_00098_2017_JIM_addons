@@ -224,9 +224,9 @@ class VariantCategorization(models.Model):
     @api.multi
     def write(self, values):
         # Save and go to variant
-        if super(VariantCategorization, self).write(values):
-            self.product_tmpl_id.calculate_categorization_percent()
-            return self.env['product.template.categorization'].with_context(default_product_id=self.product_id.product_tmpl_id.id).edit_variant()
+        super(VariantCategorization, self).write(values)
+        self.product_id.product_tmpl_id.calculate_categorization_percent()
+        return self.env['product.template.categorization'].with_context(default_product_id=self.product_id.product_tmpl_id.id).edit_variant()
 
     @api.multi
     def unlink(self):
