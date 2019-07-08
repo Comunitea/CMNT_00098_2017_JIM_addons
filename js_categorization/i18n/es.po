@@ -290,6 +290,11 @@ msgid "Models"
 msgstr "Modelos"
 
 #. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "Model to make the relation"
+msgstr "Modelo para para establecer la relación"
+
+#. module: js_categorization
 #: code:addons/js_categorization/models/categorization.py:48
 #, python-format
 msgid "Monetary"
@@ -415,6 +420,11 @@ msgstr "Variante Relacionada"
 #, python-format
 msgid "Relation not valid on selected model!"
 msgstr "¡La relación no es válida en el modelo seleccionado!"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "Relation table name"
+msgstr "Nombre de la tabla de relación"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
