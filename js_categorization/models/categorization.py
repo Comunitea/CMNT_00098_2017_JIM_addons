@@ -3,6 +3,7 @@ from odoo import api, fields, models, _
 from odoo.exceptions import AccessError, UserError, ValidationError
 from unidecode import unidecode
 import lxml.etree as xee
+import copy
 import re
 
 class CategorizationType(models.Model):
@@ -198,10 +199,11 @@ class CategorizationField(models.Model):
     @api.model
     def create(self, values):
         try:
+            model_values = copy.copy(values)
             # Create base field for the model
             self.env['ir.model.fields'].sudo().create(self._transformValues(values))
             # Create categorization field
-            result = super(CategorizationField, self).create(values)
+            result = super(CategorizationField, self).create(model_values)
             if result:
                 # Write to database
                 self.env.cr.commit()
@@ -216,6 +218,7 @@ class CategorizationField(models.Model):
 
     @api.multi
     def write(self, values):
+        model_values = copy.copy(values)
         # Reset XML to make changes
         self._resetXml()
         # Loop records
@@ -227,7 +230,7 @@ class CategorizationField(models.Model):
                     custom_field.ensure_one() # One record expected, if more abort
                     custom_field.write(self._transformValues(values))
                 # Write categorization field
-                super(CategorizationField, record).write(values)
+                super(CategorizationField, record).write(model_values)
                 # Write to database
                 self.env.cr.commit()
             except Exception, exception:
