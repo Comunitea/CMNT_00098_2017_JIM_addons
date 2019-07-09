@@ -21,7 +21,7 @@ class ProductTemplate(models.Model):
             # Loop categorization fields
             for field in categorization_fields:
                 # If field not have type, and categorization_type is distinct of product template categorization type
-                if not field.categorization_type or field.categorization_type == product_categorization.categorization_template:
+                if not field.categorization_type or product_categorization.categorization_template.id == field.categorization_type.id:
                     # If field is for product
                     if field.model_id.model == 'product.template.categorization':
                         custom_fields += 1 # Add field to the counter
@@ -40,7 +40,9 @@ class ProductTemplate(models.Model):
             if custom_fields:
                 # Calculate and save percent
                 categorization_percent = int((filled_fields/custom_fields) * 100)
-            record.categorization_percent_filled = categorization_percent
+            # We use super here to allow write value inside product.template.write() method
+            super(ProductTemplate, record).write({ 'categorization_percent_filled': categorization_percent })
+            # record.categorization_percent_filled = categorization_percent
 
     @api.multi
     def categorization_modal(self):
@@ -61,6 +63,12 @@ class ProductTemplate(models.Model):
             'context': { 'default_product_id': self.id  },
             'target': 'new'
         }
+
+    @api.multi
+    def write(self, values):
+        res = super(ProductTemplate, self).write(values)
+        self.calculate_categorization_percent()
+        return res
 
 class ProductProduct(models.Model):
     _inherit = "product.product"
@@ -85,6 +93,12 @@ class ProductProduct(models.Model):
             'target': 'new'
         }
 
+    @api.multi
+    def write(self, values):
+        res = super(ProductProduct, self).write(values)
+        self.product_tmpl_id.calculate_categorization_percent()
+        return res
+
 class ProductCategorization(models.Model):
     _name = 'product.template.categorization'
     _description = "Product Categorization"
@@ -93,6 +107,7 @@ class ProductCategorization(models.Model):
 
     product_id = fields.Many2one('product.template', string='Related Product', required=True, ondelete='cascade')
     categorization_template = fields.Many2one('js_categorization.type', string='Template', required=False)
+    active = fields.Boolean('Active', default=True, related='product_id.active', store=False)
 
     @api.multi
     def new_field_modal(self):
@@ -134,12 +149,12 @@ class ProductCategorization(models.Model):
     def write(self, values):
         # If categorization template changed, empty not applicable fields
         # We did this instead of delete asociated categorization to avoid fill generic fields again
-        if self.categorization_template != values.get('categorization_template'):
+        if self.categorization_template.id != values.get('categorization_template'):
             categorization_fields = self.env['js_categorization.field'].sudo().search([])
             product_categorization = self.env['product.template.categorization'].search([('product_id', '=', self.product_id.id)])
             variants_categorization = self.env['product.product.categorization'].search([('product_id', 'in', self.product_id.product_variant_ids._ids)])
             for field in categorization_fields:
-                if field.categorization_type and values.get('categorization_template', self.categorization_template) not in field.categorization_type:
+                if field.categorization_type and values.get('categorization_template', self.categorization_template.id) != field.categorization_type.id:
                     if product_categorization:
                         super(ProductCategorization, product_categorization).write({ field.name: False })
                     if variants_categorization:
@@ -169,6 +184,7 @@ class VariantCategorization(models.Model):
 
     product_id = fields.Many2one('product.product', string='Related Variant', required=True, ondelete='cascade')
     categorization_template = fields.Many2one('js_categorization.type', string='Template', compute='_get_product_template', store=False)
+    active = fields.Boolean('Active', default=True, related='product_id.active', store=False)
 
     @api.multi
     @api.depends('product_id')
@@ -212,9 +228,9 @@ class VariantCategorization(models.Model):
     @api.multi
     def write(self, values):
         # Save and go to variant
-        if super(VariantCategorization, self).write(values):
-            self.product_id.product_tmpl_id.calculate_categorization_percent()
-            return self.env['product.template.categorization'].with_context(default_product_id=self.product_id.product_tmpl_id.id).edit_variant()
+        super(VariantCategorization, self).write(values)
+        self.product_id.product_tmpl_id.calculate_categorization_percent()
+        return self.env['product.template.categorization'].with_context(default_product_id=self.product_id.product_tmpl_id.id).edit_variant()
 
     @api.multi
     def unlink(self):
