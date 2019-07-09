@@ -205,14 +205,8 @@ class CategorizationField(models.Model):
             # Create categorization field
             result = super(CategorizationField, self).create(model_values)
             if result:
-                # Write to database
-                self.env.cr.commit()
-                # Write fields to XML
                 self.createFieldsXml()
         except Exception, exception:
-            # Not make changes in db
-            self.env.cr.rollback()
-            # Handle error
             raise exception
         return result
 
@@ -231,12 +225,7 @@ class CategorizationField(models.Model):
                     custom_field.write(self._transformValues(values))
                 # Write categorization field
                 super(CategorizationField, record).write(model_values)
-                # Write to database
-                self.env.cr.commit()
             except Exception, exception:
-                # Not make changes in db
-                self.env.cr.rollback()
-                # Handle error
                 raise exception
         # Write fields to XML
         self.createFieldsXml()
@@ -257,12 +246,7 @@ class CategorizationField(models.Model):
                 custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record_name), ('state', '=', 'manual')])
                 custom_field.ensure_one() # One record expected, if more abort
                 custom_field.with_context(_force_unlink=True).unlink()
-                # Write to database
-                self.env.cr.commit()
             except Exception, exception:
-                # Not make changes in db
-                self.env.cr.rollback()
-                # Handle error
                 raise exception
         # Write fields to XML
         self.createFieldsXml()
