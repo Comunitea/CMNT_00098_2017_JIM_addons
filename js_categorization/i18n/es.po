@@ -151,6 +151,13 @@ msgid "Field Label"
 msgstr "Etiqueta"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_delivery_carrier_categorization_percent_filled
+#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_percent_filled
+#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_percent_filled
+msgid "All Filled"
+msgstr "Completada"
+
+#. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_name
 msgid "Field Name"
 msgstr "Nombre de campo"

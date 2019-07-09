@@ -107,6 +107,7 @@ class ProductCategorization(models.Model):
 
     product_id = fields.Many2one('product.template', string='Related Product', required=True, ondelete='cascade')
     categorization_template = fields.Many2one('js_categorization.type', string='Template', required=False)
+    active = fields.Boolean('Active', default=True, related='product_id.active', store=False)
 
     @api.multi
     def new_field_modal(self):
@@ -183,6 +184,7 @@ class VariantCategorization(models.Model):
 
     product_id = fields.Many2one('product.product', string='Related Variant', required=True, ondelete='cascade')
     categorization_template = fields.Many2one('js_categorization.type', string='Template', compute='_get_product_template', store=False)
+    active = fields.Boolean('Active', default=True, related='product_id.active', store=False)
 
     @api.multi
     @api.depends('product_id')
@@ -227,7 +229,7 @@ class VariantCategorization(models.Model):
     def write(self, values):
         # Save and go to variant
         super(VariantCategorization, self).write(values)
-        self.product_tmpl_id.calculate_categorization_percent()
+        self.product_id.product_tmpl_id.calculate_categorization_percent()
         return self.env['product.template.categorization'].with_context(default_product_id=self.product_id.product_tmpl_id.id).edit_variant()
 
     @api.multi

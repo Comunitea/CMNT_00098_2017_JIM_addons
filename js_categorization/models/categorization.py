@@ -10,7 +10,7 @@ class CategorizationType(models.Model):
     _name = 'js_categorization.type'
     _description = "Categorization Types"
     _sql_constraints = [('categorization_type_unique', 'unique(name)', 'Type must be unique in categorization!')]
-    _order = 'id, sequence'
+    _order = 'sequence, id'
     name = fields.Char(required=True, translate=False)
     sequence = fields.Integer(help="Determine the display order", default=10)
 
