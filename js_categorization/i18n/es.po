@@ -80,7 +80,7 @@ msgstr "Valores de Categorización"
 #. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_categorization_type
 msgid "Categorization type"
-msgstr "Tipos categorización (Plantillas)"
+msgstr "Plantilla"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
@@ -149,13 +149,6 @@ msgstr "Información del Campo"
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_tree
 msgid "Field Label"
 msgstr "Etiqueta"
-
-#. module: js_categorization
-#: model:ir.model.fields,field_description:js_categorization.field_delivery_carrier_categorization_percent_filled
-#: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_percent_filled
-#: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_percent_filled
-msgid "All Filled"
-msgstr "Completada"
 
 #. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_name
