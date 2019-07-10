@@ -251,6 +251,7 @@ class CategorizationField(models.Model):
 class CategorizationValue(models.Model):
     _name = 'js_categorization.value'
     _description = "Categorization Values"
+    _order = 'name, categorization_type'
     _sql_constraints = [('categorization_value_unique', 'unique(name, categorization_type)', 'Value must be unique in categorization type!')]
     name = fields.Char(required=True, translate=True)
     categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', required=False)
