@@ -66,7 +66,8 @@ class ProductTemplate(models.Model):
     def write(self, values):
         res = super(ProductTemplate, self).write(values)
         if 'categorization_percent_filled' not in values:
-            self.calculate_categorization_percent()
+            for record in self:
+                record.calculate_categorization_percent()
         return res
 
 class ProductProduct(models.Model):
@@ -96,7 +97,8 @@ class ProductProduct(models.Model):
     def write(self, values):
         res = super(ProductProduct, self).write(values)
         if 'categorization_percent_filled' not in values:
-            self.product_tmpl_id.calculate_categorization_percent()
+            for record in self:
+                record.product_tmpl_id.calculate_categorization_percent()
         return res
 
 class ProductCategorization(models.Model):
