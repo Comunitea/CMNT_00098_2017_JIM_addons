@@ -126,6 +126,17 @@
 
     <!-- CONFIGURACIÓN DE VALORES -->
 
+    <record id="js_categorization_values_tree" model="ir.ui.view">
+        <field name="name">js_categorization.value.tree</field>
+        <field name="model">js_categorization.value</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="name"/>
+                <field name="categorization_type"/>
+            </tree>
+        </field>
+    </record>
+
     <record id="js_categorization_values" model="ir.actions.act_window">
         <field name="name">Categorization Values</field>
         <field name="type">ir.actions.act_window</field>

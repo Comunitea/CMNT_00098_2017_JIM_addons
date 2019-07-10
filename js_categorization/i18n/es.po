@@ -408,7 +408,7 @@ msgstr "Campo relacionado"
 #. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_product_id
 msgid "Related Product"
-msgstr "Producto Relaccionado"
+msgstr "Producto Relacionado"
 
 #. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_product_id

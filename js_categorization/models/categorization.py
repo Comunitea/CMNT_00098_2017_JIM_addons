@@ -32,7 +32,7 @@ class CategorizationField(models.Model):
         # Return next number or 1
         return higher_sequence + 1 if higher_sequence else 1
 
-    sequence = fields.Integer(default=_set_next_sequence)
+    sequence = fields.Integer(default=_set_next_sequence, copy=False)
     categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', required=False)
     name = fields.Char(copy=False)
     model_id = fields.Many2one(domain=_set_mod_filter)
@@ -53,18 +53,20 @@ class CategorizationField(models.Model):
             ('js_many2many', _('Multiselect')) # Special multi-selection for categorization values
         ]
 
-    @api.onchange('field_description')
+    @api.onchange('categorization_type', 'field_description')
     def _set_name_from_label(self):
         if self.field_description:
             # Uppercase field_description
             self.field_description = self.field_description.upper()
         if not self._origin: # Only on create mode
-            self.name = 'x_' # Restore original value
+            slug = 'x' # Restore original preffix
+            if self.categorization_type: # If var is False, nothing to do
+                slug += '_' + unidecode(self.categorization_type.name).lower() # Change accentuated chars and convert to lowercase
             if self.field_description: # If var is False, nothing to do
-                slug = unidecode(self.field_description).lower() # Change accentuated chars and convert to lowercase
-                slug = re.sub(r"[^\w\s]", '', slug) # Remove all non-word characters (everything except numbers and letters)
-                slug = re.sub(r"\s+", '_', slug) # Replace all runs of whitespace with a single dash
-                self.name = 'x_' + slug # Update field
+                slug += '_' + unidecode(self.field_description).lower() # Change accentuated chars and convert to lowercase
+            slug = re.sub(r"[^\w\s]", '', slug) # Remove all non-word characters (everything except numbers and letters)
+            slug = re.sub(r"\s+", '_', slug) # Replace all runs of whitespace with a single dash
+            self.name = slug # Update field
 
     @api.onchange('related')
     def _onchange_related(self):
@@ -86,14 +88,6 @@ class CategorizationField(models.Model):
                     }
                 }
 
-    @api.onchange('selection_vals')
-    def _onchange_selection_vals(self):
-        # Sync domain with selection_vals
-        if self.selection_vals:
-            self.domain = "[('id', 'in', %s)]" % self.selection_vals.ids
-        else:
-            self.domain = '[]'
-
     @api.onchange('name', 'ttype', 'model_id', 'relation')
     def _onchange_ttype(self):
         special_values_model = 'js_categorization.value'
@@ -108,7 +102,7 @@ class CategorizationField(models.Model):
             self.relation_table = "%s_%s_rel" % (self.name, special_values_model.replace('.', '_'))
 
     @api.model
-    def createFieldsXml(self):
+    def _createFieldsXml(self):
         # import web_pdb; web_pdb.set_trace()
         categorization_product_view = self.env.ref('js_categorization.categorization_product_form_view')
         categorization_variant_view = self.env.ref('js_categorization.categorization_variant_form_view')
@@ -163,6 +157,8 @@ class CategorizationField(models.Model):
                     doc_field_input.set('string', field.field_description)
                     if field.ttype in ('many2many', 'js_many2many'):
                         doc_field_input.set('widget', 'many2many_tags')
+                    if field.ttype in ('js_many2one', 'js_many2many'):
+                        doc_field_input.set('domain', "[('categorization_type', '=', categorization_template), ('id', 'in', %s)]" % field.selection_vals.ids)
                     if field.ttype in ('many2one', 'many2many', 'js_many2one', 'js_many2many'):
                         doc_field_input.set('options', "{ 'no_open': True, 'no_create': True }")
                     #if field.index: # If is indexed field
@@ -190,8 +186,9 @@ class CategorizationField(models.Model):
             # Save to field
             categorization_view.arch_base = xee.tostring(doc)
 
-    @api.model
-    def _transformValues(self, values):
+    @staticmethod
+    def _transformValues(model_values):
+        values = copy.copy(model_values)
         if values.get('ttype', False) and values['ttype'].startswith('js_'):
             values['ttype'] = values['ttype'].replace('js_', '')
         return values
@@ -201,11 +198,11 @@ class CategorizationField(models.Model):
         try:
             model_values = copy.copy(values)
             # Create base field for the model
-            self.env['ir.model.fields'].sudo().create(self._transformValues(values))
+            self.env['ir.model.fields'].sudo().create(self._transformValues(model_values))
             # Create categorization field
             result = super(CategorizationField, self).create(model_values)
             if result:
-                self.createFieldsXml()
+                self._createFieldsXml()
         except Exception, exception:
             raise exception
         return result
@@ -222,13 +219,13 @@ class CategorizationField(models.Model):
                 if not (values.get('sequence') and len(values) == 1):
                     custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record.name), ('state', '=', 'manual')])
                     custom_field.ensure_one() # One record expected, if more abort
-                    custom_field.write(self._transformValues(values))
+                    custom_field.write(self._transformValues(model_values))
                 # Write categorization field
                 super(CategorizationField, record).write(model_values)
             except Exception, exception:
                 raise exception
         # Write fields to XML
-        self.createFieldsXml()
+        self._createFieldsXml()
         return True
 
     @api.multi
@@ -249,7 +246,7 @@ class CategorizationField(models.Model):
             except Exception, exception:
                 raise exception
         # Write fields to XML
-        self.createFieldsXml()
+        self._createFieldsXml()
         return True
 
 class CategorizationValue(models.Model):
@@ -257,3 +254,4 @@ class CategorizationValue(models.Model):
     _description = "Categorization Values"
     _sql_constraints = [('categorization_value_unique', 'unique(name)', 'Value must be unique in categorization!')]
     name = fields.Char(required=True, translate=True)
+    categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', required=False)
