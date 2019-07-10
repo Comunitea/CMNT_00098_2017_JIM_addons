@@ -523,8 +523,8 @@ msgstr "El valor se copiará cuando un registro del modelo es duplicado"
 
 #. module: js_categorization
 #: sql_constraint:js_categorization.value:0
-msgid "Value must be unique in categorization!"
-msgstr "¡El valor debe ser único en la categorización!"
+msgid "Value must be unique in categorization type!"
+msgstr "¡El valor debe ser único en la plantilla de categorización!"
 
 #. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_selection_vals
