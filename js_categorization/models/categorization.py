@@ -36,7 +36,8 @@ class CategorizationField(models.Model):
     categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', required=False)
     name = fields.Char(copy=False)
     model_id = fields.Many2one(domain=_set_mod_filter)
-    selection_vals = fields.Many2many('js_categorization.value', string='Values')
+    selection_vals = fields.Many2many('js_categorization.value')
+    filter_vals = fields.Boolean()
 
     @api.model
     def _get_field_types(self):
@@ -159,7 +160,8 @@ class CategorizationField(models.Model):
                         doc_field_input.set('widget', 'many2many_tags')
                     if field.ttype in ('js_many2one', 'js_many2many'):
                         doc_field_input.set('options', "{ 'no_open': True, 'no_create': True }")
-                        doc_field_input.set('domain', "[('categorization_type', '=', categorization_template), ('id', 'in', %s)]" % field.selection_vals.ids)
+                        field_domain = "['&', ('categorization_type', '=', categorization_template), " if field.filter_vals else "["
+                        doc_field_input.set('domain', field_domain + "('id', 'in', %s)]" % field.selection_vals.ids)
                     #if field.index: # If is indexed field
                     doc_field_search.set('name', field.name)
                     doc_field_search.set('string', field.field_description)
@@ -254,4 +256,4 @@ class CategorizationValue(models.Model):
     _order = 'name, categorization_type'
     _sql_constraints = [('categorization_value_unique', 'unique(name, categorization_type)', 'Value must be unique in categorization type!')]
     name = fields.Char(required=True, translate=True)
-    categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', required=False)
+    categorization_type = fields.Many2one('js_categorization.type', ondelete='cascade', required=False)

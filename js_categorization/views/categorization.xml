@@ -50,12 +50,11 @@
         <field name="name">js_categorization.field.form</field>
         <field name="model">js_categorization.field</field>
         <field name="arch" type="xml">
-            <form string="Categorization Field">
+            <form string="Categorization Field" duplicate="0">
                 <sheet>
                     <group>
                         <group string="Field Info">
                             <field name="id" invisible="1"/>
-                            <field name="domain" invisible="1"/>
                             <field name="model_id" invisible="1"/>
                             <field name="categorization_type" help="Categorization Template Type"/>
                             <field name="field_description" string="Field Label" help="Field display name" default_focus="1"/>
@@ -75,6 +74,7 @@
                             <field name="index" string="Indexed" help="Indexed field for faster searchs"/>
                             <field name="copy" string="Copied" help="Value copied when model registry is duplicated"/>
                             <field name="store" string="Stored" help="Saved on database"/>
+                            <field name="filter_vals" string="Filter vals" help="Filter values by selected type in categorization" attrs="{ 'invisible': [('ttype', 'not in', ['js_many2one', 'js_many2many'])] }"/>
                         </group>
                     </group>
                 </sheet>
