@@ -273,3 +273,22 @@ class CategorizationValue(models.Model):
                 record_list[1] += ' [%s]' % record.categorization_type.name
             result.append(tuple(record_list))
         return result
+
+    @api.model
+    def create(self, values):
+        result = super(CategorizationValue, self).create(values)
+        if result:
+            self.env['js_categorization.field']._createFieldsXml()
+            return result
+
+    @api.multi
+    def write(self, values):
+        super(CategorizationValue, self).write(values)
+        self.env['js_categorization.field']._createFieldsXml()
+        return True
+
+    @api.multi
+    def unlink(self):
+        super(CategorizationValue, self).unlink()
+        self._createFieldsXml()
+        return True
