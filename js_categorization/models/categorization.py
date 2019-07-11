@@ -290,5 +290,5 @@ class CategorizationValue(models.Model):
     @api.multi
     def unlink(self):
         super(CategorizationValue, self).unlink()
-        self._createFieldsXml()
+        self.env['js_categorization.field']._createFieldsXml()
         return True
