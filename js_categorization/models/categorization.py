@@ -1,18 +1,21 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
-from odoo.exceptions import AccessError, UserError, ValidationError
 from unidecode import unidecode
 import lxml.etree as xee
 import copy
 import re
 
+
 class CategorizationType(models.Model):
     _name = 'js_categorization.type'
     _description = "Categorization Types"
-    _sql_constraints = [('categorization_type_unique', 'unique(name)', 'Type must be unique in categorization!')]
+    _sql_constraints = [
+        ('categorization_type_unique', 'unique(name)',
+         'Type must be unique in categorization!')]
     _order = 'sequence, id'
     name = fields.Char(required=True, translate=False)
     sequence = fields.Integer(help="Determine the display order", default=10)
+
 
 class CategorizationField(models.Model):
     _name = 'js_categorization.field'
@@ -22,7 +25,9 @@ class CategorizationField(models.Model):
 
     def _set_mod_filter(self):
         # Get model ids for fields
-        model_ids = self.env['ir.model'].sudo().search([('model', 'in', ['product.template.categorization',  'product.product.categorization'])])
+        model_ids = self.env['ir.model'].sudo().search(
+            [('model', 'in', ['product.template.categorization',
+              'product.product.categorization'])])
         # Set domain to this ids
         return [('id', 'in', model_ids.ids)]
 
@@ -40,7 +45,7 @@ class CategorizationField(models.Model):
 
     @api.model
     def _get_field_types(self):
-        return [ # Get field types
+        return [  # Get field types
             ('char', _('Text')),
             ('text', _('Long Text')),
             ('date', _('Date')),
@@ -66,7 +71,7 @@ class CategorizationField(models.Model):
                 slug += '_' + unidecode(self.field_description).lower() # Change accentuated chars and convert to lowercase
             slug = re.sub(r"[^\w\s]", '', slug) # Remove all non-word characters (everything except numbers and letters)
             slug = re.sub(r"\s+", '_', slug) # Replace all runs of whitespace with a single dash
-            self.name = slug # Update field
+            self.name = slug  # Update field
 
     @api.onchange('related')
     def _onchange_related(self):
@@ -159,7 +164,8 @@ class CategorizationField(models.Model):
                         doc_field_input.set('widget', 'many2many_tags')
                     if field.ttype in ('js_many2one', 'js_many2many'):
                         doc_field_input.set('options', "{ 'no_open': True, 'no_create': True }")
-                        doc_field_input.set('domain', "[('categorization_type', '=', categorization_template), ('id', 'in', %s)]" % field.selection_vals.ids)
+                        doc_field_input.set(
+                            'domain', "[('categorization_type', '=', categorization_template), ('id', 'in', %s)]" % field.selection_vals.ids)
                     #if field.index: # If is indexed field
                     doc_field_search.set('name', field.name)
                     doc_field_search.set('string', field.field_description)
@@ -172,15 +178,21 @@ class CategorizationField(models.Model):
 
     @api.model
     def _resetXml(self):
-        for view in ('categorization_product_form_view', 'categorization_product_search_by_field', 'categorization_variant_form_view', 'categorization_variant_search_by_field'):
+        for view in (
+                'categorization_product_form_view',
+                'categorization_product_search_by_field',
+                'categorization_variant_form_view',
+                'categorization_variant_search_by_field'):
             # Get view object
-            categorization_view = self.env.ref('js_categorization.' + view).sudo()
+            categorization_view = self.env.ref(
+                'js_categorization.' + view).sudo()
             # Get and parse view XML
             doc = xee.fromstring(categorization_view.arch_base)
             # In search view clear all
-            if (view in ('categorization_product_search_by_field', 'categorization_variant_search_by_field')):
+            if (view in ('categorization_product_search_by_field',
+                         'categorization_variant_search_by_field')):
                 doc.clear()
-            else: # On others clear group
+            else:  # On others clear group
                 doc.find('.//div[@id="categorization_fields"]/group').clear()
             # Save to field
             categorization_view.arch_base = xee.tostring(doc)
@@ -197,7 +209,8 @@ class CategorizationField(models.Model):
         try:
             model_values = copy.copy(values)
             # Create base field for the model
-            self.env['ir.model.fields'].sudo().create(self._transformValues(model_values))
+            self.env['ir.model.fields'].sudo().create(
+                self._transformValues(model_values))
             # Create categorization field
             result = super(CategorizationField, self).create(model_values)
             if result:
@@ -216,8 +229,9 @@ class CategorizationField(models.Model):
             try:
                 # Write model base field
                 if not (values.get('sequence') and len(values) == 1):
-                    custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record.name), ('state', '=', 'manual')])
-                    custom_field.ensure_one() # One record expected, if more abort
+                    custom_field = self.env['ir.model.fields'].sudo().search(
+                        [('name', '=', record.name), ('state', '=', 'manual')])
+                    custom_field.ensure_one()  # One record expected, if more abort
                     custom_field.write(self._transformValues(model_values))
                 # Write categorization field
                 super(CategorizationField, record).write(model_values)
@@ -239,8 +253,9 @@ class CategorizationField(models.Model):
                 # Delete categorization field
                 super(CategorizationField, record).unlink()
                 # Unlink model base field
-                custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record_name), ('state', '=', 'manual')])
-                custom_field.ensure_one() # One record expected, if more abort
+                custom_field = self.env['ir.model.fields'].sudo().search(
+                    [('name', '=', record_name), ('state', '=', 'manual')])
+                custom_field.ensure_one()  # One record expected, if more abort
                 custom_field.with_context(_force_unlink=True).unlink()
             except Exception, exception:
                 raise exception
@@ -248,10 +263,14 @@ class CategorizationField(models.Model):
         self._createFieldsXml()
         return True
 
+
 class CategorizationValue(models.Model):
     _name = 'js_categorization.value'
     _description = "Categorization Values"
     _order = 'name, categorization_type'
-    _sql_constraints = [('categorization_value_unique', 'unique(name, categorization_type)', 'Value must be unique in categorization type!')]
+    _sql_constraints = [
+        ('categorization_value_unique', 'unique(name, categorization_type)',
+         'Value must be unique in categorization type!')]
     name = fields.Char(required=True, translate=True)
-    categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', required=False)
+    categorization_type = fields.Many2one(
+        'js_categorization.type', ondelete='restrict', required=False)
