@@ -3,18 +3,17 @@
 
     <!-- CONFIGURACIÓN DE TIPOS -->
 
-    <record id="js_categorization_types" model="ir.actions.act_window">
-        <field name="name">Categorization Types</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">js_categorization.type</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-        <field name="help" type="html">
-          <p class="oe_view_nocontent_create">
-            Push here to create a new type
-          </p><p>
-            The types are parameters groups aplied to the product
-          </p>
+    <record id="js_categorization_types_form" model="ir.ui.view">
+        <field name="name">js_categorization.type.form</field>
+        <field name="model">js_categorization.type</field>
+        <field name="arch" type="xml">
+            <form string="Categorization Type">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
         </field>
     </record>
 
@@ -29,18 +28,18 @@
         </field>
     </record>
 
-    <record id="js_categorization_types_form" model="ir.ui.view">
-        <field name="name">js_categorization.type.form</field>
-        <field name="model">js_categorization.type</field>
-        <field name="context">{ '_restrict_generic_type': True }</field>
-        <field name="arch" type="xml">
-            <form string="Categorization Type">
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                    </group>
-                </sheet>
-            </form>
+    <record id="js_categorization_types" model="ir.actions.act_window">
+        <field name="name">Categorization Types</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">js_categorization.type</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Push here to create a new type
+          </p><p>
+            The types are parameters groups aplied to the product
+          </p>
         </field>
     </record>
 
@@ -126,6 +125,22 @@
 
     <!-- CONFIGURACIÓN DE VALORES -->
 
+    <record id="js_categorization_values_form" model="ir.ui.view">
+        <field name="name">js_categorization.value.form</field>
+        <field name="model">js_categorization.value</field>
+        <field name="arch" type="xml">
+            <form string="Categorization Value">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="categorization_type"/>
+                        <field name="fields"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <record id="js_categorization_values_tree" model="ir.ui.view">
         <field name="name">js_categorization.value.tree</field>
         <field name="model">js_categorization.value</field>
@@ -133,6 +148,7 @@
             <tree string="parameters">
                 <field name="name"/>
                 <field name="categorization_type"/>
+                <field name="fields"/>
             </tree>
         </field>
     </record>

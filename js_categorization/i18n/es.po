@@ -193,6 +193,7 @@ msgid "product_id.xxx"
 msgstr "product_id.xxx"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_js_categorization_value_fields
 #: model:ir.ui.menu,name:js_categorization.menu_js_categorization_fields_tree
 msgid "Fields"
 msgstr "Campos"

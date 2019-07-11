@@ -36,8 +36,12 @@ class CategorizationField(models.Model):
     categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', required=False)
     name = fields.Char(copy=False)
     model_id = fields.Many2one(domain=_set_mod_filter)
-    selection_vals = fields.Many2many('js_categorization.value')
+    selection_vals = fields.Many2many('js_categorization.value', 'js_categorization_field_js_categorization_value_rel', 'js_categorization_field_id', 'js_categorization_value_id')
     filter_vals = fields.Boolean()
+
+    @api.multi
+    def name_get(self):
+        return [(record.id, record.name) for record in self]
 
     @api.model
     def _get_field_types(self):
@@ -255,5 +259,17 @@ class CategorizationValue(models.Model):
     _description = "Categorization Values"
     _order = 'name, categorization_type'
     _sql_constraints = [('categorization_value_unique', 'unique(name, categorization_type)', 'Value must be unique in categorization type!')]
+
     name = fields.Char(required=True, translate=True)
     categorization_type = fields.Many2one('js_categorization.type', ondelete='cascade', required=False)
+    fields = fields.Many2many('js_categorization.field', 'js_categorization_field_js_categorization_value_rel', 'js_categorization_value_id', 'js_categorization_field_id')
+
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            record_list = [record.id, record.name]
+            if (record.categorization_type):
+                record_list[1] += ' [%s]' % record.categorization_type.name
+            result.append(tuple(record_list))
+        return result
