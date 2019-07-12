@@ -6,6 +6,7 @@ class ProductTemplate(models.Model):
 
     categorization_percent_filled = fields.Integer(string='Categorization Percent Completed', default=0, store=True)
 
+    #public
     @api.model
     def calculate_categorization_percent(self):
         for record in self:
@@ -42,6 +43,7 @@ class ProductTemplate(models.Model):
                 categorization_percent = int((filled_fields/custom_fields) * 100)
             record.categorization_percent_filled = categorization_percent
 
+    #public
     @api.multi
     def categorization_modal(self):
         self.ensure_one() # One record expected
@@ -62,6 +64,7 @@ class ProductTemplate(models.Model):
             'target': 'new'
         }
 
+    #override
     @api.multi
     def write(self, values):
         res = super(ProductTemplate, self).write(values)
@@ -73,6 +76,7 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
+    #public
     @api.multi
     def categorization_modal(self):
         self.ensure_one() # One record expected
@@ -93,6 +97,7 @@ class ProductProduct(models.Model):
             'target': 'new'
         }
 
+    #override
     @api.multi
     def write(self, values):
         res = super(ProductProduct, self).write(values)
@@ -111,6 +116,17 @@ class ProductCategorization(models.Model):
     categorization_template = fields.Many2one('js_categorization.type', string='Template', required=False)
     active = fields.Boolean('Active', default=True, related='product_id.active', store=False)
 
+    #override
+    @api.model
+    def fields_get(self, allfields=None, attributes=None):
+        fields = super(ProductCategorization, self).fields_get(allfields, attributes=attributes)
+        for field in fields:
+            field_obj = self.env['js_categorization.field'].search([('name', '=', field)])
+            if field_obj and field_obj.categorization_type:
+                fields[field]['string'] += ' [%s]' % field_obj.categorization_type.name.upper()
+        return fields
+
+    #public
     @api.multi
     def new_field_modal(self):
         self.ensure_one() # One record expected
@@ -124,6 +140,7 @@ class ProductCategorization(models.Model):
             'target': 'new'
         }
 
+    #public
     @api.multi
     def edit_variant(self):
         return { # Open variant selection wizard
@@ -136,6 +153,7 @@ class ProductCategorization(models.Model):
             'target': 'new'
         }
 
+    #public
     @api.multi
     def go_to_product(self):
         self.ensure_one() # One record expected
@@ -147,6 +165,7 @@ class ProductCategorization(models.Model):
             'type': 'ir.actions.act_window'
         }
 
+    #override
     @api.multi
     def write(self, values):
         # If categorization template changed, empty not applicable fields
@@ -166,6 +185,7 @@ class ProductCategorization(models.Model):
         self.product_id.calculate_categorization_percent()
         return self.with_context(default_product_id=self.product_id.id).edit_variant()
 
+    #override
     @api.multi
     def unlink(self):
         for record in self:
@@ -188,6 +208,17 @@ class VariantCategorization(models.Model):
     categorization_template = fields.Many2one('js_categorization.type', string='Template', compute='_get_product_template', store=False)
     active = fields.Boolean('Active', default=True, related='product_id.active', store=False)
 
+    #override
+    @api.model
+    def fields_get(self, allfields=None, attributes=None):
+        fields = super(VariantCategorization, self).fields_get(allfields, attributes=attributes)
+        for field in fields:
+            field_obj = self.env['js_categorization.field'].search([('name', '=', field)])
+            if field_obj and field_obj.categorization_type:
+                fields[field]['string'] += ' [%s]' % field_obj.categorization_type.name.upper()
+        return fields
+
+    #private
     @api.multi
     @api.depends('product_id')
     def _get_product_template(self):
@@ -198,6 +229,7 @@ class VariantCategorization(models.Model):
                 # Set parent template as variant template
                 record.categorization_template = product_template_categorization.categorization_template
 
+    #public
     @api.multi
     def new_field_modal(self):
         self.ensure_one() # One record expected
@@ -211,11 +243,13 @@ class VariantCategorization(models.Model):
             'target': 'new'
         }
 
+    #public
     @api.multi
     def edit_template(self):
         self.ensure_one() # One record expected
         return self.env['product.template'].browse(self.product_id.product_tmpl_id.id).categorization_modal()
 
+    #public
     @api.multi
     def go_to_variant(self):
         self.ensure_one() # One record expected
@@ -227,6 +261,7 @@ class VariantCategorization(models.Model):
             'type': 'ir.actions.act_window'
         }
 
+    #override
     @api.multi
     def write(self, values):
         # Save and go to variant
@@ -234,6 +269,7 @@ class VariantCategorization(models.Model):
         self.product_id.product_tmpl_id.calculate_categorization_percent()
         return self.env['product.template.categorization'].with_context(default_product_id=self.product_id.product_tmpl_id.id).edit_variant()
 
+    #override
     @api.multi
     def unlink(self):
         for record in self:

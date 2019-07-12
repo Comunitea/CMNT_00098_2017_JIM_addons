@@ -62,7 +62,7 @@
                             <field name="ttype" string="Field Type" help="Field data type"/>
                             <field name="relation" help="Model to make the relation" attrs="{ 'required': [('ttype', 'in', ['many2one', 'many2many'])], 'invisible': [('ttype', 'not in', ['many2one', 'many2many'])] }"/>
                             <field name="relation_table" help="Relation table name" attrs="{ 'required': [('ttype', '=', 'many2many')], 'invisible': [('ttype', '!=', 'many2many')] }"/>
-                            <field name="selection_vals" widget="many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['js_many2one', 'js_many2many'])], 'invisible': [('ttype', 'not in', ['js_many2one', 'js_many2many'])] }"/>
+                            <field name="selection_vals" widget="js_many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['js_many2one', 'js_many2many'])], 'invisible': [('ttype', 'not in', ['js_many2one', 'js_many2many'])] }"/>
                             <field name="related" string="Related Field" help="Field value is related to other field" placeholder="product_id.xxx" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                         </group>
 
@@ -134,7 +134,7 @@
                     <group>
                         <field name="name"/>
                         <field name="categorization_type"/>
-                        <field name="fields"/>
+                        <field name="fields" invisible="context.get('hide_fields', False)"/>
                     </group>
                 </sheet>
             </form>
