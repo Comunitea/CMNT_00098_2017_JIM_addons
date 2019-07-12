@@ -11,7 +11,7 @@
                 <table class="custom_table table_left" style="border-top: 1px solid black">
                     <tbody>
                         <tr>
-                            <td rowspan="3" class="col-xs-8">
+                            <td rowspan="4" class="col-xs-8">
                                 Obs:
                                 <t t-if="o.sale_id.client_order_ref">
                                     Customer order number <span t-field="o.sale_id.client_order_ref"/> <br/>
@@ -30,6 +30,11 @@
 
                                 <strong style="margin-left: 5px;">Packages: </strong><span t-field="o.pick_packages"/>
                                 <strong>kilos: </strong><span t-field="o.pick_weight"/>
+                            </td>
+                        </tr>
+                        <tr t-if="o.carrier_tracking_ref">
+                            <td>
+                                <strong style="margin-left: 5px;">Tracking ref:</strong> <span t-field="o.carrier_tracking_ref"/>
                             </td>
                         </tr>
                         <tr>
