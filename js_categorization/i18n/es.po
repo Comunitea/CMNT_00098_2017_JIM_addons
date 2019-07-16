@@ -193,6 +193,7 @@ msgid "product_id.xxx"
 msgstr "product_id.xxx"
 
 #. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_js_categorization_value_fields
 #: model:ir.ui.menu,name:js_categorization.menu_js_categorization_fields_tree
 msgid "Fields"
 msgstr "Campos"
@@ -201,6 +202,17 @@ msgstr "Campos"
 #: model:ir.ui.view,arch_db:js_categorization.categorization_template_and_product_form_view
 msgid "Filled fields"
 msgstr "Valores asignados"
+
+#. module: js_categorization
+#: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_filter_vals
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "Filter vals"
+msgstr "Filtrar valores"
+
+#. module: js_categorization
+#: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
+msgid "Filter values by selected type in categorization"
+msgstr "Filtrar valores para la plantilla seleccionada en la categorización"
 
 #. module: js_categorization
 #: code:addons/js_categorization/models/categorization.py:134

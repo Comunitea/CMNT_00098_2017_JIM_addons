@@ -3,6 +3,31 @@
 
     <!-- CONFIGURACIÓN DE TIPOS -->
 
+    <record id="js_categorization_types_form" model="ir.ui.view">
+        <field name="name">js_categorization.type.form</field>
+        <field name="model">js_categorization.type</field>
+        <field name="arch" type="xml">
+            <form string="Categorization Type">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="js_categorization_types_tree" model="ir.ui.view">
+        <field name="name">js_categorization.type.tree</field>
+        <field name="model">js_categorization.type</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
     <record id="js_categorization_types" model="ir.actions.act_window">
         <field name="name">Categorization Types</field>
         <field name="type">ir.actions.act_window</field>
@@ -18,44 +43,17 @@
         </field>
     </record>
 
-    <record id="js_categorization_types_tree" model="ir.ui.view">
-        <field name="name">js_categorization.type.tree</field>
-        <field name="model">js_categorization.type</field>
-        <field name="arch" type="xml">
-            <tree string="parameters">
-                <field name="sequence" widget="handle"/>
-                <field name="name"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="js_categorization_types_form" model="ir.ui.view">
-        <field name="name">js_categorization.type.form</field>
-        <field name="model">js_categorization.type</field>
-        <field name="context">{ '_restrict_generic_type': True }</field>
-        <field name="arch" type="xml">
-            <form string="Categorization Type">
-                <sheet>
-                    <group>
-                        <field name="name"/>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
-
     <!-- CONFIGURACIÓN DE PARÁMETROS -->
 
     <record id="js_categorization_fields_form" model="ir.ui.view">
         <field name="name">js_categorization.field.form</field>
         <field name="model">js_categorization.field</field>
         <field name="arch" type="xml">
-            <form string="Categorization Field">
+            <form string="Categorization Field" duplicate="0">
                 <sheet>
                     <group>
                         <group string="Field Info">
                             <field name="id" invisible="1"/>
-                            <field name="domain" invisible="1"/>
                             <field name="model_id" invisible="1"/>
                             <field name="categorization_type" help="Categorization Template Type"/>
                             <field name="field_description" string="Field Label" help="Field display name" default_focus="1"/>
@@ -64,7 +62,7 @@
                             <field name="ttype" string="Field Type" help="Field data type"/>
                             <field name="relation" help="Model to make the relation" attrs="{ 'required': [('ttype', 'in', ['many2one', 'many2many'])], 'invisible': [('ttype', 'not in', ['many2one', 'many2many'])] }"/>
                             <field name="relation_table" help="Relation table name" attrs="{ 'required': [('ttype', '=', 'many2many')], 'invisible': [('ttype', '!=', 'many2many')] }"/>
-                            <field name="selection_vals" widget="many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['js_many2one', 'js_many2many'])], 'invisible': [('ttype', 'not in', ['js_many2one', 'js_many2many'])] }"/>
+                            <field name="selection_vals" widget="js_many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['js_many2one', 'js_many2many'])], 'invisible': [('ttype', 'not in', ['js_many2one', 'js_many2many'])] }"/>
                             <field name="related" string="Related Field" help="Field value is related to other field" placeholder="product_id.xxx" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                         </group>
 
@@ -75,6 +73,7 @@
                             <field name="index" string="Indexed" help="Indexed field for faster searchs"/>
                             <field name="copy" string="Copied" help="Value copied when model registry is duplicated"/>
                             <field name="store" string="Stored" help="Saved on database"/>
+                            <field name="filter_vals" string="Filter vals" help="Filter values by selected type in categorization" attrs="{ 'invisible': [('ttype', 'not in', ['js_many2one', 'js_many2many'])] }"/>
                         </group>
                     </group>
                 </sheet>
@@ -126,6 +125,22 @@
 
     <!-- CONFIGURACIÓN DE VALORES -->
 
+    <record id="js_categorization_values_form" model="ir.ui.view">
+        <field name="name">js_categorization.value.form</field>
+        <field name="model">js_categorization.value</field>
+        <field name="arch" type="xml">
+            <form string="Categorization Value">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="categorization_type"/>
+                        <field name="fields" invisible="context.get('hide_fields', False)"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <record id="js_categorization_values_tree" model="ir.ui.view">
         <field name="name">js_categorization.value.tree</field>
         <field name="model">js_categorization.value</field>
@@ -133,6 +148,7 @@
             <tree string="parameters">
                 <field name="name"/>
                 <field name="categorization_type"/>
+                <field name="fields"/>
             </tree>
         </field>
     </record>

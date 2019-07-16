@@ -41,8 +41,15 @@ class CategorizationField(models.Model):
     categorization_type = fields.Many2one('js_categorization.type', ondelete='restrict', required=False)
     name = fields.Char(copy=False)
     model_id = fields.Many2one(domain=_set_mod_filter)
-    selection_vals = fields.Many2many('js_categorization.value', string='Values')
+    selection_vals = fields.Many2many('js_categorization.value', 'js_categorization_field_js_categorization_value_rel', 'js_categorization_field_id', 'js_categorization_value_id')
+    filter_vals = fields.Boolean()
 
+    #override
+    @api.multi
+    def name_get(self):
+        return [(record.id, record.name) for record in self]
+
+    #override
     @api.model
     def _get_field_types(self):
         return [  # Get field types
@@ -58,21 +65,7 @@ class CategorizationField(models.Model):
             ('js_many2many', _('Multiselect')) # Special multi-selection for categorization values
         ]
 
-    @api.onchange('categorization_type', 'field_description')
-    def _set_name_from_label(self):
-        if self.field_description:
-            # Uppercase field_description
-            self.field_description = self.field_description.upper()
-        if not self._origin: # Only on create mode
-            slug = 'x' # Restore original preffix
-            if self.categorization_type: # If var is False, nothing to do
-                slug += '_' + unidecode(self.categorization_type.name).lower() # Change accentuated chars and convert to lowercase
-            if self.field_description: # If var is False, nothing to do
-                slug += '_' + unidecode(self.field_description).lower() # Change accentuated chars and convert to lowercase
-            slug = re.sub(r"[^\w\s]", '', slug) # Remove all non-word characters (everything except numbers and letters)
-            slug = re.sub(r"\s+", '_', slug) # Replace all runs of whitespace with a single dash
-            self.name = slug  # Update field
-
+    #override
     @api.onchange('related')
     def _onchange_related(self):
         if self.related:
@@ -92,7 +85,8 @@ class CategorizationField(models.Model):
                         'message': _("Relation not valid on selected model!")
                     }
                 }
-
+              
+    #override
     @api.onchange('name', 'ttype', 'model_id', 'relation')
     def _onchange_ttype(self):
         special_values_model = 'js_categorization.value'
@@ -106,6 +100,23 @@ class CategorizationField(models.Model):
         if self.name and self.model_id and self.ttype == 'js_many2many':
             self.relation_table = "%s_%s_rel" % (self.name, special_values_model.replace('.', '_'))
 
+    #private
+    @api.onchange('categorization_type', 'field_description')
+    def _set_name_from_label(self):
+        if self.field_description:
+            # Uppercase field_description
+            self.field_description = self.field_description.upper()
+        if not self._origin: # Only on create mode
+            slug = 'x' # Restore original preffix
+            if self.categorization_type: # If var is False, nothing to do
+                slug += '_' + unidecode(self.categorization_type.name).lower() # Change accentuated chars and convert to lowercase
+            if self.field_description: # If var is False, nothing to do
+                slug += '_' + unidecode(self.field_description).lower() # Change accentuated chars and convert to lowercase
+            slug = re.sub(r"[^\w\s]", '', slug) # Remove all non-word characters (everything except numbers and letters)
+            slug = re.sub(r"\s+", '_', slug) # Replace all runs of whitespace with a single dash
+            self.name = slug # Update field
+
+    #private
     @api.model
     def _createFieldsXml(self):
         # import web_pdb; web_pdb.set_trace()
@@ -164,11 +175,11 @@ class CategorizationField(models.Model):
                         doc_field_input.set('widget', 'many2many_tags')
                     if field.ttype in ('js_many2one', 'js_many2many'):
                         doc_field_input.set('options', "{ 'no_open': True, 'no_create': True }")
-                        doc_field_input.set(
-                            'domain', "[('categorization_type', '=', categorization_template), ('id', 'in', %s)]" % field.selection_vals.ids)
+                        field_domain = "['&', ('categorization_type', '=', categorization_template), " if field.filter_vals else "["
+                        doc_field_input.set('domain', field_domain + "('id', 'in', %s)]" % field.selection_vals.ids)
                     #if field.index: # If is indexed field
                     doc_field_search.set('name', field.name)
-                    doc_field_search.set('string', field.field_description)
+                    doc_field_search.set('string', field.field_description if not type[0] else field.field_description + ' [%s]' % type[1].upper())
         # Save XML to database
         categorization_product_view.arch_base = xee.tostring(pdoc, pretty_print=True)
         categorization_variant_view.arch_base = xee.tostring(vdoc, pretty_print=True)
@@ -176,6 +187,7 @@ class CategorizationField(models.Model):
         categorization_variant_search.arch_base = xee.tostring(vsea, pretty_print=True)
         return True
 
+    #private
     @api.model
     def _resetXml(self):
         for view in (
@@ -197,6 +209,7 @@ class CategorizationField(models.Model):
             # Save to field
             categorization_view.arch_base = xee.tostring(doc)
 
+    #private
     @staticmethod
     def _transformValues(model_values):
         values = copy.copy(model_values)
@@ -204,6 +217,7 @@ class CategorizationField(models.Model):
             values['ttype'] = values['ttype'].replace('js_', '')
         return values
 
+    #override
     @api.model
     def create(self, values):
         try:
@@ -219,6 +233,7 @@ class CategorizationField(models.Model):
             raise exception
         return result
 
+    #override
     @api.multi
     def write(self, values):
         model_values = copy.copy(values)
@@ -241,6 +256,7 @@ class CategorizationField(models.Model):
         self._createFieldsXml()
         return True
 
+    #override
     @api.multi
     def unlink(self):
         # Reset XML to make changes
@@ -268,9 +284,41 @@ class CategorizationValue(models.Model):
     _name = 'js_categorization.value'
     _description = "Categorization Values"
     _order = 'name, categorization_type'
-    _sql_constraints = [
-        ('categorization_value_unique', 'unique(name, categorization_type)',
-         'Value must be unique in categorization type!')]
+    _sql_constraints = [('categorization_value_unique', 'unique(name, categorization_type)', 'Value must be unique in categorization type!')]
+
     name = fields.Char(required=True, translate=True)
-    categorization_type = fields.Many2one(
-        'js_categorization.type', ondelete='restrict', required=False)
+    categorization_type = fields.Many2one('js_categorization.type', ondelete='cascade', required=False)
+    fields = fields.Many2many('js_categorization.field', 'js_categorization_field_js_categorization_value_rel', 'js_categorization_value_id', 'js_categorization_field_id')
+
+    #override
+    @api.multi
+    def name_get(self):
+        result = []
+        for record in self:
+            record_list = [record.id, record.name]
+            if (record.categorization_type):
+                record_list[1] += ' [%s]' % record.categorization_type.name.upper()
+            result.append(tuple(record_list))
+        return result
+
+    #override
+    @api.model
+    def create(self, values):
+        result = super(CategorizationValue, self).create(values)
+        if result:
+            self.env['js_categorization.field']._createFieldsXml()
+            return result
+
+    #override
+    @api.multi
+    def write(self, values):
+        super(CategorizationValue, self).write(values)
+        self.env['js_categorization.field']._createFieldsXml()
+        return True
+
+    #override
+    @api.multi
+    def unlink(self):
+        super(CategorizationValue, self).unlink()
+        self.env['js_categorization.field']._createFieldsXml()
+        return True
