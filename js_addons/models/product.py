@@ -6,9 +6,9 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     discontinued_product = fields.Boolean('Discontinued', default=False, help="If checked, the product will not be sold in main company")
-    product_size_width = fields.Float('Width', help="Max width of the product in cm")
-    product_size_height = fields.Float('Height', help="Max height of the product in cm")
-    product_size_depth = fields.Float('Depth', help="Max depth of the product in cm")
+    product_size_width = fields.Float('Width', help="Product max width in cm")
+    product_size_height = fields.Float('Height', help="Product max height in cm")
+    product_size_depth = fields.Float('Depth', help="Product max depth in cm")
     volume = fields.Float(compute='_compute_volume', digits=(3,2), store=False, help="Computed volume of the product (cube formula) in m³")
 
     #override
@@ -70,9 +70,9 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
 
     discontinued_product = fields.Boolean('Discontinued', default=False, help="If checked, the variant will not be sold in main company")
-    product_size_width = fields.Float('Width', help="Max width of the product in cm")
-    product_size_height = fields.Float('Height', help="Max height of the product in cm")
-    product_size_depth = fields.Float('Depth', help="Max depth of the product in cm")
+    product_size_width = fields.Float('Width', help="Product max width in cm")
+    product_size_height = fields.Float('Height', help="Product max height in cm")
+    product_size_depth = fields.Float('Depth', help="Product max depth in cm")
     volume = fields.Float(compute='_compute_volume', digits=(3,2), store=False, help="Computed volume of the product (cube formula) in m³")
 
     @api.onchange('product_size_depth', 'product_size_width', 'product_size_height')

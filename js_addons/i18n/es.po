@@ -53,26 +53,25 @@ msgstr "Si está marcado el producto no se vende en la compañía principal"
 msgid "If checked, the variant will not be sold in main company"
 msgstr "Si está marcado la variante no se vende en la compañía principal"
 
-
 #. module: js_addons
 #: model:ir.model.fields,help:js_addons.field_delivery_carrier_product_size_depth
 #: model:ir.model.fields,help:js_addons.field_product_product_product_size_depth
 #: model:ir.model.fields,help:js_addons.field_product_template_product_size_depth
-msgid "Max depth of the product in cm"
+msgid "Product max depth in cm"
 msgstr "Medida de la parte más profunda en cm"
 
 #. module: js_addons
 #: model:ir.model.fields,help:js_addons.field_delivery_carrier_product_size_height
 #: model:ir.model.fields,help:js_addons.field_product_product_product_size_height
 #: model:ir.model.fields,help:js_addons.field_product_template_product_size_height
-msgid "Max height of the product in cm"
+msgid "Product max height in cm"
 msgstr "Medida de la parte más alta en cm"
 
 #. module: js_addons
 #: model:ir.model.fields,help:js_addons.field_delivery_carrier_product_size_width
 #: model:ir.model.fields,help:js_addons.field_product_product_product_size_width
 #: model:ir.model.fields,help:js_addons.field_product_template_product_size_width
-msgid "Max width of the product in cm"
+msgid "Product max width in cm"
 msgstr "Medida de la parte más ancha en cm"
 
 #. module: js_addons
