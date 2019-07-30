@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
+import volumes
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
@@ -14,10 +15,10 @@ class ProductTemplate(models.Model):
     @api.onchange('product_size_depth', 'product_size_width', 'product_size_height')
     def _compute_volume(self):
         for record in self:
-            record.volume = 0.0
-            if  record.product_size_width and record.product_size_height and record.product_size_depth:
-                record.volume = float(record.product_size_width * record.product_size_height * record.product_size_depth) / 100
+            volumeInCm = volumes.calcCubeVolume(record.product_size_width, record.product_size_height, record.product_size_depth)
+            record.volume = volumeInCm / 1000000
 
+    @api.model
     def _set_variant_discontinued(self, values):
         if 'discontinued_product' in values:
             for variant in self.product_variant_ids:
@@ -60,7 +61,7 @@ class ProductTemplate(models.Model):
                         product = template.product_variant_ids.filtered(lambda x: not(values - x.attribute_value_ids))[:1]
 
                         result['str_table'][x][y].update({
-                            'discontinued': product and product.discontinued_product or False,
+                            'discontinued': product and product.discontinued_product or False
                         })
 
         return result
@@ -77,6 +78,5 @@ class ProductProduct(models.Model):
     @api.onchange('product_size_depth', 'product_size_width', 'product_size_height')
     def _compute_volume(self):
         for record in self:
-            record.volume = 0.0
-            if  record.product_size_width and record.product_size_height and record.product_size_depth:
-                record.volume = float(record.product_size_width * record.product_size_height * record.product_size_depth) / 100
+            volumeInCm = volumes.calcCubeVolume(record.product_size_width, record.product_size_height, record.product_size_depth)
+            record.volume = volumeInCm / 1000000
