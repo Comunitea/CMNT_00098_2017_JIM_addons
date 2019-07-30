@@ -21,6 +21,7 @@
     <record id="categorization_product_form_view" model="ir.ui.view">
         <field name="name">Product Categorization</field>
         <field name="model">product.template.categorization</field>
+        <field name="sequence">20</field>
         <field name="arch" type="xml">
             <form string="Categorization" create="false">
                 <header id="categorization_header" invisible="not context.get('default_product_id')">
@@ -42,7 +43,7 @@
                     </div>
                 </sheet>
                 <footer invisible="not context.get('default_product_id')">
-                    <button name="write" string="Save" class="btn-primary" type="object"/>
+                    <button name="write" string="Save" class="btn-primary oe_edit_only" type="object"/>
                     <button string="Cancel" class="btn-default" special="cancel"/>
                 </footer>
             </form>
@@ -74,7 +75,7 @@
                     </div>
                 </sheet>
                 <footer invisible="not context.get('default_product_id')">
-                    <button name="write" string="Save" class="btn-primary" type="object"/>
+                    <button name="write" string="Save" class="btn-primary oe_edit_only" type="object"/>
                     <button string="Cancel" class="btn-default" special="cancel"/>
                 </footer>
             </form>

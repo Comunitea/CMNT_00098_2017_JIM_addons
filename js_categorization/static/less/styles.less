@@ -1,3 +1,10 @@
+// Fix to show scrollbar on search popup
+.o_searchview .o_searchview_autocomplete {
+    max-height: 80vh;
+    overflow: auto;
+    left: 0; // Fix alignment
+}
+
 // Vertical position of table fields
 .o_main .o_notebook table.o_group{
     td:not(.o_td_label){
@@ -98,6 +105,14 @@
     #categorization_fields{
         .o_form_input, .o_form_textarea{
             padding: 4px 8px;
+        }
+
+        .o_form_field.o_with_button{
+            width: calc(100% - 19px);
+
+            & > .o_external_button{
+                margin-left: 9px;
+            }
         }
 
         .o_form_field_many2one{

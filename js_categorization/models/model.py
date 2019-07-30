@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import api, models
 
+
 class IrModel(models.Model):
     _inherit = 'ir.model'
 

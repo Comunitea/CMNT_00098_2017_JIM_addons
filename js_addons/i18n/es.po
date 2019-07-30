@@ -23,11 +23,25 @@ msgid "Contact"
 msgstr "Contacto"
 
 #. module: js_addons
+#: model:ir.model.fields,field_description:js_addons.field_delivery_carrier_product_size_depth
+#: model:ir.model.fields,field_description:js_addons.field_product_product_product_size_depth
+#: model:ir.model.fields,field_description:js_addons.field_product_template_product_size_depth
+msgid "Depth"
+msgstr "Profundidad"
+
+#. module: js_addons
 #: model:ir.model.fields,field_description:js_addons.field_product_product_discontinued_product
 #: model:ir.model.fields,field_description:js_addons.field_product_template_discontinued_product
 #: model:ir.ui.view,arch_db:js_addons.js_addons_product_template_search_view
 msgid "Discontinued"
 msgstr "Descatalogado"
+
+#. module: js_addons
+#: model:ir.model.fields,field_description:js_addons.field_delivery_carrier_product_size_height
+#: model:ir.model.fields,field_description:js_addons.field_product_product_product_size_height
+#: model:ir.model.fields,field_description:js_addons.field_product_template_product_size_height
+msgid "Height"
+msgstr "Alto"
 
 #. module: js_addons
 #: model:ir.model.fields,help:js_addons.field_product_template_discontinued_product
@@ -38,6 +52,28 @@ msgstr "Si está marcado el producto no se vende en la compañía principal"
 #: model:ir.model.fields,help:js_addons.field_product_product_discontinued_product
 msgid "If checked, the variant will not be sold in main company"
 msgstr "Si está marcado la variante no se vende en la compañía principal"
+
+
+#. module: js_addons
+#: model:ir.model.fields,help:js_addons.field_delivery_carrier_product_size_depth
+#: model:ir.model.fields,help:js_addons.field_product_product_product_size_depth
+#: model:ir.model.fields,help:js_addons.field_product_template_product_size_depth
+msgid "Max depth of the product in cm"
+msgstr "Medida de la parte más profunda en cm"
+
+#. module: js_addons
+#: model:ir.model.fields,help:js_addons.field_delivery_carrier_product_size_height
+#: model:ir.model.fields,help:js_addons.field_product_product_product_size_height
+#: model:ir.model.fields,help:js_addons.field_product_template_product_size_height
+msgid "Max height of the product in cm"
+msgstr "Medida de la parte más alta en cm"
+
+#. module: js_addons
+#: model:ir.model.fields,help:js_addons.field_delivery_carrier_product_size_width
+#: model:ir.model.fields,help:js_addons.field_product_product_product_size_width
+#: model:ir.model.fields,help:js_addons.field_product_template_product_size_width
+msgid "Max width of the product in cm"
+msgstr "Medida de la parte más ancha en cm"
 
 #. module: js_addons
 #: model:ir.model,name:js_addons.model_product_product
@@ -54,3 +90,10 @@ msgstr "Producto"
 #: model:ir.model.fields,field_description:js_addons.field_res_users_group_companies_ids
 msgid "Web Access"
 msgstr "Acceso Web"
+
+#. module: js_addons
+#: model:ir.model.fields,field_description:js_addons.field_delivery_carrier_product_size_width
+#: model:ir.model.fields,field_description:js_addons.field_product_product_product_size_width
+#: model:ir.model.fields,field_description:js_addons.field_product_template_product_size_width
+msgid "Width"
+msgstr "Ancho"

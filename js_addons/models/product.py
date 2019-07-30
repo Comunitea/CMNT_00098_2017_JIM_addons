@@ -5,6 +5,18 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     discontinued_product = fields.Boolean('Discontinued', default=False, help="If checked, the product will not be sold in main company")
+    product_size_width = fields.Float('Width', help="Max width of the product in cm")
+    product_size_height = fields.Float('Height', help="Max height of the product in cm")
+    product_size_depth = fields.Float('Depth', help="Max depth of the product in cm")
+    volume = fields.Float(compute='_compute_volume', digits=(3,2), store=False, help="Computed volume of the product (cube formula) in m³")
+
+    #override
+    @api.onchange('product_size_depth', 'product_size_width', 'product_size_height')
+    def _compute_volume(self):
+        for record in self:
+            record.volume = 0.0
+            if  record.product_size_width and record.product_size_height and record.product_size_depth:
+                record.volume = float(record.product_size_width * record.product_size_height * record.product_size_depth) / 100
 
     def _set_variant_discontinued(self, values):
         if 'discontinued_product' in values:
@@ -14,7 +26,17 @@ class ProductTemplate(models.Model):
     @api.model
     def create(self, vals):
         self._set_variant_discontinued(vals);
-        return super(ProductTemplate, self).create(vals)
+        template = super(ProductTemplate, self).create(vals)
+        related_vals = {}
+        if vals.get('product_size_width'):
+            related_vals['product_size_width'] = vals['product_size_width']
+        if vals.get('product_size_height'):
+            related_vals['product_size_height'] = vals['product_size_height']
+        if vals.get('product_size_depth'):
+            related_vals['product_size_depth'] = vals['product_size_depth']
+        if related_vals:
+            template.write(related_vals)
+        return template
 
     @api.multi
     def write(self, vals):
@@ -47,3 +69,14 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
 
     discontinued_product = fields.Boolean('Discontinued', default=False, help="If checked, the variant will not be sold in main company")
+    product_size_width = fields.Float('Width', help="Max width of the product in cm")
+    product_size_height = fields.Float('Height', help="Max height of the product in cm")
+    product_size_depth = fields.Float('Depth', help="Max depth of the product in cm")
+    volume = fields.Float(compute='_compute_volume', digits=(3,2), store=False, help="Computed volume of the product (cube formula) in m³")
+
+    @api.onchange('product_size_depth', 'product_size_width', 'product_size_height')
+    def _compute_volume(self):
+        for record in self:
+            record.volume = 0.0
+            if  record.product_size_width and record.product_size_height and record.product_size_depth:
+                record.volume = float(record.product_size_width * record.product_size_height * record.product_size_depth) / 100
