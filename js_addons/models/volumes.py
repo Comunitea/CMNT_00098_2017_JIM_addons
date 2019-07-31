@@ -1,9 +1,4 @@
-###########################
-#  BASIC VOLUME FORMULAS  #
-#  By Pablo Luaces        #
-#  Coding UTF-8           #
-###########################
-
+# -*- coding: utf-8 -*-
 import math
 
 def calcCubeVolume(width=0.0, height=0.0, depth=0.0):

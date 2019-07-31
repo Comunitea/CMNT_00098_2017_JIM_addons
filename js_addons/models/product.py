@@ -9,16 +9,15 @@ class ProductTemplate(models.Model):
     product_size_width = fields.Float('Width', help="Product max width in cm")
     product_size_height = fields.Float('Height', help="Product max height in cm")
     product_size_depth = fields.Float('Depth', help="Product max depth in cm")
-    volume = fields.Float(compute='_compute_volume', digits=(3,2), store=False, help="Computed volume of the product (cube formula) in m³")
+    volume = fields.Float(compute='_compute_volume', digits=(3,6), store=False, help="Computed volume of the product (cube formula) in m³")
 
     #override
-    @api.onchange('product_size_depth', 'product_size_width', 'product_size_height')
+    @api.depends('product_size_depth', 'product_size_width', 'product_size_height')
     def _compute_volume(self):
         for record in self:
             volumeInCm = volumes.calcCubeVolume(record.product_size_width, record.product_size_height, record.product_size_depth)
             record.volume = volumeInCm / 1000000
 
-    @api.model
     def _set_variant_discontinued(self, values):
         if 'discontinued_product' in values:
             for variant in self.product_variant_ids:
@@ -26,8 +25,8 @@ class ProductTemplate(models.Model):
 
     @api.model
     def create(self, vals):
-        self._set_variant_discontinued(vals);
         template = super(ProductTemplate, self).create(vals)
+        template._set_variant_discontinued(vals);
         related_vals = {}
         if vals.get('product_size_width'):
             related_vals['product_size_width'] = vals['product_size_width']
@@ -73,9 +72,9 @@ class ProductProduct(models.Model):
     product_size_width = fields.Float('Width', help="Product max width in cm")
     product_size_height = fields.Float('Height', help="Product max height in cm")
     product_size_depth = fields.Float('Depth', help="Product max depth in cm")
-    volume = fields.Float(compute='_compute_volume', digits=(3,2), store=False, help="Computed volume of the product (cube formula) in m³")
+    volume = fields.Float(compute='_compute_volume', digits=(3,6), store=False, help="Computed volume of the product (cube formula) in m³")
 
-    @api.onchange('product_size_depth', 'product_size_width', 'product_size_height')
+    @api.depends('product_size_depth', 'product_size_width', 'product_size_height')
     def _compute_volume(self):
         for record in self:
             volumeInCm = volumes.calcCubeVolume(record.product_size_width, record.product_size_height, record.product_size_depth)
