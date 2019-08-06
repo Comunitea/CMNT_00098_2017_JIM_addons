@@ -9,7 +9,7 @@ class ProductTemplate(models.Model):
     product_size_width = fields.Float('Width', help="Product max width in cm")
     product_size_height = fields.Float('Height', help="Product max height in cm")
     product_size_depth = fields.Float('Depth', help="Product max depth in cm")
-    volume = fields.Float(compute='_compute_volume', digits=(3,6), store=False, help="Computed volume of the product (cube formula) in m³")
+    volume = fields.Float(compute='_compute_volume', inverse=False, digits=(3,6), store=False, help="Computed volume of the product (cube formula) in m³")
 
     #override
     @api.depends('product_size_depth', 'product_size_width', 'product_size_height')
