@@ -97,8 +97,9 @@ class WizardValuationHistory(models.TransientModel):
                             il.quantity as quantity_imp, il.price_subtotal *
                             (ai.amount_untaxed_signed/ai.amount_untaxed) as 
                             price_subtotal_imp, 
-                            il.arancel_percentage,  il.arancel,
-			                il.arancel * il.quantity AS arancel_linea, il.arancel_percentage * il.quantity AS arancel_percentage_linea,
+                            il.arancel_percentage,  il.arancel * (ai.amount_untaxed_signed/ai.amount_untaxed),
+			                il.arancel * (ai.amount_untaxed_signed/ai.amount_untaxed) * il.quantity AS arancel_linea, 
+			                il.arancel_percentage * il.quantity AS arancel_percentage_linea,
                             CASE
                                 WHEN ai.amount_untaxed = 0 THEN NULL
                                 WHEN il.quantity = 0 THEN NULL
