@@ -11,7 +11,13 @@ class WizardValuationHistory(models.TransientModel):
 
 
     web_visible = fields.Selection([('yes', 'Visible'), ('no', 'No visible'), ('all', 'Todos')], string ="Visible en web", default='all')
-    stock_available = fields.Selection([('yes', 'Disponible'), ('no', 'No disponible'), ('all', 'Todos')], string ="Available stock", default='all')
+    stock_available = fields.Selection([('yes', 'Disponible'),
+                                        ('no', 'No disponible'),
+                                        ('all', 'Todos') ,
+                                        ('all_inactive',
+                                         'Todos, incluido no activos')],
+                                       string ="Available stock",
+                                       default='all')
     search_text = fields.Char("Search text")
     offset = fields.Integer("Start", default=0)
     limit = fields.Integer("Limit", default=0)
@@ -45,6 +51,10 @@ class WizardValuationHistory(models.TransientModel):
             domain.append(['web_global_stock', '>', 0])
         elif self.stock_available == 'no':
             domain.append(['web_global_stock', '<=', 0])
+        elif self.stock_available == 'all_inactive':
+            domain.append('|')
+            domain.append(['active', '=', True])
+            domain.append(['active', '=', False])
 
         if self.search_text:
             domain.append(['tag_names', 'ilike', self.search_text])
