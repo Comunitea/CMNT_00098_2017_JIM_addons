@@ -13,6 +13,16 @@ class MrpProduction(models.Model):
 
     _inherit = 'mrp.production'
 
+    @api.model
+    def _get_default_picking_type(self):
+        domain_wh = [
+            ('partner_id', '=', self.env.user.company_id.partner_id.id)]
+        warehouse_id = self.env['stock.warehouse'].search(domain_wh, limit=1)
+        types = warehouse_id and warehouse_id.manu_type_id
+        if not types:
+            return super(MrpProduction, self)._get_default_picking_type()
+        return types[:1]
+
     global_real_stock = fields.Float('Global Real Stock',
                                      digits=dp.get_precision
                                      ('Product Unit of Measure'),
