@@ -87,7 +87,7 @@ div.o_view_manager_content:not(.o_form_field) > div > div.table-responsive table
     tbody {
         display: block;
         height: 100vh;
-        max-height: calc(100vh - 185px); // 154px for Odoo control panel
+        max-height: ~"calc(100vh - 172px)"; // 172px for Odoo control panel
         overflow: auto;
     }
 
@@ -114,7 +114,7 @@ div.o_view_manager_content:not(.o_form_field) > div > div.table-responsive table
 	width: 12px;
     position: absolute;
     opacity: 0.8;
-    top: 60px;
+    bottom: 30px;
     right: 10px;
 	&::before,
 	&::after {
