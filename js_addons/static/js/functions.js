@@ -7,22 +7,29 @@ odoo.define('js_addons.fixedTableHeaders', function (require) {
     var fixedTablesActive = false;
 
     $.fn.hasScrollBar = function() {
-        return this[0] ? this[0].scrollHeight > this.innerHeight() : false;
+        var hasScrollBar = this[0] ? this[0].scrollHeight > this.innerHeight() : false;
+        console.info('HAS SCROLLBAR', hasScrollBar);
+        return hasScrollBar;
     }
 
     $.fn.scrollEnds = function() {
-        return (this.scrollTop() + this.innerHeight() >= this[0].scrollHeight);
+        var scrollEnds = (this.scrollTop() + this.innerHeight() >= this[0].scrollHeight);
+        console.info('[js_addons] SCROLL ENDS', scrollEnds);
+        return scrollEnds;
     }
 
     $.isStandaloneListView = function() {
         var $container = $('div.o_view_manager_content:not(.o_form_field)');
         // Is standalone view if: (CONTAINER EXITS) AND (BUTTON ".o_cp_switch_list" EXISTS AND HAS CLASS "active") AND (CONTAINER CHILD NOT HAS CLASS "o_form_view")
-        return ($container.length === 1 && $('button.o_cp_switch_list.active').length === 1 && $container.children('div.o_form_view').length === 0);
+        var isStandaloneListView = ($container.length === 1 && $('button.o_cp_switch_list.active').length === 1 && $container.children('div.o_form_view').length === 0);
+        console.info('[js_addons] IS STANDALONE LISTVIEW', isStandaloneListView);
+        return isStandaloneListView;
     }
 
     $.scrollIndicator = function() {
         var $indicator = $('#fixed-table-scroll-indicator');
         if (!$indicator.length) $indicator = $('<div id="fixed-table-scroll-indicator" title="Hay más elementos ¡haz scroll!"><div></div></div>').appendTo($('div.o_view_manager_content:not(.o_form_field)')).hide();
+        console.info('[js_addons] SCROLL INDICATOR', $indicator);
         return $indicator;
     }
 
@@ -32,6 +39,7 @@ odoo.define('js_addons.fixedTableHeaders', function (require) {
         var icon = (fixedTablesActive)? 'fa-toggle-on':'fa-toggle-off';
         var $newBtn = $('<div class="btn-group btn-group-sm o_cp_switch_buttons btn-fxt-toggle"/>');
         $('<button type="button" class="btn btn-icon fa fa-lg ' + icon + '" data-original-title="Cabecera"></button>').appendTo($newBtn).tooltip();
+        console.info('[js_addons] FIX BUTTON', $newBtn);
         return $newBtn.appendTo($('div.o_cp_right'));
     }
 
@@ -39,6 +47,8 @@ odoo.define('js_addons.fixedTableHeaders', function (require) {
         // Tables to apply
         var $tableObj = $('div.o_view_manager_content:not(.o_form_field)').find('table');
         var $tableBody = $tableObj.find('tbody');
+
+        console.info('[js_addons] SET TABLE HEADER FIXED:', fixedTablesActive);
 
         if (fixedTablesActive){
             // Set button status
@@ -64,8 +74,15 @@ odoo.define('js_addons.fixedTableHeaders', function (require) {
 
     ListView.include({
         reload_content: function(){
-            var self = this;
             var reloaded = $.Deferred();
+
+            // Set toggle btn on o_control_panel
+            if ($.isStandaloneListView()){
+                $.fixTableButton().click(function(){
+                    fixedTablesActive = !fixedTablesActive;
+                    $.setTableHeaderFixedIfActive();
+                });
+            }
 
             $('div.o_cp_switch_buttons, div.o_sub_menu_content, nav.oe_main_menu_navbar').off().click(function(){
                 // Workaround to remove toggle button
@@ -73,6 +90,12 @@ odoo.define('js_addons.fixedTableHeaders', function (require) {
             });
 
             this._super().then(function(){
+                console.log('[js_addons] View render...');
+                // Set table fixed header if active
+                $.setTableHeaderFixedIfActive();
+                // Resolve the promise
+                reloaded.resolve();
+            }).then(function(){
                 // Set toggle btn on o_control_panel
                 if ($.isStandaloneListView()){
                     $.fixTableButton().click(function(){
@@ -80,10 +103,6 @@ odoo.define('js_addons.fixedTableHeaders', function (require) {
                         $.setTableHeaderFixedIfActive();
                     });
                 }else $.fixTableButton().remove();
-                // Set table fixed if is active
-                $.setTableHeaderFixedIfActive();
-                // Resolve the promise
-                reloaded.resolve();
             });
 
             return reloaded.promise();
