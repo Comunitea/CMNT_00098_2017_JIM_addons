@@ -18,7 +18,7 @@
 
     <!-- PRODUCTS CATEGORIZATION FORM -->
 
-    <!--record id="categorization_product_form_view" model="ir.ui.view">
+    <record id="categorization_product_form_view" model="ir.ui.view">
         <field name="name">Product Categorization</field>
         <field name="model">product.template.categorization</field>
         <field name="sequence">20</field>
@@ -48,7 +48,7 @@
                 </footer>
             </form>
         </field>
-    </record-->
+    </record>
 
     <!-- VARIANTS CATEGORIZATION FORM -->
 
@@ -84,12 +84,12 @@
 
     <!-- CATEGORIZATION FILTERS -->
 
-    <!--record id="categorization_product_search_by_field" model="ir.ui.view">
+    <record id="categorization_product_search_by_field" model="ir.ui.view">
         <field name="model">product.template.categorization</field>
         <field name="arch" type="xml">
             <search/>
         </field>
-    </record-->
+    </record>
 
     <record id="categorization_variant_search_by_field" model="ir.ui.view">
         <field name="model">product.product.categorization</field>
