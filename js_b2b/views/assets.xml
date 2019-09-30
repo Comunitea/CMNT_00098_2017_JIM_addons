@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <template id="assets" inherit_id="web.assets_backend" name="B2B Assets">
+
+        <xpath expr="link[last()]" position="after">
+            <link href="/js_b2b/static/less/styles.less" rel="stylesheet" type="text/less"/>
+        </xpath>
+
+        <xpath expr="." position="inside">
+            <script type="text/javascript" src="/js_b2b/static/js/form_widgets.js"></script>
+        </xpath>
+
+    </template>
+
+</odoo>

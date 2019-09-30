@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <record id="js_b2b_clients_form" model="ir.ui.view">
+        <field name="name">b2b.client.form</field>
+        <field name="model">b2b.client</field>
+        <field name="arch" type="xml">
+            <form string="Client">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+                            <field name="active" widget="boolean_button" options='{"terminology": "active"}'/>
+                        </button>
+                    </div>
+                    <div class="oe_title" name="title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <field name="partner"/>
+                        <field name="key" widget="js_clipboard"/>
+                        <field name="items"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="js_b2b_clients_tree" model="ir.ui.view">
+        <field name="name">b2b.client.tree</field>
+        <field name="model">b2b.client</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="partner"/>
+                <field name="name"/>
+                <field name="active"/>
+                <field name="items"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="js_b2b_clients" model="ir.actions.act_window">
+        <field name="name">B2B Clients</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">b2b.client</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Push here to create a new client
+          </p><p>
+            The clients with <b>active</b> status can receive data from suscriptions or webhooks
+          </p>
+        </field>
+    </record>
+
+    <!-- ACCIONES DE MENÚ -->
+
+    <menuitem id="js_b2b_clients_action" name="B2B Clients" parent="base.menu_users" sequence="90" action="js_b2b_clients" groups="base.group_portal"  />
+
+</odoo>
