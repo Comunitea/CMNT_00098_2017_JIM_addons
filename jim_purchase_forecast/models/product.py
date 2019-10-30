@@ -73,6 +73,18 @@ class ProductProduct(models.Model):
 
     @api.multi
     def get_dates(self, num_years_ago=0, stock_months=4):
+        import ipdb; ipdb.set_trace()
+        def check(day, month):
+            if day not in ['31', '29']:
+                return day
+            short_month = ['02', '04', '06', '09', '11']
+            if month in short_month:
+                if day == '31':
+                    return '30'
+                elif day == '29':
+                    return '28'
+            return day
+
         self.ensure_one()
         today = datetime.today()
         future_date = today + relativedelta(months=+stock_months)
@@ -83,7 +95,10 @@ class ProductProduct(models.Model):
         month_future = future_date.strftime("%m")
 
         day_today = today.strftime("%d")
+
         day_future = future_date.strftime("%d")
+        day_today = check(day_today, month_today)
+        day_future = check(day_future, month_future)
 
         date_start = str(year_today) + '-' + month_today + '-' + day_today
         date_end = str(year_future) + '-' + month_future + '-' + day_future
