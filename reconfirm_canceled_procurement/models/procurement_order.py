@@ -12,7 +12,7 @@ LOCATION_USAGES = ['customer']
 class ProductPricelistItem(models.Model):
     _inherit = 'product.pricelist.item'
 
-    active = fields.Boolean(default=False, help="Set archive to true to hide the maintenance request without deleting it.")
+    active = fields.Boolean(default=True, help="Set archive to true to hide the maintenance request without deleting it.")
 
 class ProcurementOrder(models.Model):
 
