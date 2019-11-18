@@ -1,11 +1,40 @@
-pre.ace_editor{
+/* ACE EDITOR STYLES */
+
+pre.ace_editor {
     border-radius: 5px;
 
-    & > div.ace_gutter{
+    & > div.ace_gutter {
         border-radius: 5px 0 0 5px;
     }
 
     span.ace_fold-widget.ace_closed {
         background-color: yellow !important;
+    }
+}
+
+/* FIX FORM STYLES */
+
+.o_form_view {
+    .o_form_field.o_form_field_many2one .o_external_button {
+        margin-left: 5px;
+    }
+
+    .o_form_sheet_bg .o_form_sheet {
+        padding: 38px;
+    }
+
+    .o_group {
+        .o_group_col_6{
+            width: 49%;
+            margin-left: 2%;
+        }
+
+        .o_group_col_6:first-child {
+            margin-left: 0;
+        }
+
+        .o_td_label + td {
+            padding: 2px 0 2px 8px;
+        }
     }
 }

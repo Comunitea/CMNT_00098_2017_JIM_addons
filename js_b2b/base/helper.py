@@ -29,18 +29,6 @@ class OutputHelper:
         print("\n")
 
     @staticmethod
-    def debug(msg, include_timestamp=True):
-        print("\n")
-        print("{}{}{}".format(MsgTypes.ERROR, OutputHelper.DIVIDER, MsgTypes.ENDC))
-
-        if include_timestamp:
-            print("{}{}{}".format(MsgTypes.INFO, datetime.now(), MsgTypes.ENDC))
-
-        print("    {}{}{}".format(MsgTypes.WARNING, msg, MsgTypes.ENDC))
-        print("{}{}{}".format(MsgTypes.ERROR, OutputHelper.DIVIDER, MsgTypes.ENDC))
-        print("\n")
-
-    @staticmethod
     def format_date(date_string=None, input_date_format='%Y-%m-%d %H:%M:%S', output_date_format='%Y%m%d'):
         if not date_string:
             date_string = datetime.now().strftime('%Y-%m-%d %H:%M:%S')

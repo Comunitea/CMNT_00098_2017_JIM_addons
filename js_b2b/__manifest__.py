@@ -13,9 +13,9 @@
     ],
     'data': [
         'security/ir.model.access.csv',
+        'views/assets.xml',
         'views/client.xml',
-        'views/item.xml',
-        'views/assets.xml'
+        'views/item.xml'
     ],
     'depends': [
         'base',

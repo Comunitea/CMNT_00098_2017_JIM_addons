@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
+    <!-- FORMULARIO -->
+
     <record id="js_b2b_items_form" model="ir.ui.view">
         <field name="name">b2b.item.form</field>
         <field name="model">b2b.item</field>
         <field name="arch" type="xml">
             <form string="Item">
                 <sheet>
+                    <field name="id" invisible="1"/>
                     <div class="oe_button_box" name="button_box">
                         <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
                             <field name="active" widget="boolean_button" options='{"terminology": "active"}'/>
@@ -15,11 +18,11 @@
                     <div class="oe_title" name="title">
                         <label for="name" class="oe_edit_only"/>
                         <h1>
-                            <field name="name"/>
+                            <field name="name" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                         </h1>
                     </div>
                     <group>
-                        <field name="type"/>
+                        <field name="mode"/>
                         <field name="code" widget="js_code"/>
                     </group>
                 </sheet>
@@ -27,20 +30,24 @@
         </field>
     </record>
 
+    <!-- LISTADO -->
+
     <record id="js_b2b_items_tree" model="ir.ui.view">
         <field name="name">b2b.item.tree</field>
         <field name="model">b2b.item</field>
         <field name="arch" type="xml">
             <tree string="parameters">
                 <field name="name"/>
-                <field name="type"/>
+                <field name="mode"/>
                 <field name="active"/>
             </tree>
         </field>
     </record>
 
+    <!-- VISTAS -->
+
     <record id="js_b2b_items" model="ir.actions.act_window">
-        <field name="name">B2B items</field>
+        <field name="name">B2B Items</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">b2b.item</field>
         <field name="view_type">form</field>
@@ -56,6 +63,6 @@
     
     <!-- ACCIONES DE MENÚ -->
 
-    <menuitem id="js_b2b_items_action" name="B2B Items" parent="base.menu_users" sequence="100" action="js_b2b_items" groups="base.group_portal"  />
+    <menuitem id="js_b2b_items_action" name="Items" parent="js_b2b_menu" sequence="10" action="js_b2b_items" groups="base_technical_features.group_technical_features"  />
 
 </odoo>

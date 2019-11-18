@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
+    <!-- FORMULARIO -->
+
     <record id="js_b2b_clients_form" model="ir.ui.view">
         <field name="name">b2b.client.form</field>
         <field name="model">b2b.client</field>
@@ -8,19 +10,21 @@
             <form string="Client">
                 <sheet>
                     <div class="oe_button_box" name="button_box">
-                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
-                            <field name="active" widget="boolean_button" options='{"terminology": "active"}'/>
+                        <button name="toggle_vip" type="object" class="oe_stat_button" icon="fa-user-secret">
+                            <field name="vip" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Is VIP', 'string_false': 'Not VIP' }}"/>
+                        </button>
+                        <button name="toggle_send" type="object" class="oe_stat_button" icon="fa-paper-plane">
+                            <field name="send" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Can Send', 'string_false': 'Can not Send' }}"/>
+                        </button>
+                        <button name="toggle_active" type="object" class="oe_stat_button" icon="fa-google">
+                            <field name="active" widget="boolean_button" options="{ 'terminology': 'active' }"/>
                         </button>
                     </div>
-                    <div class="oe_title" name="title">
-                        <label for="name" class="oe_edit_only"/>
-                        <h1>
-                            <field name="name"/>
-                        </h1>
-                    </div>
                     <group>
-                        <field name="partner"/>
-                        <field name="key" widget="js_clipboard"/>
+                        <field name="partner" attrs="{ 'readonly': [('iam_sa', '!=', False)] }"/>
+                        <field name="iam_sa" widget="js_clipboard" attrs="{ 'invisible': [('iam_sa', '==', False)] }"/>
+                        <field name="iam_key" attrs="{ 'invisible': [('iam_sa', '==', False)] }"/>
+                        <field name="products_filter" widget="many2many_tags"/>
                         <field name="items"/>
                     </group>
                 </sheet>
@@ -28,18 +32,22 @@
         </field>
     </record>
 
+    <!-- LISTADO -->
+
     <record id="js_b2b_clients_tree" model="ir.ui.view">
         <field name="name">b2b.client.tree</field>
         <field name="model">b2b.client</field>
         <field name="arch" type="xml">
             <tree string="parameters">
                 <field name="partner"/>
-                <field name="name"/>
+                <field name="send"/>
                 <field name="active"/>
                 <field name="items"/>
             </tree>
         </field>
     </record>
+
+    <!-- VISTAS -->
 
     <record id="js_b2b_clients" model="ir.actions.act_window">
         <field name="name">B2B Clients</field>
@@ -58,6 +66,6 @@
 
     <!-- ACCIONES DE MENÚ -->
 
-    <menuitem id="js_b2b_clients_action" name="B2B Clients" parent="base.menu_users" sequence="90" action="js_b2b_clients" groups="base.group_portal"  />
+    <menuitem id="js_b2b_clients_action" name="Clients" parent="js_b2b_menu" sequence="20" action="js_b2b_clients" groups="base_technical_features.group_technical_features"  />
 
 </odoo>

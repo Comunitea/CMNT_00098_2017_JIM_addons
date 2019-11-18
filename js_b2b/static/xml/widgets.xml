@@ -26,7 +26,7 @@
                     t-att-maxlength="widget.field.size" />
             </div>
 
-            <button type="button" class="fa fa-clipboard btn btn-default o_external_button" tabindex="-1" draggable="false"/>
+            <button type="button" class="fa fa-clipboard btn btn-default o_external_button" tabindex="-1" draggable="false" title="Copy to clipboard"/>
         </div>
     </t>
 
