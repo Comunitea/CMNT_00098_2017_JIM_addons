@@ -32,6 +32,12 @@ odoo.define('js_categorization.form_widgets', function (require) {
             },
             'click .badge': function(e) {
                 e.stopPropagation();
+
+                if (typeof(this.many2one) == 'undefined'){
+                    alert(_t("Can't open this item on view mode!"));
+                    return false;
+                }
+
                 var self = this;
                 var record_id = this.get_badge_id(e.target);
                 new common.FormViewDialog(self, {
