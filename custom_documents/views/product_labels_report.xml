@@ -13,6 +13,10 @@
                                 width: 57.8mm;
                                 margin-left: 2.5mm;
                             }
+                            .text_imported {
+                                font-size: 6px;
+                                text-align: center;
+                            }
                         </style>
                         <t t-foreach="product_page" t-as="product">
                             <div class="product_label">
@@ -28,9 +32,22 @@
                                     <div style="text-align: center;">
                                         <span style="text-align: center;" t-field="product.barcode"/>
                                     </div>
+                                    <div class="text_imported">
+
+                                        <span class="text_imported">
+                                            IMPORTADO POR:JIM SPORTS TECHNOLOGY, S.L. CIF-B-15932304
+                                        </span><p style="margin:0px"/>
+                                        <span class="text_imported">
+                                            POL. IND. PALAS DE REI, S/N 27200 PALAS DE REI LUGO
+                                        </span >
+
+                                    </div>
                                 </div>
                                 <div class="image" t-if="product.image_medium" style="padding-top:2px; width:100%; text-align: center;">
                                     <img t-att-src="'data:image/png;base64,%s' % product.image_medium"/>
+                                </div>
+                                <div>
+
                                 </div>
                             </div>
                         </t>
@@ -45,7 +62,7 @@
         id="report_product_label"
         name="custom_documents.product_from_product_label_report"
         file="custom_documents.product_label_report"
-        report_type="qweb-pdf"
+        report_type="qweb-html"
         model="product.product"
         string="Labels"/>
 
