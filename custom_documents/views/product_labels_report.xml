@@ -62,7 +62,7 @@
         id="report_product_label"
         name="custom_documents.product_from_product_label_report"
         file="custom_documents.product_label_report"
-        report_type="qweb-html"
+        report_type="qweb-pdf"
         model="product.product"
         string="Labels"/>
 
