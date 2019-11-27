@@ -132,16 +132,16 @@ class B2bClients(models.Model):
         return subscriber.subscription_path(os.environ['GOOGLE_CLOUD_PROJECT_ID'], item_name)
 
     @api.model
-    def __create_subscription(self, sub_path, topic_name):
+    def __create_subscription(self, sub_path, topic_path):
         if self.partner and self.iam_sa:
             if subscriber.create_subscription(
                 sub_path,
-                self.__topic_path(topic_name),
+                topic_path,
                 ack_deadline_seconds=10, 
                 retain_acked_messages=False,
-                # Never expire! maintained by the module
-                expiration_policy=pubsub_v1.types.ExpirationPolicy(),
-                labels={ 'partner_id': str(self.partner.id) }
+                
+                expiration_policy=pubsub_v1.types.ExpirationPolicy(), # Never expire! maintained by the module
+                labels={ 'partner_id': str(self.partner.id) } # Label to filter subscriptions by Odoo client id
             ):
                 return self.__set_subscription_policy(sub_path)
         return False
@@ -192,27 +192,31 @@ class B2bClients(models.Model):
     @api.multi
     def toggle_vip(self):
         for client in self:
+            # Current inverse value
             client.vip = not client.vip
 
     @api.multi
     def toggle_send(self):
         for client in self:
+            # Current inverse value
             client.send = not client.send
 
     @api.multi
     def client_set_send_auth(self):
-        # Change account send auth on send change
+        # Change topic Policy on send change
         for client in self:
-            topic_path = self.__topic_path('PUBLIC-IN')
             if client.send:
-                client.__set_topic_policy(topic_path)
-            else: 
-                client.__delete_topic_policy(topic_path)
+                # Add roles/pubsub.publisher for current client
+                client.__set_topic_policy(self.__topic_path('PUBLIC-IN'))
+            else:
+                # Remove roles/pubsub.publisher for current client
+                client.__delete_topic_policy(self.__topic_path('PUBLIC-IN'))
 
     @api.multi
     def iam_toggle_active(self):
-        # Change account status on active change
+        # Change Service Account status on active change
         for client in self:
+            # Enable/disable client Service Account
             client.__toggle_service_account()
 
     @api.model
@@ -224,7 +228,7 @@ class B2bClients(models.Model):
         # Create customer exclusive topic
         client.__create_topic(self.__topic_path(client.partner.ref))
         # Create public topic subscription
-        client.__create_subscription(self.__subscription_path('PUBLIC-OUT-' + client.partner.ref), 'PUBLIC-OUT')
+        client.__create_subscription(self.__subscription_path('PUBLIC-OUT-' + client.partner.ref), self.__topic_path('PUBLIC-OUT'))
         # Create customer exclusive topic subscription
         client.__create_subscription(self.__subscription_path(client.partner.ref), client.partner.ref)
         return client

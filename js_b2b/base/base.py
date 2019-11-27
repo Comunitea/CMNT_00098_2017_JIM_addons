@@ -113,6 +113,7 @@ class BaseB2B(models.AbstractModel):
                     if send_to_clients:
                         # Obtener los clientes configurados (todos), aunque esté inactivo se le envían igualmente los mensajes
                         # para que al activarlo de nuevo no los pierda (hay que tener en cuenta que tienen una caducidad)
+                        # un cliente inactivo no puede acceder a sus suscripciones (se desactiva su Service Account)
                         send_clients = self.env['b2b.client'].sudo().search(['|', ('active', '=', True), ('active', '=', False)])
                         # Enviar a cada cliente
                         for client in send_clients:
