@@ -24,7 +24,6 @@
                         <field name="partner" attrs="{ 'readonly': [('iam_sa', '!=', False)] }"/>
                         <field name="iam_sa" widget="js_clipboard" attrs="{ 'invisible': [('iam_sa', '==', False)] }"/>
                         <field name="iam_key" attrs="{ 'invisible': [('iam_sa', '==', False)] }"/>
-                        <field name="products_filter" widget="many2many_tags"/>
                         <field name="items"/>
                     </group>
                 </sheet>

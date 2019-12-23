@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- FORMULARIO -->
+
+    <record id="js_b2b_filters_form" model="ir.ui.view">
+        <field name="name">b2b.filter.form</field>
+        <field name="model">b2b.filter</field>
+        <field name="arch" type="xml">
+            <form string="Filter">
+                <sheet>
+                    <group>
+                        <field name="client" options="{ 'no_create':True, 'no_create_edit':True }"/>
+                        <field name="item" options="{ 'no_create':True, 'no_create_edit':True }"/>
+                        <field name="where" widget="domain" options="{'model': 'model'}"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- LISTADO -->
+
+    <record id="js_b2b_filters_tree" model="ir.ui.view">
+        <field name="name">b2b.filter.tree</field>
+        <field name="model">b2b.filter</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="client"/>
+                <field name="item"/>
+                <field name="where"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- VISTAS -->
+
+    <record id="js_b2b_filters" model="ir.actions.act_window">
+        <field name="name">B2B Filters</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">b2b.filter</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Push here to create a new data filter
+          </p><p>
+            You can associate a filter with multiple clients
+          </p>
+        </field>
+    </record>
+    
+    <!-- ACCIONES DE MENÚ -->
+
+    <menuitem id="js_b2b_filter_action" name="Filters" parent="js_b2b_menu" sequence="30" action="js_b2b_filters" groups="base_technical_features.group_technical_features"  />
+
+</odoo>

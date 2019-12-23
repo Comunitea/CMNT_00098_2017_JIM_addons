@@ -89,3 +89,4 @@ ENV/
 # Rope project settings
 .ropeproject
 js_b2b/static/js-b2b-1572002252254-be577478fce9.json
+*.json

@@ -15,6 +15,7 @@
         'security/ir.model.access.csv',
         'views/assets.xml',
         'views/client.xml',
+        'views/filter.xml',
         'views/item.xml'
     ],
     'depends': [
