@@ -1,13 +1,25 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
 from .helper import JSync
-import os
 
 # Module base class
 class BaseB2B(models.AbstractModel):
 	_inherit = 'base'
 
+	def get_field_translations(self, field='name'):
+		field_name = ','.join([self._name, field])
+		configured_langs = self.env['res.lang'].search([('translatable', '=', True)])
+		# Default values
+		translations = { lang.code:self[field] for lang in configured_langs }
+		# Query to get translations
+		self._cr.execute("SELECT lang, value FROM ir_translation WHERE type='model' AND name=%s AND res_id=%s", (field_name, self.id))
+		# Update translations dict
+		translations.update({ lang_code:field_translation for lang_code,field_translation in self._cr.fetchall() })
+		# Return lang -> str dict
+		return translations
+
 	def __must_notify(self, is_notifiable, fields_to_watch=None, vals=None):
+		# Check if model is not notifiable
 		if not is_notifiable(self):
 			return False
 		# Return true if have fields to watch

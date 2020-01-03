@@ -9,22 +9,16 @@ class B2bItems(models.Model):
 	_description = "B2B Item"
 
 	_default_code_str = re.sub(r'(^[ ]{0,8})', '', """
-		# Fields to watch
-		# Tuple of fields
+		# Tuple of fields to watch
 		fields_to_watch = None
 
-		# When this model is notifiable
-		# Returns True or False
+		# When this model is notifiable. Returns True or False
 		def is_notifiable(self):
 			return self._name == 'res.partner'
 
-		# Recipients of data
-		# Odoo partner references list
-		def send_to(self):
-			return []
-
 		# Get model data for a item
-		# Object data dictionary
+		# To get all langs dict of translatable field use:
+		# self.get_field_translations('field_name')
 		def get_data(self):
 			return { }
 	""", flags=re.M).strip()
@@ -45,7 +39,7 @@ class B2bItems(models.Model):
 				raise UserError(_('Syntax Error!\n') + str(e))
 			# Check required vars and methods to avoid errors
 			variables = { 'fields_to_watch': tuple }
-			methods = ['is_notifiable', 'send_to', 'get_data']
+			methods = ['is_notifiable', 'get_data']
 			for var in tuple(variables.keys() + methods):
 				if not var in locals():
 					raise UserError(_('Code Error!\n %s not defined' % (var)))

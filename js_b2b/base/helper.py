@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from odoo.http import request as HttpRequest
 from odoo.exceptions import ValidationError
 from unidecode import unidecode
 import requests as request
@@ -92,21 +93,22 @@ class JSync:
 						"\n    - operation: {}" \
 						"\n    - data: {}"
 
-			b2b_conexion_error = self.env['ir.values'].get_default('base.config.settings', 'b2b_conexion_error')
-			b2b_response_error = self.env['ir.values'].get_default('base.config.settings', 'b2b_response_error')
+			b2b_conexion_error = HttpRequest.env['ir.values'].get_default('base.config.settings', 'b2b_conexion_error')
+			b2b_response_error = HttpRequest.env['ir.values'].get_default('base.config.settings', 'b2b_response_error')
 
 			try:
 				jsync_res = request.post(os.environ['JSYNC_SERVER_URL'] + path, timeout=timeout_sec, headers=header_dict, data=json.dumps(data_dict))
 				OutputHelper.print_text(debug_msg.format(jsync_res.text, data_dict.get('to'), data_dict.get('id'), data_dict.get('type'), data_dict.get('operation'), json.dumps(data_dict.get('data'), indent=8, sort_keys=True)), MsgTypes.OK)
+
+				if jsync_res.status_code is not 200 and b2b_conexion_error and b2b_response_error:
+					raise ValidationError("JSync Server Response Error\n%s" % (jsync_res.text))
+
+				try:
+					return json.loads(jsync_res.text)
+				except:
+					return jsync_res.text
+
 			except Exception as e:
 				OutputHelper.print_text(debug_msg.format('CONNECTION ERROR!', data_dict.get('to'), data_dict.get('id'), data_dict.get('type'), data_dict.get('operation'), json.dumps(data_dict.get('data'), indent=8, sort_keys=True)), MsgTypes.ERROR)
 				if b2b_conexion_error:
 					raise ValidationError("JSync Server Connection Error\n%s" % (e))
-
-			if jsync_res.status_code is not 200 and b2b_conexion_error and b2b_response_error:
-				raise ValidationError("JSync Server Response Error\n%s" % (jsync_res.text))
-
-			try:
-				return json.loads(jsync_res.text)
-			except:
-				return jsync_res.text
