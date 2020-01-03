@@ -45,9 +45,9 @@ class BaseB2B(models.AbstractModel):
 				# Obtenemos el id
 				item = JSync(self.id)
 				# Obtenemos el nombre
-				item.obj_type = str(si.name)
-				# Para quien es (False para todos)
-				item.obj_to = send_to(self)
+				item.obj_name = str(si.name)
+				# Obtenemos el tipo (Normal|Premium)
+				item.obj_type = si.premium
 				# Obtenemos los datos
 				item.obj_data = get_data(self)
 				# Enviamos los datos
@@ -75,4 +75,3 @@ class BaseB2B(models.AbstractModel):
 			item.__b2b_record('delete')
 		super(BaseB2B, self).unlink()
 		return True
-

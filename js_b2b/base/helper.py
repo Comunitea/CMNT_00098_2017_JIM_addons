@@ -7,31 +7,23 @@ import requests as request
 import json
 import os
 
-class MsgTypes:
-
-	HEADER = '\033[95m'
-	INFO = '\033[94m'
-	WARNING = '\033[93m'
-	OK = '\033[92m'
-	ERROR = '\033[91m'
-	UNDERLINE = '\033[4m'
-	BOLD = '\033[1m'
-	ENDC = '\033[0m'
-
 class OutputHelper:
 
+	OK = '\033[92m'
+	ERROR = '\033[91m'
+	ENDC = '\033[0m'
 	DIVIDER = "=" * 80
 
 	@staticmethod
-	def print_text(msg, msg_type=MsgTypes.INFO, include_timestamp=True):
+	def print_text(msg, msg_type='', include_timestamp=True):
 		print("\n")
-		print("{}{}{}".format(msg_type, OutputHelper.DIVIDER, MsgTypes.ENDC))
+		print("{}{}{}".format(msg_type, OutputHelper.DIVIDER, OutputHelper.ENDC))
 
 		if include_timestamp:
-			print("{}{}{}".format(msg_type, datetime.now(), MsgTypes.ENDC))
+			print("{}{}{}".format(msg_type, datetime.now(), OutputHelper.ENDC))
 
-		print("    {}{}{}".format(msg_type, msg, MsgTypes.ENDC))
-		print("{}{}{}".format(msg_type, OutputHelper.DIVIDER, MsgTypes.ENDC))
+		print("    {}{}{}".format(msg_type, msg, OutputHelper.ENDC))
+		print("{}{}{}".format(msg_type, OutputHelper.DIVIDER, OutputHelper.ENDC))
 		print("\n")
 
 	@staticmethod
@@ -42,9 +34,9 @@ class OutputHelper:
 
 class JSync:
 
-	obj_to = [] # Recipients list (topics)
 	obj_id = None # Item id
-	obj_type = None # Data item name
+	obj_name = None # Data item name
+	obj_type = False # Data item type (Normal:False|Premium:True)
 	obj_data = {} # Item data dict
 
 	def __init__(self, obj_id=None):
@@ -72,23 +64,23 @@ class JSync:
 		return self.obj_data
 
 	def send(self, path='', action='create', timeout_sec=10):
-		if self.obj_id and self.obj_type:
+		if self.obj_id and self.obj_name:
 
 			header_dict = { 
 				'Content-Type': 'application/json' 
 			}
 
 			data_dict = {
-				'to': self.obj_to,
 				'id': self.obj_id,
+				'name': self.obj_name,
 				'type': self.obj_type,
 				'operation': action,
 				'data': self.obj_data
 			}
 
 			debug_msg = "JSync Response: {}" \
-						"\n    - to: {}" \
 						"\n    - id: {}" \
+						"\n    - name: {}" \
 						"\n    - type: {}" \
 						"\n    - operation: {}" \
 						"\n    - data: {}"
@@ -98,7 +90,7 @@ class JSync:
 
 			try:
 				jsync_res = request.post(os.environ['JSYNC_SERVER_URL'] + path, timeout=timeout_sec, headers=header_dict, data=json.dumps(data_dict))
-				OutputHelper.print_text(debug_msg.format(jsync_res.text, data_dict.get('to'), data_dict.get('id'), data_dict.get('type'), data_dict.get('operation'), json.dumps(data_dict.get('data'), indent=8, sort_keys=True)), MsgTypes.OK)
+				OutputHelper.print_text(debug_msg.format(jsync_res.text, data_dict.get('id'), data_dict.get('name'), data_dict.get('type'), data_dict.get('operation'), json.dumps(data_dict.get('data'), indent=8, sort_keys=True)), OutputHelper.OK)
 
 				if jsync_res.status_code is not 200 and b2b_conexion_error and b2b_response_error:
 					raise ValidationError("JSync Server Response Error\n%s" % (jsync_res.text))
@@ -109,6 +101,6 @@ class JSync:
 					return jsync_res.text
 
 			except Exception as e:
-				OutputHelper.print_text(debug_msg.format('CONNECTION ERROR!', data_dict.get('to'), data_dict.get('id'), data_dict.get('type'), data_dict.get('operation'), json.dumps(data_dict.get('data'), indent=8, sort_keys=True)), MsgTypes.ERROR)
+				OutputHelper.print_text(debug_msg.format('CONNECTION ERROR!', data_dict.get('id'), data_dict.get('name'), data_dict.get('type'), data_dict.get('operation'), json.dumps(data_dict.get('data'), indent=8, sort_keys=True)), OutputHelper.ERROR)
 				if b2b_conexion_error:
 					raise ValidationError("JSync Server Connection Error\n%s" % (e))

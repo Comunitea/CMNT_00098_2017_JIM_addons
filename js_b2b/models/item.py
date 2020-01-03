@@ -54,7 +54,7 @@ class B2bItems(models.Model):
 		jitem = JSync()
 		# Set data
 		jitem.obj_id = self.id
-		jitem.obj_type = 'item'
+		jitem.obj_name = 'item'
 		jitem.obj_data = { 
 			'name': self.name, 
 			'premium': self.premium

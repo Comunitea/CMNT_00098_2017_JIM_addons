@@ -20,7 +20,7 @@ class B2bClients(models.Model):
 	def __b2b_record(self, mode='create', vals=None):  
 		jitem = JSync(self.id)
 		# Set data
-		jitem.obj_type = 'client'
+		jitem.obj_name = 'client'
 		jitem.obj_data = {
 			'fixed:partner_ref': self.partner.ref,
 			'fixed:partner_name': self.partner.name,
