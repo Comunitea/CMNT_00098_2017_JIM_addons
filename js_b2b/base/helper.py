@@ -73,7 +73,7 @@ class JSync:
 			data_dict = {
 				'id': self.obj_id,
 				'name': self.obj_name,
-				'type': self.obj_type,
+				'premium': self.obj_type,
 				'operation': action,
 				'data': self.obj_data
 			}
@@ -81,7 +81,7 @@ class JSync:
 			debug_msg = "JSync Response: {}" \
 						"\n    - id: {}" \
 						"\n    - name: {}" \
-						"\n    - type: {}" \
+						"\n    - premium: {}" \
 						"\n    - operation: {}" \
 						"\n    - data: {}"
 
@@ -90,7 +90,7 @@ class JSync:
 
 			try:
 				jsync_res = request.post(os.environ['JSYNC_SERVER_URL'] + path, timeout=timeout_sec, headers=header_dict, data=json.dumps(data_dict))
-				OutputHelper.print_text(debug_msg.format(jsync_res.text, data_dict.get('id'), data_dict.get('name'), data_dict.get('type'), data_dict.get('operation'), json.dumps(data_dict.get('data'), indent=8, sort_keys=True)), OutputHelper.OK)
+				OutputHelper.print_text(debug_msg.format(jsync_res.text, data_dict.get('id'), data_dict.get('name'), data_dict.get('premium'), data_dict.get('operation'), json.dumps(data_dict.get('data'), indent=8, sort_keys=True)), OutputHelper.OK)
 
 				if jsync_res.status_code is not 200 and b2b_conexion_error and b2b_response_error:
 					raise ValidationError("JSync Server Response Error\n%s" % (jsync_res.text))
@@ -101,6 +101,6 @@ class JSync:
 					return jsync_res.text
 
 			except Exception as e:
-				OutputHelper.print_text(debug_msg.format('CONNECTION ERROR!', data_dict.get('id'), data_dict.get('name'), data_dict.get('type'), data_dict.get('operation'), json.dumps(data_dict.get('data'), indent=8, sort_keys=True)), OutputHelper.ERROR)
+				OutputHelper.print_text(debug_msg.format('CONNECTION ERROR!', data_dict.get('id'), data_dict.get('name'), data_dict.get('premium'), data_dict.get('operation'), json.dumps(data_dict.get('data'), indent=8, sort_keys=True)), OutputHelper.ERROR)
 				if b2b_conexion_error:
 					raise ValidationError("JSync Server Connection Error\n%s" % (e))
