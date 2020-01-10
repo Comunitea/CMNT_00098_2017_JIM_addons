@@ -11,9 +11,6 @@
 				<sheet>
 					<field name="id" invisible="1"/>
 					<div class="oe_button_box" name="button_box">
-						<button name="toggle_premium" type="object" class="oe_stat_button" icon="fa-certificate">
-							<field name="premium" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Is Premium', 'string_false': 'Not Premium' }}"/>
-						</button>
 						<button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
 							<field name="active" widget="boolean_button" options='{"terminology": "active"}'/>
 						</button>
@@ -39,8 +36,8 @@
 		<field name="model">b2b.item</field>
 		<field name="arch" type="xml">
 			<tree string="parameters">
+				<field name="sequence" widget="handle"/>
 				<field name="name"/>
-				<field name="premium"/>
 				<field name="active"/>
 			</tree>
 		</field>

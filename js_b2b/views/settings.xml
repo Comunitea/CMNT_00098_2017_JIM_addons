@@ -1,19 +1,39 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-	<!-- CONFIGURACIÓN -->
+	<!-- FORMULARIO -->
 
-	<record id="b2b_settings" model="ir.ui.view">
-		<field name="name">General Settings</field>
-		<field name="model">base.config.settings</field>
-		<field name="inherit_id" ref="base_setup.view_general_configuration"/>
+	<record id="js_b2b_settings_form" model="ir.ui.view">
+		<field name="name">b2b.settings.form</field>
+		<field name="model">b2b.settings</field>
 		<field name="arch" type="xml">
-			<xpath expr="//form" position="inside">
-				<group string="B2B Synchronization" groups="base_technical_features.group_technical_features">
-					<field name="b2b_conexion_error" class="oe_inline" />
-					<field name="b2b_response_error" class="oe_inline" attrs="{'invisible': [('b2b_conexion_error','=',False)]}" />
-				</group>
-			</xpath>
+			<form string="B2B Configuration" class="oe_form_configuration">
+				<header>
+					<button string="Apply" type="object" name="execute" class="oe_highlight mr4"/> 
+					<button string="Cancel" type="object" name="cancel" special="cancel"/>
+				</header>
+				<div>
+					<group string="B2B Settings">
+						<field name="url" class="oe_inline"/>
+						<field name="conexion_error" class="oe_inline"/>
+						<field name="response_error" class="oe_inline" attrs="{'invisible': [('conexion_error','=',False)]}"/>
+					</group>
+				</div>
+			</form>
 		</field>
 	</record>
+
+	<!-- VISTAS -->
+
+    <record id="js_b2b_settings" model="ir.actions.act_window">
+        <field name="name">B2B Settings</field>
+        <field name="res_model">b2b.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+
+	<!-- ACCIONES DE MENÚ -->
+
+	<menuitem id="js_b2b_settings_action" name="Settings" parent="js_b2b_menu" sequence="100" action="js_b2b_settings" groups="base_technical_features.group_technical_features"  />
+
 </odoo>

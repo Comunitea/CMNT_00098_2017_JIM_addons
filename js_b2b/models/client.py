@@ -9,11 +9,10 @@ class B2bClients(models.Model):
 	_rec_name = 'partner'
 
 	partner = fields.Many2one('res.partner', 'Odoo Client', ondelete='cascade', required=True, help="Select a client")
+	ctype = fields.Selection(selection=[('premium', 'Premium'),('vip', 'VIP')], string='Special Type', help="Premium: Enable to receive premium items\nVIP: Receive all data, not only yours") 
 	iam_sa = fields.Char('Service Account', required =False, translate=False, help="Google IAM service account")
 	iam_key = fields.Binary('Service Account Key', attachment=True, help="Google IAM service account key")
-	vip = fields.Boolean('VIP Client', default=False, help="Receive all clients data, not only yours")
 	send = fields.Boolean('Can Send', default=False, help="Authorize this client for send data items")
-	premium = fields.Boolean('Premium', default=False, help="Enable this client to receive premium items")
 	active = fields.Boolean('Active', default=True, help="Enable or disable this client")
 	items = fields.Many2many('b2b.item', 'b2b_client_item_rel', string='Data Items')
 
@@ -22,15 +21,14 @@ class B2bClients(models.Model):
 		# Set data
 		jitem.obj_name = 'client'
 		jitem.obj_data = {
+			'partner:partner_id': self.partner.id,
 			'fixed:partner_ref': self.partner.ref,
 			'fixed:partner_name': self.partner.name,
 			'fixed:iam_sa': self.iam_sa,
 			'iam_key': self.iam_key,
-			'vip': self.vip,
+			'ctype:type': self.ctype,
 			'send': self.send,
-			'premium': self.premium,
-			'active': self.active,
-			'items': self.items.ids
+			'active': self.active
 		}
 		# Filter data
 		jitem.filter_obj_data(vals)
@@ -40,24 +38,14 @@ class B2bClients(models.Model):
 	# -------------------------------------------------------------------------------------------
 
 	@api.multi
-	def toggle_vip(self):
-		for client in self:
-			client.vip = not client.vip
-
-	@api.multi
 	def toggle_send(self):
 		for client in self:
 			client.send = not client.send
 
-	@api.multi
-	def toggle_premium(self):
-		for client in self:
-			client.premium = not client.premium
-
 	@api.model
 	def create(self, vals):
 		client = super(B2bClients, self).create(vals)
-		result = client.__b2b_record('create', vals)
+		result = client.__b2b_record('create')
 		client.iam_sa = result.get('iam_sa', False)
 		client.iam_key = result.get('iam_key', False)
 		return client
@@ -72,6 +60,6 @@ class B2bClients(models.Model):
 	@api.multi
 	def unlink(self):
 		for client in self:
-			client.__b2b_record('delete')
+			client.__b2b_record('delete', False)
 		super(B2bClients, self).unlink()
 		return True

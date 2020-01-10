@@ -10,14 +10,8 @@
 			<form string="Client">
 				<sheet>
 					<div class="oe_button_box" name="button_box">
-						<button name="toggle_vip" type="object" class="oe_stat_button" icon="fa-user-secret">
-							<field name="vip" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Is VIP', 'string_false': 'Not VIP' }}"/>
-						</button>
 						<button name="toggle_send" type="object" class="oe_stat_button" icon="fa-paper-plane">
 							<field name="send" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Can Send', 'string_false': 'Can not Send' }}"/>
-						</button>
-						<button name="toggle_premium" type="object" class="oe_stat_button" icon="fa-certificate">
-							<field name="premium" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Is Premium', 'string_false': 'Not Premium' }}"/>
 						</button>
 						<button name="toggle_active" type="object" class="oe_stat_button" icon="fa-google">
 							<field name="active" widget="boolean_button" options="{ 'terminology': 'active' }"/>
@@ -25,6 +19,7 @@
 					</div>
 					<group>
 						<field name="partner" attrs="{ 'readonly': [('iam_sa', '!=', False)] }"/>
+						<field name="ctype"/>
 						<field name="iam_sa" widget="js_clipboard" attrs="{ 'invisible': [('iam_sa', '==', False)] }"/>
 						<field name="iam_key" attrs="{ 'invisible': [('iam_sa', '==', False)] }"/>
 						<field name="items"/>
@@ -42,8 +37,8 @@
 		<field name="arch" type="xml">
 			<tree string="parameters">
 				<field name="partner"/>
+				<field name="ctype"/>
 				<field name="send"/>
-				<field name="premium"/>
 				<field name="active"/>
 				<field name="items"/>
 			</tree>

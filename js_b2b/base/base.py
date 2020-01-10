@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models
+from odoo import api, models
 from .helper import JSync
+import datetime
 
 # Module base class
 class BaseB2B(models.AbstractModel):
@@ -10,7 +11,7 @@ class BaseB2B(models.AbstractModel):
 		field_name = ','.join([self._name, field])
 		configured_langs = self.env['res.lang'].search([('translatable', '=', True)])
 		# Default values
-		translations = { lang.code:self[field] for lang in configured_langs }
+		translations = { lang.code:self[field] or '' for lang in configured_langs }
 		# Query to get translations
 		self._cr.execute("SELECT lang, value FROM ir_translation WHERE type='model' AND name=%s AND res_id=%s", (field_name, self.id))
 		# Update translations dict
@@ -23,8 +24,8 @@ class BaseB2B(models.AbstractModel):
 		if not is_notifiable(self):
 			return False
 		# Return true if have fields to watch
-		if fields_to_watch and vals:
-			return len(set(vals).intersection(set(fields_to_watch))) > 0
+		if type(fields_to_watch) is tuple and type(vals) is dict:
+			return bool(set(vals).intersection(set(fields_to_watch)))
 		# Watch all by default
 		return True
 
@@ -46,12 +47,16 @@ class BaseB2B(models.AbstractModel):
 				item = JSync(self.id)
 				# Obtenemos el nombre
 				item.obj_name = str(si.name)
-				# Obtenemos el tipo (Normal|Premium)
-				item.obj_type = si.premium
+				# Obtenemos el destinatario
+				item.obj_dest = send_to(self)
 				# Obtenemos los datos
 				item.obj_data = get_data(self)
-				# Enviamos los datos
-				return item.send('', mode)
+				# Filtramos los datos
+				item.filter_obj_data(vals)
+				# Enviamos los datos si son correctos
+				# es un borrado o obj_data no puede estar vacío
+				if mode=='delete' or item.obj_data:
+					return item.send('', mode)
 		return False
 
 	# -------------------------------------------------------------------------------------------
@@ -59,19 +64,24 @@ class BaseB2B(models.AbstractModel):
 	@api.model
 	def create(self, vals):
 		item = super(BaseB2B, self).create(vals)
-		item.__b2b_record('create', vals)
+		item.__b2b_record('create')
 		return item
 
 	@api.multi
 	def write(self, vals):
 		super(BaseB2B, self).write(vals)
 		for item in self:
-			item.__b2b_record('update', vals)
+			if vals.get('active') is True:
+				item.__b2b_record('create')
+			elif vals.get('active') is False:
+				item.__b2b_record('delete', False)
+			else:
+				item.__b2b_record('update', vals)
 		return True
 
 	@api.multi
 	def unlink(self):
 		for item in self:
-			item.__b2b_record('delete')
+			item.__b2b_record('delete', False)
 		super(BaseB2B, self).unlink()
 		return True

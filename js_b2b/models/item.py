@@ -6,28 +6,37 @@ import re
 
 class B2bItems(models.Model):
 	_name = 'b2b.item'
-	_description = "B2B Item"
-
+	_description = 'B2B Item'
+	_order = 'sequence, id'
 	_default_code_str = re.sub(r'(^[ ]{0,8})', '', """
-		# Tuple of fields to watch
-		fields_to_watch = None
+		# Set to None for watch all
+        fields_to_watch = ('name', 'reference')
 
-		# When this model is notifiable. Returns True or False
-		def is_notifiable(self):
-			return self._name == 'res.partner'
+        def send_to(self):
+            # 'all' for all clients
+            # 'premium' for premium clients
+            # Client ID for one client. Ex: self.partner_id.id
+            # None or False: not send
+            return 'all'
 
-		# Get model data for a item
-		# To get all langs dict of translatable field use:
-		# self.get_field_translations('field_name')
-		def get_data(self):
-			return { }
+        def is_notifiable(self):
+            return self._name == 'product.product'
+
+        def get_data(self):
+            return {
+                # Sends names dict when field has changed
+                'name': self.get_field_translations('name'),
+                # fixed: modifier forces send even if it has not changed
+                'fixed:reference': self.default_code,
+                # field: modifier send if field has changed, if not setted send null
+                'categ_id:category_id': self.categ_id.id if self.categ_id else None,
+            }
 	""", flags=re.M).strip()
 
 	name = fields.Char('Item Name', required=False, translate=False, help="Set the item name")
-	partners = fields.Many2many('res.partner', 'b2b_item_partner_rel', string='Partners')
 	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
-	premium = fields.Boolean('Premium', default=False, help="Is a premium item")
 	active = fields.Boolean('Active', default=True, help="Enable or disable this item")
+	sequence = fields.Integer(help="Determine the items order")
 
 	@staticmethod
 	def __check_code(code):
@@ -39,7 +48,7 @@ class B2bItems(models.Model):
 				raise UserError(_('Syntax Error!\n') + str(e))
 			# Check required vars and methods to avoid errors
 			variables = { 'fields_to_watch': tuple }
-			methods = ['is_notifiable', 'get_data']
+			methods = ['send_to', 'is_notifiable', 'get_data']
 			for var in tuple(variables.keys() + methods):
 				if not var in locals():
 					raise UserError(_('Code Error!\n %s not defined' % (var)))
@@ -49,45 +58,3 @@ class B2bItems(models.Model):
 			for method in methods:
 				if not callable(eval(method)):
 					raise UserError(_('Code Error!\n %s must be a function' % (method)))
-
-	def __b2b_record(self, mode='create', vals=None):  
-		jitem = JSync()
-		# Set data
-		jitem.obj_id = self.id
-		jitem.obj_name = 'item'
-		jitem.obj_data = { 
-			'name': self.name, 
-			'premium': self.premium
-		}
-		# Filter data
-		jitem.filter_obj_data(vals)
-		# Send item
-		jitem.send('config', mode, 60)
-
-	# -------------------------------------------------------------------------------------------
-	@api.multi
-	def toggle_premium(self):
-		for item in self:
-			item.premium = not item.premium
-
-	@api.model
-	def create(self, vals):
-		self.__check_code(vals.get('code'))
-		item = super(B2bItems, self).create(vals)
-		item.__b2b_record('create', vals)
-		return item
-
-	@api.multi
-	def write(self, vals):
-		self.__check_code(vals.get('code'))
-		super(B2bItems, self).write(vals)
-		for item in self:
-		   item.__b2b_record('update', vals)
-		return True
-
-	@api.multi
-	def unlink(self):
-		for item in self:
-			item.__b2b_record('delete')
-		super(B2bItems, self).unlink()
-		return True
