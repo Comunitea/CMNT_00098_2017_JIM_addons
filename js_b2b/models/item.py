@@ -11,14 +11,7 @@ class B2bItems(models.Model):
 	_default_code_str = re.sub(r'(^[ ]{0,8})', '', """
 		# Set to None for watch all
         fields_to_watch = ('name', 'reference')
-
-        def send_to(self):
-            # 'all' for all clients
-            # 'premium' for premium clients
-            # Client ID for one client. Ex: self.partner_id.id
-            # None or False: not send
-            return 'all'
-
+        
         def is_notifiable(self):
             return self._name == 'product.product'
 
@@ -34,6 +27,7 @@ class B2bItems(models.Model):
 	""", flags=re.M).strip()
 
 	name = fields.Char('Item Name', required=False, translate=False, help="Set the item name")
+	clients = fields.Many2many('b2b.client', 'b2b_client_item_rel', 'b2b_item_id', 'b2b_client_id')
 	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
 	active = fields.Boolean('Active', default=True, help="Enable or disable this item")
 	sequence = fields.Integer(help="Determine the items order")
@@ -48,7 +42,7 @@ class B2bItems(models.Model):
 				raise UserError(_('Syntax Error!\n') + str(e))
 			# Check required vars and methods to avoid errors
 			variables = { 'fields_to_watch': tuple }
-			methods = ['send_to', 'is_notifiable', 'get_data']
+			methods = ['is_notifiable', 'get_data']
 			for var in tuple(variables.keys() + methods):
 				if not var in locals():
 					raise UserError(_('Code Error!\n %s not defined' % (var)))

@@ -38,7 +38,6 @@ class BaseB2B(models.AbstractModel):
 			# establece localmente las siguentes variables y métodos:
 			#   fields_to_watch <type 'tuple'>
 			#   is_notifiable <type 'function'>
-			#   send_to <type 'function'>
 			#   get_data <type 'function'>
 			exec(si.code)
 			# Comprobamos si se debe notificar
@@ -47,8 +46,8 @@ class BaseB2B(models.AbstractModel):
 				item = JSync(self.id)
 				# Obtenemos el nombre
 				item.obj_name = str(si.name)
-				# Obtenemos el destinatario
-				item.obj_dest = send_to(self)
+				# Obtenemos los destinatarios
+				item.obj_dest = si.clients.ids if si.clients else list()
 				# Obtenemos los datos
 				item.obj_data = get_data(self)
 				# Filtramos los datos

@@ -48,6 +48,7 @@
 	<record id="js_b2b_items" model="ir.actions.act_window">
 		<field name="name">B2B Items</field>
 		<field name="type">ir.actions.act_window</field>
+		<field name="context">{ 'active_test': False }</field>
 		<field name="res_model">b2b.item</field>
 		<field name="view_type">form</field>
 		<field name="view_mode">tree,form</field>

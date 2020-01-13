@@ -9,7 +9,6 @@ class B2bClients(models.Model):
 	_rec_name = 'partner'
 
 	partner = fields.Many2one('res.partner', 'Odoo Client', ondelete='cascade', required=True, help="Select a client")
-	ctype = fields.Selection(selection=[('premium', 'Premium'),('vip', 'VIP')], string='Special Type', help="Premium: Enable to receive premium items\nVIP: Receive all data, not only yours") 
 	iam_sa = fields.Char('Service Account', required =False, translate=False, help="Google IAM service account")
 	iam_key = fields.Binary('Service Account Key', attachment=True, help="Google IAM service account key")
 	send = fields.Boolean('Can Send', default=False, help="Authorize this client for send data items")
@@ -26,7 +25,6 @@ class B2bClients(models.Model):
 			'fixed:partner_name': self.partner.name,
 			'fixed:iam_sa': self.iam_sa,
 			'iam_key': self.iam_key,
-			'ctype:type': self.ctype,
 			'send': self.send,
 			'active': self.active
 		}

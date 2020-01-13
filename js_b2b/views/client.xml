@@ -19,10 +19,14 @@
 					</div>
 					<group>
 						<field name="partner" attrs="{ 'readonly': [('iam_sa', '!=', False)] }"/>
-						<field name="ctype"/>
 						<field name="iam_sa" widget="js_clipboard" attrs="{ 'invisible': [('iam_sa', '==', False)] }"/>
 						<field name="iam_key" attrs="{ 'invisible': [('iam_sa', '==', False)] }"/>
-						<field name="items"/>
+						<field name="items" widget="many2many">
+							<tree>
+								<field name="name"/>
+								<field name="active"/>
+							</tree>
+						</field>
 					</group>
 				</sheet>
 			</form>
@@ -37,7 +41,6 @@
 		<field name="arch" type="xml">
 			<tree string="parameters">
 				<field name="partner"/>
-				<field name="ctype"/>
 				<field name="send"/>
 				<field name="active"/>
 				<field name="items"/>
@@ -50,6 +53,7 @@
 	<record id="js_b2b_clients" model="ir.actions.act_window">
 		<field name="name">B2B Clients</field>
 		<field name="type">ir.actions.act_window</field>
+		<field name="context">{ 'active_test': False }</field>
 		<field name="res_model">b2b.client</field>
 		<field name="view_type">form</field>
 		<field name="view_mode">tree,form</field>
