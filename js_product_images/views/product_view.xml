@@ -41,6 +41,27 @@
         </field>
     </record>
 
+    <!-- Backend Variant Easy View -->
+    <record id="product_variant_easy_edit_view" model="ir.ui.view">
+        <field name="name">product.product.view.form.easy</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='image_medium']" position="replace"></xpath>
+        </field>
+    </record>
+
+    <!-- Backend Variant View -->
+    <record id="product_normal_form_view" model="ir.ui.view">
+        <field name="name">product.product.form</field>
+        <field name="model">product.product</field>
+        <field eval="8" name="priority"/>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='image_medium']" position="replace"></xpath>
+        </field>
+    </record>
+
     <!-- Backend Image Add/Edit -->
     <record id="view_product_image_form" model="ir.ui.view">
         <field name="name">product.image.form</field>

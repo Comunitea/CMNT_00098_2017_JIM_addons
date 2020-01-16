@@ -18,10 +18,11 @@
 					<div class="oe_title" name="title">
 						<label for="name" class="oe_edit_only"/>
 						<h1>
-							<field name="name" attrs="{ 'readonly': [('id', '!=', False)] }"/>
+							<field name="name"/>
 						</h1>
 					</div>
 					<group>
+						<field name="description"/>
 						<field name="code" widget="js_code"/>
 					</group>
 				</sheet>
@@ -38,6 +39,7 @@
 			<tree string="parameters">
 				<field name="sequence" widget="handle"/>
 				<field name="name"/>
+				<field name="description"/>
 				<field name="active"/>
 			</tree>
 		</field>

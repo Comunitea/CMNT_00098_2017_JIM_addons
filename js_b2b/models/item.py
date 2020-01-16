@@ -12,7 +12,7 @@ class B2bItems(models.Model):
 		# Set to None for watch all
         fields_to_watch = ('name', 'reference')
         
-        def is_notifiable(self):
+        def is_notifiable(self, vals):
             return self._name == 'product.product'
 
         def get_data(self):
@@ -26,7 +26,8 @@ class B2bItems(models.Model):
             }
 	""", flags=re.M).strip()
 
-	name = fields.Char('Item Name', required=False, translate=False, help="Set the item name")
+	name = fields.Char('Item Name', required=True, translate=False, help="Set the item name")
+	description = fields.Char('Description', required=False, translate=False, help="Set the item description")
 	clients = fields.Many2many('b2b.client', 'b2b_client_item_rel', 'b2b_item_id', 'b2b_client_id')
 	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
 	active = fields.Boolean('Active', default=True, help="Enable or disable this item")
@@ -37,7 +38,7 @@ class B2bItems(models.Model):
 		if type(code) is unicode:
 			# Exec B2B Item Code
 			try:
-				exec(code)
+				exec(code, globals())
 			except Exception as e:
 				raise UserError(_('Syntax Error!\n') + str(e))
 			# Check required vars and methods to avoid errors

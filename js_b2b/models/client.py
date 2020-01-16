@@ -15,7 +15,14 @@ class B2bClients(models.Model):
 	active = fields.Boolean('Active', default=True, help="Enable or disable this client")
 	items = fields.Many2many('b2b.item', 'b2b_client_item_rel', string='Data Items')
 
-	def __b2b_record(self, mode='create', vals=None):  
+	def __b2b_record(self, mode='create', vals=None): 
+		"""
+		Private method to check configured clients and send the data
+
+		:param mode: String, CRUD mode
+		:param vals: Default model data update dict (to check changes)
+		:return: boolean
+		"""
 		jitem = JSync(self.id)
 		# Set data
 		jitem.obj_name = 'client'
@@ -33,12 +40,14 @@ class B2bClients(models.Model):
 		# Send item
 		return jitem.send('config', mode, 300)
 
-	# -------------------------------------------------------------------------------------------
+	# ------------------------------------- BUTTONS -------------------------------------
 
 	@api.multi
 	def toggle_send(self):
 		for client in self:
 			client.send = not client.send
+
+	# ------------------------------------ OVERRIDES ------------------------------------
 
 	@api.model
 	def create(self, vals):

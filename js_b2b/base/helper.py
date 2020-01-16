@@ -57,6 +57,8 @@ class JSync:
 					self.obj_data[obj_new] = self.obj_data.pop(field)
 				if obj_old != 'fixed' and (type(vals) is dict and obj_old not in vals or vals is False):
 					del self.obj_data[obj_new]
+				elif type(value) is unicode:
+					self.obj_data[obj_new] = value.decode('utf-8')
 		return self.obj_data
 
 	def send(self, path='', action='create', timeout_sec=10):
@@ -91,7 +93,7 @@ class JSync:
 				OutputHelper.print_text(debug_msg.format(jsync_res.text, data_dict.get('id'), data_dict.get('name'), data_dict.get('receivers'), data_dict.get('operation'), debug_data), OutputHelper.OK)
 
 				if jsync_res.status_code is not 200 and b2b_settings['conexion_error'] and b2b_settings['response_error']:
-					raise ValidationError("JSync Server Response Error\n%s" % (jsync_res.text))
+					raise ValidationError("JSync Server Response Error\n%s" % (jsync_res.text.encode('latin1').capitalize()))
 
 				try:
 					return json.loads(jsync_res.text)
@@ -101,4 +103,7 @@ class JSync:
 			except Exception as e:
 				OutputHelper.print_text(debug_msg.format('CONNECTION ERROR!', data_dict.get('id'), data_dict.get('name'), data_dict.get('receivers'), data_dict.get('operation'), debug_data), OutputHelper.ERROR)
 				if b2b_settings['conexion_error']:
-					raise ValidationError("JSync Server Connection Error\n%s" % (e))
+					if type(e) is not ValidationError:
+						raise ValidationError("JSync Server Connection Error\n%s" % (e))
+					else:
+						raise e
