@@ -22,6 +22,7 @@ class ProductProduc(models.Model):
         # Jim = 1
         # SE = 8
         # EME = 5
+        # Gestibeca = 16
         #partner
         # Jim = 1
         # SE = 18
@@ -31,7 +32,7 @@ class ProductProduc(models.Model):
                          precision_digits=2):
             return self.intercompany_price
         #Compra realizada desde Jim o SE a EME
-        if company_id in (1, 8) and \
+        if company_id in (1, 8, 16) and \
                         partner_id == 11:
             pricelist_id = 39  # tarifa de produccion
             pricelist = self.env['product.pricelist'].browse(pricelist_id)

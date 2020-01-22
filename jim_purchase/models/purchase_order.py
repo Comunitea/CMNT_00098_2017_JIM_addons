@@ -110,9 +110,8 @@ class PurchaseOrder(models.Model):
 
     @api.model
     def _default_picking_type(self):
-        type_obj = self.env['stock.picking.type']
         domain_wh = [('partner_id', '=', self.env.user.company_id.partner_id.id)]
-        warehouse_id = self.env['stock.warehouse'].search(domain_wh)
+        warehouse_id = self.env['stock.warehouse'].search(domain_wh, limit=1)
         types = warehouse_id and warehouse_id.in_type_id
         if not types:
             return super(PurchaseOrder, self)._default_picking_type()

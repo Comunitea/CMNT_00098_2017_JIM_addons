@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Backend CSS -->
-    <template id="js_website_images_assets_backend" inherit_id="web.assets_backend" name="JS Website Images CSS Backend">
-        <xpath expr="." position="inside">
-            <link href="/js_product_images/static/less/backend.less" rel="stylesheet" type="text/less" />
-        </xpath>
-    </template>
-
     <!-- Backend Product View -->
     <record id="product_template_form_view" model="ir.ui.view">
         <field name="name">product.template.product.images.form</field>
@@ -37,6 +30,31 @@
                         </kanban>
                     </field>
                 </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Backend Variant Easy View -->
+    <record id="product_variant_easy_edit_view" model="ir.ui.view">
+        <field name="name">product.product.view.form.easy</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='image_medium']" position="replace">
+                <field name="image_variant" widget="image" class="oe_avatar" readonly="1" options="{ 'no_cache': True  }" />
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Backend Variant View -->
+    <record id="product_normal_form_view" model="ir.ui.view">
+        <field name="name">product.product.form</field>
+        <field name="model">product.product</field>
+        <field eval="8" name="priority"/>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='image_medium']" position="replace">
+                <field name="image_variant" widget="image" class="oe_avatar" readonly="1" options="{ 'no_cache': True  }" />
             </xpath>
         </field>
     </record>

@@ -32,7 +32,14 @@ TsModels.TsModel = TsModels.TsModel.extend({
         order_model.set('neutral', order_obj.neutral_document);
         order_model.set('epd', order_obj.early_payment_discount);
         order_model.set('scheduled_order', order_obj.scheduled_order);
-    }
+    },
+
+    //Get contact person
+    _get_partner_fields: function(){
+        var res = TsModelSuper.prototype._get_partner_fields.call(this,{});
+        res.push('default_contact_person')
+        return res
+    },
 });
 
 // Set template to store the template name en la linea

@@ -9,6 +9,101 @@
                <option value="person" selected="1">Address</option> 
             </select>
         </t>
+        <t t-jquery=".company_type" t-operation="replace">
+            <select style="display:inline;" class="company_type" name="type_select">
+               <option value="person" selected="1">Address</option> 
+            </select>
+        </t>
+
+        <t t-jquery=".client-details-right" t-operation="replace">
+            <div class='client-details-right'>
+                <div class='client-detail'>
+                    <span class='label'>Phone</span>
+                    <input class='detail client-phone'  id='phone' name='phone'    type='tel'      t-att-value='partner.phone || ""'></input>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Email</span>
+                    <input class='detail client-email'  name='email'    type='email'    t-att-value='partner.email || ""'></input>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Reference: </span>
+                    <input class='detail ref'           name='ref'     t-att-value='partner.ref || ""'></input>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Pricelist</span>
+                    <input id="pricelist" class='detail pricelist'   name='property_product_pricelist'         t-att-value='partner.pricelist_name || ""' placeholder='Pricelist'></input>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Contact Person</span>
+                    <input id="contact" class='detail contact'   name='default_contact_person'   t-att-value='partner.default_contact_person || ""' placeholder='Contact Person'></input>
+                </div>
+            </div>
+        </t>
+    </t>
+
+    <!-- Avoid Company Option -->
+    <t t-extend="CustomerDetails">
+        <t t-jquery=".company_type" t-operation="replace">
+            <select style="display:inline;" class="company_type" name="type_select">
+               <option value="person" selected="1">Address</option> 
+            </select>
+        </t>
+        <t t-jquery=".company_type" t-operation="replace">
+            <select style="display:inline;" class="company_type" name="type_select">
+               <option value="person" selected="1">Address</option> 
+            </select>
+        </t>
+
+        <t t-jquery=".client-details-right" t-operation="replace">
+            <div class='client-details-right'>
+               <div class='client-detail'>
+                    <span class='label'>Phone</span>
+                    <t t-if='partner.phone'>
+                        <span class='detail client-phone'><t t-esc='partner.phone' /></span>
+                    </t>
+                    <t t-if='!partner.phone'>
+                        <span class='detail client-phone empty'>N/A</span>
+                    </t>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Email</span>
+                    <t t-if='partner.email'>
+                        <span class='detail client-email'><t t-esc='partner.email' /></span>
+                    </t>
+                    <t t-if='!partner.email'>
+                        <span class='detail client-email empty'>N/A</span>
+                    </t>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Reference</span>
+                    <t t-if='partner.ref'>
+                        <span class='detail ref'><t t-esc='partner.ref'/></span>
+                    </t>
+                    <t t-if='!partner.ref'>
+                        <span class='detail ref empty'>N/A</span>
+                    </t>
+                </div>
+                <div class='client-detail'>
+                    <span class='label'>Pricelist</span>
+                    <t t-if='partner.pricelist_name'>
+                        <span class='detail ref'><t t-esc='partner.pricelist_name'/></span>
+                    </t>
+                    <t t-if='!partner.pricelist_name'>
+                        <span class='detail ref empty'>N/A</span>
+                    </t>
+                </div>
+                <div class='client-detail'>
+
+                    <span class='label'>Contact Person</span>
+                    <t t-if='partner.default_contact_person'>
+                        <span class='detail ref'><t t-esc='partner.default_contact_person'/></span>
+                    </t>
+                    <t t-if='!partner.default_contact_person'>
+                        <span class='detail ref empty'>N/A</span>
+                    </t>
+                </div>
+            </div>
+        </t>
     </t>
 
 </templates>

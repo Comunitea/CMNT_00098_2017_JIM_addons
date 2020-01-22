@@ -104,8 +104,12 @@ class SaleOrder(models.Model):
     @api.model
     def get_head_order_vals(self, order):
         res = super(SaleOrder, self).get_head_order_vals(order)
-        res.update(neutral_document=order.get('neutral', False))
-        res.update(scheduled_order=order.get('scheduled_order', False))
+        vals = {
+            'neutral_document': order.get('neutral', False),
+            'scheduled_order': order.get('scheduled_order', False),
+            'early_payment_discount': order.get('epd', False)
+            }
+        res.update(vals)
         return res
 
 
