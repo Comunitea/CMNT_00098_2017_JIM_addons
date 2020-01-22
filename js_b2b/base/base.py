@@ -52,6 +52,8 @@ class BaseB2B(models.AbstractModel):
 		:param vals: Default model data update dict (to check changes)
 		:return: boolean
 		"""
+		self.b2b_id = self.id
+		self.b2b_mode = mode
 		send_items = self.env['b2b.item'].sudo().search([])
 		# Para cada elemento activo
 		for si in send_items:
@@ -64,13 +66,13 @@ class BaseB2B(models.AbstractModel):
 			# Comprobamos si se debe notificar
 			if is_notifiable(self, vals) and self.__must_notify(fields_to_watch, vals):
 				# Obtenemos el id
-				item = JSync(self.id)
+				item = JSync(self.b2b_id)
 				# Obtenemos el nombre
 				item.obj_name = str(si.name)
 				# Obtenemos los destinatarios
 				item.obj_dest = si.clients.ids if si.clients else list()
 				# Obtenemos los datos
-				if mode != 'delete':
+				if self.b2b_mode != 'delete':
 					item.obj_data = get_data(self)
 					# Filtramos los datos
 					# para eliminar los que no cambiaron
@@ -78,8 +80,8 @@ class BaseB2B(models.AbstractModel):
 					item.filter_obj_data(vals)
 				# Enviamos los datos si son correctos
 				# es un borrado o obj_data no puede estar vacío
-				if mode == 'delete' or item.obj_data:
-					return item.send('', mode)
+				if self.b2b_mode == 'delete' or item.obj_data or item.obj_images:
+					return item.send('', self.b2b_mode)
 		return False
 
 	# ------------------------------------ OVERRIDES ------------------------------------

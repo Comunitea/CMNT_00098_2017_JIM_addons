@@ -9,7 +9,7 @@ class B2bItems(models.Model):
 	_description = 'B2B Item'
 	_order = 'sequence, id'
 	_default_code_str = re.sub(r'(^[ ]{0,8})', '', """
-		# Set to None for watch all
+        # Set to None for watch all
         fields_to_watch = ('name', 'reference')
         
         def is_notifiable(self, vals):
@@ -21,8 +21,10 @@ class B2bItems(models.Model):
                 'name': self.get_field_translations('name'),
                 # fixed: modifier forces send even if it has not changed
                 'fixed:reference': self.default_code,
-                # field: modifier send if field has changed, if not setted send null
+                # field: modifier sends if field has changed, if not setted send null
                 'categ_id:category_id': self.categ_id.id if self.categ_id else None,
+                # image: modifier uploads base64 image to public server and replaces this param with the URL
+                'image:logo': '/9j/4AAQSkZJRgABAQAAAQABAAD...'
             }
 	""", flags=re.M).strip()
 
