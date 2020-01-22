@@ -9,6 +9,7 @@
     "depends": ["product"],
     "data": [
         "security/ir.model.access.csv",
+        'views/assets.xml',
         "views/product_view.xml"
     ],
     'installable': True

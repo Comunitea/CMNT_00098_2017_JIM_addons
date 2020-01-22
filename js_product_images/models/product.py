@@ -21,7 +21,18 @@ class Product(models.Model):
         # To exclude images without all attribute of variant use this line instead
         # filtered(lambda image: all(map(lambda x,y: x in product_attrs and y in image.product_attributes_values._ids, image.product_attributes_values._ids, product_attrs)))
 
+    @api.one
+    @api.depends('product_image_ids')
+    def _compute_variant_images(self):
+        if self.product_image_ids:
+            self.image_variant = self.product_image_ids[0].image
+        elif self.product_tmpl_id.image_medium:
+            self.image_variant = self.product_tmpl_id.image_medium
+        else:
+            self.image_variant = False
+
     product_image_ids = fields.One2many('product.image', string='Images', compute='_filter_variant_images')
+    image_variant = fields.Binary(compute='_compute_variant_images', store=False) # override
 
 class ProductImage(models.Model):
     _name = 'product.image'
@@ -35,22 +46,19 @@ class ProductImage(models.Model):
         else:
             return []
 
-    name = fields.Char('Name')
+    name = fields.Char('Name', translate=True)
     image = fields.Binary('Image', attachment=True)
     product_tmpl_id = fields.Many2one('product.template', string='Related Product', ondelete='cascade', copy=True)
     product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel', domain=_filter_product_attributes)
 
-    def _resize_large_image(self, vals):
-        if vals.get('image'):
-            base64_source = vals['image'].encode('ascii') if isinstance(vals['image'], pycompat.text_type) else vals['image']
-            vals.update({ 'image': tools.image_resize_image(base64_source, size=(1024, None)) })
-
+    # override
     @api.model
     def create(self, vals):
-        self._resize_large_image(vals);
+        tools.image_resize_images(vals)
         return super(ProductImage, self).create(vals)
 
+    # override
     @api.multi
     def write(self, vals):
-        self._resize_large_image(vals);
+        tools.image_resize_images(vals)
         return super(ProductImage, self).write(vals)
