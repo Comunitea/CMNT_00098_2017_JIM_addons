@@ -4,3 +4,4 @@
 from . import purchase_order
 from . import account
 from . import product
+from . import res_company
