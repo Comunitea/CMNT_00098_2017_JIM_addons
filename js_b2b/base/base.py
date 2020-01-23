@@ -72,12 +72,11 @@ class BaseB2B(models.AbstractModel):
 				# Obtenemos los destinatarios
 				item.obj_dest = si.clients.ids if si.clients else list()
 				# Obtenemos los datos
-				if self.b2b_mode != 'delete':
-					item.obj_data = get_data(self)
-					# Filtramos los datos
-					# para eliminar los que no cambiaron
-					# o no son fixed
-					item.filter_obj_data(vals)
+				item.obj_data = get_data(self)
+				# Filtramos los datos
+				# para eliminar los que no cambiaron
+				# o no son fixed
+				item.filter_obj_data(vals)
 				# Enviamos los datos si son correctos
 				# es un borrado o obj_data no puede estar vacío
 				if self.b2b_mode == 'delete' or item.obj_data or item.obj_images:
@@ -100,7 +99,7 @@ class BaseB2B(models.AbstractModel):
 			item_status = vals.get('state')
 			# Al activarse y no estar cancelado se crea de nuevo
 			if item_active is True and item_status != 'cancel':
-				item.__b2b_record('create', vals)
+				item.__b2b_record('create')
 			# Al desactivarse o cancelarse se elimina
 			elif item_active is False or item_status == 'cancel':
 				item.__b2b_record('delete', False)

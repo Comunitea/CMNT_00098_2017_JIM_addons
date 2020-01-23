@@ -54,10 +54,9 @@ class JSync:
 			field_xxx_name:xxx -> Sends xxx field if field_xxx_name has changed
 			xxx: -> Sends xxx field if has changed (no modifier)
 		"""
-
 		if self.obj_data and type(self.obj_data) is dict:
 			for field, value in self.obj_data.items():
-				# Uploads are handled later
+				# Uploads are handled different
 				if not field.startswith('upload:'):
 					obj_old = obj_new = field
 					# If field have :
@@ -65,17 +64,20 @@ class JSync:
 						# Before :
 						obj_old = field[:field.index(':')]
 						# After :
-						obj_new = field[1+field.index(':'):]
+						obj_new = field[field.index(':') + 1:]
 						# Replace key
 						self.obj_data[obj_new] = self.obj_data.pop(field)
-					if obj_old != 'fixed' and (type(vals) is dict and obj_old not in vals or vals is False):
+					if obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
 						# Remove field because is not found in vals
 						del self.obj_data[obj_new]
+					elif type(value) is list:
+						# Convert lits to tuples
+						self.obj_data[obj_new] = tuple(value)
 					elif type(value) is unicode:
 						# Decode unicode str's to utf-8
-						self.obj_data[obj_new] = value.decode('utf-8')
-				elif type(vals) is dict and field[1+field.index(':'):] not in vals or vals is False:
-					del self.obj_data[field]
+						self.obj_data[obj_new] = value.decode('utf-8', 'replace')
+				elif vals is False:
+					self.obj_data[field] = None
 
 		return self.obj_data
 
