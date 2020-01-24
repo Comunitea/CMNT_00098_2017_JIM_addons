@@ -54,8 +54,59 @@
                 </div>
             </t>
         </t>
+    </template>
 
+    <template id="product_label_report_neutral">
+        <t t-call="report.html_container">
+            <t t-foreach="product_list" t-as="product_page">
+                <div class="page">
+                        <style type="text/css">
+                            .product_label{
+                                float: left;
+                                height: 82.3mm;
+                                width: 57.8mm;
+                                margin-left: 2.5mm;
+                            }
+                            .text_imported {
+                                font-size: 6px;
+                                text-align: center;
+                            }
+                        </style>
+                        <t t-foreach="product_page" t-as="product">
+                            <div class="product_label">
+                                <div style="border: 1px solid black; padding: 4px 4px 4px 4px;">
+                                    <p>Ref.: <span t-field="product.default_code"/> </p>
+                                    <p>Desc.: <span t-field="product.name"/> </p>
+                                    <p>
+                                        <t t-foreach="product.attribute_value_ids" t-as="attribute_value">
+                                            <t t-if="attribute_value.attribute_id.is_color">Color</t>
+                                            <t t-if="not attribute_value.attribute_id.is_color">Talla</t>: <span t-field="attribute_value.name"/>
+                                        </t>
+                                    </p>
+                                    <img t-if="product.barcode"
+                                         t-att-src="'/report/barcode/?type=%s&amp;value=%s&amp;width=%s&amp;height=%s&amp;' % ('EAN13', product.barcode, 600, 150)"
+                                         style="width:100%;height:20%;"/>
+                                    <div style="text-align: center;">
+                                        <span style="text-align: center;" t-field="product.barcode"/>
+                                    </div>
+                                </div>
+                                <div>
+                                    <div class="text_imported">
 
+                                        <span class="text_imported">&nbsp;
+
+                                        </span><p style="margin:0px"/>
+                                        <span class="text_imported">&nbsp;
+
+                                        </span >
+
+                                    </div>
+                                </div>
+                            </div>
+                        </t>
+                </div>
+            </t>
+        </t>
     </template>
 
     <report
@@ -64,9 +115,21 @@
         file="custom_documents.product_label_report"
         report_type="qweb-pdf"
         model="product.product"
-        string="Labels"/>
+        string="Etiquetas JIM"/>
+
+    <report
+        id="report_product_label_neutral"
+        name="custom_documents.product_label_neutral"
+        file="custom_documents.product_label_report_neutral"
+        report_type="qweb-pdf"
+        model="product.product"
+        string="Etiquetas neutrales"/>
 
     <record id="custom_documents.report_product_label" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="product_labels_paperformat_euro" />
+    </record>
+
+    <record id="custom_documents.report_product_label_neutral" model="ir.actions.report.xml">
         <field name="paperformat_id" ref="product_labels_paperformat_euro" />
     </record>
 
@@ -76,7 +139,7 @@
         file="custom_documents.product_label_report"
         report_type="qweb-pdf"
         model="purchase.order"
-        string="Labels"/>
+        string="Etiquetas para compras"/>
 
     <record id="custom_documents.report_product_label_from_purchase" model="ir.actions.report.xml">
         <field name="paperformat_id" ref="product_labels_paperformat_euro" />

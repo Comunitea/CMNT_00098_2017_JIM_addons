@@ -37,6 +37,7 @@ class ReportProductLabelFromProduct(models.AbstractModel):
 
     @api.model
     def render_html(self, docids, data=None):
+
         products = self.env['product.product'].browse(docids)
         product_list = []
         product_page = []
@@ -55,3 +56,29 @@ class ReportProductLabelFromProduct(models.AbstractModel):
         }
         return self.env['report'].render(
             'custom_documents.product_label_report', docargs)
+
+class ReportProductLabelFromProductNeutral(models.AbstractModel):
+    _name = 'report.custom_documents.product_label_neutral'
+
+    @api.model
+    def render_html(self, docids, data=None):
+
+        products = self.env['product.product'].browse(docids)
+        product_list = []
+        product_page = []
+        for product in products:
+            product_page.append(product)
+            if len(product_page) == 8:
+                product_list.append(product_page)
+                product_page = []
+        if len(product_page):
+            product_list.append(product_page)
+        docargs = {
+            'doc_ids': docids,
+            'doc_model': 'product.product',
+            'docs': products,
+            'product_list': product_list
+        }
+        return self.env['report'].render(
+            'custom_documents.product_label_report_neutral', docargs)
+
