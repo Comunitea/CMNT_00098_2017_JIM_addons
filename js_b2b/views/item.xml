@@ -22,6 +22,7 @@
 						</h1>
 					</div>
 					<group>
+						<field name="model"/>
 						<field name="description"/>
 						<field name="code" widget="js_code"/>
 					</group>
@@ -44,6 +45,26 @@
 			</tree>
 		</field>
 	</record>
+
+    <!-- ACCIONES DE LISTADO -->
+
+    <record id="b2b_sync_all" model="ir.actions.server">
+        <field name="name">B2B Sync</field>
+        <field name="model_id" ref="model_b2b_item"/>
+        <field name="state">code</field>
+        <field name="code">
+			for record in records:
+				record.sync_item('create')
+        </field>
+    </record>
+
+    <record id="ir_values_b2b_sync_all" model="ir.values">
+        <field name="name">B2B Sync</field>
+        <field name="model">b2b.item</field>
+        <field name="key">action</field>
+        <field name="key2">client_action_multi</field>
+        <field name="value" eval="'ir.actions.server, %d' % b2b_sync_all" />
+    </record>
 
 	<!-- VISTAS -->
 

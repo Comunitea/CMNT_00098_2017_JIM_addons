@@ -32,30 +32,29 @@ class OutputHelper:
 
 class JSync:
 
-	obj_id = None # Item id
-	obj_name = None # Data item name
-	obj_dest = 'all' # Client ID or string
-	obj_data = {} # Item data dict
-	obj_images = [] # Item images list
+	id = None # Item id
+	name = None # Data item name
+	dest = None # Client ID or string
+	data = {} # Item data dict
 
 	def __init__(self, id=None):
-		self.obj_id = id
+		self.id = id
 
-	def filter_obj_data(self, vals=None):
+	def filter_data(self, vals=None):
 		"""
-		Filter and normalizes item data (obj_data)
+		Filter and normalizes item data (data)
 
 		:param vals: Item data to update (from model)
 		:return: dict
 
-		obj_data key modifiers:
+		data key modifiers:
 			fixed:xxx -> Sends xxx always
 			upload:xxx -> Upload xxx to public server and returns URL
 			field_xxx_name:xxx -> Sends xxx field if field_xxx_name has changed
 			xxx: -> Sends xxx field if has changed (no modifier)
 		"""
-		if self.obj_data and type(self.obj_data) is dict:
-			for field, value in self.obj_data.items():
+		if self.data and type(self.data) is dict:
+			for field, value in self.data.items():
 				# Uploads are handled different
 				if not field.startswith('upload:'):
 					obj_old = obj_new = field
@@ -66,20 +65,24 @@ class JSync:
 						# After :
 						obj_new = field[field.index(':') + 1:]
 						# Replace key
-						self.obj_data[obj_new] = self.obj_data.pop(field)
+						self.data[obj_new] = self.data.pop(field)
 					if obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
 						# Remove field because is not found in vals
-						del self.obj_data[obj_new]
+						del self.data[obj_new]
 					elif type(value) is list:
 						# Convert lits to tuples
-						self.obj_data[obj_new] = tuple(value)
+						self.data[obj_new] = tuple(value)
 					elif type(value) is unicode:
 						# Decode unicode str's to utf-8
-						self.obj_data[obj_new] = value.decode('utf-8', 'replace')
+						self.data[obj_new] = value.decode('utf-8', 'replace')
+				# Updating other fields, delete upload
+				elif type(vals) is dict and field[7:] not in vals:
+					del self.data[field]
+				# If we are deleting an image set to NULL
 				elif vals is False:
-					self.obj_data[field] = None
+					self.data[field] = None
 
-		return self.obj_data
+		return self.data
 
 	def send(self, path='', action='create', timeout_sec=10):
 		"""
@@ -91,7 +94,7 @@ class JSync:
 
 		"""
 
-		if self.obj_id and self.obj_name:
+		if self.id and self.name:
 
 			# Header
 			header_dict = { 
@@ -100,12 +103,11 @@ class JSync:
 
 			# Content
 			data_dict = {
-				'id': self.obj_id,
-				'name': self.obj_name,
-				'receivers': self.obj_dest,
+				'id': self.id,
+				'name': self.name,
+				'receivers': self.dest,
 				'operation': action,
-				'data': self.obj_data,
-				'images': self.obj_images
+				'data': self.data
 			}
 
 			# Debug

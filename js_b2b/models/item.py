@@ -2,6 +2,7 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from ..base.helper import JSync
+from time import sleep
 import re
 
 class B2bItems(models.Model):
@@ -10,12 +11,12 @@ class B2bItems(models.Model):
 	_order = 'sequence, id'
 	_default_code_str = re.sub(r'(^[ ]{0,8})', '', """
         # Set to None for watch all
-        fields_to_watch = ('name', 'reference')
+        b2b_fields_to_watch = ('name', 'reference')
         
-        def is_notifiable(self, vals):
-            return self._name == 'product.product'
+        def b2b_is_notifiable(self, vals):
+            return True
 
-        def get_data(self):
+        def b2b_get_data(self):
             return {
                 # Sends names dict when field has changed
                 'name': self.get_field_translations('name'),
@@ -29,29 +30,125 @@ class B2bItems(models.Model):
 	""", flags=re.M).strip()
 
 	name = fields.Char('Item Name', required=True, translate=False, help="Set the item name")
+	model = fields.Char('Model Name', required=True, translate=False, help="Odoo model name")
 	description = fields.Char('Description', required=False, translate=False, help="Set the item description")
 	clients = fields.Many2many('b2b.client', 'b2b_client_item_rel', 'b2b_item_id', 'b2b_client_id')
 	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
 	active = fields.Boolean('Active', default=True, help="Enable or disable this item")
 	sequence = fields.Integer(help="Determine the items order")
 
-	@staticmethod
-	def __check_code(code):
-		if type(code) is unicode:
-			# Exec B2B Item Code
-			try:
-				exec(code, globals())
-			except Exception as e:
-				raise UserError(_('Syntax Error!\n') + str(e))
-			# Check required vars and methods to avoid errors
-			variables = { 'fields_to_watch': tuple }
-			methods = ['is_notifiable', 'get_data']
-			for var in tuple(variables.keys() + methods):
-				if not var in locals():
-					raise UserError(_('Code Error!\n %s not defined' % (var)))
-			for var, typ in variables.items():
-				if type(eval(var)) is not typ:
-					raise UserError(_('Code Error!\n %s must be a %s' % (var, typ)))
-			for method in methods:
-				if not callable(eval(method)):
-					raise UserError(_('Code Error!\n %s must be a function' % (method)))
+	@api.model
+	def __check_model(self):
+		"""
+		Check if is a valid model
+		"""
+		try:
+			self.env[self.model].search_count([])
+		except Exception as e:
+			raise UserError(_('Model not found!'))
+
+	@api.model
+	def __check_code(self):
+		"""
+		Check if is a valid code
+		"""
+		try:
+			exec(self.code, globals())
+		except Exception as e:
+			raise UserError(_('Syntax Error?\n') + str(e))
+		# Check required vars and methods to avoid fatal errors
+		variables = { 'b2b_fields_to_watch': tuple }
+		methods = ['b2b_is_notifiable', 'b2b_get_data']
+		for var in tuple(variables.keys() + methods):
+			if not var in globals():
+				raise UserError(_('Code Error!\n %s not defined' % (var)))
+		for var, typ in variables.items():
+			var_content = eval(var)
+			if var_content and type(var_content) is not typ:
+				raise UserError(_('Code Error!\nItem: %s\nVar name: %s\nReceived type: %s\nExpected type: %s' % (self.name, var, type(var_content), typ)))
+		for method in methods:
+			if not callable(eval(method)):
+				raise UserError(_('Code Error!\n %s must be a function' % (method)))
+
+	@api.model
+	def create(self, vals):
+		"""
+		Check model % code on create
+		"""
+		item = super(B2bItems, self).create(vals)
+		item.__check_model()
+		item.__check_code()
+		return item
+
+	@api.multi
+	def write(self, vals):
+		"""
+		Check model % code on write
+		"""
+		super(B2bItems, self).write(vals)
+		for item in self:
+			item.__check_model()
+			item.__check_code()
+		return True
+
+	@api.model
+	def must_notify(self, record, vals=None):
+		"""
+		Check if item record is notifiable
+		"""
+		# Default
+		is_notifiable = True
+		# Basic checks, model and code
+		if record and self.model == record._name and type(self.code) is unicode:
+			# Ejecutamos el código con exec(self.code, globals())
+			# establece globalmente las siguentes variables y métodos:
+			#   b2b_fields_to_watch <type 'tuple'>
+			#   b2b_is_notifiable <type 'function'>
+			#   b2b_get_data <type 'function'>
+			exec(self.code, globals())
+			# Devuelve False si ninguno de los campos recibidos en vals
+			# está presente en b2b_fields_to_watch (cuando los tipos coinciden)
+			if type(b2b_fields_to_watch) is tuple and type(vals) is dict:
+				vals_set = set(vals)
+				fields_set = set(b2b_fields_to_watch)
+				is_notifiable = bool(vals_set.intersection(fields_set))
+			# Comprobamos si se debe notificar según el código
+			if is_notifiable and b2b_is_notifiable(record, vals):
+				return b2b_get_data(record)
+			return False
+		return False
+
+	@api.one
+	def sync_item(self, mode='create'):
+		"""
+		Sync all item model records
+		"""
+		sleep(1) # Wait 1 second
+		record_number = 0.0 # Record counter
+		# Get code model records
+		records_ids = self.env[self.model].search([]).ids
+		total_records =  len(records_ids)
+		print("***************************************")
+		print("@@ ITEM NAME", str(self.name))
+		print("@@ ITEM MODEL", str(self.model))
+		print("@@ TOTAL RECORDS", total_records)
+		for id in records_ids:
+			record_number += 1
+			record_percent = round((record_number / total_records) * 100, 1)
+			record_percent_str = str(record_percent) + '%'
+			record = self.env[self.model].browse(id)
+			# Exec code
+			item_data = self.must_notify(record)
+			if item_data:
+				print("@@ RECORD ID#%s IS NOTIFIABLE!" % (record.id), record_percent_str)
+				# Make & send packet
+				packet = JSync(record.id)
+				packet.name = self.name
+				packet.data = item_data
+				packet.filter_data()
+				packet.send(action=mode)
+				sleep(0.05) # Wait 50 miliseconds
+			else:
+				print("@@ RECORD ID#%s NOT NOTIFIABLE" % (record.id), record_percent_str)
+		# End line
+		print("***************************************")

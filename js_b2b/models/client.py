@@ -17,16 +17,16 @@ class B2bClients(models.Model):
 
 	def __b2b_record(self, mode='create', vals=None): 
 		"""
-		Private method to check configured clients and send the data
+		Private method to send the data
 
 		:param mode: String, CRUD mode
 		:param vals: Default model data update dict (to check changes)
 		:return: boolean
 		"""
-		jitem = JSync(self.id)
+		packet = JSync(self.id)
 		# Set data
-		jitem.obj_name = 'client'
-		jitem.obj_data = {
+		packet.name = 'client'
+		packet.data = {
 			'partner:partner_id': self.partner.id,
 			'fixed:partner_ref': self.partner.ref,
 			'fixed:partner_name': self.partner.name,
@@ -36,9 +36,9 @@ class B2bClients(models.Model):
 			'active': self.active
 		}
 		# Filter data
-		jitem.filter_obj_data(vals)
+		packet.filter_data(vals)
 		# Send item
-		return jitem.send('config', mode, 300)
+		return packet.send('config', mode, 300)
 
 	# ------------------------------------- BUTTONS -------------------------------------
 
