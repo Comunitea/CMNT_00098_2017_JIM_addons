@@ -2,8 +2,8 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError, Warning
 from ..base.helper import JSync
-from time import sleep
 from datetime import datetime
+import base64
 import re
 
 class B2bItems(models.Model):
@@ -124,9 +124,9 @@ class B2bItems(models.Model):
 		"""
 		Sync all item model records
 		"""
-		sleep(1) # Wait 1 second
 		search_query = [] # Default query
 		record_number = 0.0 # Record counter
+		docs_min_date = '2019-01-01' # Begin date
 
 		# Acelerate certain models
 		# with specific queries
@@ -138,6 +138,12 @@ class B2bItems(models.Model):
 			search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
 		elif self.model == 'res.partner':
 			search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
+		elif self.model == 'account.invoice':
+			search_query = [('date_invoice', '>=', docs_min_date)]
+		elif self.model == 'date_done':
+			search_query = [('date_invoice', '>=', docs_min_date)]
+		elif self.model == 'sale.order':
+			search_query = [('date_invoice', '>=', docs_min_date)]
 
 		# User reminder
 		if search_query:
@@ -165,7 +171,6 @@ class B2bItems(models.Model):
 				packet.data = item_data
 				packet.filter_data()
 				packet.send(action=mode)
-				sleep(0.05) # Wait 50 miliseconds
 			else:
 				print("@@ RECORD ID#%s NOT NOTIFIABLE" % (record.id), record_percent_str)
 		# End line

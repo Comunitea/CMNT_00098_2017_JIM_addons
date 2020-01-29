@@ -257,7 +257,7 @@
 
                 def b2b_is_notifiable(self, vals):
                     # El estado es (assigned, done o cancel) y la empresa es JIM SPORTS TECHNOLOGY y es un INT y hace referencia a una línea de compra y la fecha es superior a la actual
-                    return self.state in ('assigned', 'done', 'cancel') and self.company_id.id == 1 and self.picking_type_id.code == 'incoming' and self.purchase_line_id and datetime.strptime(self.date_expected) >= str(datetime.now())
+                    return self.state in ('assigned', 'done', 'cancel') and self.company_id.id == 1 and self.picking_type_id.code == 'incoming' and self.purchase_line_id and datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now()
 
                 def b2b_get_data(self):
                     return {
