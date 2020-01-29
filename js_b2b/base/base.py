@@ -77,7 +77,7 @@ class BaseB2B(models.AbstractModel):
 				else:
 					# Enviamos los datos si son correctos
 					if mode == 'delete' or packet.data:
-						return packet.send(action=self.mode)
+						return packet.send(action=mode)
 					return False
 		return False
 
