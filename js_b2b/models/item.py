@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, Warning
 from ..base.helper import JSync
 from time import sleep
+from datetime import datetime
 import re
 
 class B2bItems(models.Model):
@@ -124,11 +125,28 @@ class B2bItems(models.Model):
 		Sync all item model records
 		"""
 		sleep(1) # Wait 1 second
+		search_query = [] # Default query
 		record_number = 0.0 # Record counter
+
+		# Acelerate certain models
+		# with specific queries
+		if self.model == 'product.product':
+			search_query = ['&', ('type', '=', 'product'), ('tag_ids', '!=', False)]
+		elif self.model == 'product.template':
+			search_query = ['&', '&', ('type', '=', 'product'), ('tag_ids', '!=', False), ('product_attribute_count', '>', 0)]
+		elif self.model == 'stock.move':
+			search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
+		elif self.model == 'res.partner':
+			search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
+
+		# User reminder
+		if search_query:
+			Warning(_("Using model query: %s" % search_query))
+
 		# Get code model records
-		records_ids = self.env[self.model].search([]).ids
+		records_ids = self.env[self.model].search(search_query).ids
 		total_records =  len(records_ids)
-		print("***************************************")
+		print("************* B2B ITEM *************")
 		print("@@ ITEM NAME", str(self.name))
 		print("@@ ITEM MODEL", str(self.model))
 		print("@@ TOTAL RECORDS", total_records)
@@ -151,4 +169,4 @@ class B2bItems(models.Model):
 			else:
 				print("@@ RECORD ID#%s NOT NOTIFIABLE" % (record.id), record_percent_str)
 		# End line
-		print("***************************************")
+		print("************* FIN B2B ITEM *************")

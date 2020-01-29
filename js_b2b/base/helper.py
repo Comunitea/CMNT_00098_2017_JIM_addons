@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from requests.adapters import HTTPAdapter
 from odoo.http import request as HttpRequest
+from requests.packages.urllib3.util.retry import Retry
 from odoo.exceptions import ValidationError
 from unidecode import unidecode
-import requests as request
+import requests
 import json
 
 class OutputHelper:
@@ -36,9 +38,15 @@ class JSync:
 	name = None # Data item name
 	dest = None # Client ID or string
 	data = {} # Item data dict
+	session = None # HTTP Session
 
-	def __init__(self, id=None):
+	def __init__(self, id=None, retries=3):
 		self.id = id
+		self.session = requests.Session()
+		retry = Retry(total=retries, connect=retries, backoff_factor=0.3, status_forcelist=(500, 502, 504))
+		adapter = HTTPAdapter(max_retries=retry)
+		self.session.mount('http://', adapter)
+		self.session.mount('https://', adapter)
 
 	def filter_data(self, vals=None):
 		"""
@@ -124,7 +132,7 @@ class JSync:
 
 			try:
 				
-				jsync_res = request.post(b2b_settings['url'] + path, timeout=timeout_sec, headers=header_dict, data=json_data)
+				jsync_res = self.session.post(b2b_settings['url'] + path, timeout=timeout_sec, headers=header_dict, data=json_data)
 				OutputHelper.print_text(debug_msg.format(jsync_res.text, data_dict.get('id'), data_dict.get('name'), data_dict.get('receivers'), data_dict.get('operation'), debug_data), OutputHelper.OK)
 
 				if jsync_res.status_code is not 200 and b2b_settings['conexion_error'] and b2b_settings['response_error']:
