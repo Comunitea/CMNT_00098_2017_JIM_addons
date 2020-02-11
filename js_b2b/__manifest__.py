@@ -16,7 +16,6 @@
 		'data/item_data.xml',
 		'views/settings.xml',
 		'views/assets.xml',
-		'views/client.xml',
 		'views/item.xml'
 	],
 	'depends': [

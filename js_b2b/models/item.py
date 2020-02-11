@@ -1,15 +1,14 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
-from odoo.exceptions import UserError, Warning
+from odoo.exceptions import UserError
 from ..base.helper import JSync
-from datetime import datetime
-import base64
 import re
 
 class B2bItems(models.Model):
 	_name = 'b2b.item'
 	_description = 'B2B Item'
 	_order = 'sequence, id'
+	_sql_constraints = [('b2b_item_unique', 'unique(name)', 'Name must be unique into B2B Items!')]
 	_default_code_str = re.sub(r'(^[ ]{0,8})', '', """
         # Set to None for watch all
         b2b_fields_to_watch = ('name', 'reference')
@@ -25,15 +24,14 @@ class B2bItems(models.Model):
                 'fixed:reference': self.default_code,
                 # field: modifier sends if field has changed, if not setted send null
                 'categ_id:category_id': self.categ_id.id if self.categ_id else None,
-                # image: modifier uploads base64 image to public server and replaces this param with the URL
-                'image:logo': '/9j/4AAQSkZJRgABAQAAAQABAAD...'
+                # upload: modifier uploads base64 image to public server and replaces this param with the URL
+                'upload:logo': '/9j/4AAQSkZJRgABAQAAAQABAAD...'
             }
 	""", flags=re.M).strip()
 
 	name = fields.Char('Item Name', required=True, translate=False, help="Set the item name")
 	model = fields.Char('Model Name', required=True, translate=False, help="Odoo model name")
 	description = fields.Char('Description', required=False, translate=False, help="Set the item description")
-	clients = fields.Many2many('b2b.client', 'b2b_client_item_rel', 'b2b_item_id', 'b2b_client_id')
 	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
 	active = fields.Boolean('Active', default=True, help="Enable or disable this item")
 	sequence = fields.Integer(help="Determine the items order")
@@ -54,14 +52,14 @@ class B2bItems(models.Model):
 		Check if is a valid code
 		"""
 		try:
-			exec(self.code, globals())
+			exec(self.code, locals())
 		except Exception as e:
 			raise UserError(_('Syntax Error?\n') + str(e))
 		# Check required vars and methods to avoid fatal errors
 		variables = { 'b2b_fields_to_watch': tuple }
 		methods = ['b2b_is_notifiable', 'b2b_get_data']
 		for var in tuple(variables.keys() + methods):
-			if not var in globals():
+			if not var in locals():
 				raise UserError(_('Code Error!\n %s not defined' % (var)))
 		for var, typ in variables.items():
 			var_content = eval(var)
@@ -72,27 +70,6 @@ class B2bItems(models.Model):
 				raise UserError(_('Code Error!\n %s must be a function' % (method)))
 
 	@api.model
-	def create(self, vals):
-		"""
-		Check model % code on create
-		"""
-		item = super(B2bItems, self).create(vals)
-		item.__check_model()
-		item.__check_code()
-		return item
-
-	@api.multi
-	def write(self, vals):
-		"""
-		Check model % code on write
-		"""
-		super(B2bItems, self).write(vals)
-		for item in self:
-			item.__check_model()
-			item.__check_code()
-		return True
-
-	@api.model
 	def must_notify(self, record, vals=None):
 		"""
 		Check if item record is notifiable
@@ -101,12 +78,14 @@ class B2bItems(models.Model):
 		is_notifiable = True
 		# Basic checks, model and code
 		if record and self.model == record._name and type(self.code) is unicode:
-			# Ejecutamos el código con exec(self.code, globals())
-			# establece globalmente las siguentes variables y métodos:
+			from datetime import datetime
+			import base64
+			# Ejecutamos el código con exec(self.code, locals())
+			# establece localmente las siguentes variables y métodos:
 			#   b2b_fields_to_watch <type 'tuple'>
 			#   b2b_is_notifiable <type 'function'>
 			#   b2b_get_data <type 'function'>
-			exec(self.code, globals())
+			exec(self.code, locals())
 			# Devuelve False si ninguno de los campos recibidos en vals
 			# está presente en b2b_fields_to_watch (cuando los tipos coinciden)
 			if type(b2b_fields_to_watch) is tuple and type(vals) is dict:
@@ -122,7 +101,7 @@ class B2bItems(models.Model):
 	@api.one
 	def sync_item(self, mode='create'):
 		"""
-		Sync all item model records
+		Sync all model records
 		"""
 		search_query = [] # Default query
 		record_number = 0.0 # Record counter
@@ -145,14 +124,10 @@ class B2bItems(models.Model):
 		elif self.model == 'sale.order':
 			search_query = [('date_invoice', '>=', docs_min_date)]
 
-		# User reminder
-		if search_query:
-			Warning(_("Using model query: %s" % search_query))
-
 		# Get code model records
 		records_ids = self.env[self.model].search(search_query).ids
 		total_records =  len(records_ids)
-		print("************* B2B ITEM *************")
+		print("*************** B2B ITEM ***************")
 		print("@@ ITEM NAME", str(self.name))
 		print("@@ ITEM MODEL", str(self.model))
 		print("@@ TOTAL RECORDS", total_records)
@@ -175,3 +150,26 @@ class B2bItems(models.Model):
 				print("@@ RECORD ID#%s NOT NOTIFIABLE" % (record.id), record_percent_str)
 		# End line
 		print("************* FIN B2B ITEM *************")
+
+	# ------------------------------------ OVERRIDES ------------------------------------
+
+	@api.model
+	def create(self, vals):
+		"""
+		Check model % code on create
+		"""
+		item = super(B2bItems, self).create(vals)
+		item.__check_model()
+		item.__check_code()
+		return item
+
+	@api.multi
+	def write(self, vals):
+		"""
+		Check model % code on write
+		"""
+		super(B2bItems, self).write(vals)
+		for item in self:
+			item.__check_model()
+			item.__check_code()
+		return True

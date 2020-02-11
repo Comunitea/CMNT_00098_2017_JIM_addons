@@ -5,6 +5,7 @@
             <field name="sequence">1</field>
             <field name="active">True</field>
             <field name="name">attribute</field>
+            <field name="model">b2b.item</field>
             <field name="description">Atributos de producto</field>
             <field name="code">
                 b2b_fields_to_watch = (
@@ -28,6 +29,7 @@
             <field name="sequence">2</field>
             <field name="active">True</field>
             <field name="name">attribute_value</field>
+            <field name="model">b2b.item</field>
             <field name="description">Valores de atributos</field>
             <field name="code">
                 b2b_fields_to_watch = (
@@ -51,6 +53,7 @@
             <field name="sequence">3</field>
             <field name="active">True</field>
             <field name="name">brand</field>
+            <field name="model">b2b.item</field>
             <field name="description">Marcas de productos</field>
             <field name="code">
                 b2b_fields_to_watch = (
@@ -75,6 +78,7 @@
             <field name="sequence">4</field>
             <field name="active">True</field>
             <field name="name">category</field>
+            <field name="model">b2b.item</field>
             <field name="description">Categorías de producto</field>
             <field name="code">
                 b2b_fields_to_watch = None
@@ -95,6 +99,7 @@
             <field name="sequence">5</field>
             <field name="active">True</field>
             <field name="name">product</field>
+            <field name="model">b2b.item</field>
             <field name="description">Productos</field>
             <field name="code">
                 b2b_fields_to_watch = (
@@ -134,6 +139,7 @@
             <field name="sequence">6</field>
             <field name="active">True</field>
             <field name="name">product</field>
+            <field name="model">b2b.item</field>
             <field name="description">Productos premium</field>
             <field name="code">
                 b2b_fields_to_watch = (
@@ -172,6 +178,7 @@
             <field name="sequence">7</field>
             <field name="active">True</field>
             <field name="name">product_variant</field>
+            <field name="model">b2b.item</field>
             <field name="description">Variantes / Combinaciones</field>
             <field name="code">
                 b2b_fields_to_watch = (
@@ -185,8 +192,8 @@
                 )
 
                 def b2b_is_notifiable(self, vals):
-                    # Es almacenable y tiene etiquetas y tiene atributos (las variantes únicas no tienen atributos)
-                    return self.type == 'product' and self.tag_ids and self.product_attribute_count
+                    # La plantilla está activa y es almacenable y tiene etiquetas y tiene atributos (las variantes únicas no tienen atributos)
+                    return self.product_tmpl_id.active and self.type == 'product' and self.tag_ids and self.product_attribute_count
 
                 def b2b_get_data(self):
                     return {
@@ -205,6 +212,7 @@
             <field name="sequence">8</field>
             <field name="active">True</field>
             <field name="name">product_image</field>
+            <field name="model">b2b.item</field>
             <field name="description">Imágenes del producto</field>
             <field name="code">
                 b2b_fields_to_watch = None
@@ -225,7 +233,30 @@
         <record id="b2b_item_9" model="b2b.item">
             <field name="sequence">9</field>
             <field name="active">True</field>
+            <field name="name">currency</field>
+            <field name="model">b2b.item</field>
+            <field name="description">Monedas</field>
+            <field name="code">
+                b2b_fields_to_watch = None
+
+                def b2b_is_notifiable(self, vals):
+                    return True
+
+                def b2b_get_data(self):
+                    return {
+                        'lname:name': self.lname or self.name,
+                        'code': self.name,
+                        'symbol': self.symbol,
+                        'rate': self.rate
+                    }
+            </field>
+        </record>
+
+        <record id="b2b_item_10" model="b2b.item">
+            <field name="sequence">10</field>
+            <field name="active">True</field>
             <field name="name">pricelist</field>
+            <field name="model">b2b.item</field>
             <field name="description">Tarifas</field>
             <field name="code">
                 b2b_fields_to_watch = None
@@ -240,10 +271,11 @@
             </field>
         </record>
 
-        <record id="b2b_item_10" model="b2b.item">
-            <field name="sequence">10</field>
+        <record id="b2b_item_11" model="b2b.item">
+            <field name="sequence">11</field>
             <field name="active">True</field>
             <field name="name">supply_plan</field>
+            <field name="model">b2b.item</field>
             <field name="description">Previsión de abastecimiento</field>
             <field name="code">
                 b2b_fields_to_watch = (
@@ -270,10 +302,11 @@
             </field>
         </record>
 
-        <record id="b2b_item_11" model="b2b.item">
-            <field name="sequence">11</field>
+        <record id="b2b_item_12" model="b2b.item">
+            <field name="sequence">12</field>
             <field name="active">True</field>
             <field name="name">customer</field>
+            <field name="model">b2b.item</field>
             <field name="description">Clientes</field>
             <field name="code">
                 b2b_fields_to_watch = (
@@ -292,11 +325,21 @@
                     # Es el contacto principal (puede ser el mismo) es empresa y es cliente y tiene correo electrónico y tiene contraseña web y es el contacto principal
                     return self.type == 'contact' and self.commercial_partner_id.is_company and self.commercial_partner_id.customer and self.commercial_partner_id.email and self.commercial_partner_id.web_password and self.commercial_partner_id.id == self.id
 
+                def b2b_get_primary_email(email):
+                    # Separadores válidos
+                    email_separators = (',', ';')
+                    # Si tiene un valor
+                    if email:
+                        for separator in email_separators:
+                            if separator in email:
+                                return email.split(separator)[0]
+                    return email
+                        
                 def b2b_get_data(self):
                     return {
                         'name': self.name,
                         'vat': self.vat or None,
-                        'email': self.email,
+                        'email': b2b_get_primary_email(self.email),
                         'ref:reference': self.ref or None,
                         'web_password:password': self.web_password,
                         'property_product_pricelist:pricelist_id': self.property_product_pricelist.id or None,
@@ -305,10 +348,11 @@
             </field>
         </record>
 
-        <record id="b2b_item_12" model="b2b.item">
-            <field name="sequence">12</field>
+        <record id="b2b_item_13" model="b2b.item">
+            <field name="sequence">13</field>
             <field name="active">True</field>
             <field name="name">customer_address</field>
+            <field name="model">b2b.item</field>
             <field name="description">Direcciones de clientes</field>
             <field name="code">
                 b2b_fields_to_watch = (
@@ -324,8 +368,11 @@
                 )
 
                 def b2b_is_notifiable(self, vals):
-                    # Es una dirección el contacto principal (puede ser el mismo) es empresa y es cliente y tiene correo electrónico y tiene contraseña web y no es el contacto principal
-                    return self.type == 'delivery' and self.commercial_partner_id.is_company and self.commercial_partner_id.customer and self.commercial_partner_id.email and self.commercial_partner_id.web_password and self.commercial_partner_id.id != self.id
+                    # Comprobamos si el cliente relaccionado es notificable
+                    client_item = self.env['b2b.item'].search([('name', '=', 'customer')])
+                    notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
+                    # Es de tipo 'delivery'
+                    return notifiable_client and self.type == 'delivery'
 
                 def b2b_get_data(self):
                     return {
@@ -343,33 +390,36 @@
             </field>
         </record>
 
-        <record id="b2b_item_13" model="b2b.item">
-            <field name="sequence">13</field>
+        <record id="b2b_item_14" model="b2b.item">
+            <field name="sequence">14</field>
             <field name="active">True</field>
             <field name="name">invoice</field>
+            <field name="model">b2b.item</field>
             <field name="description">Factura de venta o abono</field>
             <field name="code">
                 b2b_fields_to_watch = (
                     'commercial_partner_id', 
-                    'name', 
+                    'number', 
                     'date_invoice', 
                     'amount_total',
                     'state'
                 )
 
                 def b2b_is_notifiable(self, vals):
+                    # Comprobamos si el cliente relaccionado es notificable
+                    client_item = self.env['b2b.item'].search([('name', '=', 'customer')])
+                    notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
                     # Es de tipo out_invoice o out_refund y tiene asignado un número y el estado es open o cancel
-                    return self.type in ('out_invoice', 'out_refund') and self.number and self.state in ('open', 'cancel')
+                    return notifiable_client and self.number and self.type in ('out_invoice', 'out_refund') and self.state in ('open', 'cancel')
 
                 def b2b_get_data(self):
-                    import base64
                     # Obtenemos el documento PDF como un string
                     docfile = self.env['report'].sudo().get_pdf([self.id], 'account.report_invoice')
                     # Todos los campos son fixed, ya que hasta que se valida no se notifica
                     # de forma que los campos que no se modifican al validar no se enviarían
                     return {
                         'fixed:customer_id': self.commercial_partner_id.id,
-                        'fixed:name': self.name, 
+                        'fixed:number': self.number, 
                         'fixed:date': self.date_invoice, 
                         'fixed:total': self.amount_total, 
                         'fixed:pdf': base64.b64encode(docfile)
@@ -377,10 +427,11 @@
             </field>
         </record>
 
-        <record id="b2b_item_14" model="b2b.item">
-            <field name="sequence">14</field>
+        <record id="b2b_item_15" model="b2b.item">
+            <field name="sequence">15</field>
             <field name="active">True</field>
             <field name="name">delivery_note</field>
+            <field name="model">b2b.item</field>
             <field name="description">Albarán de venta</field>
             <field name="code">
                 b2b_fields_to_watch = (
@@ -392,11 +443,13 @@
                 )
 
                 def b2b_is_notifiable(self, vals):
+                    # Comprobamos si el cliente relaccionado es notificable
+                    client_item = self.env['b2b.item'].search([('name', '=', 'customer')])
+                    notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
                     # Es un albarán y es de salida o dropshipping y el estado es done o cancel
-                    return (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state in ('done', 'cancel')
+                    return notifiable_client and (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state in ('done', 'cancel')
 
                 def b2b_get_data(self):
-                    import base64
                     # Obtenemos el documento PDF como un string
                     docfile = self.env['report'].sudo().get_pdf([self.id], 'stock.report_deliveryslip')
                     # Todos los campos son fixed, ya que hasta que se valida no se notifica
@@ -411,10 +464,11 @@
             </field>
         </record>
 
-        <record id="b2b_item_15" model="b2b.item">
-            <field name="sequence">15</field>
+        <record id="b2b_item_16" model="b2b.item">
+            <field name="sequence">16</field>
             <field name="active">True</field>
             <field name="name">sale_order</field>
+            <field name="model">b2b.item</field>
             <field name="description">Pedido de venta</field>
             <field name="code">
                 b2b_fields_to_watch = (
@@ -426,11 +480,13 @@
                 )
 
                 def b2b_is_notifiable(self, vals):
+                    # Comprobamos si el cliente relaccionado es notificable
+                    client_item = self.env['b2b.item'].search([('name', '=', 'customer')])
+                    notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
                     # Es un pedido de venta y (se recibe date_order en vals y el estado es pending o lqdr) o el estado es cancel
-                    return (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
+                    return notifiable_client and (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
 
                 def b2b_get_data(self):
-                    import base64
                     # Obtenemos el documento PDF como un string
                     docfile = self.env['report'].sudo().get_pdf([self.id], 'sale.report_saleorder')
                     # Todos los campos son fixed, ya que hasta que se valida no se notifica

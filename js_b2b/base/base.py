@@ -64,8 +64,6 @@ class BaseB2B(models.AbstractModel):
 				packet = JSync(self.id)
 				# Obtenemos el nombre
 				packet.name = item.name
-				# Obtenemos los destinatarios
-				packet.dest = item.clients.ids if item.clients else list()
 				# Obtenemos los datos
 				packet.data = item_data
 				# Normalizamos los datos
