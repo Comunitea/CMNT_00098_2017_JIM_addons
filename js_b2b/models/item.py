@@ -119,10 +119,10 @@ class B2bItems(models.Model):
 			search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
 		elif self.model == 'account.invoice':
 			search_query = [('date_invoice', '>=', docs_min_date)]
-		elif self.model == 'date_done':
-			search_query = [('date_invoice', '>=', docs_min_date)]
+		elif self.model == 'stock.picking':
+			search_query = [('date_done', '>=', docs_min_date)]
 		elif self.model == 'sale.order':
-			search_query = [('date_invoice', '>=', docs_min_date)]
+			search_query = [('date_order', '>=', docs_min_date)]
 
 		# Get code model records
 		records_ids = self.env[self.model].search(search_query).ids

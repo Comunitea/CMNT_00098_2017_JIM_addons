@@ -91,7 +91,8 @@
                     return {
                         'name': self.get_field_translations('name'),
                         'parent_id': self.parent_id.id if self.parent_id else None,
-                        'visible': self.web
+                        'upload:image': self.image or None,
+                        'sequence': 0
                     }
             </field>
         </record>
@@ -333,7 +334,7 @@
                     if email:
                         for separator in email_separators:
                             if separator in email:
-                                return email.split(separator)[0]
+                                return email.split(separator)[0].strip()
                     return email
                         
                 def b2b_get_data(self):
@@ -416,13 +417,16 @@
                 def b2b_get_data(self):
                     # Obtenemos el documento PDF como un string
                     docfile = self.env['report'].sudo().get_pdf([self.id], 'account.report_invoice')
+                    # Obtenemos la moneda y posición
+                    currency = self.currency_id.symbol
+                    position = self.currency_id.position
                     # Todos los campos son fixed, ya que hasta que se valida no se notifica
                     # de forma que los campos que no se modifican al validar no se enviarían
                     return {
                         'fixed:customer_id': self.commercial_partner_id.id,
                         'fixed:number': self.number, 
                         'fixed:date': self.date_invoice, 
-                        'fixed:total': self.amount_total, 
+                        'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
                         'fixed:pdf': base64.b64encode(docfile)
                     }
             </field>
@@ -446,20 +450,23 @@
                 def b2b_is_notifiable(self, vals):
                     # Comprobamos si el cliente relaccionado es notificable
                     client_item = self.env['b2b.item'].search([('name', '=', 'customer')])
-                    notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
+                    notifiable_client = client_item.must_notify(self.partner_id.commercial_partner_id) if client_item else False
                     # Es un albarán y es de salida o dropshipping y el estado es done o cancel
                     return notifiable_client and (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state in ('done', 'cancel')
 
                 def b2b_get_data(self):
                     # Obtenemos el documento PDF como un string
                     docfile = self.env['report'].sudo().get_pdf([self.id], 'stock.report_deliveryslip')
+                    # Obtenemos la moneda y posición
+                    currency = self.origin.pricelist_id.currency_id.symbol
+                    position = self.origin.pricelist_id.currency_id.position
                     # Todos los campos son fixed, ya que hasta que se valida no se notifica
                     # de forma que los campos que no se modifican al validar no se enviarían
                     return {
-                        'fixed:customer_id': self.sale_id.partner_id.commercial_partner_id.id,
+                        'fixed:customer_id': self.partner_id.commercial_partner_id.id,
                         'fixed:name': self.name, 
                         'fixed:date': self.date_done, 
-                        'fixed:total': self.amount_total, 
+                        'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
                         'fixed:pdf': base64.b64encode(docfile)
                     }
             </field>
@@ -483,20 +490,23 @@
                 def b2b_is_notifiable(self, vals):
                     # Comprobamos si el cliente relaccionado es notificable
                     client_item = self.env['b2b.item'].search([('name', '=', 'customer')])
-                    notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
+                    notifiable_client = client_item.must_notify(self.partner_id.commercial_partner_id) if client_item else False
                     # Es un pedido de venta y (se recibe date_order en vals y el estado es pending o lqdr) o el estado es cancel
                     return notifiable_client and (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
 
                 def b2b_get_data(self):
                     # Obtenemos el documento PDF como un string
                     docfile = self.env['report'].sudo().get_pdf([self.id], 'sale.report_saleorder')
+                    # Obtenemos la moneda y posición
+                    currency = self.pricelist_id.currency_id.symbol
+                    position = self.pricelist_id.currency_id.position
                     # Todos los campos son fixed, ya que hasta que se valida no se notifica
                     # de forma que los campos que no se modifican al validar no se enviarían
                     return {
                         'fixed:customer_id': self.partner_id.commercial_partner_id.id,
                         'fixed:name': self.name, 
                         'fixed:date': self.date_order, 
-                        'fixed:total': self.amount_total, 
+                        'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
                         'fixed:pdf': base64.b64encode(docfile)
                     }
             </field>
