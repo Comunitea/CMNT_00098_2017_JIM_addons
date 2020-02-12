@@ -26,7 +26,7 @@ class BaseB2B(models.AbstractModel):
 		# Query to get translations
 		self._cr.execute("SELECT lang, value FROM ir_translation WHERE type='model' AND name=%s AND res_id=%s", (field_name, self.id))
 		# Update translations dict
-		translations.update({ lang_code:field_translation for lang_code,field_translation in self._cr.fetchall() })
+		translations.update({ lang_code.replace('_', '-'):field_translation for lang_code,field_translation in self._cr.fetchall() })
 		# Return lang -> str dict
 		return translations
 
