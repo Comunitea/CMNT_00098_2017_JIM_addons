@@ -84,8 +84,8 @@
                 b2b_fields_to_watch = None
 
                 def b2b_is_notifiable(self, vals):
-                    # Está activa para la web
-                    return self.web
+                    # Está activa para la web (y la categoría padre también)
+                    return self.web and (not self.parent_id or (self.parent_id and self.parent_id.web))
 
                 def b2b_get_data(self):
                     return {

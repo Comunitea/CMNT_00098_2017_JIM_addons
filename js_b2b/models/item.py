@@ -125,7 +125,7 @@ class B2bItems(models.Model):
 			search_query = [('date_order', '>=', docs_min_date)]
 
 		# Get code model records
-		records_ids = self.env[self.model].search(search_query).ids
+		records_ids = self.env[self.model].search(search_query, order='id ASC').ids
 		total_records =  len(records_ids)
 		print("*************** B2B ITEM ***************")
 		print("@@ ITEM NAME", str(self.name))
