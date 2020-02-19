@@ -67,7 +67,7 @@
 
                 def b2b_get_data(self):
                     return {
-                        'name': self.get_field_translations('name'),
+                        'name': self.name,
                         'description': self.get_field_translations('description'),
                         'upload:logo': self.logo or None
                     }
