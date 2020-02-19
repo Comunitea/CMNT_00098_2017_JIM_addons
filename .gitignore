@@ -88,4 +88,5 @@ ENV/
 
 # Rope project settings
 .ropeproject
-js_b2b/static/js-b2b-admin-1572002252254-e5f6aaf7609c.json
+*.json
+*.xls

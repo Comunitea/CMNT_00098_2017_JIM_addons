@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-12-17 17:17+0000\n"
-"PO-Revision-Date: 2019-12-17 17:17+0000\n"
+"POT-Creation-Date: 2017-10-23 15:52+0000\n"
+"PO-Revision-Date: 2017-10-23 15:52+0000\n"
 "Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -38,23 +38,6 @@ msgstr "(Proforma)"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:114
-#, python-format
-msgid "ACT. CANTIDADES"
-msgstr "ACT. CANTIDADES"
-
-#. module: jim_telesale
-#. openerp-web
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:9
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:14
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:48
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:53
-#, python-format
-msgid "Address"
-msgstr "Address"
-
-#. module: jim_telesale
-#. openerp-web
 #: code:addons/jim_telesale/static/src/xml/new_order_template.xml:41
 #, python-format
 msgid "Available"
@@ -62,44 +45,28 @@ msgstr "Disponible"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:121
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:109
 #, python-format
 msgid "CANCEL"
 msgstr "CANCELAR"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:136
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:123
 #, python-format
 msgid "CONFIRM"
 msgstr "CONFIRMAR"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:37
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:38
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:97
-#, python-format
-msgid "Contact Person"
-msgstr "Persona de contacto"
-
-#. module: jim_telesale
-#. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:246
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:232
 #, python-format
 msgid "Customer name '' does not exist"
 msgstr "El nombre del cliente'' no existe"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:189
-#, python-format
-msgid "D.N:"
-msgstr "D.N:"
-
-#. module: jim_telesale
-#. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:209
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:188
 #, python-format
 msgid "Desc:"
 msgstr "Desc:"
@@ -119,14 +86,6 @@ msgid "Disc"
 msgstr "Disc"
 
 #. module: jim_telesale
-#. openerp-web
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:25
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:69
-#, python-format
-msgid "Email"
-msgstr "Email"
-
-#. module: jim_telesale
 #: model:ir.model,name:jim_telesale.model_stock_location_route
 msgid "Inventory Routes"
 msgstr "Rutas de inventario"
@@ -141,18 +100,14 @@ msgstr "LQDR"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:65
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:74
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:83
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:92
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:102
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:176
 #, python-format
-msgid "N/A"
-msgstr "N/A"
+msgid "Neutral Doc:"
+msgstr "Doc. neutro:"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:177
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:172
 #, python-format
 msgid "No"
 msgstr "No"
@@ -166,35 +121,28 @@ msgstr "Notas"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:197
-#, python-format
-msgid "P.P:"
-msgstr "P.P:"
-
-#. module: jim_telesale
-#. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:162
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:149
 #, python-format
 msgid "PRINT ORDER ALM"
 msgstr "IMPRIMIR PRESUPUESTO ALM"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:151
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:138
 #, python-format
 msgid "PRINT PROFORMA"
 msgstr "IMPRIMIR PROFORMA"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:154
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:141
 #, python-format
 msgid "PRINT QUOTATION"
 msgstr "IMPRIMIR PRESUPUESTO"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:143
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:130
 #, python-format
 msgid "PROFORMA"
 msgstr "PROFORMA"
@@ -208,24 +156,7 @@ msgstr "Pendiente aprobación"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:21
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:60
-#, python-format
-msgid "Phone"
-msgstr "Phone"
-
-#. module: jim_telesale
-#. openerp-web
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:33
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:34
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:87
-#, python-format
-msgid "Pricelist"
-msgstr "Pricelist"
-
-#. module: jim_telesale
-#. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:304
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:290
 #, python-format
 msgid "Pricelist name '' does not exist"
 msgstr "LA tarifa con nombre '' no existe"
@@ -243,20 +174,6 @@ msgid "Proforma"
 msgstr "Proforma"
 
 #. module: jim_telesale
-#. openerp-web
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:78
-#, python-format
-msgid "Reference"
-msgstr "Reference"
-
-#. module: jim_telesale
-#. openerp-web
-#: code:addons/jim_telesale/static/src/xml/customer_list_template.xml:29
-#, python-format
-msgid "Reference:"
-msgstr "Reference:"
-
-#. module: jim_telesale
 #: model:ir.model.fields,field_description:jim_telesale.field_delivery_carrier_route_name
 #: model:ir.model.fields,field_description:jim_telesale.field_product_product_route_name
 msgid "Route name"
@@ -264,7 +181,7 @@ msgstr "Nombre ruta"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:129
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:116
 #, python-format
 msgid "SAVE"
 msgstr "GUARDAR"
@@ -281,7 +198,7 @@ msgstr "Línea de pedido de venta"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:177
+#: code:addons/jim_telesale/static/src/xml/new_order_template.xml:164
 #, python-format
 msgid "Shipp Addr:"
 msgstr "Dir. envío:"
@@ -295,21 +212,14 @@ msgstr "Almacén"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:177
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:172
 #, python-format
 msgid "Yes"
 msgstr "Sí"
 
 #. module: jim_telesale
 #. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:456
-#, python-format
-msgid "You cant confirm an order which state is diferent than draft."
-msgstr "You cant confirm an order which state is diferent than draft."
-
-#. module: jim_telesale
-#. openerp-web
-#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:370
+#: code:addons/jim_telesale/static/src/js/new_order_widgets.js:364
 #, python-format
 msgid "You cant set proform state to an order which state is diferent than draft."
 msgstr "No puedes establecer como proforma un pedido cuyo estado sea distinto de presupuesto."
@@ -317,8 +227,7 @@ msgstr "No puedes establecer como proforma un pedido cuyo estado sea distinto de
 #. module: jim_telesale
 #. openerp-web
 #: code:addons/jim_telesale/static/src/js/new_order_widgets.js:79
-#: code:addons/jim_telesale/static/src/js/popups.js:77
-#: code:addons/jim_telesale/static/src/js/product_catalog_widgets.js:65
+#: code:addons/jim_telesale/static/src/js/popups.js:73
 #, python-format
 msgid "is not a valid format for chained discount. It must be something like 23+5.2+1"
 msgstr " No es un formato válido para el descuento encadenado. Tiene que ser algo como por ejemplo 2+10.5+10"
