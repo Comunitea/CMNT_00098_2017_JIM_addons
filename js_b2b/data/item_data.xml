@@ -7,7 +7,7 @@
             <field name="name">attribute</field>
             <field name="model">product.attribute</field>
             <field name="description">Atributos de producto</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'name', 
                     'sequence'
@@ -22,7 +22,7 @@
                         'type': 'color' if self.is_color else 'select',
                         'sequence': self.sequence
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_2" model="b2b.item">
@@ -31,7 +31,7 @@
             <field name="name">attribute_value</field>
             <field name="model">product.attribute.value</field>
             <field name="description">Valores de atributos</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'name', 
                     'sequence'
@@ -46,7 +46,7 @@
                         'name': self.get_field_translations('name'),
                         'sequence': self.sequence
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_3" model="b2b.item">
@@ -55,7 +55,7 @@
             <field name="name">brand</field>
             <field name="model">product.brand</field>
             <field name="description">Marcas de productos</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'name', 
                     'description', 
@@ -71,7 +71,7 @@
                         'description': self.get_field_translations('description'),
                         'upload:logo': self.logo or None
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_4" model="b2b.item">
@@ -80,7 +80,7 @@
             <field name="name">category</field>
             <field name="model">product.tag</field>
             <field name="description">Categorías de producto</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = None
 
                 def b2b_is_notifiable(self, vals):
@@ -94,7 +94,7 @@
                         'upload:image': self.image or None,
                         'sequence': 0
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_5" model="b2b.item">
@@ -103,7 +103,7 @@
             <field name="name">product</field>
             <field name="model">product.template</field>
             <field name="description">Productos</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'name', 
                     'barcode', 
@@ -134,7 +134,7 @@
                         'weight': self.weight,
                         'upload:image': self.image or None
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_6" model="b2b.item">
@@ -143,7 +143,7 @@
             <field name="name">product</field>
             <field name="model">product.product</field>
             <field name="description">Productos premium</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'name', 
                     'barcode', 
@@ -173,7 +173,7 @@
                         'weight': self.weight,
                         'upload:image': self.image or None
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_7" model="b2b.item">
@@ -182,7 +182,7 @@
             <field name="name">product_variant</field>
             <field name="model">product.product</field>
             <field name="description">Variantes / Combinaciones</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'default_code',
                     'barcode', 
@@ -207,7 +207,7 @@
                         'weight': self.weight,
                         'default': False
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_8" model="b2b.item">
@@ -216,7 +216,7 @@
             <field name="name">product_image</field>
             <field name="model">product.image</field>
             <field name="description">Imágenes del producto</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = None
 
                 def b2b_is_notifiable(self, vals):
@@ -229,7 +229,7 @@
                         'upload:url': self.image or None, 
                         'product_attributes_values:attributes': self.product_attributes_values.ids
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_9" model="b2b.item">
@@ -238,7 +238,7 @@
             <field name="name">currency</field>
             <field name="model">res.currency</field>
             <field name="description">Monedas</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = None
 
                 def b2b_is_notifiable(self, vals):
@@ -251,7 +251,7 @@
                         'symbol': self.symbol,
                         'rate': self.rate
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_10" model="b2b.item">
@@ -260,7 +260,7 @@
             <field name="name">pricelist</field>
             <field name="model">product.pricelist</field>
             <field name="description">Tarifas</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = None
 
                 def b2b_is_notifiable(self, vals):
@@ -270,7 +270,7 @@
                     return {
                         'name': self.get_field_translations('name')
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_11" model="b2b.item">
@@ -279,7 +279,7 @@
             <field name="name">supply_plan</field>
             <field name="model">stock.move</field>
             <field name="description">Previsión de abastecimiento</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'order_id', 
                     'product_id', 
@@ -301,7 +301,7 @@
                         'quantity': self.product_uom_qty if self.state == 'assigned' else 0,
                         'shipping_date': self.date_expected
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_12" model="b2b.item">
@@ -310,7 +310,7 @@
             <field name="name">customer</field>
             <field name="model">res.partner</field>
             <field name="description">Clientes</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'ref',
                     'name', 
@@ -347,7 +347,7 @@
                         'property_product_pricelist:pricelist_id': self.property_product_pricelist.id or None,
                         'companies': [company.partner_id.id for company in self.group_companies_ids]
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_13" model="b2b.item">
@@ -356,7 +356,7 @@
             <field name="name">customer_address</field>
             <field name="model">res.partner</field>
             <field name="description">Direcciones de clientes</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'name', 
                     'type', 
@@ -389,7 +389,7 @@
                         'country_id:country': self.country_id.code if self.country_id else 'ES', 
                         'default': self.default_partner_by_type
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_14" model="b2b.item">
@@ -398,7 +398,7 @@
             <field name="name">invoice</field>
             <field name="model">account.invoice</field>
             <field name="description">Factura de venta o abono</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'commercial_partner_id', 
                     'number', 
@@ -429,7 +429,7 @@
                         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
                         'fixed:pdf': base64.b64encode(docfile)
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_15" model="b2b.item">
@@ -438,7 +438,7 @@
             <field name="name">delivery_note</field>
             <field name="model">stock.picking</field>
             <field name="description">Albarán de venta</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'sale_id', 
                     'name', 
@@ -469,7 +469,7 @@
                         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
                         'fixed:pdf': base64.b64encode(docfile)
                     }
-            </field>
+            ]]></field>
         </record>
 
         <record id="b2b_item_16" model="b2b.item">
@@ -478,7 +478,7 @@
             <field name="name">sale_order</field>
             <field name="model">sale.order</field>
             <field name="description">Pedido de venta</field>
-            <field name="code">
+            <field name="code"><![CDATA[
                 b2b_fields_to_watch = (
                     'partner_id', 
                     'name', 
@@ -509,7 +509,7 @@
                         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
                         'fixed:pdf': base64.b64encode(docfile)
                     }
-            </field>
+            ]]></field>
         </record>
     </data>
 </odoo>
