@@ -6,7 +6,7 @@ from odoo.exceptions import ValidationError
 import requests as request
 
 PARAMS = {
-	'url': ('b2b.server_url', 'http://127.0.0.1/'),
+	'url': ('b2b.server_url', 'http://0.0.0.0/'),
 	'conexion_error': ('b2b.show_conexion_error', True),
 	'response_error': ('b2b.show_response_error', True)
 }
