@@ -197,7 +197,7 @@
                                 <td><span t-field="o.date_done_date"/></td>
                                 <td><span t-field="o.name"/></td>
                                 <td><span t-field="o.orig_sale_str"/></td>
-                                <td><span t-field="o.sale_id.user_id.name"/> </td>
+                                <td><span t-esc="o.sale_id.user_id and o.sale_id.user_id.name or (o.sale_id.partner_id.user_id and o.sale_id.partner_id.user_id.name or False)"/> </td>
                             </tr>
                             </t>
                             <t t-if="not o.sale_id and o.purchase_id">
@@ -210,7 +210,7 @@
                                 <td><span t-field="o.date_done_date"/></td>
                                 <td><span t-field="o.name"/></td>
                                 <td><span t-field="o.purchase_id.name"/></td>
-                                <td><span t-field="o.purchase_id.write_uid.name"/> </td>
+                                <td><span t-esc="o.purchase_id.partner_id.user_id and o.purchase_id.partner_id.user_id.name or o.purchase_id.create_uid.name"/> </td>
                             </tr>
                             </t>
 

@@ -110,9 +110,10 @@ class BaseB2B(models.AbstractModel):
 
 	@api.multi
 	def unlink(self):
-		packets = []
+		packets = list()
 		for item in self:
-			packets.append(item.__b2b_record(False, False))
+			packets += item.__b2b_record(False, False)
+		print("@@@@@@@@@@@@ PACKET", packets)
 		if super(BaseB2B, self).unlink():
 			for packet in packets:
 				if packet:

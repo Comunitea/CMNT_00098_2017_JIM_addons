@@ -90,8 +90,10 @@ class StockPickingSGA(models.Model):
 
             if pick_dest.sale_id and pick_dest.sale_id.partner_shipping_id:
                 partner = pick_dest.sale_id.partner_shipping_id
-            else:
+            elif pick_dest.location_dest_id.usage in ('customer', 'supplier'):
                 partner = pick_dest.partner_id
+            else:
+                partner = pick.partner_id
             pick.shipping_city = partner.state_id and partner.state_id.name or partner.country_id and partner.country_id.name or 'Sin definir'
             pick.shipping_partner_name = partner.name or "Sin nombre"
 

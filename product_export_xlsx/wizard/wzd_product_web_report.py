@@ -11,7 +11,13 @@ class WizardValuationHistory(models.TransientModel):
 
 
     web_visible = fields.Selection([('yes', 'Visible'), ('no', 'No visible'), ('all', 'Todos')], string ="Visible en web", default='all')
-    stock_available = fields.Selection([('yes', 'Disponible'), ('no', 'No disponible'), ('all', 'Todos')], string ="Available stock", default='all')
+    stock_available = fields.Selection([('yes', 'Disponible'),
+                                        ('no', 'No disponible'),
+                                        ('all', 'Todos') ,
+                                        ('all_inactive',
+                                         'Todos, incluido no activos')],
+                                       string ="Available stock",
+                                       default='all')
     search_text = fields.Char("Search text")
     offset = fields.Integer("Start", default=0)
     limit = fields.Integer("Limit", default=0)
@@ -45,6 +51,10 @@ class WizardValuationHistory(models.TransientModel):
             domain.append(['web_global_stock', '>', 0])
         elif self.stock_available == 'no':
             domain.append(['web_global_stock', '<=', 0])
+        elif self.stock_available == 'all_inactive':
+            domain.append('|')
+            domain.append(['active', '=', True])
+            domain.append(['active', '=', False])
 
         if self.search_text:
             domain.append(['tag_names', 'ilike', self.search_text])
@@ -97,8 +107,9 @@ class WizardValuationHistory(models.TransientModel):
                             il.quantity as quantity_imp, il.price_subtotal *
                             (ai.amount_untaxed_signed/ai.amount_untaxed) as 
                             price_subtotal_imp, 
-                            il.arancel_percentage,  il.arancel,
-			                il.arancel * il.quantity AS arancel_linea, il.arancel_percentage * il.quantity AS arancel_percentage_linea,
+                            il.arancel_percentage,  il.arancel * (ai.amount_untaxed_signed/ai.amount_untaxed),
+			                il.arancel * (ai.amount_untaxed_signed/ai.amount_untaxed) * il.quantity AS arancel_linea, 
+			                il.arancel_percentage * il.quantity AS arancel_percentage_linea,
                             CASE
                                 WHEN ai.amount_untaxed = 0 THEN NULL
                                 WHEN il.quantity = 0 THEN NULL

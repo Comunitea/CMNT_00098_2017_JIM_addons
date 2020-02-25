@@ -6,15 +6,7 @@ from . import pycompat
 class ProductTemplate(models.Model):
     _inherit = 'product.template'
 
-    product_image_ids = fields.One2many('product.image', 'product_tmpl_id', string='Images', domain=['|', ('active', '=', False), ('active', '=', True)])
-
-    @api.multi
-    def write(self, vals):
-        # Al activar el producto se activan también sus imágenes
-        # Esto permite al módulo js_b2b capturar el evento y crearlas de nuevo
-        if 'active' in vals and vals['active']:
-            self.with_context(active_test=False).mapped('product_image_ids').write({ 'active': True })
-        return super(ProductTemplate, self).write(vals)
+    product_image_ids = fields.One2many('product.image', 'product_tmpl_id', string='Images')
 
 class Product(models.Model):
     _inherit = 'product.product'
@@ -24,23 +16,12 @@ class Product(models.Model):
         product_attrs = [attr.id for attr in self.attribute_value_ids]
 
         self.product_image_ids = self.env['product.image'].search([
-            '|', '&',
-            ('active', '=', False),
-            ('active', '=', True ),
             ('product_tmpl_id', '=', self.product_tmpl_id.id)
         ]).filtered(lambda image: all(map(lambda x: x in product_attrs, image.product_attributes_values._ids)))
         # To exclude images without all attribute of variant use this line instead
         # filtered(lambda image: all(map(lambda x,y: x in product_attrs and y in image.product_attributes_values._ids, image.product_attributes_values._ids, product_attrs)))
 
     product_image_ids = fields.One2many('product.image', string='Images', compute='_filter_variant_images')
-
-    @api.multi
-    def write(self, vals):
-        # Al activar una variante se activan también sus imágenes
-        # Esto permite al módulo js_b2b capturar el evento y crearlas de nuevo
-        if 'active' in vals and vals['active']:
-            self.with_context(active_test=False).mapped('product_image_ids').write({ 'active': True })
-        return super(Product, self).write(vals)
 
 class ProductImage(models.Model):
     _name = 'product.image'
@@ -54,11 +35,10 @@ class ProductImage(models.Model):
         else:
             return []
 
-    name = fields.Char('Name', translate=True)
+    name = fields.Char('Name')
     image = fields.Binary('Image', attachment=True)
     product_tmpl_id = fields.Many2one('product.template', string='Related Product', ondelete='cascade', copy=True)
     product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel', domain=_filter_product_attributes)
-    active = fields.Boolean('Active', default=True, help="Enable or disable this image")
 
     def _resize_large_image(self, vals):
         if vals.get('image'):

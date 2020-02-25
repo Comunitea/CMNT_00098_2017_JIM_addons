@@ -7,6 +7,7 @@
         </xpath>
 
         <xpath expr="." position="inside">
+            <script type="text/javascript" src="/js_addons/static/js/jquery.table-header-fixed.js"></script>
             <script type="text/javascript" src="/js_addons/static/js/functions.js"></script>
         </xpath>
     </template>
