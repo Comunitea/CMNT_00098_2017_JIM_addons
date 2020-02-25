@@ -7,8 +7,7 @@
 			<field name="name">attribute</field>
 			<field name="model">product.attribute</field>
 			<field name="description">Atributos de producto</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = (
+			<field name="code">b2b_fields_to_watch = (
     'name', 
     'sequence'
 )
@@ -21,8 +20,7 @@ def b2b_get_data(self):
         'name': self.get_field_translations('name'),
         'type': 'color' if self.is_color else 'select',
         'sequence': self.sequence
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_2" model="b2b.item">
@@ -31,8 +29,7 @@ def b2b_get_data(self):
 			<field name="name">attribute_value</field>
 			<field name="model">product.attribute.value</field>
 			<field name="description">Valores de atributos</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = (
+			<field name="code">b2b_fields_to_watch = (
     'name', 
     'sequence'
 )
@@ -45,8 +42,7 @@ def b2b_get_data(self):
         'attribute_id': self.attribute_id.id,
         'name': self.get_field_translations('name'),
         'sequence': self.sequence
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_3" model="b2b.item">
@@ -55,8 +51,7 @@ def b2b_get_data(self):
 			<field name="name">brand</field>
 			<field name="model">product.brand</field>
 			<field name="description">Marcas de productos</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = (
+			<field name="code">b2b_fields_to_watch = (
     'name', 
     'description', 
     'logo'
@@ -70,8 +65,7 @@ def b2b_get_data(self):
         'name': self.name,
         'description': self.get_field_translations('description'),
         'upload:logo': self.logo or None
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_4" model="b2b.item">
@@ -80,8 +74,7 @@ def b2b_get_data(self):
 			<field name="name">category</field>
 			<field name="model">product.tag</field>
 			<field name="description">Categorías de producto</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = None
+			<field name="code">b2b_fields_to_watch = None
 
 def b2b_is_notifiable(self, vals):
     # Está activa para la web (y la categoría padre también)
@@ -93,8 +86,7 @@ def b2b_get_data(self):
         'parent_id': self.parent_id.id if self.parent_id else None,
         'upload:image': self.image or None,
         'sequence': 0
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_5" model="b2b.item">
@@ -103,12 +95,10 @@ def b2b_get_data(self):
 			<field name="name">product</field>
 			<field name="model">product.template</field>
 			<field name="description">Productos</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = (
+			<field name="code">b2b_fields_to_watch = (
     'name', 
     'barcode', 
     'description', 
-    'web_global_stock', 
     'product_brand_id', 
     'attribute_line_ids',  
     'image', 
@@ -130,11 +120,9 @@ def b2b_get_data(self):
         'tag_ids:category_id': self.tag_ids.ids,
         'brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
-        'fixed:stock': self.product_variant_id.web_global_stock if self.product_variant_count == 1 else None,
         'weight': self.weight,
         'upload:image': self.image or None
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_6" model="b2b.item">
@@ -143,11 +131,9 @@ def b2b_get_data(self):
 			<field name="name">product_variant</field>
 			<field name="model">product.product</field>
 			<field name="description">Variantes / Combinaciones</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = (
+			<field name="code">b2b_fields_to_watch = (
     'default_code',
-    'barcode', 
-    'web_global_stock', 
+    'barcode',  
     'attribute_line_ids', 
     'weight',
     'default',
@@ -164,11 +150,9 @@ def b2b_get_data(self):
         'default_code:reference': self.default_code,
         'attribute_line_ids:attribute_value': self.attribute_value_ids.ids,
         'barcode:ean13': self.barcode if self.barcode else None,
-        'web_global_stock:stock': self.web_global_stock,
         'weight': self.weight,
         'default': False
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_7" model="b2b.item">
@@ -177,8 +161,7 @@ def b2b_get_data(self):
 			<field name="name">product_image</field>
 			<field name="model">product.image</field>
 			<field name="description">Imágenes del producto</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = None
+			<field name="code">b2b_fields_to_watch = None
 
 def b2b_is_notifiable(self, vals):
     return True
@@ -189,8 +172,7 @@ def b2b_get_data(self):
         'name': self.get_field_translations('name'), 
         'upload:url': self.image or None, 
         'product_attributes_values:attributes': self.product_attributes_values.ids
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_8" model="b2b.item">
@@ -199,8 +181,7 @@ def b2b_get_data(self):
 			<field name="name">currency</field>
 			<field name="model">res.currency</field>
 			<field name="description">Monedas</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = None
+			<field name="code">b2b_fields_to_watch = None
 
 def b2b_is_notifiable(self, vals):
     return True
@@ -211,8 +192,7 @@ def b2b_get_data(self):
         'code': self.name,
         'symbol': self.symbol,
         'rate': self.rate
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_9" model="b2b.item">
@@ -221,8 +201,7 @@ def b2b_get_data(self):
 			<field name="name">pricelist</field>
 			<field name="model">product.pricelist</field>
 			<field name="description">Tarifas</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = None
+			<field name="code">b2b_fields_to_watch = None
 
 def b2b_is_notifiable(self, vals):
     return True
@@ -230,8 +209,7 @@ def b2b_is_notifiable(self, vals):
 def b2b_get_data(self):
     return {
         'name': self.get_field_translations('name')
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_10" model="b2b.item">
@@ -240,8 +218,7 @@ def b2b_get_data(self):
 			<field name="name">supply_plan</field>
 			<field name="model">stock.move</field>
 			<field name="description">Previsión de abastecimiento</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = (
+			<field name="code">b2b_fields_to_watch = (
     'order_id', 
     'product_id', 
     'product_qty', 
@@ -261,8 +238,7 @@ def b2b_get_data(self):
         'variant_id': self.product_id.id if self.product_id.product_tmpl_id.product_variant_count > 1 else None,
         'quantity': self.product_uom_qty if self.state == 'assigned' else 0,
         'shipping_date': self.date_expected
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_11" model="b2b.item">
@@ -271,8 +247,7 @@ def b2b_get_data(self):
 			<field name="name">customer</field>
 			<field name="model">res.partner</field>
 			<field name="description">Clientes</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = (
+			<field name="code">b2b_fields_to_watch = (
     'ref',
     'name', 
     'vat', 
@@ -307,8 +282,7 @@ def b2b_get_data(self):
         'web_password:password': self.web_password,
         'property_product_pricelist:pricelist_id': self.property_product_pricelist.id or None,
         'companies': [company.partner_id.id for company in self.group_companies_ids]
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_12" model="b2b.item">
@@ -317,8 +291,7 @@ def b2b_get_data(self):
 			<field name="name">customer_address</field>
 			<field name="model">res.partner</field>
 			<field name="description">Direcciones de clientes</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = (
+			<field name="code">b2b_fields_to_watch = (
     'name', 
     'type', 
     'parent_id', 
@@ -359,8 +332,7 @@ def b2b_get_data(self):
 			<field name="name">invoice</field>
 			<field name="model">account.invoice</field>
 			<field name="description">Factura de venta o abono</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = (
+			<field name="code">b2b_fields_to_watch = (
     'commercial_partner_id', 
     'number', 
     'date_invoice', 
@@ -389,8 +361,7 @@ def b2b_get_data(self):
         'fixed:date': self.date_invoice, 
         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
         'fixed:pdf': base64.b64encode(docfile)
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_14" model="b2b.item">
@@ -399,8 +370,7 @@ def b2b_get_data(self):
 			<field name="name">delivery_note</field>
 			<field name="model">stock.picking</field>
 			<field name="description">Albarán de venta</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = (
+			<field name="code">b2b_fields_to_watch = (
     'sale_id', 
     'name', 
     'date_done', 
@@ -429,8 +399,7 @@ def b2b_get_data(self):
         'fixed:date': self.date_done, 
         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
         'fixed:pdf': base64.b64encode(docfile)
-    }
-			]]></field>
+    }</field>
 		</record>
 
 		<record id="b2b_item_15" model="b2b.item">
@@ -439,8 +408,7 @@ def b2b_get_data(self):
 			<field name="name">sale_order</field>
 			<field name="model">sale.order</field>
 			<field name="description">Pedido de venta</field>
-			<field name="code"><![CDATA[
-b2b_fields_to_watch = (
+			<field name="code">b2b_fields_to_watch = (
     'partner_id', 
     'name', 
     'date_order', 
@@ -469,8 +437,54 @@ def b2b_get_data(self):
         'fixed:date': self.date_order, 
         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
         'fixed:pdf': base64.b64encode(docfile)
-    }
-			]]></field>
+    }</field>
+		</record>
+
+		<record id="b2b_item_16" model="b2b.item">
+			<field name="sequence">16</field>
+			<field name="active">True</field>
+			<field name="name">product_stock</field>
+			<field name="model">sale.order</field>
+			<field name="description">Stock de productos</field>
+			<field name="code">b2b_fields_to_watch = (
+    'date_order', 
+    'amount_total',
+    'state'
+)
+
+def b2b_is_notifiable(self, vals):
+    # (se recibe date_order en vals y el estado es pending o lqdr) o el estado es cancel
+    return (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
+
+def b2b_get_data(self):
+    return [{
+        'fixed:product_id': line.product_id.product_tmpl_id.id, 
+        'fixed:variant_id': line.product_id.id if line.product_id.product_attribute_count > 0 else None, 
+        'fixed:stock': line.product_id.web_global_stock
+    } for line in self.order_line]</field>
+		</record>
+
+		<record id="b2b_item_17" model="b2b.item">
+			<field name="sequence">17</field>
+			<field name="active">True</field>
+			<field name="name">product_stock</field>
+			<field name="model">stock.move</field>
+			<field name="description">Stock de productos</field>
+			<field name="code">b2b_fields_to_watch = (
+    'make_to_stock',
+    'state'
+)
+
+def b2b_is_notifiable(self, vals):
+	# Es un movimiento de stock
+    return self.procure_method == 'make_to_stock'
+
+def b2b_get_data(self):
+    return {
+        'fixed:product_id': self.product_id.id, 
+        'fixed:variant_id': self.product_id.id if self.product_id.product_attribute_count > 0 else None, 
+        'fixed:stock': self.product_id.web_global_stock
+    }</field>
 		</record>
 	</data>
 </odoo>

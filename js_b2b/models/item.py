@@ -8,7 +8,6 @@ class B2bItems(models.Model):
 	_name = 'b2b.item'
 	_description = 'B2B Item'
 	_order = 'sequence, id'
-	_sql_constraints = [('b2b_item_unique', 'unique(name)', 'Name must be unique into B2B Items!')]
 	_default_code_str = re.sub(r'(^[ ]{0,8})', '', """
         # Set to None for watch all
         b2b_fields_to_watch = ('name', 'reference')

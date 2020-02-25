@@ -54,30 +54,34 @@ class BaseB2B(models.AbstractModel):
 		:param vals: Default model data update dict (to check changes)
 		:return: boolean
 		"""
+		packets = []
 		send_items = self.env['b2b.item'].sudo().search([])
 		# Para cada elemento activo
 		for item in send_items:
 			# Comprobamos si se debe notificar
 			item_data = item.must_notify(self, vals)
-			if item_data:
-				# Obtenemos el id
-				packet = JSync(self.id)
-				# Obtenemos el nombre
-				packet.name = item.name
-				# Obtenemos los datos
-				packet.data = item_data
-				# Normalizamos los datos
-				packet.filter_data(vals)
-				if not mode:
-					# Devolvemos el paquete 
-					# para enviarlo más tarde
-					return packet
-				else:
-					# Enviamos los datos si son correctos
-					if mode == 'delete' or packet.data:
-						return packet.send(action=mode)
-					return False
-		return False
+			# Si se recibe un diccionario se convierte a una lista
+			if type(item_data) is not list:
+				item_data = [item_data,]
+			# Para cada conjunto de datos
+			for record in item_data:
+				# Si no está vacío
+				if record:
+					# Obtenemos el id
+					packet = JSync(self.id)
+					# Obtenemos el nombre
+					packet.name = item.name
+					# Obtenemos los datos
+					packet.data = record
+					# Normalizamos los datos
+					packet.filter_data(vals)
+					# Guardamos el paquete
+					packets.append(packet)
+					# Si los datos son correctos lo enviamos
+					if mode and (mode == 'delete' or packet.data):
+						packet.send(action=mode)
+		# Paquetes creados
+		return packets
 
 	# ------------------------------------ OVERRIDES ------------------------------------
 
