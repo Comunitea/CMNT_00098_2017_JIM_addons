@@ -20,6 +20,7 @@ class SubB2B(models.Model):
 
 	@api.model
 	def __process_public_in(self, message):
+		msg_ack = False
 		with api.Environment.manage():
 			with self.pool.cursor() as cr:
 				# Get Odoo environment
@@ -34,7 +35,6 @@ class SubB2B(models.Model):
 					"\n    - data: {}".format(data_obj.get('id'), data_obj.get('name'), data_obj.get('object'), data_obj.get('data')), OutputHelper.INFO)
 				# Get items configured
 				items_in = env['b2b.item.in'].search([('name', '=', data_obj.get('object')), ('active', '=', True)])
-				print("@@@@@@@@@@ ITEMS IN", items_in)
 				# Loop items
 				if items_in and data_obj.data:
 					for item in items_in:
@@ -44,7 +44,7 @@ class SubB2B(models.Model):
 						if item_model and item_model.create(data_obj.get('data')):
 							# Acknowlege
 							message.ack()
-				print("@@@@@@@@@@ ACK ID", message.ackId)
+							msg_ack = True
 				# Not Acknowlege, try tomorrow
-				if not message.ackId:
+				if not msg_ack:
 					message.nack(86400)
