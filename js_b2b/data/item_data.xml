@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 	<data noupdate="1">
-		<record id="b2b_item_1" model="b2b.item">
+		<record id="b2b_item_1" model="b2b.item.out">
 			<field name="sequence">1</field>
 			<field name="active">True</field>
 			<field name="name">attribute</field>
@@ -23,7 +23,7 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_2" model="b2b.item">
+		<record id="b2b_item_2" model="b2b.item.out">
 			<field name="sequence">2</field>
 			<field name="active">True</field>
 			<field name="name">attribute_value</field>
@@ -45,7 +45,7 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_3" model="b2b.item">
+		<record id="b2b_item_3" model="b2b.item.out">
 			<field name="sequence">3</field>
 			<field name="active">True</field>
 			<field name="name">brand</field>
@@ -68,7 +68,7 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_4" model="b2b.item">
+		<record id="b2b_item_4" model="b2b.item.out">
 			<field name="sequence">4</field>
 			<field name="active">True</field>
 			<field name="name">category</field>
@@ -89,7 +89,7 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_5" model="b2b.item">
+		<record id="b2b_item_5" model="b2b.item.out">
 			<field name="sequence">5</field>
 			<field name="active">True</field>
 			<field name="name">product</field>
@@ -125,7 +125,7 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_6" model="b2b.item">
+		<record id="b2b_item_6" model="b2b.item.out">
 			<field name="sequence">6</field>
 			<field name="active">True</field>
 			<field name="name">product_variant</field>
@@ -155,7 +155,7 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_7" model="b2b.item">
+		<record id="b2b_item_7" model="b2b.item.out">
 			<field name="sequence">7</field>
 			<field name="active">True</field>
 			<field name="name">product_image</field>
@@ -175,7 +175,7 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_8" model="b2b.item">
+		<record id="b2b_item_8" model="b2b.item.out">
 			<field name="sequence">8</field>
 			<field name="active">True</field>
 			<field name="name">currency</field>
@@ -195,7 +195,7 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_9" model="b2b.item">
+		<record id="b2b_item_9" model="b2b.item.out">
 			<field name="sequence">9</field>
 			<field name="active">True</field>
 			<field name="name">pricelist</field>
@@ -208,12 +208,31 @@ def b2b_is_notifiable(self, vals):
 
 def b2b_get_data(self):
     return {
-        'name': self.get_field_translations('name')
+        'name': self.name,
+        'currency_id': self.currency_id
     }</field>
 		</record>
 
-		<record id="b2b_item_10" model="b2b.item">
-			<field name="sequence">10</field>
+        <record id="b2b_item_10" model="b2b.item.out">
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+            <field name="name">pricelist_item</field>
+            <field name="model">product.pricelist.item</field>
+            <field name="description">Reglas de tarifas</field>
+            <field name="code">b2b_fields_to_watch = None
+
+def b2b_is_notifiable(self, vals):
+    return True
+
+def b2b_get_data(self):
+    return {
+        'name': self.name,
+        'currency_id': self.currency_id
+    }</field>
+        </record>
+
+		<record id="b2b_item_11" model="b2b.item.out">
+			<field name="sequence">11</field>
 			<field name="active">True</field>
 			<field name="name">supply_plan</field>
 			<field name="model">stock.move</field>
@@ -241,8 +260,8 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_11" model="b2b.item">
-			<field name="sequence">11</field>
+		<record id="b2b_item_12" model="b2b.item.out">
+			<field name="sequence">12</field>
 			<field name="active">True</field>
 			<field name="name">customer</field>
 			<field name="model">res.partner</field>
@@ -285,8 +304,8 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_12" model="b2b.item">
-			<field name="sequence">12</field>
+		<record id="b2b_item_13" model="b2b.item.out">
+			<field name="sequence">13</field>
 			<field name="active">True</field>
 			<field name="name">customer_address</field>
 			<field name="model">res.partner</field>
@@ -305,7 +324,7 @@ def b2b_get_data(self):
 
 def b2b_is_notifiable(self, vals):
     # Comprobamos si el cliente relaccionado es notificable
-    client_item = self.env['b2b.item'].search([('name', '=', 'customer')])
+    client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
     notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
     # Es de tipo 'delivery'
     return notifiable_client and self.type == 'delivery'
@@ -326,8 +345,8 @@ def b2b_get_data(self):
 			</field>
 		</record>
 
-		<record id="b2b_item_13" model="b2b.item">
-			<field name="sequence">13</field>
+		<record id="b2b_item_14" model="b2b.item.out">
+			<field name="sequence">14</field>
 			<field name="active">True</field>
 			<field name="name">invoice</field>
 			<field name="model">account.invoice</field>
@@ -342,7 +361,7 @@ def b2b_get_data(self):
 
 def b2b_is_notifiable(self, vals):
     # Comprobamos si el cliente relaccionado es notificable
-    client_item = self.env['b2b.item'].search([('name', '=', 'customer')])
+    client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
     notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
     # Es de tipo out_invoice o out_refund y tiene asignado un número y el estado es open o cancel
     return notifiable_client and self.number and self.type in ('out_invoice', 'out_refund') and self.state in ('open', 'cancel')
@@ -364,8 +383,8 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_14" model="b2b.item">
-			<field name="sequence">14</field>
+		<record id="b2b_item_15" model="b2b.item.out">
+			<field name="sequence">15</field>
 			<field name="active">True</field>
 			<field name="name">delivery_note</field>
 			<field name="model">stock.picking</field>
@@ -380,7 +399,7 @@ def b2b_get_data(self):
 
 def b2b_is_notifiable(self, vals):
     # Comprobamos si el cliente relaccionado es notificable
-    client_item = self.env['b2b.item'].search([('name', '=', 'customer')])
+    client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
     notifiable_client = client_item.must_notify(self.partner_id.commercial_partner_id) if client_item else False
     # Es un albarán y es de salida o dropshipping y el estado es done o cancel
     return notifiable_client and (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state in ('done', 'cancel')
@@ -402,8 +421,8 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_15" model="b2b.item">
-			<field name="sequence">15</field>
+		<record id="b2b_item_16" model="b2b.item.out">
+			<field name="sequence">16</field>
 			<field name="active">True</field>
 			<field name="name">sale_order</field>
 			<field name="model">sale.order</field>
@@ -418,7 +437,7 @@ def b2b_get_data(self):
 
 def b2b_is_notifiable(self, vals):
     # Comprobamos si el cliente relaccionado es notificable
-    client_item = self.env['b2b.item'].search([('name', '=', 'customer')])
+    client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
     notifiable_client = client_item.must_notify(self.partner_id.commercial_partner_id) if client_item else False
     # Es un pedido de venta y (se recibe date_order en vals y el estado es pending o lqdr) o el estado es cancel
     return notifiable_client and (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
@@ -440,8 +459,8 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_16" model="b2b.item">
-			<field name="sequence">16</field>
+		<record id="b2b_item_17" model="b2b.item.out">
+			<field name="sequence">17</field>
 			<field name="active">True</field>
 			<field name="name">product_stock</field>
 			<field name="model">sale.order</field>
@@ -464,8 +483,31 @@ def b2b_get_data(self):
     } for line in self.order_line]</field>
 		</record>
 
-		<record id="b2b_item_17" model="b2b.item">
-			<field name="sequence">17</field>
+        <record id="b2b_item_18" model="b2b.item.out">
+            <field name="sequence">18</field>
+            <field name="active">True</field>
+            <field name="name">product_stock</field>
+            <field name="model">stock.picking</field>
+            <field name="description">Stock de productos</field>
+            <field name="code">b2b_fields_to_watch = (
+    'make_to_stock',
+    'state'
+)
+
+def b2b_is_notifiable(self, vals):
+    # Es un movimiento de stock
+    return self.state in ('done', 'partially_available', 'cancel')
+
+def b2b_get_data(self):
+    return [{
+        'fixed:product_id': line.product_id.product_tmpl_id.id, 
+        'fixed:variant_id': line.product_id.id if line.product_id.product_attribute_count > 0 else None, 
+        'fixed:stock': line.product_id.web_global_stock
+    } for line in self.move_lines if line.procure_method == 'make_to_stock' and line.state in ('done', 'cancel')]</field>
+        </record>
+
+		<record id="b2b_item_19" model="b2b.item.out">
+			<field name="sequence">19</field>
 			<field name="active">True</field>
 			<field name="name">product_stock</field>
 			<field name="model">stock.move</field>
@@ -476,7 +518,7 @@ def b2b_get_data(self):
 )
 
 def b2b_is_notifiable(self, vals):
-	# Es un movimiento de stock
+    # Es un movimiento de stock
     return self.procure_method == 'make_to_stock'
 
 def b2b_get_data(self):

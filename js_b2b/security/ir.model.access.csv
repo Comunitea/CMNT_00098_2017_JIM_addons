@@ -1,2 +1,3 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_js_b2b_item,js_b2b.item,model_b2b_item,base_technical_features.group_technical_features,1,1,1,1
+access_js_b2b_item_out,js_b2b.item.out,model_b2b_item_out,base_technical_features.group_technical_features,1,1,1,1
+access_js_b2b_item_in,js_b2b.item.in,model_b2b_item_in,base_technical_features.group_technical_features,1,1,1,1

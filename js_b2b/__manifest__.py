@@ -16,10 +16,12 @@
 		'data/item_data.xml',
 		'views/assets.xml',
 		'views/settings.xml',
-		'views/item.xml'
+		'views/item_out.xml',
+		'views/item_in.xml'
 	],
 	'depends': [
 		'base',
+		'sale',
 		'jim_sale',
 		'product_tags',
 		'js_product_images',

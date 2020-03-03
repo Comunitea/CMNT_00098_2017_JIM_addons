@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<!-- FORMULARIO -->
+
+	<record id="js_b2b_items_form" model="ir.ui.view">
+		<field name="name">b2b.item.in.form</field>
+		<field name="model">b2b.item.in</field>
+		<field name="arch" type="xml">
+			<form string="Item">
+				<sheet>
+					<field name="id" invisible="1"/>
+					<div class="oe_button_box" name="button_box">
+						<button name="toggle_active" type="object" class="oe_stat_button" icon="fa-archive">
+							<field name="active" widget="boolean_button" options='{"terminology": "active"}'/>
+						</button>
+					</div>
+					<div class="oe_title" name="title">
+						<label for="name" class="oe_edit_only"/>
+						<h1>
+							<field name="name"/>
+						</h1>
+					</div>
+					<group>
+						<field name="model"/>
+						<field name="description"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<!-- LISTADO -->
+
+	<record id="js_b2b_items_tree" model="ir.ui.view">
+		<field name="name">b2b.item.in.tree</field>
+		<field name="model">b2b.item.in</field>
+		<field name="arch" type="xml">
+			<tree string="parameters">
+				<field name="sequence" widget="handle"/>
+				<field name="name"/>
+				<field name="model"/>
+				<field name="description"/>
+				<field name="active"/>
+			</tree>
+		</field>
+	</record>
+
+	<!-- VISTAS -->
+
+	<record id="js_b2b_items_in" model="ir.actions.act_window">
+		<field name="name">B2B Items In</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="context">{ 'active_test': False }</field>
+		<field name="res_model">b2b.item.in</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="help" type="html">
+		  <p class="oe_view_nocontent_create">
+			Push here to create a new data item
+		  </p><p>
+			The items with <b>active</b> status are processed from the broker
+		  </p>
+		</field>
+	</record>
+	
+	<!-- ACCIONES DE MENÚ -->
+
+	<menuitem id="js_b2b_items_in_action" name="Items In" parent="js_b2b_menu" sequence="10" action="js_b2b_items_in" groups="base_technical_features.group_technical_features"  />
+
+</odoo>

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from odoo import api, models
-from .helper import JSync
+from odoo import api, models, tools
+from .helper import OutputHelper, JSync
 
 # Module base class
 class BaseB2B(models.AbstractModel):
+
 	_inherit = 'base'
 
 	def get_field_translations(self, field='name'):
@@ -55,7 +56,7 @@ class BaseB2B(models.AbstractModel):
 		:return: boolean
 		"""
 		packets = []
-		send_items = self.env['b2b.item'].sudo().search([])
+		send_items = self.env['b2b.item.out'].sudo().search([])
 		# Para cada elemento activo
 		for item in send_items:
 			# Comprobamos si se debe notificar
@@ -113,7 +114,6 @@ class BaseB2B(models.AbstractModel):
 		packets = list()
 		for item in self:
 			packets += item.__b2b_record(False, False)
-		print("@@@@@@@@@@@@ PACKET", packets)
 		if super(BaseB2B, self).unlink():
 			for packet in packets:
 				if packet:

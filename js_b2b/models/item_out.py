@@ -4,9 +4,9 @@ from odoo.exceptions import UserError
 from ..base.helper import JSync
 import re
 
-class B2bItems(models.Model):
-	_name = 'b2b.item'
-	_description = 'B2B Item'
+class B2bItemsOut(models.Model):
+	_name = 'b2b.item.out'
+	_description = 'B2B Item Out'
 	_order = 'sequence, id'
 	_default_code_str = re.sub(r'(^[ ]{0,8})', '', """
         # Set to None for watch all
@@ -155,9 +155,9 @@ class B2bItems(models.Model):
 	@api.model
 	def create(self, vals):
 		"""
-		Check model % code on create
+		Check model & code on create
 		"""
-		item = super(B2bItems, self).create(vals)
+		item = super(B2bItemsOut, self).create(vals)
 		item.__check_model()
 		item.__check_code()
 		return item
@@ -165,9 +165,9 @@ class B2bItems(models.Model):
 	@api.multi
 	def write(self, vals):
 		"""
-		Check model % code on write
+		Check model & code on write
 		"""
-		super(B2bItems, self).write(vals)
+		super(B2bItemsOut, self).write(vals)
 		for item in self:
 			item.__check_model()
 			item.__check_code()

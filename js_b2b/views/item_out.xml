@@ -4,8 +4,8 @@
 	<!-- FORMULARIO -->
 
 	<record id="js_b2b_items_form" model="ir.ui.view">
-		<field name="name">b2b.item.form</field>
-		<field name="model">b2b.item</field>
+		<field name="name">b2b.item.out.form</field>
+		<field name="model">b2b.item.out</field>
 		<field name="arch" type="xml">
 			<form string="Item">
 				<sheet>
@@ -34,12 +34,13 @@
 	<!-- LISTADO -->
 
 	<record id="js_b2b_items_tree" model="ir.ui.view">
-		<field name="name">b2b.item.tree</field>
-		<field name="model">b2b.item</field>
+		<field name="name">b2b.item.out.tree</field>
+		<field name="model">b2b.item.out</field>
 		<field name="arch" type="xml">
 			<tree string="parameters">
 				<field name="sequence" widget="handle"/>
 				<field name="name"/>
+				<field name="model"/>
 				<field name="description"/>
 				<field name="active"/>
 			</tree>
@@ -50,7 +51,7 @@
 
     <record id="b2b_sync_all" model="ir.actions.server">
         <field name="name">B2B Sync</field>
-        <field name="model_id" ref="model_b2b_item"/>
+        <field name="model_id" ref="model_b2b_item_out"/>
         <field name="state">code</field>
         <field name="code">
 			for record in records:
@@ -59,8 +60,8 @@
     </record>
 
     <record id="ir_values_b2b_sync_all" model="ir.values">
-        <field name="name">B2B Sync</field>
-        <field name="model">b2b.item</field>
+        <field name="name">B2B Send All</field>
+        <field name="model">b2b.item.out</field>
         <field name="key">action</field>
         <field name="key2">client_action_multi</field>
         <field name="value" eval="'ir.actions.server, %d' % b2b_sync_all" />
@@ -68,11 +69,11 @@
 
 	<!-- VISTAS -->
 
-	<record id="js_b2b_items" model="ir.actions.act_window">
-		<field name="name">B2B Items</field>
+	<record id="js_b2b_items_out" model="ir.actions.act_window">
+		<field name="name">B2B Items Out</field>
 		<field name="type">ir.actions.act_window</field>
 		<field name="context">{ 'active_test': False }</field>
-		<field name="res_model">b2b.item</field>
+		<field name="res_model">b2b.item.out</field>
 		<field name="view_type">form</field>
 		<field name="view_mode">tree,form</field>
 		<field name="help" type="html">
@@ -86,6 +87,6 @@
 	
 	<!-- ACCIONES DE MENÚ -->
 
-	<menuitem id="js_b2b_items_action" name="Items" parent="js_b2b_menu" sequence="10" action="js_b2b_items" groups="base_technical_features.group_technical_features"  />
+	<menuitem id="js_b2b_items_out_action" name="Items Out" parent="js_b2b_menu" sequence="10" action="js_b2b_items_out" groups="base_technical_features.group_technical_features"  />
 
 </odoo>

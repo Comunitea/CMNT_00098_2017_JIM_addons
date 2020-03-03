@@ -4,30 +4,32 @@ from requests.adapters import HTTPAdapter
 from odoo.http import request as HttpRequest
 from requests.packages.urllib3.util.retry import Retry
 from odoo.exceptions import ValidationError
+from google.cloud import pubsub_v1
 from unidecode import unidecode
 import requests
 import json
+import os
+
+#cr = openerp.registry(self.env.cr.dbname).cursor()
+#api.Environment(cr, odoo.SUPERUSER_ID, self.env.context)
+#api.Environment(self.cr, self.uid, {})
 
 class OutputHelper:
 
 	OK = '\033[92m' # Green
 	ERROR = '\033[91m' # Red
+	INFO = '\033[38;5;039m' # Blue
 	ENDC = '\033[0m' # End
 	DIVIDER = "=" * 80 # Divider line
 
 	@staticmethod
-	def print_text(msg, msg_type='', include_timestamp=True):
+	def print_text(msg, msg_type=''):
 		"""
 		Prints a formatted output message
 
 		"""
-
 		print("\n")
 		print("{}{}{}".format(msg_type, OutputHelper.DIVIDER, OutputHelper.ENDC))
-
-		if include_timestamp:
-			print("{}{}{}".format(msg_type, datetime.now(), OutputHelper.ENDC))
-
 		print("    {}{}{}".format(msg_type, msg, OutputHelper.ENDC))
 		print("{}{}{}".format(msg_type, OutputHelper.DIVIDER, OutputHelper.ENDC))
 		print("\n")
@@ -148,3 +150,15 @@ class JSync:
 						raise ValidationError("JSync Server Connection Error\n%s" % (e))
 					else:
 						raise e
+
+class Google:
+
+	subscriber = None # Google Sub
+
+	def __init__(self):
+		self.subscriber = pubsub_v1.SubscriberClient()
+
+	def receive(self, subscription, callback):
+		if self.subscriber:
+			sub_path = self.subscriber.subscription_path(os.environ['GOOGLE_CLOUD_PROJECT_ID'], subscription)
+			return self.subscriber.subscribe(sub_path, callback)
