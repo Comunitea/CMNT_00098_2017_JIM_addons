@@ -62,40 +62,21 @@ class StockPickingSGA(models.Model):
     _inherit = "stock.picking"
 
     @api.multi
-    def _get_account_code(self):
+    def compute_sga_shipping_info(self):
+
         for pick in self:
-            ref = False
-            partner_id = pick.partner_id
-            if partner_id.ref:
-                ref = pick.account_code
+            sale_id = pick.sudo().orig_sale_id
+            if sale_id:
+                partner = sale_id.partner_shipping_id
+                account_code = sale_id.partner_id.ref
             else:
-                partner = pick.partner_id
-                if not ref and partner.parent_id:
-                    partner = partner.parent_id
-                    if partner:
-                        ref = partner.ref
-            if not ref:
-                ref = self.env.user.company_id.partner_id.ref
-            pick.account_code = ref
-        return ref
-
-
-    @api.multi
-    def get_shipping_city(self):
-        for pick in self.sudo():
-            if pick.move_lines and (pick.move_lines[0].move_dest_IC_id or pick.move_lines[0].move_dest_id):
-                pick_dest = pick.move_lines[0].move_dest_id.picking_id or pick.move_lines[0].move_dest_IC_id.picking_id
-            else:
-                pick_dest = pick
-
-            if pick_dest.sale_id and pick_dest.sale_id.partner_shipping_id:
-                partner = pick_dest.sale_id.partner_shipping_id
-            elif pick_dest.location_dest_id.usage in ('customer', 'supplier'):
-                partner = pick_dest.partner_id
-            else:
-                partner = pick.partner_id
-            pick.shipping_city = partner.state_id and partner.state_id.name or partner.country_id and partner.country_id.name or 'Sin definir'
-            pick.shipping_partner_name = partner.name or "Sin nombre"
+                partner = pick.partner_id or self.env.user.company_id.partner_id or False
+                if partner:
+                    account_code = partner.ref
+            if partner:
+                pick.shipping_city = partner.state_id and partner.state_id.name or partner.country_id and partner.country_id.name or 'Sin definir'
+                pick.shipping_partner_name = partner.name or "Sin nombre"
+                pick.account_code = account_code
 
     def _get_action_done_bool(self):
         return True if self.env['ir.config_parameter'].get_param('picking_auto') == u'True' else False
@@ -125,9 +106,9 @@ class StockPickingSGA(models.Model):
                                    ('MT', 'Realizado'),
                                    ('MC', 'Cancelado')], 'Estado Mecalux', default="NI", track_visibility='onchange', copy=False)
 
-    shipping_city = fields.Char(compute=get_shipping_city, string ="Provincia de entrega")
-    shipping_partner_name = fields.Char(compute=get_shipping_city, string="Entregar a")
-    account_code = fields.Char("Account code", compute=_get_account_code)
+    shipping_city = fields.Char(compute=compute_sga_shipping_info, string ="Provincia de entrega")
+    shipping_partner_name = fields.Char(compute=compute_sga_shipping_info, string="Nombre cliente")
+    account_code = fields.Char(compute=compute_sga_shipping_info, string="Codigo cliente")
     action_done_bool = fields.Boolean("Validación automática", default=_get_action_done_bool)
     do_backorder = fields.Selection([('default', 'Por defecto'), ('yes', 'Si'), ('no', 'No')], "Crea entrega parcial", default='default')
     sga_integrated = fields.Boolean(related="picking_type_id.sga_integrated")

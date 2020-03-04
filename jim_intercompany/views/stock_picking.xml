@@ -10,6 +10,11 @@
             <field name="count_picking_ready" position="after">
                 <field name="count_picking_review"/>
             </field>
+
+            <field name="company_id" position="before">
+                <field name="orig_sale_id" readonly="1"/>
+
+            </field>
         <button  name="get_action_picking_tree_ready" position="before">
             <span t-if="record.code.raw_value =='outgoing'">
             <button class="btn btn-primary" name="get_action_picking_tree_review" type="object">
