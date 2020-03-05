@@ -11,10 +11,7 @@
                 <field name="count_picking_review"/>
             </field>
 
-            <field name="company_id" position="before">
-                <field name="orig_sale_id" readonly="1"/>
 
-            </field>
         <button  name="get_action_picking_tree_ready" position="before">
             <span t-if="record.code.raw_value =='outgoing'">
             <button class="btn btn-primary" name="get_action_picking_tree_review" type="object">
@@ -85,6 +82,10 @@
             </field>
             <field name="product_qty" position="before">
                 <field name="ordered_qty" readonly="1" />
+            </field>
+            <field name="company_id" position="before">
+                <field name="orig_sale_id" readonly="1"/>
+
             </field>
             <!--<xpath expr="//field[@name='pack_operation_product_ids']/tree" position="attributes">
                 <attribute name="colors">green:ordered_qty&lt;product_qty;red:ordered_qty&gt;product_qty
