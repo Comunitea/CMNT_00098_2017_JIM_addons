@@ -14,3 +14,4 @@ class ResCompany(models.Model):
     show_discount = fields.Boolean(default=True)
     iso_logo = fields.Binary()
     hide_fields = fields.Boolean()
+    iso_purchase_order_text = fields.Html(translate=True)

@@ -21,6 +21,8 @@
                     <field name="qweb_footer"/>
                     <separator string="Invoice footer"/>
                     <field name="qweb_invoice_footer"/>
+                    <separator string="Iso Purchase footer"/>
+                    <field name="iso_purchase_order_text"/>
                 </page>
             </notebook>
         </field>

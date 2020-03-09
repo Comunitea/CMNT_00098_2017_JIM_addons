@@ -402,10 +402,16 @@
                 </div>
 
             </t>
-            <t t-if="o._name != 'account.invoice'">
+            <t t-if="o._name != 'account.invoice' and o._name != 'purchase.order'">
                 <div class="text-center">
                     <!--para que non aparezca o pe con etiquetas html usar t-raw-->
                     <span t-raw="company.qweb_footer"/>
+                </div>
+            </t>
+            <t t-if="o._name == 'purchase.order'">
+                <div class="text-center">
+                    <!--para que non aparezca o pe con etiquetas html usar t-raw-->
+                    <span t-raw="company.iso_purchase_order_text"/>
                 </div>
             </t>
         </div>
