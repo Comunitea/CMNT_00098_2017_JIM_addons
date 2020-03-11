@@ -7,6 +7,7 @@ class B2bItemsIn(models.Model):
 	_name = 'b2b.item.in'
 	_description = 'B2B Item In'
 	_order = 'sequence, id'
+	_sql_constraints = [('b2b_item_in_unique', 'unique(name)', 'Name must be unique into B2B Incoming Items!')]
 
 	name = fields.Char('Item Name', required=True, translate=False, help="Set the item name")
 	model = fields.Char('Model Name', required=True, translate=False, help="Odoo model name")

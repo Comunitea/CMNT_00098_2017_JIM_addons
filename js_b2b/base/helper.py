@@ -2,7 +2,7 @@
 from datetime import datetime
 from requests.adapters import HTTPAdapter
 from odoo.http import request as HttpRequest
-from requests.packages.urllib3.util.retry import Retry
+from requests.packages.urllib3.util.retry import Retry as httpRetry
 from odoo.exceptions import ValidationError
 from google.cloud import pubsub_v1
 from unidecode import unidecode
@@ -38,14 +38,13 @@ class JSync:
 
 	id = None # Item id
 	name = None # Data item name
-	dest = None # Client ID or string
 	data = {} # Item data dict
 	session = None # HTTP Session
 
 	def __init__(self, id=None, retries=3):
 		self.id = id
 		self.session = requests.Session()
-		retry = Retry(total=retries, connect=retries, backoff_factor=0.3, status_forcelist=(500, 502, 504))
+		retry = httpRetry(total=retries, connect=retries, backoff_factor=0.3, status_forcelist=(500, 502, 504))
 		adapter = HTTPAdapter(max_retries=retry)
 		self.session.mount('http://', adapter)
 		self.session.mount('https://', adapter)
@@ -94,7 +93,7 @@ class JSync:
 
 		return self.data
 
-	def send(self, path='', action='create', timeout_sec=10):
+	def send(self, path='', action=None, timeout_sec=10):
 		"""
 		Sends data to JSync server and prints on screen
 
@@ -104,7 +103,7 @@ class JSync:
 
 		"""
 
-		if self.id and self.name:
+		if self.name and action:
 
 			# Header
 			header_dict = { 
@@ -158,7 +157,8 @@ class Google:
 	def __init__(self):
 		self.subscriber = pubsub_v1.SubscriberClient()
 
-	def receive(self, subscription, callback):
+	def receive(self, subscription, callback_obj):
 		if self.subscriber:
 			sub_path = self.subscriber.subscription_path(os.environ['GOOGLE_CLOUD_PROJECT_ID'], subscription)
-			return self.subscriber.subscribe(sub_path, callback)
+			flow_control_obj = pubsub_v1.types.FlowControl(max_messages=10)
+			return self.subscriber.subscribe(sub_path, callback=callback_obj, flow_control=flow_control_obj)

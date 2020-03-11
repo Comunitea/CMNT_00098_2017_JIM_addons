@@ -2,18 +2,25 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from ..base.helper import JSync
+from datetime import datetime
+import base64
 import re
 
 class B2bItemsOut(models.Model):
 	_name = 'b2b.item.out'
 	_description = 'B2B Item Out'
 	_order = 'sequence, id'
+	_sql_constraints = [('b2b_item_out_unique', 'unique(name)', 'Name must be unique into B2B Outgoing Items!')]
+
 	_default_code_str = re.sub(r'(^[ ]{0,8})', '', """
         # Set to None for watch all
         b2b_fields_to_watch = ('name', 'reference')
-        
-        def b2b_is_notifiable(self, vals):
+
+        def b2b_is_notifiable(self, action, vals):
             return True
+
+        def b2b_get_action(self, action, vals):
+            return action
 
         def b2b_get_data(self):
             return {
@@ -40,10 +47,16 @@ class B2bItemsOut(models.Model):
 		"""
 		Check if is a valid model
 		"""
-		try:
-			self.env[self.model].search_count([])
-		except Exception as e:
-			raise UserError(_('Model not found!'))
+		separators = (',', ';')
+
+		for separator in separators:
+			for model in self.model.split(separator):
+				model_name = model.strip()
+				
+				try:
+					self.env[model_name].search_count([])
+				except Exception as e:
+					raise UserError(_('Model %s not found!') % model_name)
 
 	@api.model
 	def __check_code(self):
@@ -56,7 +69,7 @@ class B2bItemsOut(models.Model):
 			raise UserError(_('Syntax Error?\n') + str(e))
 		# Check required vars and methods to avoid fatal errors
 		variables = { 'b2b_fields_to_watch': tuple }
-		methods = ['b2b_is_notifiable', 'b2b_get_data']
+		methods = ['b2b_is_notifiable', 'b2b_get_action', 'b2b_get_data']
 		for var in tuple(variables.keys() + methods):
 			if not var in locals():
 				raise UserError(_('Code Error!\n %s not defined' % (var)))
@@ -69,31 +82,36 @@ class B2bItemsOut(models.Model):
 				raise UserError(_('Code Error!\n %s must be a function' % (method)))
 
 	@api.model
-	def must_notify(self, record, vals=None):
+	def must_notify(self, record, mode, vals=None):
 		"""
 		Check if item record is notifiable
 		"""
 		# Default
 		is_notifiable = True
 		# Basic checks, model and code
-		if record and self.model == record._name and type(self.code) is unicode:
-			from datetime import datetime
-			import base64
-			# Ejecutamos el código con exec(self.code, locals())
+		if record and record._name in self.model and type(self.code) is unicode:
+			local_vals = { 'datetime': datetime, 'base64': base64 }
+			# Ejecutamos el código con exec(self.code)
 			# establece localmente las siguentes variables y métodos:
 			#   b2b_fields_to_watch <type 'tuple'>
 			#   b2b_is_notifiable <type 'function'>
+			#	b2b_get_action <type 'function'>
 			#   b2b_get_data <type 'function'>
-			exec(self.code, locals())
+			exec(self.code, locals(), local_vals)
 			# Devuelve False si ninguno de los campos recibidos en vals
 			# está presente en b2b_fields_to_watch (cuando los tipos coinciden)
-			if type(b2b_fields_to_watch) is tuple and type(vals) is dict:
+			if type(local_vals['b2b_fields_to_watch']) is tuple and type(vals) is dict:
 				vals_set = set(vals)
-				fields_set = set(b2b_fields_to_watch)
+				fields_set = set(local_vals['b2b_fields_to_watch'])
 				is_notifiable = bool(vals_set.intersection(fields_set))
 			# Comprobamos si se debe notificar según el código
-			if is_notifiable and b2b_is_notifiable(record, vals):
-				return b2b_get_data(record)
+			if is_notifiable and local_vals['b2b_is_notifiable'](record, mode, vals):
+				return {
+					# Obtener la acción a realizar con los datos
+					'action': local_vals['b2b_get_action'](record, mode, vals), 
+					# Obtener los datos del registro
+					'data': local_vals['b2b_get_data'](record)
+				}
 			return False
 		return False
 

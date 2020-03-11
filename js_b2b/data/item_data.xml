@@ -15,6 +15,9 @@
 def b2b_is_notifiable(self, vals):
     return True
 
+def b2b_get_action(self, action, vals):
+    return action
+
 def b2b_get_data(self):
     return {
         'name': self.get_field_translations('name'),
@@ -36,6 +39,9 @@ def b2b_get_data(self):
 
 def b2b_is_notifiable(self, vals):
     return True
+
+def b2b_get_action(self, action, vals):
+    return action
 
 def b2b_get_data(self):
     return {
@@ -60,6 +66,9 @@ def b2b_get_data(self):
 def b2b_is_notifiable(self, vals):
     return True
 
+def b2b_get_action(self, action, vals):
+    return action
+
 def b2b_get_data(self):
     return {
         'name': self.name,
@@ -79,6 +88,9 @@ def b2b_get_data(self):
 def b2b_is_notifiable(self, vals):
     # Está activa para la web (y la categoría padre también)
     return self.web and (not self.parent_id or (self.parent_id and self.parent_id.web))
+
+def b2b_get_action(self, action, vals):
+    return action
 
 def b2b_get_data(self):
     return {
@@ -110,7 +122,10 @@ def b2b_get_data(self):
 
 def b2b_is_notifiable(self, vals):
     # Es almacenable y tiene etiquetas
-    return self.type == 'product' and self.tag_ids
+    return self.sale_ok and self.type == 'product' and self.tag_ids
+
+def b2b_get_action(self, action, vals):
+    return action
 
 def b2b_get_data(self):
     return {
@@ -131,27 +146,52 @@ def b2b_get_data(self):
 			<field name="name">product_variant</field>
 			<field name="model">product.product</field>
 			<field name="description">Variantes / Combinaciones</field>
-			<field name="code">b2b_fields_to_watch = (
+			<field name="code">""" 
+Este modelo es uno de los más complicados para configurar, ya que Odoo tiene una forma muy particular de manejar las plantillas/variantes.
+
+Por defecto en Odoo no existen las plantillas, sólo las variantes (que serían productos únicos) mientras que en Prestashop es justo al contrario.
+
+Cuando trabajamos con variantes cada producto único está unido a una variante única (que es lo que se usa por detrás), pero esta variante única no nos interesa pasarla a los sistemas de terceros, además
+en las variantes tenemos un campo que nos permite "desactivar" una de la web por lo que aún es más complejo.
+"""
+
+b2b_fields_to_watch = (
     'default_code',
-    'barcode',  
+    'name', 
+    'barcode', 
+    'description', 
+    'product_brand_id', 
     'attribute_line_ids', 
+    'force_web', 
+    'tag_ids'
     'weight',
     'default',
-    'active'
+    'type'
 )
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     # La plantilla está activa y es almacenable y tiene etiquetas y tiene atributos (las variantes únicas no tienen atributos)
-    return self.product_tmpl_id.active and self.type == 'product' and self.tag_ids and self.product_attribute_count
+    return self.default_code and self.product_tmpl_id.type == 'product' and self.product_tmpl_id.active and self.attribute_names
+
+def b2b_get_action(self, action, vals):
+    # Si la variante se ha activado enviamos la creación
+    if self.force_web != 'no' or self.tag_ids:
+        return 'create'
+    # En caso contrario la eliminamos
+    return 'delete'
 
 def b2b_get_data(self):
+    # Si no tiene atributos no se envía nada
+    if not self.attribute_value_ids:
+        return dict()
+    # Enviamos los datos
     return {
         'fixed:product_id': self.product_tmpl_id.id,
         'default_code:reference': self.default_code,
-        'attribute_line_ids:attribute_value': self.attribute_value_ids.ids,
-        'barcode:ean13': self.barcode if self.barcode else None,
-        'weight': self.weight,
-        'default': False
+        'fixed:attribute_value': self.attribute_value_ids.ids,
+        'fixed:ean13': self.barcode if self.barcode else None,
+        'fixed:weight': self.weight,
+        'fixed:default': False
     }</field>
 		</record>
 
@@ -165,6 +205,9 @@ def b2b_get_data(self):
 
 def b2b_is_notifiable(self, vals):
     return True
+
+def b2b_get_action(self, action, vals):
+    return action
 
 def b2b_get_data(self):
     return {
@@ -186,6 +229,9 @@ def b2b_get_data(self):
 def b2b_is_notifiable(self, vals):
     return True
 
+def b2b_get_action(self, action, vals):
+    return action
+
 def b2b_get_data(self):
     return {
         'lname:name': self.lname or self.name,
@@ -206,6 +252,9 @@ def b2b_get_data(self):
 def b2b_is_notifiable(self, vals):
     return True
 
+def b2b_get_action(self, action, vals):
+    return action
+
 def b2b_get_data(self):
     return {
         'name': self.name,
@@ -224,10 +273,13 @@ def b2b_get_data(self):
 def b2b_is_notifiable(self, vals):
     return True
 
+def b2b_get_action(self, action, vals):
+    return action
+
 def b2b_get_data(self):
     return {
         'name': self.name,
-        'currency_id': self.currency_id
+        'currency_id': self.currency_id.id
     }</field>
         </record>
 
@@ -249,6 +301,9 @@ def b2b_get_data(self):
 def b2b_is_notifiable(self, vals):
     # El estado es (assigned, done o cancel) y la empresa es JIM SPORTS TECHNOLOGY y es un INT y hace referencia a una línea de compra y la fecha es superior a la actual
     return self.state in ('assigned', 'done', 'cancel') and self.company_id.id == 1 and self.picking_type_id.code == 'incoming' and self.purchase_line_id and datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now()
+
+def b2b_get_action(self, action, vals):
+    return action
 
 def b2b_get_data(self):
     return {
@@ -291,7 +346,10 @@ def b2b_get_primary_email(email):
             if separator in email:
                 return email.split(separator)[0].strip()
     return email
-        
+
+def b2b_get_action(self, action, vals):
+    return action
+
 def b2b_get_data(self):
     return {
         'name': self.name,
@@ -329,6 +387,9 @@ def b2b_is_notifiable(self, vals):
     # Es de tipo 'delivery'
     return notifiable_client and self.type == 'delivery'
 
+def b2b_get_action(self, action, vals):
+    return action
+
 def b2b_get_data(self):
     return {
         'customer_id': self.parent_id.id, 
@@ -365,6 +426,9 @@ def b2b_is_notifiable(self, vals):
     notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
     # Es de tipo out_invoice o out_refund y tiene asignado un número y el estado es open o cancel
     return notifiable_client and self.number and self.type in ('out_invoice', 'out_refund') and self.state in ('open', 'cancel')
+
+def b2b_get_action(self, action, vals):
+    return action
 
 def b2b_get_data(self):
     # Obtenemos el documento PDF como un string
@@ -404,6 +468,9 @@ def b2b_is_notifiable(self, vals):
     # Es un albarán y es de salida o dropshipping y el estado es done o cancel
     return notifiable_client and (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state in ('done', 'cancel')
 
+def b2b_get_action(self, action, vals):
+    return action
+
 def b2b_get_data(self):
     # Obtenemos el documento PDF como un string
     docfile = self.env['report'].sudo().get_pdf([self.id], 'stock.report_deliveryslip')
@@ -442,6 +509,9 @@ def b2b_is_notifiable(self, vals):
     # Es un pedido de venta y (se recibe date_order en vals y el estado es pending o lqdr) o el estado es cancel
     return notifiable_client and (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
 
+def b2b_get_action(self, action, vals):
+    return action
+
 def b2b_get_data(self):
     # Obtenemos el documento PDF como un string
     docfile = self.env['report'].sudo().get_pdf([self.id], 'sale.report_saleorder')
@@ -475,6 +545,9 @@ def b2b_is_notifiable(self, vals):
     # (se recibe date_order en vals y el estado es pending o lqdr) o el estado es cancel
     return (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
 
+def b2b_get_action(self, action, vals):
+    return action
+
 def b2b_get_data(self):
     return [{
         'fixed:product_id': line.product_id.product_tmpl_id.id, 
@@ -498,6 +571,9 @@ def b2b_is_notifiable(self, vals):
     # Es un movimiento de stock
     return self.state in ('done', 'partially_available', 'cancel')
 
+def b2b_get_action(self, action, vals):
+    return action
+
 def b2b_get_data(self):
     return [{
         'fixed:product_id': line.product_id.product_tmpl_id.id, 
@@ -520,6 +596,9 @@ def b2b_get_data(self):
 def b2b_is_notifiable(self, vals):
     # Es un movimiento de stock
     return self.procure_method == 'make_to_stock'
+
+def b2b_get_action(self, action, vals):
+    return action
 
 def b2b_get_data(self):
     return {

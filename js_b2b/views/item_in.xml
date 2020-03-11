@@ -3,7 +3,7 @@
 
 	<!-- FORMULARIO -->
 
-	<record id="js_b2b_items_form" model="ir.ui.view">
+	<record id="js_b2b_items_in_form" model="ir.ui.view">
 		<field name="name">b2b.item.in.form</field>
 		<field name="model">b2b.item.in</field>
 		<field name="arch" type="xml">
@@ -32,7 +32,7 @@
 
 	<!-- LISTADO -->
 
-	<record id="js_b2b_items_tree" model="ir.ui.view">
+	<record id="js_b2b_items_in_tree" model="ir.ui.view">
 		<field name="name">b2b.item.in.tree</field>
 		<field name="model">b2b.item.in</field>
 		<field name="arch" type="xml">

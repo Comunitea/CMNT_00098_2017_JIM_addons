@@ -47,7 +47,7 @@ class BaseB2B(models.AbstractModel):
 		# Watch all by default
 		return True
 
-	def __b2b_record(self, mode='create', vals=None):
+	def __b2b_record(self, mode=None, vals=None):
 		"""
 		Private method to check configured items and send the data
 
@@ -59,28 +59,33 @@ class BaseB2B(models.AbstractModel):
 		send_items = self.env['b2b.item.out'].sudo().search([])
 		# Para cada elemento activo
 		for item in send_items:
-			# Comprobamos si se debe notificar
-			item_data = item.must_notify(self, vals)
-			# Si se recibe un diccionario se convierte a una lista
-			if type(item_data) is not list:
-				item_data = [item_data,]
-			# Para cada conjunto de datos
-			for record in item_data:
-				# Si no está vacío
-				if record:
-					# Obtenemos el id
-					packet = JSync(self.id)
-					# Obtenemos el nombre
-					packet.name = item.name
-					# Obtenemos los datos
-					packet.data = record
-					# Normalizamos los datos
-					packet.filter_data(vals)
-					# Guardamos el paquete
-					packets.append(packet)
-					# Si los datos son correctos lo enviamos
-					if mode and (mode == 'delete' or packet.data):
-						packet.send(action=mode)
+			# Comprobamos si se debe notificar y recogemos los datos
+			item_to_send = item.must_notify(self, mode, vals) or dict()
+			# Acción a realizar
+			item_action = item_to_send.get('action')
+			# Datos a enviar
+			item_data = item_to_send.get('data')
+			# Si tiene acción y datos
+			if item_action and item_data:
+				# Obtenemos el id
+				packet = JSync(self.id)
+				# Obtenemos el nombre
+				packet.name = item.name
+				# Obtenemos los datos
+				packet.data = item_data
+				# Normalizamos los datos
+				packet.filter_data(vals)
+				# Guardamos el paquete
+				packets.append(packet)
+				# No se puede crear un elemento si se está llamando desde unlink()
+				# esto solo pasará si hemos modificado la acción por defecto
+				bad_action = item_action == 'create' and mode == False
+				# Los datos no pueden estar vacíos, a no ser que se haga un borrado
+				not_empty = item_action and item_action == 'delete' or packet.data
+				# Si los datos son correctos lo enviamos
+				if not_empty and not bad_action:
+					packet.send(action=item_action)
+					break
 		# Paquetes creados
 		return packets
 
@@ -88,12 +93,14 @@ class BaseB2B(models.AbstractModel):
 
 	@api.model
 	def create(self, vals):
+		print("----------- CREATE", self._name, vals)
 		item = super(BaseB2B, self).create(vals)
 		item.__b2b_record('create')
 		return item
 
 	@api.multi
 	def write(self, vals):
+		print("----------- WRITE", self._name, vals)
 		super(BaseB2B, self).write(vals)
 		for item in self:
 			item_active = vals.get('active')
@@ -111,6 +118,7 @@ class BaseB2B(models.AbstractModel):
 
 	@api.multi
 	def unlink(self):
+		print("----------- DELETE", self._name, self.id)
 		packets = list()
 		for item in self:
 			packets += item.__b2b_record(False, False)
