@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
 
-
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    categorization_percent_filled = fields.Integer(
-        string='Categorization Percent Completed', default=0, store=True)
+    categorization_percent_filled = fields.Integer(string='Parameterization Percent Completed', default=0, store=True)
 
     #public
     @api.model
     def calculate_categorization_percent(self):
         for record in self:
             categorization_percent = 0  # Record categorization percent
-            custom_fields = 0.0  # Categorization fields counter
-            filled_fields = 0.0  # Categorization filled fields counter
+            custom_fields = 0.0  # Parameterization fields counter
+            filled_fields = 0.0  # Parameterization filled fields counter
             # Get all categorization fields
             categorization_fields = self.env['js_categorization.field'].sudo().search([])
             # Get product categorization
@@ -57,7 +55,7 @@ class ProductTemplate(models.Model):
             product_categorization = self.env['product.template.categorization'].create({'product_id': self.id})
 
         return {  # Open categorization popup
-            'name': 'Product Categorization',
+            'name': 'Product Parameterization',
             'view_type': 'form',
             'view_mode': 'form',
             'res_id': product_categorization.id,
@@ -76,7 +74,6 @@ class ProductTemplate(models.Model):
                 record.calculate_categorization_percent()
         return res
 
-
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
@@ -85,15 +82,13 @@ class ProductProduct(models.Model):
     def categorization_modal(self):
         self.ensure_one()  # One record expected
         # Get variant categorization
-        variant_categorization = self.env['product.product.categorization'].search(
-            [('product_id', '=', self.id)])
+        variant_categorization = self.env['product.product.categorization'].search([('product_id', '=', self.id)])
         if not variant_categorization:
             # Create variant categorization
-            variant_categorization = self.env['product.product.categorization'].create(
-                {'product_id': self.id})
+            variant_categorization = self.env['product.product.categorization'].create({'product_id': self.id})
 
         return {  # Open categorization popup
-            'name': 'Product Categorization',
+            'name': 'Product Parameterization',
             'view_type': 'form',
             'view_mode': 'form',
             'res_id': variant_categorization.id,
@@ -112,25 +107,20 @@ class ProductProduct(models.Model):
                 record.product_tmpl_id.calculate_categorization_percent()
         return res
 
-
-class ProductCategorization(models.Model):
+class ProductParameterization(models.Model):
     _name = 'product.template.categorization'
-    _description = "Product Categorization"
+    _description = "Product Parameterization"
     _sql_constraints = [('categorization_product_unique', 'unique(product_id)', 'Product must be unique in categorization!')]
     _rec_name = 'product_id'
 
-    product_id = fields.Many2one(
-        'product.template', string='Related Product', required=True,
-        ondelete='cascade')
-    categorization_template = fields.Many2one(
-        'js_categorization.type', string='Template', required=False)
-    active = fields.Boolean(
-        'Active', default=True, related='product_id.active', store=False)
+    product_id = fields.Many2one('product.template', string='Related Product', required=True, ondelete='cascade')
+    categorization_template = fields.Many2one('js_categorization.type', string='Template', required=False)
+    active = fields.Boolean('Active', default=True, related='product_id.active', store=False)
 
     #override
     @api.model
     def fields_get(self, allfields=None, attributes=None):
-        fields = super(ProductCategorization, self).fields_get(allfields, attributes=attributes)
+        fields = super(ProductParameterization, self).fields_get(allfields, attributes=attributes)
         for field in fields:
             field_obj = self.env['js_categorization.field'].search([('name', '=', field)])
             if field_obj and field_obj.categorization_type:
@@ -142,13 +132,12 @@ class ProductCategorization(models.Model):
     def new_field_modal(self):
         self.ensure_one()  # One record expected
         return {  # Open new categorization field popup
-            'name': 'Product Categorization Field',
+            'name': 'Product Parameterization Field',
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'js_categorization.field',
             'type': 'ir.actions.act_window',
-            'context': {'default_model_id': self.env['ir.model'].search(
-                [('model', '=', self._name)]).id},
+            'context': { 'default_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id },
             'target': 'new'
         }
 
@@ -180,24 +169,22 @@ class ProductCategorization(models.Model):
     #override
     @api.multi
     def write(self, values):
+        reset_fields = dict()
         # If categorization template changed, empty not applicable fields
         # We did this instead of delete asociated categorization to avoid fill generic fields again
-        if self.categorization_template.id != values.get('categorization_template'):
+        if values.get('categorization_template') and self.categorization_template.id != values['categorization_template']:
             categorization_fields = self.env['js_categorization.field'].sudo().search([])
-            product_categorization = self.env['product.template.categorization'].search
-            ([('product_id', '=', self.product_id.id)])
-            variants_categorization = self.env['product.product.categorization'].search(
-                [('product_id', 'in', self.product_id.product_variant_ids._ids)])
             for field in categorization_fields:
-                if field.categorization_type and values.get(
-                        'categorization_template',
-                        self.categorization_template.id) != field.categorization_type.id:
-                    if product_categorization:
-                        super(ProductCategorization, product_categorization).write({field.name: False})
-                    if variants_categorization:
-                        super(VariantCategorization, variants_categorization).write({field.name: False})
+                if field.categorization_type and values.get('categorization_template', self.categorization_template.id) != field.categorization_type.id:
+                    reset_fields.update({ field.name: False })
+                    
+        # Reset fields
+        if reset_fields:
+            values.update(reset_fields)
+            self.env['product.product.categorization'].search([('product_id', 'in', self.product_id.product_variant_ids._ids)]).write(reset_fields)
+
         # Save and go to variant
-        super(ProductCategorization, self).write(values)
+        super(ProductParameterization, self).write(values)
         self.product_id.calculate_categorization_percent()
         return self.with_context(default_product_id=self.product_id.id).edit_variant()
 
@@ -212,32 +199,24 @@ class ProductCategorization(models.Model):
                 [('product_id', 'in',
                   product.product_variant_ids._ids)]).unlink()
             # Delete product categorization
-            super(ProductCategorization, record).unlink()
+            super(ProductParameterization, record).unlink()
             # Set product categorization percent to 0
             product.categorization_percent_filled = 0
 
-
-class VariantCategorization(models.Model):
+class VariantParameterization(models.Model):
     _name = 'product.product.categorization'
-    _description = "Variant Categorization"
-    _sql_constraints = [
-        ('categorization_variant_unique', 'unique(product_id)',
-         'Variant must be unique in categorization!')]
+    _description = "Variant Parameterization"
+    _sql_constraints = [('categorization_variant_unique', 'unique(product_id)', 'Variant must be unique in categorization!')]
     _rec_name = 'product_id'
 
-    product_id = fields.Many2one(
-        'product.product', string='Related Variant',
-        required=True, ondelete='cascade')
-    categorization_template = fields.Many2one(
-        'js_categorization.type', string='Template',
-        compute='_get_product_template', store=False)
-    active = fields.Boolean(
-        'Active', default=True, related='product_id.active', store=False)
+    product_id = fields.Many2one('product.product', string='Related Variant', required=True, ondelete='cascade')
+    categorization_template = fields.Many2one('js_categorization.type', string='Template', compute='_get_product_template', store=False)
+    active = fields.Boolean('Active', default=True, related='product_id.active', store=False)
 
     #override
     @api.model
     def fields_get(self, allfields=None, attributes=None):
-        fields = super(VariantCategorization, self).fields_get(allfields, attributes=attributes)
+        fields = super(VariantParameterization, self).fields_get(allfields, attributes=attributes)
         for field in fields:
             field_obj = self.env['js_categorization.field'].search([('name', '=', field)])
             if field_obj and field_obj.categorization_type:
@@ -251,8 +230,7 @@ class VariantCategorization(models.Model):
         for record in self:
             if record.product_id:
                 # Get parent template categorization
-                product_template_categorization = self.env['product.template.categorization'].search(
-                    [('product_id', '=', record.product_id.product_tmpl_id.id)])
+                product_template_categorization = self.env['product.template.categorization'].search([('product_id', '=', record.product_id.product_tmpl_id.id)])
                 # Set parent template as variant template
                 record.categorization_template = product_template_categorization.categorization_template
 
@@ -261,13 +239,12 @@ class VariantCategorization(models.Model):
     def new_field_modal(self):
         self.ensure_one() # One record expected
         return { # Open new categorization field popup
-            'name': 'Variant Categorization Field',
+            'name': 'Variant Parameterization Field',
             'view_type': 'form',
             'view_mode': 'form',
             'res_model': 'js_categorization.field',
             'type': 'ir.actions.act_window',
-            'context': {'default_model_id': self.env['ir.model'].search(
-                [('model', '=', self._name)]).id},
+            'context': { 'default_model_id': self.env['ir.model'].search([('model', '=', self._name)]).id },
             'target': 'new'
         }
 
@@ -294,10 +271,9 @@ class VariantCategorization(models.Model):
     @api.multi
     def write(self, values):
         # Save and go to variant
-        super(VariantCategorization, self).write(values)
+        super(VariantParameterization, self).write(values)
         self.product_id.product_tmpl_id.calculate_categorization_percent()
-        return self.env['product.template.categorization'].with_context(
-            default_product_id=self.product_id.product_tmpl_id.id).edit_variant()
+        return self.env['product.template.categorization'].with_context(default_product_id=self.product_id.product_tmpl_id.id).edit_variant()
 
     #override
     @api.multi
@@ -306,6 +282,6 @@ class VariantCategorization(models.Model):
             # Copy parent product
             product = record.product_id.product_tmpl_id
             # Delete variant categorization
-            super(VariantCategorization, record).unlink()
+            super(VariantParameterization, record).unlink()
             # Re-calculate product categorization percent
             product.calculate_categorization_percent()
