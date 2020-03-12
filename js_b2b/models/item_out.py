@@ -50,13 +50,14 @@ class B2bItemsOut(models.Model):
 		separators = (',', ';')
 
 		for separator in separators:
-			for model in self.model.split(separator):
-				model_name = model.strip()
-				
-				try:
-					self.env[model_name].search_count([])
-				except Exception as e:
-					raise UserError(_('Model %s not found!') % model_name)
+			if separator in self.model:
+				for model in self.model.split(separator):
+					model_name = model.strip()
+					
+					try:
+						self.env[model_name].search_count([])
+					except Exception as e:
+						raise UserError(_('Model %s not found!') % model_name)
 
 	@api.model
 	def __check_code(self):

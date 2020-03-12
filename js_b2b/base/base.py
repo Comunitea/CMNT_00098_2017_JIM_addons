@@ -118,7 +118,7 @@ class BaseB2B(models.AbstractModel):
 
 	@api.multi
 	def unlink(self):
-		print("----------- DELETE", self._name, self.id)
+		print("----------- DELETE", self._name, self)
 		packets = list()
 		for item in self:
 			packets += item.__b2b_record(False, False)
