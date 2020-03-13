@@ -65,15 +65,6 @@ class ProductTemplate(models.Model):
             'target': 'new'
         }
 
-    #override
-    @api.multi
-    def write(self, values):
-        res = super(ProductTemplate, self).write(values)
-        if 'categorization_percent_filled' not in values:
-            for record in self:
-                record.calculate_categorization_percent()
-        return res
-
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
@@ -97,15 +88,6 @@ class ProductProduct(models.Model):
             'context': {'default_product_id': self.id},
             'target': 'new'
         }
-
-    #override
-    @api.multi
-    def write(self, values):
-        res = super(ProductProduct, self).write(values)
-        if 'categorization_percent_filled' not in values:
-            for record in self:
-                record.product_tmpl_id.calculate_categorization_percent()
-        return res
 
 class ProductParameterization(models.Model):
     _name = 'product.template.categorization'
