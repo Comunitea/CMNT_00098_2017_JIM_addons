@@ -106,10 +106,10 @@ class BaseB2B(models.AbstractModel):
 			item_active = vals.get('active')
 			item_status = vals.get('state')
 			# Al activarse y no estar cancelado se crea de nuevo
-			if item_active is True and item_status != 'cancel':
+			if ('active' in item and not item.active and item_active is True) and item_status != 'cancel':
 				item.__b2b_record('create')
 			# Al desactivarse o cancelarse se elimina
-			elif item_active is False or item_status == 'cancel':
+			elif ('active' in item and item.active and item_active is False) or item_status == 'cancel':
 				item.__b2b_record('delete', False)
 			# Para otros cambios se actualiza (si está activo)
 			elif item_active in (True, None):

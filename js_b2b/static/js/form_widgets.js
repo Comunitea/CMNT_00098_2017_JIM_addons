@@ -2,6 +2,7 @@ odoo.define('js_b2b.form_widgets', function (require) {
     "use strict";
 
     var core = require('web.core');
+    var form_common = require('web.form_common');
     var AceEditor = core.form_widget_registry.get('ace');
     var FieldChar = core.form_widget_registry.get('char');
     var _t = core._t;
@@ -84,12 +85,28 @@ odoo.define('js_b2b.form_widgets', function (require) {
         },
     });
 
+    var WidgetWebsiteButton = form_common.AbstractField.extend({
+        template: 'WidgetWebsiteButton',
+        render_value: function () {
+            this._super.apply(this, arguments);
+            var $value = this.$('.o_value');
+            if(this.get_value() === true) $value.html(_t('Published')).removeClass('text-danger').addClass('text-success');
+            else $value.html(_t('Unpublished')).removeClass('text-success').addClass('text-danger');
+            if(this.node.attrs.class) this.$el.addClass(this.node.attrs.class);
+        },
+        is_false: function () {
+            return false;
+        },
+    });
+
     core.form_widget_registry.add('js_code', FieldCode);
     core.form_widget_registry.add('js_clipboard', FieldClipboard);
+    core.form_widget_registry.add('js_website_button', WidgetWebsiteButton);
 
     return {
         FieldCode: FieldCode,
-        FieldClipboard : FieldClipboard
+        FieldClipboard : FieldClipboard,
+        WidgetWebsiteButton: WidgetWebsiteButton
     };
 
 });

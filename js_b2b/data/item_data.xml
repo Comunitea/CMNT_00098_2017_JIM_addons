@@ -195,8 +195,47 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_7" model="b2b.item.out">
-			<field name="sequence">7</field>
+        <record id="b2b_item_7" model="b2b.item.out">
+            <field name="sequence">7</field>
+            <field name="active">True</field>
+            <field name="name">product_parameterization</field>
+            <field name="model">product.template.categorization, product.product.categorization</field>
+            <field name="description">Parametrización de productos</field>
+            <field name="code">b2b_fields_to_watch = None
+
+def b2b_is_notifiable(self, action, vals):
+    return vals and not vals.get('lang', False)
+
+def b2b_get_action(self, action, vals):
+    return action
+
+def b2b_get_data(self):
+    product_id = None
+    variant_id = None
+    parameterization = dict()
+    # Set product and variant ID's
+    if self._name == 'product.template.categorization':
+        product_id = self.product_id.id
+    elif self._name == 'product.product.categorization':
+        product_id = self.product_id.product_tmpl_id.id
+        variant_id = self.product_id.id
+    # Get fields and data
+    model_id = self.env['ir.model'].search([('model', '=', self._name)]).id
+    for field in self.env['js_categorization.field'].search([('model_id', '=', model_id)]):
+        field_value = getattr(self, field.name) or None
+        if str(type(field_value)).startswith('&lt;class'):
+            field_value = [val.name for val in field_value]
+        parameterization.update({ field.field_description:field_value })
+    # Return data
+    return {
+        'fixed:product_id': product_id,
+        'fixed:variant_id': variant_id,
+        'fixed:parameters': parameterization
+    } if parameterization else dict()</field>
+        </record>
+
+		<record id="b2b_item_8" model="b2b.item.out">
+			<field name="sequence">8</field>
 			<field name="active">True</field>
 			<field name="name">product_image</field>
 			<field name="model">product.image</field>
@@ -218,8 +257,8 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_8" model="b2b.item.out">
-			<field name="sequence">8</field>
+		<record id="b2b_item_9" model="b2b.item.out">
+			<field name="sequence">9</field>
 			<field name="active">True</field>
 			<field name="name">currency</field>
 			<field name="model">res.currency</field>
@@ -241,8 +280,8 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_9" model="b2b.item.out">
-			<field name="sequence">9</field>
+		<record id="b2b_item_10" model="b2b.item.out">
+			<field name="sequence">10</field>
 			<field name="active">True</field>
 			<field name="name">pricelist</field>
 			<field name="model">product.pricelist</field>
@@ -257,13 +296,13 @@ def b2b_get_action(self, action, vals):
 
 def b2b_get_data(self):
     return {
-        'name': self.name,
-        'currency_id': self.currency_id
+        'fixed:name': self.name,
+        'fixed:currency_id': self.currency_id.id
     }</field>
 		</record>
 
-        <record id="b2b_item_10" model="b2b.item.out">
-            <field name="sequence">10</field>
+        <record id="b2b_item_11" model="b2b.item.out">
+            <field name="sequence">11</field>
             <field name="active">True</field>
             <field name="name">pricelist_item</field>
             <field name="model">product.pricelist.item</field>
@@ -283,8 +322,8 @@ def b2b_get_data(self):
     }</field>
         </record>
 
-		<record id="b2b_item_11" model="b2b.item.out">
-			<field name="sequence">11</field>
+		<record id="b2b_item_12" model="b2b.item.out">
+			<field name="sequence">12</field>
 			<field name="active">True</field>
 			<field name="name">supply_plan</field>
 			<field name="model">stock.move</field>
@@ -315,8 +354,8 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_12" model="b2b.item.out">
-			<field name="sequence">12</field>
+		<record id="b2b_item_13" model="b2b.item.out">
+			<field name="sequence">13</field>
 			<field name="active">True</field>
 			<field name="name">customer</field>
 			<field name="model">res.partner</field>
@@ -362,8 +401,8 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_13" model="b2b.item.out">
-			<field name="sequence">13</field>
+		<record id="b2b_item_14" model="b2b.item.out">
+			<field name="sequence">14</field>
 			<field name="active">True</field>
 			<field name="name">customer_address</field>
 			<field name="model">res.partner</field>
@@ -406,8 +445,8 @@ def b2b_get_data(self):
 			</field>
 		</record>
 
-		<record id="b2b_item_14" model="b2b.item.out">
-			<field name="sequence">14</field>
+		<record id="b2b_item_15" model="b2b.item.out">
+			<field name="sequence">15</field>
 			<field name="active">True</field>
 			<field name="name">invoice</field>
 			<field name="model">account.invoice</field>
@@ -447,8 +486,8 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_15" model="b2b.item.out">
-			<field name="sequence">15</field>
+		<record id="b2b_item_16" model="b2b.item.out">
+			<field name="sequence">16</field>
 			<field name="active">True</field>
 			<field name="name">delivery_note</field>
 			<field name="model">stock.picking</field>
@@ -488,8 +527,8 @@ def b2b_get_data(self):
     }</field>
 		</record>
 
-		<record id="b2b_item_16" model="b2b.item.out">
-			<field name="sequence">16</field>
+		<record id="b2b_item_17" model="b2b.item.out">
+			<field name="sequence">17</field>
 			<field name="active">True</field>
 			<field name="name">sale_order</field>
 			<field name="model">sale.order</field>
@@ -528,84 +567,4 @@ def b2b_get_data(self):
         'fixed:pdf': base64.b64encode(docfile)
     }</field>
 		</record>
-
-		<record id="b2b_item_17" model="b2b.item.out">
-			<field name="sequence">17</field>
-			<field name="active">True</field>
-			<field name="name">product_stock</field>
-			<field name="model">sale.order</field>
-			<field name="description">Stock de productos</field>
-			<field name="code">b2b_fields_to_watch = (
-    'date_order', 
-    'amount_total',
-    'state'
-)
-
-def b2b_is_notifiable(self, vals):
-    # (se recibe date_order en vals y el estado es pending o lqdr) o el estado es cancel
-    return (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
-
-def b2b_get_action(self, action, vals):
-    return action
-
-def b2b_get_data(self):
-    return [{
-        'fixed:product_id': line.product_id.product_tmpl_id.id, 
-        'fixed:variant_id': line.product_id.id if line.product_id.product_attribute_count > 0 else None, 
-        'fixed:stock': line.product_id.web_global_stock
-    } for line in self.order_line]</field>
-		</record>
-
-        <record id="b2b_item_18" model="b2b.item.out">
-            <field name="sequence">18</field>
-            <field name="active">True</field>
-            <field name="name">product_stock</field>
-            <field name="model">stock.picking</field>
-            <field name="description">Stock de productos</field>
-            <field name="code">b2b_fields_to_watch = (
-    'make_to_stock',
-    'state'
-)
-
-def b2b_is_notifiable(self, vals):
-    # Es un movimiento de stock
-    return self.state in ('done', 'partially_available', 'cancel')
-
-def b2b_get_action(self, action, vals):
-    return action
-
-def b2b_get_data(self):
-    return [{
-        'fixed:product_id': line.product_id.product_tmpl_id.id, 
-        'fixed:variant_id': line.product_id.id if line.product_id.product_attribute_count > 0 else None, 
-        'fixed:stock': line.product_id.web_global_stock
-    } for line in self.move_lines if line.procure_method == 'make_to_stock' and line.state in ('done', 'cancel')]</field>
-        </record>
-
-		<record id="b2b_item_19" model="b2b.item.out">
-			<field name="sequence">19</field>
-			<field name="active">True</field>
-			<field name="name">product_stock</field>
-			<field name="model">stock.move</field>
-			<field name="description">Stock de productos</field>
-			<field name="code">b2b_fields_to_watch = (
-    'make_to_stock',
-    'state'
-)
-
-def b2b_is_notifiable(self, vals):
-    # Es un movimiento de stock
-    return self.procure_method == 'make_to_stock'
-
-def b2b_get_action(self, action, vals):
-    return action
-
-def b2b_get_data(self):
-    return {
-        'fixed:product_id': self.product_id.id, 
-        'fixed:variant_id': self.product_id.id if self.product_id.product_attribute_count > 0 else None, 
-        'fixed:stock': self.product_id.web_global_stock
-    }</field>
-		</record>
-	</data>
 </odoo>

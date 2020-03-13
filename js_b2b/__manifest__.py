@@ -6,7 +6,7 @@
 	'author': 'Jim Sports',
 	'category': 'Connector',
 	'website': 'https://jimsports.com',
-	'description': 'Conector para sincronizar datos con otras plataformas/clientes',
+	'description': 'Conector para sincronizar datos con otras plataformas/clientes. Envía los datos por HTTP a un servidor secundario que los procesa y recibe datos de Google Pub/Sub.',
 	'license': 'AGPL-3',
 	'qweb': [
 		'static/xml/widgets.xml',
@@ -14,6 +14,7 @@
 	'data': [
 		'security/ir.model.access.csv',
 		'data/item_data.xml',
+		'views/product.xml',
 		'views/assets.xml',
 		'views/settings.xml',
 		'views/item_out.xml',
@@ -30,8 +31,8 @@
 		'product_code_generator'
 	],
 	'contributors': [
-		"Pablo Luaces <pablo@jimsports.com>"
+		"Pablo Luaces <pablo@jimsports.com>",
 	],
-	"application": False,
-	"installable": True
+	'application': False,
+	'installable': True
 }

@@ -36,7 +36,7 @@ class B2bItemsOut(models.Model):
 	""", flags=re.M).strip()
 
 	name = fields.Char('Item Name', required=True, translate=False, help="Set the item name")
-	model = fields.Char('Model Name', required=True, translate=False, help="Odoo model name")
+	model = fields.Char('Model Names', required=True, translate=False, help="Odoo model names to check separated by , or ;")
 	description = fields.Char('Description', required=False, translate=False, help="Set the item description")
 	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
 	active = fields.Boolean('Active', default=True, help="Enable or disable this item")
@@ -83,7 +83,7 @@ class B2bItemsOut(models.Model):
 				raise UserError(_('Code Error!\n %s must be a function' % (method)))
 
 	@api.model
-	def must_notify(self, record, mode, vals=None):
+	def must_notify(self, record, mode='create', vals=None):
 		"""
 		Check if item record is notifiable
 		"""
@@ -155,7 +155,12 @@ class B2bItemsOut(models.Model):
 			record_percent_str = str(record_percent) + '%'
 			record = self.env[self.model].browse(id)
 			# Exec code
-			item_data = self.must_notify(record)
+			item_to_send = self.must_notify(record, mode)
+			# Action to do
+			item_action = item_to_send.get('action')
+			# Data to send
+			item_data = item_to_send.get('data')
+			# If have data
 			if item_data:
 				print("@@ RECORD ID#%s IS NOTIFIABLE!" % (record.id), record_percent_str)
 				# Make & send packet
@@ -163,7 +168,7 @@ class B2bItemsOut(models.Model):
 				packet.name = self.name
 				packet.data = item_data
 				packet.filter_data()
-				packet.send(action=mode)
+				packet.send(action=item_action)
 			else:
 				print("@@ RECORD ID#%s NOT NOTIFIABLE" % (record.id), record_percent_str)
 		# End line
