@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-	<data noupdate="1">
-		<record id="b2b_item_1" model="b2b.item.out">
-			<field name="sequence">1</field>
-			<field name="active">True</field>
-			<field name="name">attribute</field>
-			<field name="model">product.attribute</field>
-			<field name="description">Atributos de producto</field>
-			<field name="code">b2b_fields_to_watch = (
+    <data noupdate="1">
+        <record id="b2b_item_out_1" model="b2b.item.out">
+            <field name="sequence">1</field>
+            <field name="active">True</field>
+            <field name="name">attribute</field>
+            <field name="model">product.attribute</field>
+            <field name="description">Atributos de producto</field>
+            <field name="code">b2b_fields_to_watch = (
     'name', 
     'sequence'
 )
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     return True
 
 def b2b_get_action(self, action, vals):
@@ -24,20 +24,20 @@ def b2b_get_data(self):
         'type': 'color' if self.is_color else 'select',
         'sequence': self.sequence
     }</field>
-		</record>
+        </record>
 
-		<record id="b2b_item_2" model="b2b.item.out">
-			<field name="sequence">2</field>
-			<field name="active">True</field>
-			<field name="name">attribute_value</field>
-			<field name="model">product.attribute.value</field>
-			<field name="description">Valores de atributos</field>
-			<field name="code">b2b_fields_to_watch = (
+        <record id="b2b_item_out_2" model="b2b.item.out">
+            <field name="sequence">2</field>
+            <field name="active">True</field>
+            <field name="name">attribute_value</field>
+            <field name="model">product.attribute.value</field>
+            <field name="description">Valores de atributos</field>
+            <field name="code">b2b_fields_to_watch = (
     'name', 
     'sequence'
 )
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     return True
 
 def b2b_get_action(self, action, vals):
@@ -49,21 +49,21 @@ def b2b_get_data(self):
         'name': self.get_field_translations('name'),
         'sequence': self.sequence
     }</field>
-		</record>
+        </record>
 
-		<record id="b2b_item_3" model="b2b.item.out">
-			<field name="sequence">3</field>
-			<field name="active">True</field>
-			<field name="name">brand</field>
-			<field name="model">product.brand</field>
-			<field name="description">Marcas de productos</field>
-			<field name="code">b2b_fields_to_watch = (
+        <record id="b2b_item_out_3" model="b2b.item.out">
+            <field name="sequence">3</field>
+            <field name="active">True</field>
+            <field name="name">brand</field>
+            <field name="model">product.brand</field>
+            <field name="description">Marcas de productos</field>
+            <field name="code">b2b_fields_to_watch = (
     'name', 
     'description', 
     'logo'
 )
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     return True
 
 def b2b_get_action(self, action, vals):
@@ -75,17 +75,17 @@ def b2b_get_data(self):
         'description': self.get_field_translations('description'),
         'upload:logo': self.logo or None
     }</field>
-		</record>
+        </record>
 
-		<record id="b2b_item_4" model="b2b.item.out">
-			<field name="sequence">4</field>
-			<field name="active">True</field>
-			<field name="name">category</field>
-			<field name="model">product.tag</field>
-			<field name="description">Categorías de producto</field>
-			<field name="code">b2b_fields_to_watch = None
+        <record id="b2b_item_out_4" model="b2b.item.out">
+            <field name="sequence">4</field>
+            <field name="active">True</field>
+            <field name="name">category</field>
+            <field name="model">product.tag</field>
+            <field name="description">Categorías de producto</field>
+            <field name="code">b2b_fields_to_watch = None
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     # Está activa para la web (y la categoría padre también)
     return self.web and (not self.parent_id or (self.parent_id and self.parent_id.web))
 
@@ -99,15 +99,38 @@ def b2b_get_data(self):
         'upload:image': self.image or None,
         'sequence': 0
     }</field>
-		</record>
+        </record>
 
-		<record id="b2b_item_5" model="b2b.item.out">
-			<field name="sequence">5</field>
-			<field name="active">True</field>
-			<field name="name">product</field>
-			<field name="model">product.template</field>
-			<field name="description">Productos</field>
-			<field name="code">b2b_fields_to_watch = (
+        <record id="b2b_item_out_5" model="b2b.item.out">
+            <field name="sequence">5</field>
+            <field name="active">True</field>
+            <field name="name">web_category</field>
+            <field name="model">product.public.category</field>
+            <field name="description">Categorías públicas de producto</field>
+            <field name="code">b2b_fields_to_watch = None
+
+def b2b_is_notifiable(self, action, vals):
+    return True
+
+def b2b_get_action(self, action, vals):
+    return action
+
+def b2b_get_data(self):
+    return {
+        'name': self.get_field_translations('name'),
+        'parent_id': self.parent_id.id if self.parent_id else None,
+        'upload:image': self.image or None,
+        'sequence': 0
+    }</field>
+        </record>
+
+        <record id="b2b_item_out_6" model="b2b.item.out">
+            <field name="sequence">6</field>
+            <field name="active">True</field>
+            <field name="name">product</field>
+            <field name="model">product.template</field>
+            <field name="description">Productos</field>
+            <field name="code">b2b_fields_to_watch = (
     'name', 
     'barcode', 
     'description', 
@@ -116,11 +139,10 @@ def b2b_get_data(self):
     'image', 
     'tag_ids', 
     'type', 
-    'company_id',
-    'active'
+    'company_id'
 )
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     # Es almacenable y tiene etiquetas
     return self.sale_ok and self.type == 'product' and self.tag_ids
 
@@ -138,15 +160,15 @@ def b2b_get_data(self):
         'weight': self.weight,
         'upload:image': self.image or None
     }</field>
-		</record>
+        </record>
 
-		<record id="b2b_item_6" model="b2b.item.out">
-			<field name="sequence">6</field>
-			<field name="active">True</field>
-			<field name="name">product_variant</field>
-			<field name="model">product.product</field>
-			<field name="description">Variantes / Combinaciones</field>
-			<field name="code">""" 
+        <record id="b2b_item_out_7" model="b2b.item.out">
+            <field name="sequence">7</field>
+            <field name="active">True</field>
+            <field name="name">product_variant</field>
+            <field name="model">product.product</field>
+            <field name="description">Variantes / Combinaciones</field>
+            <field name="code">""" 
 Este modelo es uno de los más complicados para configurar, ya que Odoo tiene una forma muy particular de manejar las plantillas/variantes.
 
 Por defecto en Odoo no existen las plantillas, sólo las variantes (que serían productos únicos) mientras que en Prestashop es justo al contrario.
@@ -193,10 +215,10 @@ def b2b_get_data(self):
         'fixed:weight': self.weight,
         'fixed:default': False
     }</field>
-		</record>
+        </record>
 
-        <record id="b2b_item_7" model="b2b.item.out">
-            <field name="sequence">7</field>
+        <record id="b2b_item_out_8" model="b2b.item.out">
+            <field name="sequence">8</field>
             <field name="active">True</field>
             <field name="name">product_parameterization</field>
             <field name="model">product.template.categorization, product.product.categorization</field>
@@ -223,7 +245,7 @@ def b2b_get_data(self):
     model_id = self.env['ir.model'].search([('model', '=', self._name)]).id
     for field in self.env['js_categorization.field'].search([('model_id', '=', model_id)]):
         field_value = getattr(self, field.name) or None
-        if str(type(field_value)).startswith('&lt;class'):
+        if str(type(field_value)).lstrip(u"\u003C").startswith('class'):
             field_value = [val.name for val in field_value]
         parameterization.update({ field.field_description:field_value })
     # Return data
@@ -234,15 +256,15 @@ def b2b_get_data(self):
     } if parameterization else dict()</field>
         </record>
 
-		<record id="b2b_item_8" model="b2b.item.out">
-			<field name="sequence">8</field>
-			<field name="active">True</field>
-			<field name="name">product_image</field>
-			<field name="model">product.image</field>
-			<field name="description">Imágenes del producto</field>
-			<field name="code">b2b_fields_to_watch = None
+        <record id="b2b_item_out_9" model="b2b.item.out">
+            <field name="sequence">9</field>
+            <field name="active">True</field>
+            <field name="name">product_image</field>
+            <field name="model">product.image</field>
+            <field name="description">Imágenes del producto</field>
+            <field name="code">b2b_fields_to_watch = None
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     return True
 
 def b2b_get_action(self, action, vals):
@@ -255,17 +277,17 @@ def b2b_get_data(self):
         'upload:url': self.image or None, 
         'product_attributes_values:attributes': self.product_attributes_values.ids
     }</field>
-		</record>
+        </record>
 
-		<record id="b2b_item_9" model="b2b.item.out">
-			<field name="sequence">9</field>
-			<field name="active">True</field>
-			<field name="name">currency</field>
-			<field name="model">res.currency</field>
-			<field name="description">Monedas</field>
-			<field name="code">b2b_fields_to_watch = None
+        <record id="b2b_item_out_10" model="b2b.item.out">
+            <field name="sequence">10</field>
+            <field name="active">True</field>
+            <field name="name">currency</field>
+            <field name="model">res.currency</field>
+            <field name="description">Monedas</field>
+            <field name="code">b2b_fields_to_watch = None
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     return True
 
 def b2b_get_action(self, action, vals):
@@ -278,17 +300,17 @@ def b2b_get_data(self):
         'symbol': self.symbol,
         'rate': self.rate
     }</field>
-		</record>
+        </record>
 
-		<record id="b2b_item_10" model="b2b.item.out">
-			<field name="sequence">10</field>
-			<field name="active">True</field>
-			<field name="name">pricelist</field>
-			<field name="model">product.pricelist</field>
-			<field name="description">Tarifas</field>
-			<field name="code">b2b_fields_to_watch = None
+        <record id="b2b_item_out_11" model="b2b.item.out">
+            <field name="sequence">11</field>
+            <field name="active">True</field>
+            <field name="name">pricelist</field>
+            <field name="model">product.pricelist</field>
+            <field name="description">Tarifas</field>
+            <field name="code">b2b_fields_to_watch = None
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     return True
 
 def b2b_get_action(self, action, vals):
@@ -299,36 +321,15 @@ def b2b_get_data(self):
         'fixed:name': self.name,
         'fixed:currency_id': self.currency_id.id
     }</field>
-		</record>
-
-        <record id="b2b_item_11" model="b2b.item.out">
-            <field name="sequence">11</field>
-            <field name="active">True</field>
-            <field name="name">pricelist_item</field>
-            <field name="model">product.pricelist.item</field>
-            <field name="description">Reglas de tarifas</field>
-            <field name="code">b2b_fields_to_watch = None
-
-def b2b_is_notifiable(self, vals):
-    return True
-
-def b2b_get_action(self, action, vals):
-    return action
-
-def b2b_get_data(self):
-    return {
-        'name': self.name,
-        'currency_id': self.currency_id.id
-    }</field>
         </record>
 
-		<record id="b2b_item_12" model="b2b.item.out">
-			<field name="sequence">12</field>
-			<field name="active">True</field>
-			<field name="name">supply_plan</field>
-			<field name="model">stock.move</field>
-			<field name="description">Previsión de abastecimiento</field>
-			<field name="code">b2b_fields_to_watch = (
+        <record id="b2b_item_out_12" model="b2b.item.out">
+            <field name="sequence">12</field>
+            <field name="active">True</field>
+            <field name="name">supply_plan</field>
+            <field name="model">stock.move</field>
+            <field name="description">Previsión de abastecimiento</field>
+            <field name="code">b2b_fields_to_watch = (
     'order_id', 
     'product_id', 
     'product_qty', 
@@ -337,7 +338,7 @@ def b2b_get_data(self):
     'state'
 )
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     # El estado es (assigned, done o cancel) y la empresa es JIM SPORTS TECHNOLOGY y es un INT y hace referencia a una línea de compra y la fecha es superior a la actual
     return self.state in ('assigned', 'done', 'cancel') and self.company_id.id == 1 and self.picking_type_id.code == 'incoming' and self.purchase_line_id and datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now()
 
@@ -352,15 +353,15 @@ def b2b_get_data(self):
         'quantity': self.product_uom_qty if self.state == 'assigned' else 0,
         'shipping_date': self.date_expected
     }</field>
-		</record>
+        </record>
 
-		<record id="b2b_item_13" model="b2b.item.out">
-			<field name="sequence">13</field>
-			<field name="active">True</field>
-			<field name="name">customer</field>
-			<field name="model">res.partner</field>
-			<field name="description">Clientes</field>
-			<field name="code">b2b_fields_to_watch = (
+        <record id="b2b_item_out_13" model="b2b.item.out">
+            <field name="sequence">13</field>
+            <field name="active">True</field>
+            <field name="name">customer</field>
+            <field name="model">res.partner</field>
+            <field name="description">Clientes</field>
+            <field name="code">b2b_fields_to_watch = (
     'ref',
     'name', 
     'vat', 
@@ -372,7 +373,7 @@ def b2b_get_data(self):
     'group_companies_ids'
 )
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     # Es el contacto principal (puede ser el mismo) es empresa y es cliente y tiene correo electrónico y tiene contraseña web y es el contacto principal
     return self.type == 'contact' and self.commercial_partner_id.is_company and self.commercial_partner_id.customer and self.commercial_partner_id.email and self.commercial_partner_id.web_password and self.commercial_partner_id.id == self.id
 
@@ -399,15 +400,15 @@ def b2b_get_data(self):
         'property_product_pricelist:pricelist_id': self.property_product_pricelist.id or None,
         'companies': [company.partner_id.id for company in self.group_companies_ids]
     }</field>
-		</record>
+        </record>
 
-		<record id="b2b_item_14" model="b2b.item.out">
-			<field name="sequence">14</field>
-			<field name="active">True</field>
-			<field name="name">customer_address</field>
-			<field name="model">res.partner</field>
-			<field name="description">Direcciones de clientes</field>
-			<field name="code">b2b_fields_to_watch = (
+        <record id="b2b_item_out_14" model="b2b.item.out">
+            <field name="sequence">14</field>
+            <field name="active">True</field>
+            <field name="name">customer_address</field>
+            <field name="model">res.partner</field>
+            <field name="description">Direcciones de clientes</field>
+            <field name="code">b2b_fields_to_watch = (
     'name', 
     'type', 
     'parent_id', 
@@ -419,7 +420,7 @@ def b2b_get_data(self):
     'country_id'
 )
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     # Comprobamos si el cliente relaccionado es notificable
     client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
     notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
@@ -442,16 +443,16 @@ def b2b_get_data(self):
         'country_id:country': self.country_id.code if self.country_id else 'ES', 
         'default': self.default_partner_by_type
     }
-			</field>
-		</record>
+            </field>
+        </record>
 
-		<record id="b2b_item_15" model="b2b.item.out">
-			<field name="sequence">15</field>
-			<field name="active">True</field>
-			<field name="name">invoice</field>
-			<field name="model">account.invoice</field>
-			<field name="description">Factura de venta o abono</field>
-			<field name="code">b2b_fields_to_watch = (
+        <record id="b2b_item_out_15" model="b2b.item.out">
+            <field name="sequence">15</field>
+            <field name="active">True</field>
+            <field name="name">invoice</field>
+            <field name="model">account.invoice</field>
+            <field name="description">Factura de venta o abono</field>
+            <field name="code">b2b_fields_to_watch = (
     'commercial_partner_id', 
     'number', 
     'date_invoice', 
@@ -459,7 +460,7 @@ def b2b_get_data(self):
     'state'
 )
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     # Comprobamos si el cliente relaccionado es notificable
     client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
     notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
@@ -484,15 +485,15 @@ def b2b_get_data(self):
         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
         'fixed:pdf': base64.b64encode(docfile)
     }</field>
-		</record>
+        </record>
 
-		<record id="b2b_item_16" model="b2b.item.out">
-			<field name="sequence">16</field>
-			<field name="active">True</field>
-			<field name="name">delivery_note</field>
-			<field name="model">stock.picking</field>
-			<field name="description">Albarán de venta</field>
-			<field name="code">b2b_fields_to_watch = (
+        <record id="b2b_item_out_16" model="b2b.item.out">
+            <field name="sequence">16</field>
+            <field name="active">True</field>
+            <field name="name">delivery_note</field>
+            <field name="model">stock.picking</field>
+            <field name="description">Albarán de venta</field>
+            <field name="code">b2b_fields_to_watch = (
     'sale_id', 
     'name', 
     'date_done', 
@@ -500,7 +501,7 @@ def b2b_get_data(self):
     'state'
 )
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     # Comprobamos si el cliente relaccionado es notificable
     client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
     notifiable_client = client_item.must_notify(self.partner_id.commercial_partner_id) if client_item else False
@@ -525,15 +526,15 @@ def b2b_get_data(self):
         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
         'fixed:pdf': base64.b64encode(docfile)
     }</field>
-		</record>
+        </record>
 
-		<record id="b2b_item_17" model="b2b.item.out">
-			<field name="sequence">17</field>
-			<field name="active">True</field>
-			<field name="name">sale_order</field>
-			<field name="model">sale.order</field>
-			<field name="description">Pedido de venta</field>
-			<field name="code">b2b_fields_to_watch = (
+        <record id="b2b_item_out_17" model="b2b.item.out">
+            <field name="sequence">17</field>
+            <field name="active">True</field>
+            <field name="name">sale_order</field>
+            <field name="model">sale.order</field>
+            <field name="description">Pedido de venta</field>
+            <field name="code">b2b_fields_to_watch = (
     'partner_id', 
     'name', 
     'date_order', 
@@ -541,7 +542,7 @@ def b2b_get_data(self):
     'state'
 )
 
-def b2b_is_notifiable(self, vals):
+def b2b_is_notifiable(self, action, vals):
     # Comprobamos si el cliente relaccionado es notificable
     client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
     notifiable_client = client_item.must_notify(self.partner_id.commercial_partner_id) if client_item else False
@@ -566,5 +567,6 @@ def b2b_get_data(self):
         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
         'fixed:pdf': base64.b64encode(docfile)
     }</field>
-		</record>
+        </record>
+    </data>
 </odoo>

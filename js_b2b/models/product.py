@@ -3,6 +3,8 @@
 from odoo import api, fields, models, tools, _
 from odoo.exceptions import ValidationError
 
+base_product_publish_error = 'Error! You can not publish this product because '
+
 class ProductPublicCategory(models.Model):
 	_name = "product.public.category"
 	_description = "Website Product Category"
@@ -49,7 +51,14 @@ class ProductTemplate(models.Model):
 
 	@api.multi
 	def website_publish_button(self):
+		
 		for product in self:
+			if not product.sale_ok:
+				raise ValidationError(_(base_product_publish_error + 'it cannot be sold.'))
+			if self.type != 'product':
+				raise ValidationError(_(base_product_publish_error + 'it is not storable.'))
+			if not self.tag_ids:
+				raise ValidationError(_(base_product_publish_error + 'does not have tags.'))
 			toggled_status = not product.website_published
 			product.website_published = toggled_status
 			product.mapped('product_variant_ids').write({ 'website_published': toggled_status })
@@ -63,5 +72,5 @@ class ProductProduct(models.Model):
 	def website_publish_button(self):
 		for variant in self:
 			if not variant.product_tmpl_id.website_published:
-				raise ValidationError(_('Error! You can not publish this product because template in unpublished.'))
+				raise ValidationError(_(base_product_publish_error + 'template is unpublished.'))
 			variant.website_published = not variant.website_published

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="b2b_item_in_1" model="b2b.item.in">
+            <field name="sequence">1</field>
+            <field name="active">True</field>
+            <field name="name">sale_order</field>
+            <field name="model">sale.order</field>
+            <field name="description">Presupuesto de venta</field>
+        </record>
+    </data>
+</odoo>

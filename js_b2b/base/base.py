@@ -105,8 +105,16 @@ class BaseB2B(models.AbstractModel):
 		for item in self:
 			item_active = vals.get('active')
 			item_status = vals.get('state')
+			# Los productos se envían de forma diferente, tienen su propio botón
+			if item._name in ('product.template', 'product.product'):
+				# Se está publicando
+				if not item.website_published and vals.get('website_published') == True:
+					item.__b2b_record('create')
+				# Se está des-publicando
+				elif item.website_published and vals.get('website_published') == False:
+					item.__b2b_record('delete', False)
 			# Al activarse y no estar cancelado se crea de nuevo
-			if ('active' in item and not item.active and item_active is True) and item_status != 'cancel':
+			elif ('active' in item and not item.active and item_active is True) and item_status != 'cancel':
 				item.__b2b_record('create')
 			# Al desactivarse o cancelarse se elimina
 			elif ('active' in item and item.active and item_active is False) or item_status == 'cancel':
