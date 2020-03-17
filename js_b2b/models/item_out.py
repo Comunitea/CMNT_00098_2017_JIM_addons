@@ -69,8 +69,8 @@ class B2bItemsOut(models.Model):
 		except Exception as e:
 			raise UserError(_('Syntax Error?\n') + str(e))
 		# Check required vars and methods to avoid fatal errors
-		variables = { 'b2b_fields_to_watch': tuple }
-		methods = ['b2b_is_notifiable', 'b2b_get_action', 'b2b_get_data']
+		variables = { 'fields_to_watch': tuple }
+		methods = ['is_notifiable', 'get_action', 'get_data']
 		for var in tuple(variables.keys() + methods):
 			if not var in locals():
 				raise UserError(_('Code Error!\n %s not defined' % (var)))
@@ -91,27 +91,31 @@ class B2bItemsOut(models.Model):
 		is_notifiable = True
 		# Basic checks, model and code
 		if record and record._name in self.model and type(self.code) is unicode:
-			local_vals = { 'datetime': datetime, 'base64': base64 }
+			import datetime
+			import base64
+			b2b = dict()
 			# Ejecutamos el código con exec(self.code)
 			# establece localmente las siguentes variables y métodos:
-			#   b2b_fields_to_watch <type 'tuple'>
-			#   b2b_is_notifiable <type 'function'>
-			#	b2b_get_action <type 'function'>
-			#   b2b_get_data <type 'function'>
-			exec(self.code, locals(), local_vals)
+			#   b2b['fields_to_watch'] <type 'tuple'>
+			#   b2b['is_notifiable'] <type 'function'>
+			#	b2b['get_action'] <type 'function'>
+			#   b2b['get_data'] <type 'function'>
+			exec(self.code, locals(), b2b)
+			# Comprobamos si es notificable
+			is_notifiable = b2b['is_notifiable'](record, mode, vals)
 			# Devuelve False si ninguno de los campos recibidos en vals
 			# está presente en b2b_fields_to_watch (cuando los tipos coinciden)
-			if type(local_vals['b2b_fields_to_watch']) is tuple and type(vals) is dict:
+			if type(b2b['fields_to_watch']) is tuple and type(vals) is dict:
 				vals_set = set(vals)
-				fields_set = set(local_vals['b2b_fields_to_watch'])
-				is_notifiable = bool(vals_set.intersection(fields_set))
+				fields_set = set(b2b['fields_to_watch'])
+				is_notifiable =  is_notifiable and bool(vals_set.intersection(fields_set))
 			# Comprobamos si se debe notificar según el código
-			if is_notifiable and local_vals['b2b_is_notifiable'](record, mode, vals):
+			if is_notifiable:
 				return {
 					# Obtener la acción a realizar con los datos
-					'action': local_vals['b2b_get_action'](record, mode, vals), 
+					'action': b2b['get_action'](record, mode, vals), 
 					# Obtener los datos del registro
-					'data': local_vals['b2b_get_data'](record)
+					'data': b2b['get_data'](record)
 				}
 			return False
 		return False
@@ -155,7 +159,7 @@ class B2bItemsOut(models.Model):
 			record_percent_str = str(record_percent) + '%'
 			record = self.env[self.model].browse(id)
 			# Exec code
-			item_to_send = self.must_notify(record, mode)
+			item_to_send = self.must_notify(record, mode) or dict()
 			# Action to do
 			item_action = item_to_send.get('action')
 			# Data to send

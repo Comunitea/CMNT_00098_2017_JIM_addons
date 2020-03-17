@@ -49,7 +49,7 @@ class JSync:
 		self.session.mount('http://', adapter)
 		self.session.mount('https://', adapter)
 
-	def filter_data(self, vals=None):
+	def filter_data(self, vals=None, delete=False):
 		"""
 		Filter and normalizes item data (data)
 
@@ -75,7 +75,7 @@ class JSync:
 						obj_new = field[field.index(':') + 1:]
 						# Replace key
 						self.data[obj_new] = self.data.pop(field)
-					if obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
+					if delete or obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
 						# Remove field because is not found in vals
 						del self.data[obj_new]
 					elif type(value) is list:

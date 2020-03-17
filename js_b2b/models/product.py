@@ -51,22 +51,26 @@ class ProductTemplate(models.Model):
 
 	@api.multi
 	def website_publish_button(self):
-		
 		for product in self:
-			if not product.sale_ok:
-				raise ValidationError(_(base_product_publish_error + 'it cannot be sold.'))
-			if self.type != 'product':
-				raise ValidationError(_(base_product_publish_error + 'it is not storable.'))
-			if not self.tag_ids:
-				raise ValidationError(_(base_product_publish_error + 'does not have tags.'))
-			toggled_status = not product.website_published
+			if not product.website_published:
+				if not self.tag_ids:
+					raise ValidationError(_(base_product_publish_error + 'does not have tags.'))
+				if not self.public_categ_ids:
+					raise ValidationError(_(base_product_publish_error + 'does not have web categories.'))
+			toggled_status = bool(not product.website_published)
 			product.website_published = toggled_status
 			product.mapped('product_variant_ids').write({ 'website_published': toggled_status })
 
 class ProductProduct(models.Model):
  	_inherit = ["product.product"]
 
- 	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
+ 	def _default_website_published(self):
+ 		""" 
+ 		Set default value based on template field 
+ 		"""
+ 		return self.product_tmpl_id.website_published
+
+ 	website_published = fields.Boolean('Visible on Website', default=_default_website_published, copy=False)
 
  	@api.multi
 	def website_publish_button(self):

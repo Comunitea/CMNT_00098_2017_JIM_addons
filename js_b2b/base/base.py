@@ -74,7 +74,7 @@ class BaseB2B(models.AbstractModel):
 				# Obtenemos los datos
 				packet.data = item_data
 				# Normalizamos los datos
-				packet.filter_data(vals)
+				packet.filter_data(vals, delete=(item_action == 'delete'))
 				# Guardamos el paquete
 				packets.append(packet)
 				# No se puede crear un elemento si se está llamando desde unlink()
@@ -85,7 +85,7 @@ class BaseB2B(models.AbstractModel):
 				# Si los datos son correctos lo enviamos
 				if not_empty and not bad_action:
 					packet.send(action=item_action)
-					break
+					#break
 		# Paquetes creados
 		return packets
 
@@ -93,14 +93,18 @@ class BaseB2B(models.AbstractModel):
 
 	@api.model
 	def create(self, vals):
-		print("----------- CREATE", self._name, vals)
+		print("----------- [B2B BASE] CREATE", self._name, vals)
 		item = super(BaseB2B, self).create(vals)
-		item.__b2b_record('create')
+		# Los productos no se envían cuando se crean
+		if item._name not in ('product.template', 'product.product'):
+			item.__b2b_record('create')
 		return item
 
 	@api.multi
 	def write(self, vals):
-		print("----------- WRITE", self._name, vals)
+		print("----------- [B2B BASE] WRITE", self._name, vals)
+		active_before = { item.id:bool('active' in item and item.active) for item in self } 
+		website_published_before = { item.id:bool('website_published' in item and item.website_published) for item in self } 
 		super(BaseB2B, self).write(vals)
 		for item in self:
 			item_active = vals.get('active')
@@ -108,16 +112,16 @@ class BaseB2B(models.AbstractModel):
 			# Los productos se envían de forma diferente, tienen su propio botón
 			if item._name in ('product.template', 'product.product'):
 				# Se está publicando
-				if not item.website_published and vals.get('website_published') == True:
+				if not website_published_before[item.id] and vals.get('website_published') == True:
 					item.__b2b_record('create')
 				# Se está des-publicando
-				elif item.website_published and vals.get('website_published') == False:
+				elif website_published_before[item.id] and vals.get('website_published') == False:
 					item.__b2b_record('delete', False)
 			# Al activarse y no estar cancelado se crea de nuevo
-			elif ('active' in item and not item.active and item_active is True) and item_status != 'cancel':
+			elif (not active_before[item.id] and item_active == True) and item_status != 'cancel':
 				item.__b2b_record('create')
 			# Al desactivarse o cancelarse se elimina
-			elif ('active' in item and item.active and item_active is False) or item_status == 'cancel':
+			elif (active_before[item.id] and item_active == False) or item_status == 'cancel':
 				item.__b2b_record('delete', False)
 			# Para otros cambios se actualiza (si está activo)
 			elif item_active in (True, None):
@@ -126,7 +130,7 @@ class BaseB2B(models.AbstractModel):
 
 	@api.multi
 	def unlink(self):
-		print("----------- DELETE", self._name, self)
+		print("----------- [B2B BASE] DELETE", self._name, self)
 		packets = list()
 		for item in self:
 			packets += item.__b2b_record(False, False)
