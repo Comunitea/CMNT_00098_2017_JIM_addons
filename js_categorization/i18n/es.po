@@ -385,7 +385,7 @@ msgstr "Productos"
 #. module: js_categorization
 #: model:ir.actions.act_window,name:js_categorization.categorization_products
 msgid "Products Categorizated"
-msgstr "Productos Categorizados"
+msgstr "Productos Parametrizados"
 
 #. module: js_categorization
 #: model:ir.actions.act_window,help:js_categorization.js_categorization_fields
