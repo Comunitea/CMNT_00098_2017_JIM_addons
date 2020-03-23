@@ -2,7 +2,6 @@
 from odoo import api, models, tools, SUPERUSER_ID
 from .helper import OutputHelper, Google
 from inspect import getmembers
-from pprint import pprint
 import json
 
 # Suscriber class

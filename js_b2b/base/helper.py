@@ -3,16 +3,14 @@ from datetime import datetime
 from requests.adapters import HTTPAdapter
 from odoo.http import request as HttpRequest
 from requests.packages.urllib3.util.retry import Retry as httpRetry
+from json import loads as json_load, dumps as json_dump
 from odoo.exceptions import ValidationError
 from google.cloud import pubsub_v1
 from unidecode import unidecode
+from sys import getsizeof
+from os import environ
+from math import ceil
 import requests
-import json
-import os
-
-#cr = openerp.registry(self.env.cr.dbname).cursor()
-#api.Environment(cr, odoo.SUPERUSER_ID, self.env.context)
-#api.Environment(self.cr, self.uid, {})
 
 class OutputHelper:
 
@@ -23,7 +21,11 @@ class OutputHelper:
 	DIVIDER = "=" * 80 # Divider line
 
 	@staticmethod
-	def print_text(msg, msg_type=''):
+	def log(msg, msg_type=''):
+		print("{}{}{}".format(msg_type, msg, OutputHelper.ENDC if msg_type else ''))
+
+	@staticmethod
+	def print_message(msg, msg_type=''):
 		"""
 		Prints a formatted output message
 
@@ -36,18 +38,42 @@ class OutputHelper:
 
 class JSync:
 
-	id = None # Item id
 	name = None # Data item name
 	data = {} # Item data dict
 	session = None # HTTP Session
+	settings = dict() # JSync Settings
+	path = '' # URL Path
 
-	def __init__(self, id=None, retries=3):
-		self.id = id
-		self.session = requests.Session()
+	def __init__(self, retries=3, settings=dict()):
 		retry = httpRetry(total=retries, connect=retries, backoff_factor=0.3, status_forcelist=(500, 502, 504))
 		adapter = HTTPAdapter(max_retries=retry)
+		self.session = requests.Session()
 		self.session.mount('http://', adapter)
 		self.session.mount('https://', adapter)
+		self.settings = settings or HttpRequest.env['b2b.settings'].get_default_params()
+
+	def __data_iterator(self):
+		"""
+		Splits data list in multiple parts
+
+		:param parts: Number of parts
+		:return: list of iterators
+		"""
+		out_it = []
+		last = 0.0
+
+		if not self.data or type(self.data) not in (list, tuple):
+			return False
+
+		packet_size_mb = self.settings.get('packet_size', 5)
+		data_size = getsizeof(self.data)/1048576
+		num_packets_total = ceil(data_size / packet_size_mb) or 1
+		data_items_count = len(self.data)
+		avg = data_items_count / float(num_packets_total)
+		while last < data_items_count:
+			out_it.append(iter(self.data[int(last):int(last + avg)]))
+			last += avg
+		return out_it
 
 	def filter_data(self, vals=None, delete=False):
 		"""
@@ -93,62 +119,82 @@ class JSync:
 
 		return self.data
 
-	def send(self, path='', action=None, timeout_sec=10):
+	def __send(self, data_dict, action, timeout_sec=10, settings=None):
+		"""
+		Sends data to JSync server and prints on screen (low private method)
+
+		:param data_dict: valid data dict
+		:param action: valid action str
+
+		"""
+
+		# Header
+		header_dict = { 'Content-Type': 'application/json' }
+
+		# Debug
+		debug_msg = "JSync Response: {}" \
+					"\n    - name: {}" \
+					"\n    - operation: {}" \
+					"\n    - data: {}" \
+					"\n    - part: {}"
+
+		json_data = json_dump(data_dict)
+		debug_data = json_dump(data_dict.get('data'), indent=8, sort_keys=True)
+
+		try:
+			
+			endpoint = self.settings.get('url') + self.path
+			jsync_res = self.session.post(endpoint, timeout=timeout_sec, headers=header_dict, data=json_data)
+			OutputHelper.print_message(debug_msg.format(jsync_res.text, data_dict.get('name'), data_dict.get('operation'), debug_data, data_dict.get('part')), OutputHelper.OK)
+
+			if jsync_res.status_code is not 200 and self.settings['conexion_error'] and self.settings['response_error']:
+				raise ValidationError("JSync Server Response Error\n%s" % (jsync_res.text.encode('latin1').capitalize()))
+
+			try:
+				return json_load(jsync_res.text)
+			except:
+				return jsync_res.text
+
+		except Exception as e:
+			OutputHelper.print_message(debug_msg.format('CONNECTION ERROR!', data_dict.get('id'), data_dict.get('name'), data_dict.get('operation'), debug_data), OutputHelper.ERROR)
+			if self.settings['conexion_error']:
+				if type(e) is not ValidationError:
+					raise ValidationError("JSync Server Connection Error\n%s" % (e))
+				else:
+					raise e
+
+	def send(self, **kwargs):
 		"""
 		Sends data to JSync server and prints on screen
 
-		:param path: URL path to post
 		:param action: CRUD action
 		:param timeout_sec: POST Request timeout
 
 		"""
+		if self.name and kwargs.get('action'):
 
-		if self.name and action:
+			# Get multiple data iterators
+			# large data sets have to be divided in multiple parts
+			# determined by packet_size on settings
+			data_list_multiple = self.__data_iterator()
 
-			# Header
-			header_dict = { 
-				'Content-Type': 'application/json' 
-			}
-
-			# Content
-			data_dict = {
-				'id': self.id,
-				'name': self.name,
-				'operation': action,
-				'data': self.data
-			}
-
-			# Debug
-			debug_msg = "JSync Response: {}" \
-						"\n    - id: {}" \
-						"\n    - name: {}" \
-						"\n    - operation: {}" \
-						"\n    - data: {}"
-
-			json_data = json.dumps(data_dict)
-			debug_data = json.dumps(data_dict.get('data'), indent=8, sort_keys=True)
-			b2b_settings = HttpRequest.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error'])
-
-			try:
-				
-				jsync_res = self.session.post(b2b_settings['url'] + path, timeout=timeout_sec, headers=header_dict, data=json_data)
-				OutputHelper.print_text(debug_msg.format(jsync_res.text, data_dict.get('id'), data_dict.get('name'), data_dict.get('operation'), debug_data), OutputHelper.OK)
-
-				if jsync_res.status_code is not 200 and b2b_settings['conexion_error'] and b2b_settings['response_error']:
-					raise ValidationError("JSync Server Response Error\n%s" % (jsync_res.text.encode('latin1').capitalize()))
-
-				try:
-					return json.loads(jsync_res.text)
-				except:
-					return jsync_res.text
-
-			except Exception as e:
-				OutputHelper.print_text(debug_msg.format('CONNECTION ERROR!', data_dict.get('id'), data_dict.get('name'), data_dict.get('operation'), debug_data), OutputHelper.ERROR)
-				if b2b_settings['conexion_error']:
-					if type(e) is not ValidationError:
-						raise ValidationError("JSync Server Connection Error\n%s" % (e))
-					else:
-						raise e
+			if data_list_multiple:
+				# Multiple
+				num_packets = len(data_list_multiple)
+				for i in range(num_packets):
+					self.__send({
+							'name': self.name,
+							'operation': kwargs['action'],
+							'data': list(data_list_multiple[i]),
+							'part': [i + 1, num_packets]
+						}, **kwargs)
+			else:
+				# One
+				self.__send({
+						'name': self.name,
+						'operation': kwargs['action'],
+						'data': self.data
+					}, **kwargs)
 
 class Google:
 
@@ -159,6 +205,6 @@ class Google:
 
 	def receive(self, subscription, callback_obj):
 		if self.subscriber:
-			sub_path = self.subscriber.subscription_path(os.environ['GOOGLE_CLOUD_PROJECT_ID'], subscription)
+			sub_path = self.subscriber.subscription_path(environ['GOOGLE_CLOUD_PROJECT_ID'], subscription)
 			flow_control_obj = pubsub_v1.types.FlowControl(max_messages=10)
 			return self.subscriber.subscribe(sub_path, callback=callback_obj, flow_control=flow_control_obj)

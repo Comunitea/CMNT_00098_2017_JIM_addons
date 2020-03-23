@@ -14,6 +14,7 @@
 				</header>
 				<div>
 					<group string="B2B Settings">
+						<field name="packet_size" class="oe_inline"/>
 						<field name="url" class="oe_inline"/>
 						<field name="conexion_error" class="oe_inline"/>
 						<field name="response_error" class="oe_inline" attrs="{'invisible': [('conexion_error','=',False)]}"/>

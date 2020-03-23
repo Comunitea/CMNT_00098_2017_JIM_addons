@@ -20,6 +20,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'name': self.get_field_translations('name'),
         'type': 'color' if self.is_color else 'select',
         'sequence': self.sequence
@@ -45,6 +46,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'attribute_id': self.attribute_id.id,
         'name': self.get_field_translations('name'),
         'sequence': self.sequence
@@ -71,6 +73,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'name': self.name,
         'description': self.get_field_translations('description'),
         'upload:logo': self.logo or None
@@ -94,6 +97,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'name': self.get_field_translations('name'),
         'parent_id': self.parent_id.id if self.parent_id else None,
         'upload:image': self.image or None,
@@ -117,6 +121,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'name': self.get_field_translations('name'),
         'parent_id': self.parent_id.id if self.parent_id else None,
         'upload:image': self.image or None,
@@ -151,6 +156,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'name': self.get_field_translations('name'),
         'default_code:reference': self.template_code or self.default_code,
         'barcode:ean13': self.barcode if self.barcode else None,
@@ -208,6 +214,7 @@ def get_data(self):
         return dict()
     # Enviamos los datos
     return {
+        'fixed:jim_id': self.id,
         'fixed:product_id': self.product_tmpl_id.id,
         'default_code:reference': self.default_code,
         'fixed:attribute_value': self.attribute_value_ids.ids,
@@ -250,6 +257,7 @@ def get_data(self):
         parameterization.update({ field.field_description:field_value })
     # Return data
     return {
+        'fixed:jim_id': self.id,
         'fixed:product_id': product_id,
         'fixed:variant_id': variant_id,
         'fixed:parameters': parameterization
@@ -272,6 +280,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'fixed:product_id': self.product_tmpl_id.id, 
         'name': self.get_field_translations('name'), 
         'upload:url': self.image or None, 
@@ -295,6 +304,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'lname:name': self.lname or self.name,
         'code': self.name,
         'symbol': self.symbol,
@@ -308,7 +318,7 @@ def get_data(self):
             <field name="name">pricelist</field>
             <field name="model">product.pricelist</field>
             <field name="description">Tarifas</field>
-            <field name="code">fields_to_watch = None
+            <field name="code">fields_to_watch = ('name', 'currency_id')
 
 def is_notifiable(self, action, vals):
     return True
@@ -318,6 +328,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'fixed:name': self.name,
         'fixed:currency_id': self.currency_id.id
     }</field>
@@ -347,6 +358,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'purchase_line_id:order_id': self.purchase_line_id.order_id.id,
         'product_id': self.product_id.product_tmpl_id.id if self.product_id else None,
         'variant_id': self.product_id.id if self.product_id.product_tmpl_id.product_variant_count > 1 else None,
@@ -392,6 +404,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'name': self.name,
         'vat': self.vat or None,
         'email': get_primary_email(self.email),
@@ -432,6 +445,7 @@ def get_action(self, action, vals):
 
 def get_data(self):
     return {
+        'fixed:jim_id': self.id,
         'customer_id': self.parent_id.id, 
         'ref:reference': self.ref, 
         'name': self.name, 
@@ -479,6 +493,7 @@ def get_data(self):
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
     # de forma que los campos que no se modifican al validar no se enviarían
     return {
+        'fixed:jim_id': self.id,
         'fixed:customer_id': self.commercial_partner_id.id,
         'fixed:number': self.number, 
         'fixed:date': self.date_invoice, 
@@ -520,6 +535,7 @@ def get_data(self):
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
     # de forma que los campos que no se modifican al validar no se enviarían
     return {
+        'fixed:jim_id': self.id,
         'fixed:customer_id': self.partner_id.commercial_partner_id.id,
         'fixed:name': self.name, 
         'fixed:date': self.date_done, 
@@ -561,12 +577,54 @@ def get_data(self):
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
     # de forma que los campos que no se modifican al validar no se enviarían
     return {
+        'fixed:jim_id': self.id,
         'fixed:customer_id': self.partner_id.commercial_partner_id.id,
         'fixed:name': self.name, 
         'fixed:date': self.date_order, 
         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
         'fixed:pdf': base64.b64encode(docfile)
     }</field>
+        </record>
+
+        <record id="b2b_item_out_18" model="b2b.item.out">
+            <field name="sequence">18</field>
+            <field name="active">True</field>
+            <field name="name">customer_price</field>
+            <field name="model">customer.price</field>
+            <field name="description">Precios de clientes (actualizaciones)</field>
+            <field name="code">fields_to_watch = None
+
+def is_notifiable(self, action, vals):
+    return self.product_id or self.product_tmpl_id
+
+def get_action(self, action, vals):
+    return None
+
+def get_data(self):
+    # Llamamos al método que envía los precios pero lo limitamos a esta línea
+    self.env['b2b.export'].b2b_customers_prices(lines_filter=[self.id,])
+    return list()</field>
+        </record>
+
+        <record id="b2b_item_out_19" model="b2b.item.out">
+            <field name="sequence">19</field>
+            <field name="active">True</field>
+            <field name="name">pricelist_item</field>
+            <field name="model">product.pricelist.item</field>
+            <field name="description">Precios de tarifas (actualizaciones)</field>
+            <field name="code">fields_to_watch = None
+
+def is_notifiable(self, action, vals):
+    return self.product_id or self.product_tmpl_id
+
+def get_action(self, action, vals):
+    return None
+
+def get_data(self):
+    template_obj = self.product_id.product_tmpl_id if self.product_id else self.product_tmpl_id
+    # Llamamos al método que envía los precios pero lo limitamos a esta plantilla
+    self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[template_obj.id,])
+    return list()</field>
         </record>
     </data>
 </odoo>

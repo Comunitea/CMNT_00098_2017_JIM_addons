@@ -9,7 +9,8 @@ PARAMS = {
 	'url': ('b2b.server_url', 'http://0.0.0.0/'),
 	'conexion_error': ('b2b.show_conexion_error', True),
 	'response_error': ('b2b.show_response_error', True),
-	'last_stock_date': ('b2b.last_stock_date', False)
+	'last_stock_date': ('b2b.last_stock_date', False),
+	'packet_size': ('b2b.packet_size_mb', 5)
 }
 
 class B2BSettings(models.TransientModel):
@@ -19,7 +20,8 @@ class B2BSettings(models.TransientModel):
 	url = fields.Char('JSync URL', required=True, translate=False, help="Set the server URL (http://ip:port/)")
 	conexion_error = fields.Boolean('Conexion errors', help="Disturb user with conexion errors and do not execute the action.")
 	response_error = fields.Boolean('Response errors', help="Disturb user with response errors and do not execute the action.")
-	last_stock_date = fields.Char('Last Stock Date', required=False, translate=False, help="Last time execution for stock planified action")
+	last_stock_date = fields.Char('Last Stock Date', help="Last time execution for stock planified action")
+	packet_size = fields.Float(string='Max. Packet Size', help="Messages that exceeds this limit are splited")
 
 	@api.multi
 	def execute(self):
@@ -36,7 +38,7 @@ class B2BSettings(models.TransientModel):
 		return super(B2BSettings, self).execute()
 
 	@api.model
-	def set_param(self, param, value=None):
+	def update_param(self, param, value=None):
 		if param in PARAMS:
 			key_name = PARAMS[param][0]
 			default_val = PARAMS[param][1]

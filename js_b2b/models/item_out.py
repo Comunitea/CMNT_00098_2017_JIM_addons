@@ -14,20 +14,24 @@ class B2bItemsOut(models.Model):
 
 	_default_code_str = re.sub(r'(^[ ]{0,8})', '', """
         # Set to None for watch all
-        b2b_fields_to_watch = ('name', 'reference')
+        fields_to_watch = ('name', 'reference')
 
-        def b2b_is_notifiable(self, action, vals):
+        # When this model is notifiable
+        def is_notifiable(self, action, vals):
             return True
 
-        def b2b_get_action(self, action, vals):
+        # Update default action (experimental)
+        def get_action(self, action, vals):
             return action
 
-        def b2b_get_data(self):
+        # Object data to send
+        def get_data(self):
             return {
+                # Item key (required)
+                # fixed: modifier forces send even if it has not changed
+                'fixed:jim_id': self.id,
                 # Sends names dict when field has changed
                 'name': self.get_field_translations('name'),
-                # fixed: modifier forces send even if it has not changed
-                'fixed:reference': self.default_code,
                 # field: modifier sends if field has changed, if not setted send null
                 'categ_id:category_id': self.categ_id.id if self.categ_id else None,
                 # upload: modifier uploads base64 image to public server and replaces this param with the URL
@@ -90,7 +94,7 @@ class B2bItemsOut(models.Model):
 		# Default
 		is_notifiable = True
 		# Basic checks, model and code
-		if record and record._name in self.model and type(self.code) is unicode:
+		if record and record._name in self.model.split(',') and type(self.code) is unicode:
 			import datetime
 			import base64
 			b2b = dict()
@@ -168,7 +172,7 @@ class B2bItemsOut(models.Model):
 			if item_data:
 				print("@@ RECORD ID#%s IS NOTIFIABLE!" % (record.id), record_percent_str)
 				# Make & send packet
-				packet = JSync(record.id)
+				packet = JSync()
 				packet.name = self.name
 				packet.data = item_data
 				packet.filter_data()

@@ -80,10 +80,8 @@ class BaseB2B(models.AbstractModel):
 				# No se puede crear un elemento si se está llamando desde unlink()
 				# esto solo pasará si hemos modificado la acción por defecto
 				bad_action = item_action == 'create' and mode == False
-				# Los datos no pueden estar vacíos, a no ser que se haga un borrado
-				not_empty = item_action and item_action == 'delete' or packet.data
 				# Si los datos son correctos lo enviamos
-				if not_empty and not bad_action:
+				if packet.data and not bad_action:
 					packet.send(action=item_action)
 					#break
 		# Paquetes creados
