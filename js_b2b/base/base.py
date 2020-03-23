@@ -74,7 +74,7 @@ class BaseB2B(models.AbstractModel):
 				# Obtenemos los datos
 				packet.data = item_data
 				# Normalizamos los datos
-				packet.filter_data(vals, delete=(item_action == 'delete'))
+				packet.filter_data(vals)
 				# Guardamos el paquete
 				packets.append(packet)
 				# No se puede crear un elemento si se está llamando desde unlink()
