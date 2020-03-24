@@ -156,7 +156,7 @@ class JSync:
 				return jsync_res.text
 
 		except Exception as e:
-			OutputHelper.print_message(debug_msg.format('CONNECTION ERROR!', data_dict.get('id'), data_dict.get('name'), data_dict.get('operation'), debug_data), OutputHelper.ERROR)
+			OutputHelper.print_message(debug_msg.format('CONNECTION ERROR!', data_dict.get('name'), data_dict.get('operation'), debug_data, data_dict.get('part')), OutputHelper.ERROR)
 			if self.settings['conexion_error']:
 				if type(e) is not ValidationError:
 					raise ValidationError("JSync Server Connection Error\n%s" % (e))
