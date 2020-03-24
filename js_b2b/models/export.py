@@ -60,8 +60,12 @@ class B2BBulkExport(models.Model):
 				SELECT product_id FROM sale_order_line WHERE \
 				write_date > %s \
 				GROUP BY product_id \
+					UNION \
+				SELECT product_id FROM stock_quant WHERE \
+				write_date > %s \
+				GROUP BY product_id \
 			) \
-			GROUP BY product_tmpl_id", [date, date])
+			GROUP BY product_tmpl_id", [date, date, date])
 		return tuple(r[0] for r in self.env.cr.fetchall())
 
 	# ------------------------------------ PUBLIC METHODS ------------------------------------
