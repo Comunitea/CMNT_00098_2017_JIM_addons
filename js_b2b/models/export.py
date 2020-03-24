@@ -233,10 +233,11 @@ class B2BBulkExport(models.Model):
 				product = self.env['product.template'].browse(product_id)
 				print(":: %s%% PROCESANDO... [%s] %s" % (percent, product.default_code, product.name))
 				for variant in product.product_variant_ids:
+					stock_for_product = variant.web_global_stock or 0
 					stock.append({ 
 						'product_id': variant.product_tmpl_id.id,
 						'variant_id': variant.id if variant.product_attribute_count else None,
-						'stock': variant.web_global_stock
+						'stock': stock_for_product
 					})
 		except Exception as e:
 			self.write_to_log('[b2b_products_stock] ERROR ON LOOP! %s' % e)
