@@ -22,8 +22,8 @@ class B2BBulkExport(models.Model):
 	# ------------------------------------ CUSTOM QUERIES ------------------------------------
 
 	def __pricelists_unique_quantities(self):
-		self.env.cr.execute(
-			"SELECT pricelist_id, CASE \
+		self.env.cr.execute("SELECT pricelist_id, \
+			CASE \
 				WHEN min_quantity > 0 THEN min_quantity \
 				ELSE 1 \
 			END min_qty \
@@ -35,8 +35,8 @@ class B2BBulkExport(models.Model):
 		return self.env.cr.fetchall()
 
 	def __products_in_pricelists(self):
-		self.env.cr.execute(
-			"SELECT product_tmpl_id FROM product_product \
+		self.env.cr.execute("SELECT product_tmpl_id \
+			FROM product_product \
 			WHERE id IN ( \
 				SELECT product_id FROM product_pricelist_item \
 				WHERE active = true \
@@ -50,8 +50,8 @@ class B2BBulkExport(models.Model):
 		return tuple(r[0] for r in self.env.cr.fetchall())
 
 	def __products_with_stock_moves(self, date=None):
-		self.env.cr.execute(
-			"SELECT product_tmpl_id FROM product_product \
+		self.env.cr.execute("SELECT product_tmpl_id \
+			FROM product_product \
 			WHERE id IN ( \
 				SELECT product_id FROM stock_move WHERE \
 				write_date > %s \
@@ -170,7 +170,7 @@ class B2BBulkExport(models.Model):
 		# Get decimals number
 		prices_precision = self.env['decimal.precision'].precision_get('Product Price')
 		# Price lines filter
-		prices_filter = [('id', 'in', lines_filter)] if lines_filter else list()
+		prices_filter = [('id', 'in', lines_filter)] if lines_filter and type(lines_filter) is list else list()
 		try:
 			# Get all prices
 			for price_line in self.env['customer.price'].read_group(prices_filter, ('partner_id', 'product_tmpl_id', 'product_id', 'min_qty', 'price'), groupby=('partner_id', 'product_tmpl_id', 'product_id', 'min_qty'), orderby=('id DESC'), lazy=False):
@@ -204,7 +204,7 @@ class B2BBulkExport(models.Model):
 			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
 			packet.name = 'customer_price'
 			packet.data = prices
-			packet.send(action='update' if prices_filter is not None else 'replace', timeout_sec=300)
+			packet.send(action='update' if lines_filter is not None else 'replace', timeout_sec=300)
 			self.write_to_log(str(prices), 'customer_price', "w+")
 
 	def b2b_products_stock(self, test_limit=None, test_date=None):
@@ -237,11 +237,11 @@ class B2BBulkExport(models.Model):
 				product = self.env['product.template'].browse(product_id)
 				print(":: %s%% PROCESANDO... [%s] %s" % (percent, product.default_code, product.name))
 				for variant in product.product_variant_ids:
-					stock_for_product = variant.web_global_stock or 0
+					stock_for_product = variant.web_global_stock
 					stock.append({ 
 						'product_id': variant.product_tmpl_id.id,
 						'variant_id': variant.id if variant.product_attribute_count else None,
-						'stock': stock_for_product
+						'stock': stock_for_product if stock_for_product > 0 else 0
 					})
 		except Exception as e:
 			self.write_to_log('[b2b_products_stock] ERROR ON LOOP! %s' % e)
