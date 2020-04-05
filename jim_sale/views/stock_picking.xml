@@ -23,6 +23,9 @@
                 <field name="location_dest_id" position="after">
                      <field name="scheduled_order"/>
                 </field>
+                <xpath expr="//field[@name='min_date']"  position="after">
+                    <field name="confirmation_date" attrs="{'invisible': [('sale_id', '=', False)]}"/>
+                </xpath>
             </field>
         </record>
 
