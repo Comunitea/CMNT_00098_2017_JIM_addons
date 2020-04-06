@@ -15,3 +15,4 @@ class ResCompany(models.Model):
     iso_logo = fields.Binary()
     hide_fields = fields.Boolean()
     iso_purchase_order_text = fields.Html(translate=True)
+    company_advise = fields.Html(translate=True)

@@ -26,7 +26,8 @@
         'commercial_rules',
         'telesale',
         'sale_early_payment_discount',
-        'report_wkhtmltopdf_param'
+        'report_wkhtmltopdf_param',
+        'report_qweb_element_page_visibility'
     ],
     "data": [
         'views/layout_templates.xml',

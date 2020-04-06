@@ -186,6 +186,11 @@
                         <span t-field="o.payment_mode_id.report_refund_warning"/>
                     </div>
                 </div>
+
+                <div class="row" style="page-break-before: always">
+                        <div class="col-xs-12">
+                        </div>
+                    </div>
             </div>
         </t>
     </template>

@@ -27,9 +27,17 @@
         <t t-if="o._name == 'account.invoice'" t-call="custom_documents.custom_layout_header_invoce" />
         <t t-if="o._name == 'purchase.order'" t-call="custom_documents.custom_layout_header_purchase" />
         <t t-raw="0" />
-        <t t-call="custom_documents.custom_layout_footer" />
+        <t t-call="custom_documents.custom_layout_footer"/>
     </template>
-
+     <template id="company_advise" name="Página de condiciones">
+        <div class="last-page" style="page-break-before: always">
+            <div class="row">
+              <div class="col-xs-12">
+                <span t-raw="o.company_id.company_advise"/>
+              </div>
+            </div>
+        </div>
+    </template>
     <!-- cabecera para pedidos y proforma que se tratan como un pedidos, mira si esta marcado el campo neutro y logo se imprime proforma o pedido -->
     <template id="custom_layout_header_sale">
         <div class="header">
@@ -129,6 +137,12 @@
     <!-- cabecera para albarán, mira si está marcado o campo neutro -->
     <template id="custom_layout_header_picking">
         <div class="header">
+             <div class="row last-page" style="padding-top: 75px">
+              <div class="col-xs-12">
+                <span t-raw="o.company_id.company_advise"/>
+              </div>
+            </div>
+            <div class="not-last-page">
             <div class="row">
                 <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;">
                     <div class="sombreado" t-if=" not o.neutral_document" style="padding-left:10px;">
@@ -229,6 +243,7 @@
                     </table>
                 </div>
             </div>
+            </div>
         </div>
     </template>
 
@@ -236,86 +251,93 @@
     <!-- cabeceira para facturas-->
      <template id="custom_layout_header_invoce">
         <div class="header">
-            <div class="row">
-                <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;" >
-                    <div class="sombreado" t-if="not o.company_id.hide_fields" style="padding-left:10px;">
-                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
+             <div class="row last-page" style="padding-top: 75px">
+              <div class="col-xs-12">
+                <span t-raw="o.company_id.company_advise"/>
+              </div>
+            </div>
+            <div class="not-last-page">
+                <div class="row ">
+                    <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;" >
+                        <div class="sombreado" t-if="not o.company_id.hide_fields" style="padding-left:10px;">
+                            <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
 
-                        <span t-field="company.partner_id"
-                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
-                        <p><strong>CIF/NIF:</strong> <span t-field="company.vat"/></p>
-                        <p><strong>Telf.:</strong> <span t-field="company.phone"/> <strong>FAX:</strong> <span t-field="company.fax"/></p>
+                            <span t-field="company.partner_id"
+                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                            <p><strong>CIF/NIF:</strong> <span t-field="company.vat"/></p>
+                            <p><strong>Telf.:</strong> <span t-field="company.phone"/> <strong>FAX:</strong> <span t-field="company.fax"/></p>
+                        </div>
+                    </div>
+                    <div class="col-xs-6">
+                        <t t-if="o.type in ('in_invoice', 'out_invoice')">
+                            <t t-if="o.company_id.id == 17">
+                                <h1 class="text-center">NOTA</h1>
+                            </t>
+                            <t t-if="o.company_id.id != 17">
+                                <h1 class="text-center">INVOICE</h1>
+                            </t>
+
+                        </t>
+                        <t t-if="o.type in ('in_refund', 'out_refund')">
+                            <h1 class="text-center">CREDIT NOTE</h1>
+                        </t>
                     </div>
                 </div>
-                <div class="col-xs-6">
-                    <t t-if="o.type in ('in_invoice', 'out_invoice')">
-                        <t t-if="o.company_id.id == 17">
-                            <h1 class="text-center">NOTA</h1>
-                        </t>
-                        <t t-if="o.company_id.id != 17">
-                            <h1 class="text-center">INVOICE</h1>
-                        </t>
-
+                <div class="row">
+                    <t t-if="o.partner_shipping_id != o.commercial_partner_id">
+                        <div class="col-xs-6" style="height: 100px;">
+                            <div t-field="o.partner_shipping_id"
+                                    t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true, "min_name": True}' />
+                        </div>
+                        <div class="col-xs-6" style="height: 100px;">
+                            <div t-field="o.commercial_partner_id"
+                                    t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true, "min_name": True}' />
+                        </div>
                     </t>
-                    <t t-if="o.type in ('in_refund', 'out_refund')">
-                        <h1 class="text-center">CREDIT NOTE</h1>
+                    <t t-if="o.partner_shipping_id == o.commercial_partner_id">
+                        <div class="col-xs-6 col-xs-offset-6" style="height: 100px;">
+                            <div t-field="o.commercial_partner_id"
+                                    t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true, "min_name": True}' />
+                        </div>
                     </t>
                 </div>
-            </div>
-            <div class="row">
-                <t t-if="o.partner_shipping_id != o.commercial_partner_id">
-                    <div class="col-xs-6" style="height: 100px;">
-                        <div t-field="o.partner_shipping_id"
-                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true, "min_name": True}' />
+                <div class="row" style="margin-top: 15px;">
+                    <div class="col-xs-12">
+                        <table class="custom_table">
+                            <thead>
+                                <tr>
+                                    <th>Customer nª</th>
+                                    <th>CIF/NIF</th>
+                                    <th>Page nº</th>
+                                    <th>Date</th>
+                                    <th>Invoice Nº</th>
+                                    <th>Agent</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span t-field="o.commercial_partner_id.ref"/></td>
+                                    <td><span t-field="o.commercial_partner_id.vat"/></td>
+                                    <td>
+                                        Page: <span class="page"/> of <span class="topage"/>
+                                    </td>
+                                    <td><span t-field="o.date_invoice"/></td>
+                                    <td><span t-field="o.number"/></td>
+                                    <td><span t-field="o.user_id"/></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
                     </div>
-                    <div class="col-xs-6" style="height: 100px;">
-                        <div t-field="o.commercial_partner_id"
-                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true, "min_name": True}' />
-                    </div>
-                </t>
-                <t t-if="o.partner_shipping_id == o.commercial_partner_id">
-                    <div class="col-xs-6 col-xs-offset-6" style="height: 100px;">
-                        <div t-field="o.commercial_partner_id"
-                                t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true, "min_name": True}' />
-                    </div>
-                </t>
-            </div>
-            <div class="row" style="margin-top: 15px;">
-                <div class="col-xs-12">
-                    <table class="custom_table">
-                        <thead>
-                            <tr>
-                                <th>Customer nª</th>
-                                <th>CIF/NIF</th>
-                                <th>Page nº</th>
-                                <th>Date</th>
-                                <th>Invoice Nº</th>
-                                <th>Agent</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td><span t-field="o.commercial_partner_id.ref"/></td>
-                                <td><span t-field="o.commercial_partner_id.vat"/></td>
-                                <td>
-                                    Page: <span class="page"/> of <span class="topage"/>
-                                </td>
-                                <td><span t-field="o.date_invoice"/></td>
-                                <td><span t-field="o.number"/></td>
-                                <td><span t-field="o.user_id"/></td>
-                            </tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                        </tfoot>
-                    </table>
                 </div>
             </div>
         </div>
