@@ -136,14 +136,14 @@
 
     <!-- cabecera para albarán, mira si está marcado o campo neutro -->
     <template id="custom_layout_header_picking">
-        <div class="header">
-             <div class="row last-page" style="padding-top: 75px">
-              <div class="col-xs-12">
-                <span t-raw="o.company_id.company_advise"/>
-              </div>
+            <div t-if="o.company_id.company_advise" class="header">
+                <div class="row last-page" style="padding-top: 75px">
+                  <div class="col-xs-12">
+                    <span t-raw="o.company_id.company_advise"/>
+                 </div>
             </div>
-            <div class="not-last-page">
-            <div class="row">
+            <div t-att-class="o.company_id.class_page">
+                <div class="row">
                 <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;">
                     <div class="sombreado" t-if=" not o.neutral_document" style="padding-left:10px;">
                         <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
@@ -250,13 +250,13 @@
 
     <!-- cabeceira para facturas-->
      <template id="custom_layout_header_invoce">
-        <div class="header">
-             <div class="row last-page" style="padding-top: 75px">
-              <div class="col-xs-12">
-                <span t-raw="o.company_id.company_advise"/>
-              </div>
+             <div t-if="o.company_id.company_advise" class="header">
+                <div class="row last-page" style="padding-top: 75px">
+                  <div class="col-xs-12">
+                    <span t-raw="o.company_id.company_advise"/>
+                 </div>
             </div>
-            <div class="not-last-page">
+            <div t-att-class="o.company_id.class_page">
                 <div class="row ">
                     <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;" >
                         <div class="sombreado" t-if="not o.company_id.hide_fields" style="padding-left:10px;">
