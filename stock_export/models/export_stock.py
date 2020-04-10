@@ -404,7 +404,8 @@ class DeletedObject(models.Model):
         str = "Fin para {} con inc= {}. Tiempo : {}".format(len(product_ids), inc, time.time() - start_time)
         print (str)
         if cron_id:
-            cron_id.last_call = fields.Datetime.to_string(time_now)
+            sql = "update ir_cron set last_call = '{}' where id = {}".format(fields.Datetime.to_string(time_now), cron_id.id)
+            self._cr.execute(sql)
         return res
 
 
