@@ -294,7 +294,6 @@ class DeletedObject(models.Model):
         ('product_id_uniq', 'unique(product_id)', _("A product_id can only be assigned to one product !")),
     ]
 
-
     def get_time_domain(self, from_time, to_time, field_parent_id = False):
         def get_domain(operator, time_obj, parent_id):
             if parent_id:
@@ -318,23 +317,26 @@ class DeletedObject(models.Model):
     @api.model
     def compute_product_ids_xmlrpc(self, values):
         all = values.get('all', False)
-        table = values.get('table', False)
+        table = values.get('table', True)
         days = values.get('days', 1)
         from_time = values.get('from_time', False)
         to_time = values.get('to_time', False)
         field_id = values.get('field_id', 'id')
         stock_field = values.get('stock_field', 'web_global_stock')
-        inc = values.get('inc', 500)
+        inc = values.get('inc', 80)
         return self.compute_product_ids(all, table, from_time, to_time, field_id, stock_field, days, inc)
 
-    def compute_product_ids_bucle_check_performance(self):
+    def test_compute_product_ids_bucle_check_performance(self):
         mid_time = time.time()
         for inc in [80,500,2500,5000,80,500,2500,5000]:
             res = self.compute_product_ids(inc=inc)
             print ("---- {} resultados en {}".format(len(res),time.time() - mid_time)); mid_time = time.time()
 
+    def compute_product_ids_all(self):
+        values = {'all': True}
+        return self.compute_product_ids_xmlrpc(values)
 
-    def compute_product_ids(self, all=True, table=True, from_time=False, to_time=False, field_id='id', stock_field='web_global_stock', days=0, inc=80):
+    def compute_product_ids(self, all=False, table=True, from_time=False, to_time=False, field_id='id', stock_field='web_global_stock', days=0, inc=80):
         time_now = fields.datetime.now()
         cron_id = self.env['ir.cron'].search([('name','=','Exportar Stock')])
         start_time = time.time()
