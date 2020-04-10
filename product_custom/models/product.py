@@ -15,11 +15,11 @@ class ProductTemplate(models.Model):
         help="The volume in m3.", store=True, digits=(10, 6))
     # Avoid translations in those fields because of slow performance when 
     # create a product.product with lang in context.
-    name = fields.Char(translate=False)
-    description = fields.Text(translate=False)
-    description_sale = fields.Text(translate=False)
-    description_picking = fields.Text(translate=False)
-    description_purchase = fields.Text(translate=False)
+    # name = fields.Char(translate=False)
+    # description = fields.Text(translate=False)
+    # description_sale = fields.Text(translate=False)
+    # description_picking = fields.Text(translate=False)
+    # description_purchase = fields.Text(translate=False)
     tag_names = fields.Char('Tags', compute='_compute_tag_names', store=True)
     web = fields.Boolean('Web', compute="_compute_web_state", store=True)
 
