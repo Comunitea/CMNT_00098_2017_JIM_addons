@@ -14,28 +14,55 @@ class IrCron(models.Model):
 
     last_call = fields.Datetime('Last call')
 
+
+class ConfigPathFiles(models.TransientModel):
+    _inherit = 'res.config.settings'
+
+    last_call_export_xmlstock = fields.Char('Last call export xml_stock')
+
+    @api.model
+    def get_default_last_call_export_xmlstock(self, fields):
+        res = {}
+        icp = self.env['ir.config_parameter']
+        res['last_call_export_xmlstock'] = icp.get_param(
+            'last_call_export_xmlstock')
+        return res
+
+    @api.multi
+    def set_last_call_export_xmlstock(self):
+        icp = self.env['ir.config_parameter']
+        icp.set_param('last_call_export_xmlstock',
+                      self.last_call_export_xmlstock)
+
+
 class MrpBom(models.Model):
     _inherit = 'mrp.bom'
 
     @api.multi
     def compute_up_insert_product_ids(self, product_ids=False):
 
-        up_bom_line_domain = [('product_id', 'in', product_ids.ids)]
+        up_bom_line_domain = [('bom_id.id', 'not in', self.ids), ('product_id', 'in', product_ids.ids)]
         up_bom = self.env['mrp.bom.line'].search(up_bom_line_domain).mapped('bom_id')
         if up_bom:
-            up_bom_product_ids = up_bom.compute_self_product_ids()
-            product_ids |= up_bom_product_ids
-            product_ids |= up_bom.compute_up_insert_product_ids(up_bom_product_ids)
+            new_product_ids = up_bom.compute_self_product_ids()
+            product_ids |= new_product_ids
+            product_ids |= up_bom.compute_up_insert_product_ids(new_product_ids)
+
+
+            # up_bom_product_ids = up_bom.compute_self_product_ids() - product_ids
+            # product_ids |= up_bom_product_ids
+            # product_ids |= up_bom.compute_up_insert_product_ids(up_bom_product_ids)
         return product_ids
 
     @api.multi
     def compute_down_insert_product_ids(self):
         product_ids = self.mapped('bom_line_ids').mapped('product_id')
-        down_bom_domain = ['|', ('product_tmpl_id', 'in', product_ids.mapped('product_tmpl_id').ids), ('product_id', 'in', product_ids.ids)]
+        down_bom_domain = [('id', 'not in', self.ids), '|', ('product_tmpl_id', 'in', product_ids.mapped('product_tmpl_id').ids), ('product_id', 'in', product_ids.ids)]
         down_bom_ids = self.env['mrp.bom'].search(down_bom_domain)
         if down_bom_ids:
-            product_ids |= down_bom_ids.compute_self_product_ids()
             product_ids |= down_bom_ids.compute_down_insert_product_ids()
+            # product_ids |= down_bom_ids.compute_self_product_ids()
+            # product_ids |= down_bom_ids.compute_down_insert_product_ids()
         return product_ids
 
     @api.multi
@@ -45,6 +72,7 @@ class MrpBom(models.Model):
 
     @api.multi
     def compute_insert_product_ids(self):
+
         product_ids = self.compute_self_product_ids()
         product_ids_up = self.compute_up_insert_product_ids(product_ids)
         product_ids_down = self.compute_down_insert_product_ids()
@@ -55,7 +83,7 @@ class MrpBom(models.Model):
     @api.multi
     def insert_product_ids(self):
         product_ids = self.compute_insert_product_ids()
-        return self.env['exportxml.object'].insert_product_ids(product_ids, self._name)
+        return product_ids; #self.env['exportxml.object'].insert_product_ids(product_ids, self._name)
 
     @api.model
     def create(self, vals):
@@ -73,8 +101,6 @@ class MrpBom(models.Model):
     def unlink(self):
         self.insert_product_ids()
         return super(MrpBom, self).unlink()
-
-
 
     @api.multi
     def export_related_bom_ids(self, product_ids):
@@ -126,8 +152,8 @@ class StockLocation(models.Model):
             for res_id in res:
                 if res_id['qty'] > 0:
                     product_ids.append(res_id['product_id'][0])
-            if product_ids:
-                self.env['exportxml.object'].insert_product_ids(self.browse(product_ids), self._name)
+            # if product_ids:
+            #     self.env['exportxml.object'].insert_product_ids(self.browse(product_ids), self._name)
 
         return res
 
@@ -195,6 +221,7 @@ class StockMove(models.Model):
         time_domain = self.env['exportxml.object'].get_time_domain(from_time, to_time, False)
         internal = self.get_locations_domain()
         domain = expression.normalize_domain(expression.AND([time_domain, internal]))
+        print (domain)
         sol = self.search(domain)
         if table:
             product_ids = sol.insert_product_ids()
@@ -207,8 +234,8 @@ class StockMove(models.Model):
     def insert_product_ids(self, product_ids= False):
         if not product_ids:
             product_ids = self.mapped('product_id')
-        if product_ids:
-            self.env['exportxml.object'].insert_product_ids(product_ids, self._name)
+        # if product_ids:
+        #     self.env['exportxml.object'].insert_product_ids(product_ids, self._name)
         return product_ids
 
 class StockLocationRoute(models.Model):
@@ -235,8 +262,8 @@ class PurchaseOrderLine(models.Model):
     @api.multi
     def insert_product_ids(self):
         product_ids = self.mapped('product_id')
-        if product_ids:
-            self.env['exportxml.object'].insert_product_ids(product_ids, self._name)
+        # if product_ids:
+        #     self.env['exportxml.object'].insert_product_ids(product_ids, self._name)
         return product_ids
 
     @api.multi
@@ -257,8 +284,8 @@ class SaleOrderLine(models.Model):
     @api.multi
     def insert_product_ids(self):
         product_ids = self.mapped('product_id')
-        if product_ids:
-            self.env['exportxml.object'].insert_product_ids(product_ids, self._name)
+        # if product_ids:
+        #     self.env['exportxml.object'].insert_product_ids(product_ids, self._name)
         return product_ids
 
     @api.multi
@@ -273,7 +300,7 @@ class SaleOrderLine(models.Model):
     def get_stock_export_products(self, from_time, to_time = False, table=False):
 
         time_domain = self.env['exportxml.object'].get_time_domain(from_time, to_time, 'order_id')
-        state_domain = [('state', 'in', ('lqdr', 'pending'))]
+        state_domain = [('state', 'in', ('cancel', 'draft', 'lqdr', 'pending'))]
         product_domain = [('product_id.type', '=', 'product')]
         domain = expression.AND([product_domain, state_domain, time_domain])
         sol = self.search(domain)
@@ -295,21 +322,16 @@ class DeletedObject(models.Model):
     ]
 
     def get_time_domain(self, from_time, to_time, field_parent_id = False):
-        def get_domain(operator, time_obj, parent_id):
-            if parent_id:
-                domain =  ['|', '|', '|', ('{}.create_date'.format(parent_id),operator, time_obj),
-                               ('{}.write_date'.format(parent_id), operator, time_obj), ('create_date', operator, time_obj),
-                               ('write_date', operator, time_obj)]
-            else:
-                domain = ['|', ('create_date',operator, time_obj), ('write_date',operator, time_obj)]
+        def get_domain(field):
+            domain = [(field,'>=', from_time), (field,'<=', to_time)]
             return expression.normalize_domain(domain)
 
-        time_domain = get_domain('>=', from_time, field_parent_id)
-        if to_time:
-            to_domain = get_domain('<=', to_time, field_parent_id)
-            time_domain = expression.AND([time_domain, to_domain])
-        return expression.normalize_domain(time_domain)
-
+        domain = get_domain('create_date')
+        domain = expression.OR([domain, get_domain('write_date')])
+        if field_parent_id:
+            domain = expression.OR([domain, get_domain('{}.create_date'.format(field_parent_id))])
+            domain = expression.OR([domain, get_domain('{}.write_date'.format(field_parent_id))])
+        return expression.normalize_domain(domain)
 
     def compute_product_stock(self):
         fields.Datetime.now()
@@ -336,17 +358,21 @@ class DeletedObject(models.Model):
         values = {'all': True}
         return self.compute_product_ids_xmlrpc(values)
 
-    def compute_product_ids(self, all=False, table=True, from_time=False, to_time=False, field_id='id', stock_field='web_global_stock', days=0, inc=80):
+    def compute_product_ids(self, all=False, table=False, from_time=False, to_time=False, field_id='id', stock_field='web_global_stock', days=0, inc=80):
         time_now = fields.datetime.now()
-        cron_id = self.env['ir.cron'].search([('name','=','Exportar Stock')])
+        sql_ir_config = "select value from  ir_config_parameter where key = 'last_call_export_xmlstock'"
+        self._cr.execute(sql_ir_config)
+        res_id = self._cr.fetchall()
+        if res_id:
+            last_call = res_id[0][0]
+        else:
+            last_call = fields.Datetime.to_string(time_now)
         start_time = time.time()
-        if not from_time and cron_id:
-            from_time = cron_id.last_call
-        if not to_time:
-            to_time = fields.Datetime.to_string(time_now)
         if not from_time:
-            from_time = fields.Datetime.to_string(time_now - timedelta(days=days))
-
+            from_time = last_call
+        if not to_time:
+            from_time_str = fields.Datetime.from_string(from_time)
+            to_time = fields.Datetime.to_string(from_time_str + timedelta(days=1))
         print ("Comenzando la exportación desde {} hasta {}".format(from_time, to_time))
 
         ##stock.location.route, stock.location,mrp.bom, mrp.bom.line lo hacen en write/create
@@ -375,15 +401,23 @@ class DeletedObject(models.Model):
             table_ids = self.search(domain)
             product_table_ids = table_ids.mapped('product_id')
             model_ids = table_ids.mapped('model')
+            print ("--Tabla de productos")
+            print ("---- {} modelos en la tabla".format(len(model_ids)))
+            print ("---- {} productos en la tabla".format(len(product_table_ids)))
         if table:
             product_ids = product_table_ids
         else:
             product_ids = product_table_ids | p_ids
 
 
-        print ("--Tabla de productos")
-        print ("---- {} modelos en la tabla".format(len(model_ids)))
-        print ("---- {} productos en la tabla".format(len(product_table_ids)))
+        if product_ids:
+            mid_time = time.time()
+            product_bom_ids = self.env['exportxml.object'].insert_product_ids(product_ids)
+            product_ids |= product_bom_ids
+            print ("---- {} productos de listas de materiales en {}".format(len(product_bom_ids),time.time() - mid_time)); mid_time = time.time()
+
+
+
         print ("-- Total: {} productos a evaluar en {}".format(len(product_ids), time.time() - mid_time)); mid_time = time.time()
         total = len(product_ids)
         res= []
@@ -400,22 +434,44 @@ class DeletedObject(models.Model):
                 sql = "delete from exportxml_object where product_id = {}".format(product_ids.id)
             else:
                 sql = "delete from exportxml_object where product_id in {}".format(tuple(product_ids.ids))
+            sql_ir_config = "update ir_config_parameter set value = '{}' where key = 'last_call_export_xmlstock'".format(to_time)
+
             self._cr.execute(sql)
+            self._cr.execute(sql_ir_config)
+            self._cr.commit()
+
+
+        #icp.last_call_export_xmlstock = last_call
+
         str = "Fin para {} con inc= {}. Tiempo : {}".format(len(product_ids), inc, time.time() - start_time)
         print (str)
-        if cron_id:
-            sql = "update ir_cron set last_call = '{}' where id = {}".format(fields.Datetime.to_string(time_now), cron_id.id)
-            self._cr.execute(sql)
         return res
 
+    def test_recursitivy_product(self):
+        bom_ids = self.env['mrp.bom'].search([])
+        product_ids = bom_ids.mapped('product_tmpl_id').mapped('product_variant_ids') | bom_ids.mapped('product_id') | bom_ids.mapped('bom_line_ids').mapped('product_id')
+        error_ids = self.env['product.product']
+        for product_id in product_ids:
+            try:
+                p_ids = self.env['exportxml.object'].insert_product_ids(product_ids)
+                print ('{} OK '.format(product_id.display_name))
+            except:
+                error_ids |= product_id
+                print ('Error en {}. Id {}'.product_id.display_name, product_id.id)
+        print ("Errores: \n {}".format(error_ids.ids))
 
-    def insert_product_ids(self, list_product_ids=[], model='product.product'):
+
+    def insert_product_ids(self, list_product_ids=[], model=False):
+
         if not list_product_ids:
-            return
-        print ('\n#######################\nSe van a añadir {} productos de {} al listado de stock'.format(len(list_product_ids), model))
+            return self.env['product.product']
+
+        #print ('\n#######################\nSe van a añadir {} productos de {} al listado de stock'.format(len(list_product_ids), model))
         start_time = time.time()
         vals = ''
         list_product_ids |= self.env['mrp.bom'].export_related_bom_ids(list_product_ids)
+        if not model:
+            return list_product_ids
 
 
         for product_id in list_product_ids:
