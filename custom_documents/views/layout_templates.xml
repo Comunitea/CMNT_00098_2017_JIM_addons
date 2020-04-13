@@ -159,31 +159,16 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
     <!-- cabecera para albarán, mira si está marcado o campo neutro -->
     <template id="custom_layout_header_picking">
         <div class="header">
-            <div class="row last-page" style="padding-top: 75px">
-                <div class="col-xs-12">
-                    <span t-raw="o.company_id.company_advise"/>
-                </div>
-            </div>
-            <div t-att-class="o.company_id.class_page">
-                    <div class="row">
-                        <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;">
-                            <div class="sombreado" t-if=" not o.neutral_document" style="padding-left:10px;">
-                                <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"
-                                     style="max-height: 45px;"/>
-                                <span t-field="company.partner_id"
-                                      t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
-                                <p>
-                                    <strong>CIF/NIF:</strong>
-                                    <span t-field="company.vat"/>
-                                </p>
-                                <p>
-                                    <strong>Telf.:</strong>
-                                    <span t-field="company.phone"/>
-                                    <strong>FAX:</strong>
-                                    <span t-field="company.fax"/>
-                                </p>
-                            </div>
-                            <div t-if="o.neutral_document">
+            <div class="row">
+                <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;">
+                    <div class="sombreado" t-if=" not o.neutral_document" style="padding-left:10px;">
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
+                        <span t-field="company.partner_id"
+                            t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
+                        <p><strong>CIF/NIF:</strong> <span t-field="company.vat"/></p>
+                        <p><strong>Telf.:</strong> <span t-field="company.phone"/> <strong>FAX:</strong> <span t-field="company.fax"/></p>
+                    </div>
+                    <div t-if="o.neutral_document">
 
                                 <span t-field="o.sale_id.partner_id"
                                       t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
@@ -304,7 +289,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
                             </table>
                         </div>
                     </div>
-                </div>
+
 
         </div>
     </template>
@@ -313,18 +298,10 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
     <!-- cabeceira para facturas-->
     <template id="custom_layout_header_invoce">
         <div class="header">
-            <div class="row last-page" style="padding-top: 75px">
-                <div class="col-xs-12">
-                    <span t-raw="o.company_id.company_advise"/>
-                </div>
-            </div>
-            <div t-att-class="o.company_id.class_page">
-
-                    <div class="row">
-                    <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;">
-                        <div class="sombreado" t-if="not o.company_id.hide_fields" style="padding-left:10px;">
-                            <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo"
-                                 style="max-height: 45px;"/>
+            <div class="row">
+                <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;" >
+                    <div class="sombreado" t-if="not o.company_id.hide_fields" style="padding-left:10px;">
+                        <img t-if="company.logo" t-att-src="'data:image/png;base64,%s' % company.logo" style="max-height: 45px;"/>
 
                             <span t-field="company.partner_id"
                                   t-field-options='{"widget": "contact", "fields": ["address", "name"], "no_marker": true}'/>
@@ -425,7 +402,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
                     </div>
                 </div>
 
-            </div>
+
         </div>
     </template>
 
