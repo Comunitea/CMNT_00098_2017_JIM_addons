@@ -158,14 +158,13 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
     <!-- cabecera para albarán, mira si está marcado o campo neutro -->
     <template id="custom_layout_header_picking">
-        <div t-if="o.company_id.company_advise" class="header">
+        <div class="header">
             <div class="row last-page" style="padding-top: 75px">
                 <div class="col-xs-12">
                     <span t-raw="o.company_id.company_advise"/>
                 </div>
             </div>
             <div t-att-class="o.company_id.class_page">
-                <div class="header">
                     <div class="row">
                         <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;">
                             <div class="sombreado" t-if=" not o.neutral_document" style="padding-left:10px;">
@@ -306,21 +305,21 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
                         </div>
                     </div>
                 </div>
-            </div>
+
         </div>
     </template>
 
 
     <!-- cabeceira para facturas-->
     <template id="custom_layout_header_invoce">
-        <div t-if="o.company_id.company_advise" class="header">
+        <div class="header">
             <div class="row last-page" style="padding-top: 75px">
                 <div class="col-xs-12">
                     <span t-raw="o.company_id.company_advise"/>
                 </div>
             </div>
             <div t-att-class="o.company_id.class_page">
-                <div class="header">
+
                     <div class="row">
                     <div class="col-xs-6" style="height: 190px; margin-bottom: 15px;">
                         <div class="sombreado" t-if="not o.company_id.hide_fields" style="padding-left:10px;">
@@ -425,7 +424,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
                         </table>
                     </div>
                 </div>
-                </div>
+
             </div>
         </div>
     </template>
