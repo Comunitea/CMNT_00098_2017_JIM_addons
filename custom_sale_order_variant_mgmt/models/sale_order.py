@@ -69,7 +69,7 @@ class SaleOrderLineTemplate(models.Model):
             # (con referencia y atributos de variante)
             ctx.update(no_create_template_line=True)
             line_vals = vals.copy()
-            orig = False
+            orig = True
             if orig:
                 line_vals = vals.copy()
                 template_product = self.env['product.template'].browse(vals['product_template'])
