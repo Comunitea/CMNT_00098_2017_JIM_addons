@@ -27,7 +27,6 @@
         'telesale',
         'sale_early_payment_discount',
         'report_wkhtmltopdf_param',
-        'report_qweb_element_page_visibility'
     ],
     "data": [
         'views/layout_templates.xml',
@@ -35,6 +34,7 @@
         'views/sale_order_report.xml',
         'views/sale_order_report_warehouse.xml',
         'views/sale_order_report_ean.xml',
+        'views/company_advise_report_view.xml',
         'views/company.xml',
         'views/picking_grouped_invoice_report.xml',
         'report_invoice.xml',
@@ -55,6 +55,7 @@
         'views/ir_qweb.xml',
         'data/stock_mail_template.xml',
         'data/sale_mail_template.xml',
-        'views/product_labels_report.xml'
+        'views/product_labels_report.xml',
+        'security/ir.model.access.csv'
     ],
 }

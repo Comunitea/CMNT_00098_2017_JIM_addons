@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+Copyright 2015 Tecnativa - Antonio Espinosa
+Copyright 2017 Tecnativa - Pedro M. Baeza
+License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
+-->
+<odoo>
+
+<record id="view_report_company_advise" model="ir.ui.view">
+    <field name="name">report.company.advise.form</field>
+    <field name="model">report.company.advise</field>
+    <field name="arch" type="xml">
+        <form string="Informes con pagina de advertencia">
+            <sheet string="Informe">
+                <group>
+                    <field name="xml_id" domain="[('model', '=', 'ir.actions.report.xml')]"/>
+                </group>
+
+                <group>
+                    <group>
+                        <field name="name"/>
+                        <field name="model_id"/>
+                    </group>
+                    <group>
+                        <field name="active"/>
+                    </group>
+                </group>
+            </sheet>
+        </form>
+    </field>
+</record>
+
+<record id="view_report_company_advisetree" model="ir.ui.view" >
+    <field name="name">report.company.advise.tree</field>
+    <field name="model">report.company.advise</field>
+    <field name="arch" type="xml">
+        <tree string="Informes con pagina de advertencia">
+
+            <field name="name"/>
+            <field name="xml_id"/>
+            <field name="model_id"/>
+            <field name="active"/>
+
+        </tree>
+    </field>
+</record>
+
+<record id="action_view_report_company_advisetree" model="ir.actions.act_window">
+    <field name="name">Aviso compañia</field>
+    <field name="res_model">report.company.advise</field>
+    <field name="view_type">form</field>
+    <field name="view_mode">tree,form</field>
+</record>
+
+<menuitem id="menu_view_report_company_advisetree"
+          name="Informes con ISO"
+          parent="report.reporting_menuitem"
+          action="action_view_report_company_advisetree"/>
+
+</odoo>

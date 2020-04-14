@@ -190,11 +190,6 @@
                         </div>
                     </div>
 
-                    <div t-if="o.company_id.show_company_advise" class="row" style="page-break-before: always">
-                            <div class="col-xs-12">
-                            </div>
-                        </div>
-
 
                 </div>
 
