@@ -18,13 +18,13 @@
         <field name="inherit_id" ref="base.view_company_form"/>
         <field name="arch" type="xml">
             <notebook position="inside">
-                <page string="Advise page">
+                <!--page string="Advise page">
                     <separator string="Page"/>
 
                     <field name="show_company_advise"/>
                     <field name="company_advise"/>
 
-                </page>
+                </page-->
                 <page string="Qweb">
                     <group>
                         <field name="show_discount"/>

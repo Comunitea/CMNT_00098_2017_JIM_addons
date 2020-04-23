@@ -52,9 +52,9 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
     <field name="view_mode">tree,form</field>
 </record>
 
-<menuitem id="menu_view_report_company_advisetree"
+<!--menuitem id="menu_view_report_company_advisetree"
           name="Informes con ISO"
           parent="report.reporting_menuitem"
-          action="action_view_report_company_advisetree"/>
+          action="action_view_report_company_advisetree"/-->
 
 </odoo>

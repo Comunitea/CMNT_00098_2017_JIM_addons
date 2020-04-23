@@ -55,10 +55,6 @@ class ClassReport(models.Model):
         model = IrActionsReport.model
         model_ids = self.env[model].browse(res_ids)
 
-        def advise_company_report_pdf(company_id):
-            advise_pdf = super(ClassReport, self).get_pdf([company_id], report_name='custom_documents.company_advise')
-            return advise_pdf
-
         if IrActionsReport.xml_id in self.env['report.company.advise'].search([]).mapped('complete_name'):
             pdfdatas = []
             temporary_files = []
