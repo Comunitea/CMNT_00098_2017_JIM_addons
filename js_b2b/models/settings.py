@@ -10,7 +10,7 @@ PARAMS = {
 	'conexion_error': ('b2b.show_conexion_error', True),
 	'response_error': ('b2b.show_response_error', True),
 	'last_stock_date': ('b2b.last_stock_date', False),
-	'packet_size': ('b2b.packet_size_mb', 5)
+	'packet_size': ('b2b.packet_size_mb', 10)
 }
 
 class B2BSettings(models.TransientModel):

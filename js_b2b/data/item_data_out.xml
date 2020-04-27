@@ -15,9 +15,6 @@
 def is_notifiable(self, action, vals):
     return True
 
-def get_action(self, action, vals):
-    return action
-
 def get_data(self):
     return {
         'fixed:jim_id': self.id,
@@ -40,9 +37,6 @@ def get_data(self):
 
 def is_notifiable(self, action, vals):
     return True
-
-def get_action(self, action, vals):
-    return action
 
 def get_data(self):
     return {
@@ -68,9 +62,6 @@ def get_data(self):
 def is_notifiable(self, action, vals):
     return True
 
-def get_action(self, action, vals):
-    return action
-
 def get_data(self):
     return {
         'fixed:jim_id': self.id,
@@ -91,9 +82,6 @@ def get_data(self):
 def is_notifiable(self, action, vals):
     # Está activa para la web (y la categoría padre también)
     return self.web and (not self.parent_id or (self.parent_id and self.parent_id.web))
-
-def get_action(self, action, vals):
-    return action
 
 def get_data(self):
     return {
@@ -116,9 +104,6 @@ def get_data(self):
 def is_notifiable(self, action, vals):
     return True
 
-def get_action(self, action, vals):
-    return action
-
 def get_data(self):
     return {
         'fixed:jim_id': self.id,
@@ -140,19 +125,16 @@ def get_data(self):
     'barcode', 
     'description', 
     'product_brand_id', 
-    'attribute_line_ids',  
     'image', 
     'tag_ids', 
+    'public_categ_ids', 
     'type', 
-    'company_id'
+    'company_id',
+    'website_published'
 )
 
 def is_notifiable(self, action, vals):
-    # Es almacenable y tiene etiquetas
-    return self.sale_ok and self.type == 'product' and self.tag_ids
-
-def get_action(self, action, vals):
-    return action
+    return self.website_published
 
 def get_data(self):
     return {
@@ -161,11 +143,24 @@ def get_data(self):
         'default_code:reference': self.template_code or self.default_code,
         'barcode:ean13': self.barcode if self.barcode else None,
         'tag_ids:category_id': self.tag_ids.ids,
+        'public_categ_ids:web_category_id': self.public_categ_ids.ids, 
         'brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
         'weight': self.weight,
         'upload:image': self.image or None
-    }</field>
+    }
+
+def pos_data(self, action):
+    # Creamos las imágenes
+    if action == 'create':
+        for image in self.product_image_ids:
+            image.b2b_record('create')
+    # Borramos las imágenes
+    # dejarán de estar accesibles antes de que 
+    # llege el mensaje al suscriptor
+    # elif action == 'delete':
+    #    for image in self.product_image_ids:
+    #        image.b2b_record('delete')</field>
         </record>
 
         <record id="b2b_item_out_7" model="b2b.item.out">
@@ -174,53 +169,32 @@ def get_data(self):
             <field name="name">product_variant</field>
             <field name="model">product.product</field>
             <field name="description">Variantes / Combinaciones</field>
-            <field name="code">""" 
-Este modelo es uno de los más complicados para configurar, ya que Odoo tiene una forma muy particular de manejar las plantillas/variantes.
-
-Por defecto en Odoo no existen las plantillas, sólo las variantes (que serían productos únicos) mientras que en Prestashop es justo al contrario.
-
-Cuando trabajamos con variantes cada producto único está unido a una variante única (que es lo que se usa por detrás), pero esta variante única no nos interesa pasarla a los sistemas de terceros, además
-en las variantes tenemos un campo que nos permite "desactivar" una de la web por lo que aún es más complejo.
-"""
-
-fields_to_watch = (
+            <field name="code">fields_to_watch = (
     'default_code',
     'name', 
     'barcode', 
-    'description', 
-    'product_brand_id', 
-    'attribute_line_ids', 
-    'force_web', 
-    'tag_ids'
+    'product_tmpl_id', 
+    'attribute_names', 
+    'attribute_value_ids', 
     'weight',
     'default',
-    'type'
+    'website_published'
 )
 
 def is_notifiable(self, action, vals):
-    # La plantilla está activa y es almacenable y tiene etiquetas y tiene atributos (las variantes únicas no tienen atributos)
-    return self.default_code and self.product_tmpl_id.type == 'product' and self.product_tmpl_id.active and self.attribute_names
-
-def get_action(self, action, vals):
-    # Si la variante se ha activado enviamos la creación
-    if self.force_web != 'no' or self.tag_ids:
-        return 'create'
-    # En caso contrario la eliminamos
-    return 'delete'
-
+    # La plantilla está publicada y tiene código y es almacenable y tiene etiquetas 
+    # y tiene atributos (las variantes únicas no tienen atributos)
+    return self.product_tmpl_id.website_published and self.default_code and self.product_tmpl_id.type == 'product' and self.attribute_names and self.website_published
+    
 def get_data(self):
-    # Si no tiene atributos no se envía nada
-    if not self.attribute_value_ids:
-        return dict()
-    # Enviamos los datos
     return {
         'fixed:jim_id': self.id,
         'fixed:product_id': self.product_tmpl_id.id,
         'default_code:reference': self.default_code,
-        'fixed:attribute_value': self.attribute_value_ids.ids,
-        'fixed:ean13': self.barcode if self.barcode else None,
-        'fixed:weight': self.weight,
-        'fixed:default': False
+        'attribute_value_ids:attribute_value': self.attribute_value_ids.ids,
+        'barcode:ean13': self.barcode if self.barcode else None,
+        'weight': self.weight,
+        'default': False
     }</field>
         </record>
 
@@ -234,9 +208,6 @@ def get_data(self):
 
 def is_notifiable(self, action, vals):
     return vals and not vals.get('lang', False)
-
-def get_action(self, action, vals):
-    return action
 
 def get_data(self):
     product_id = None
@@ -273,10 +244,7 @@ def get_data(self):
             <field name="code">fields_to_watch = None
 
 def is_notifiable(self, action, vals):
-    return True
-
-def get_action(self, action, vals):
-    return action
+    return self.product_tmpl_id.website_published
 
 def get_data(self):
     return {
@@ -299,9 +267,6 @@ def get_data(self):
 def is_notifiable(self, action, vals):
     return True
 
-def get_action(self, action, vals):
-    return action
-
 def get_data(self):
     return {
         'fixed:jim_id': self.id,
@@ -322,9 +287,6 @@ def get_data(self):
 
 def is_notifiable(self, action, vals):
     return True
-
-def get_action(self, action, vals):
-    return action
 
 def get_data(self):
     return {
@@ -353,9 +315,6 @@ def is_notifiable(self, action, vals):
     # El estado es (assigned, done o cancel) y la empresa es JIM SPORTS TECHNOLOGY y es un INT y hace referencia a una línea de compra y la fecha es superior a la actual
     return self.state in ('assigned', 'done', 'cancel') and self.company_id.id == 1 and self.picking_type_id.code == 'incoming' and self.purchase_line_id and datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now()
 
-def get_action(self, action, vals):
-    return action
-
 def get_data(self):
     return {
         'fixed:jim_id': self.id,
@@ -378,17 +337,18 @@ def get_data(self):
     'name', 
     'vat', 
     'email', 
-    'web_password', 
-    'property_product_pricelist', 
     'type', 
     'parent_id', 
-    'group_companies_ids'
+    'property_product_pricelist',
+    'commercial_partner_id', 
+    'group_companies_ids',
+    'active'
 )
 
 def is_notifiable(self, action, vals):
-    # Es el contacto principal (puede ser el mismo) es empresa y es cliente y tiene correo electrónico y tiene contraseña web y es el contacto principal
-    return self.type == 'contact' and self.commercial_partner_id.is_company and self.commercial_partner_id.customer and self.commercial_partner_id.email and self.commercial_partner_id.web_password and self.commercial_partner_id.id == self.id
-
+    # Es un contacto y es empresa y tiene asignada por lo menos una empresa para la web y tiene correo electrónico y tiene contraseña web y es el contacto principal
+    return self.active and self.is_company and self.group_companies_ids and self.customer and self.email and self.commercial_partner_id.id == self.id  and self.type == 'contact'
+    
 def get_primary_email(email):
     # Separadores válidos
     email_separators = (',', ';')
@@ -399,20 +359,22 @@ def get_primary_email(email):
                 return email.split(separator)[0].strip()
     return email
 
-def get_action(self, action, vals):
-    return action
-
 def get_data(self):
     return {
         'fixed:jim_id': self.id,
         'name': self.name,
         'vat': self.vat or None,
-        'email': get_primary_email(self.email),
+        'email': b2b['get_primary_email'](self.email),
         'ref:reference': self.ref or None,
-        'web_password:password': self.web_password,
         'property_product_pricelist:pricelist_id': self.property_product_pricelist.id or None,
-        'companies': [company.partner_id.id for company in self.group_companies_ids]
-    }</field>
+        'group_companies_ids:companies': [company.partner_id.id for company in self.group_companies_ids]
+    }
+
+def pos_data(self, action):
+    # Creamos las direcciones
+    if action == 'create':
+        for child in self.child_ids:
+            child.b2b_record('create')</field>
         </record>
 
         <record id="b2b_item_out_14" model="b2b.item.out">
@@ -430,25 +392,22 @@ def get_data(self):
     'zip', 
     'city', 
     'state_id', 
-    'country_id'
+    'country_id',
+    'commercial_partner_id',
+    'active'
 )
 
 def is_notifiable(self, action, vals):
     # Comprobamos si el cliente relaccionado es notificable
-    client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
-    notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
-    # Es de tipo 'delivery'
-    return notifiable_client and self.type == 'delivery'
-
-def get_action(self, action, vals):
-    return action
+    customer_notifiable = self.commercial_partner_id.active and self.commercial_partner_id.group_companies_ids and self.commercial_partner_id.is_company and self.commercial_partner_id.customer and self.commercial_partner_id.email and self.commercial_partner_id.web_password and self.commercial_partner_id.id != self.id
+    # Es de tipo 'delivery' y no es una dirección de dropshipping
+    return customer_notifiable and self.active and self.type == 'delivery' and self.name != 'DROPSHIPPING'
 
 def get_data(self):
     return {
         'fixed:jim_id': self.id,
-        'customer_id': self.parent_id.id, 
-        'ref:reference': self.ref, 
-        'name': self.name, 
+        'fixed:customer_id': self.parent_id.id, 
+        'name': self.name if self.name else self.commercial_partner_id.name, 
         'street': self.street, 
         'street2': self.street2 or None, 
         'zip': self.zip, 
@@ -456,8 +415,7 @@ def get_data(self):
         'state_id:state': self.state_id.name if self.state_id else None, 
         'country_id:country': self.country_id.code if self.country_id else 'ES', 
         'default': self.default_partner_by_type
-    }
-            </field>
+    }</field>
         </record>
 
         <record id="b2b_item_out_15" model="b2b.item.out">
@@ -476,13 +434,9 @@ def get_data(self):
 
 def is_notifiable(self, action, vals):
     # Comprobamos si el cliente relaccionado es notificable
-    client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
-    notifiable_client = client_item.must_notify(self.commercial_partner_id) if client_item else False
+    customer_notifiable = self.partner_id.commercial_partner_id.active and self.partner_id.commercial_partner_id.group_companies_ids and self.partner_id.commercial_partner_id.is_company and self.partner_id.commercial_partner_id.customer and self.partner_id.commercial_partner_id.email
     # Es de tipo out_invoice o out_refund y tiene asignado un número y el estado es open o cancel
-    return notifiable_client and self.number and self.type in ('out_invoice', 'out_refund') and self.state in ('open', 'cancel')
-
-def get_action(self, action, vals):
-    return action
+    return customer_notifiable and self.number and self.type in ('out_invoice', 'out_refund') and self.state in ('open', 'cancel')
 
 def get_data(self):
     # Obtenemos el documento PDF como un string
@@ -518,13 +472,9 @@ def get_data(self):
 
 def is_notifiable(self, action, vals):
     # Comprobamos si el cliente relaccionado es notificable
-    client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
-    notifiable_client = client_item.must_notify(self.partner_id.commercial_partner_id) if client_item else False
+    customer_notifiable = self.partner_id.commercial_partner_id.active and self.partner_id.commercial_partner_id.group_companies_ids and self.partner_id.commercial_partner_id.is_company and self.partner_id.commercial_partner_id.customer and self.partner_id.commercial_partner_id.email
     # Es un albarán y es de salida o dropshipping y el estado es done o cancel
-    return notifiable_client and (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state in ('done', 'cancel')
-
-def get_action(self, action, vals):
-    return action
+    return customer_notifiable and (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state in ('done', 'cancel')
 
 def get_data(self):
     # Obtenemos el documento PDF como un string
@@ -560,13 +510,9 @@ def get_data(self):
 
 def is_notifiable(self, action, vals):
     # Comprobamos si el cliente relaccionado es notificable
-    client_item = self.env['b2b.item.out'].search([('name', '=', 'customer')])
-    notifiable_client = client_item.must_notify(self.partner_id.commercial_partner_id) if client_item else False
+    customer_notifiable = self.partner_id.commercial_partner_id.active and self.partner_id.commercial_partner_id.group_companies_ids and self.partner_id.commercial_partner_id.is_company and self.partner_id.commercial_partner_id.customer and self.partner_id.commercial_partner_id.email
     # Es un pedido de venta y (se recibe date_order en vals y el estado es pending o lqdr) o el estado es cancel
-    return notifiable_client and (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
-
-def get_action(self, action, vals):
-    return action
+    return customer_notifiable and (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
 
 def get_data(self):
     # Obtenemos el documento PDF como un string
@@ -597,9 +543,6 @@ def get_data(self):
 def is_notifiable(self, action, vals):
     return self.product_id or self.product_tmpl_id
 
-def get_action(self, action, vals):
-    return None
-
 def get_data(self):
     # Llamamos al método que envía los precios pero lo limitamos a esta línea
     self.env['b2b.export'].b2b_customers_prices(lines_filter=[self.id,])
@@ -616,9 +559,6 @@ def get_data(self):
 
 def is_notifiable(self, action, vals):
     return self.product_id or self.product_tmpl_id
-
-def get_action(self, action, vals):
-    return None
 
 def get_data(self):
     template_obj = self.product_id.product_tmpl_id if self.product_id else self.product_tmpl_id

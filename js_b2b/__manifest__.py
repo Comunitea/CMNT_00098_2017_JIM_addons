@@ -24,12 +24,10 @@
 	'depends': [
 		'base',
 		'sale',
+		'product',
 		'jim_sale',
-		'product_tags',
 		'js_product_images',
-		'purchase',
-		'sga_file',
-		'product_code_generator'
+		'js_categorization'
 	],
 	'contributors': [
 		"Pablo Luaces <pablo@jimsports.com>",

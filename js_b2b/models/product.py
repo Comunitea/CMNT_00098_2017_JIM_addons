@@ -61,20 +61,35 @@ class ProductTemplate(models.Model):
 			product.website_published = toggled_status
 			product.mapped('product_variant_ids').write({ 'website_published': toggled_status })
 
+	@api.multi
+	def create_variant_ids(self):
+		res = super(ProductTemplate, self).create_variant_ids()
+		# Publish new variants based on template
+		for tmpl_id in self.with_context(active_test=False).filtered(lambda x: x.attribute_line_ids):
+			for product_id in tmpl_id.product_variant_ids:
+				website_published = tmpl_id.website_published
+				if product_id.website_published != website_published:
+					product_id.website_published = website_published
+		# Unpublish unique variant without attributes
+		for tmpl_id in self.with_context(active_test=False).filtered(lambda x: len(x.product_variant_ids) == 1 and not x.attribute_line_ids):
+			if tmpl_id.product_variant_ids[0].website_published:
+				tmpl_id.product_variant_ids[0].website_published = False
+		return res
+
 class ProductProduct(models.Model):
- 	_inherit = ["product.product"]
+	_inherit = ["product.product"]
 
- 	def _default_website_published(self):
- 		""" 
- 		Set default value based on template field 
- 		"""
- 		return self.product_tmpl_id.website_published
+	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
 
- 	website_published = fields.Boolean('Visible on Website', default=_default_website_published, copy=False)
-
- 	@api.multi
+	@api.multi
 	def website_publish_button(self):
 		for variant in self:
 			if not variant.product_tmpl_id.website_published:
 				raise ValidationError(_(base_product_publish_error + 'template is unpublished.'))
 			variant.website_published = not variant.website_published
+
+	@api.model
+	def create(self, vals):
+		template = self.env['product.template'].browse(vals.get('product_tmpl_id', 0))
+		vals.update({ 'website_published': template.website_published })
+		return super(ProductProduct, self).create(vals)
