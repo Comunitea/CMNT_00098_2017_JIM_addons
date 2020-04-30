@@ -27,7 +27,8 @@
 		'product',
 		'jim_sale',
 		'js_product_images',
-		'js_categorization'
+		'js_categorization',
+		'stock_export'
 	],
 	'contributors': [
 		"Pablo Luaces <pablo@jimsports.com>",
