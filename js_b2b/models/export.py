@@ -224,7 +224,7 @@ class B2BBulkExport(models.Model):
 		# If actual time is between 00:30 & 00:45 set "all" to True
 		all_products = B2BBulkExport.is_time_between('00:30:00', '00:45:00')
 		print(":::::: ALL PRODUCTS", all_products)
-		stock = self.env['exportxml.object'].compute_product_ids(self, from_time=test_date, inc=test_limit or 999999999)
+		stock = self.env['exportxml.object'].compute_product_ids(all=True, from_time=test_date, inc=test_limit or 999999999)
 		print(":::::: STOCK COMUNITEA", stock)
 
 		# Send to JSync

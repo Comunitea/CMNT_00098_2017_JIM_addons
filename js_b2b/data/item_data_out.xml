@@ -394,14 +394,16 @@ def pos_data(self, action):
     'state_id', 
     'country_id',
     'commercial_partner_id',
-    'active'
+    'type', 
+    'default', 
+    'active',
 )
 
 def is_notifiable(self, action, vals):
     # Comprobamos si el cliente relaccionado es notificable
     customer_notifiable = self.commercial_partner_id.active and self.commercial_partner_id.group_companies_ids and self.commercial_partner_id.is_company and self.commercial_partner_id.customer and self.commercial_partner_id.email and self.commercial_partner_id.web_password and self.commercial_partner_id.id != self.id
-    # Es de tipo 'delivery' y no es una dirección de dropshipping
-    return customer_notifiable and self.active and self.type == 'delivery' and self.name != 'DROPSHIPPING'
+    # Es de tipo 'invoice' o 'delivery' y no es una dirección de dropshipping
+    return customer_notifiable and self.active and self.type in ('invoice', 'delivery') and self.name != 'DROPSHIPPING'
 
 def get_data(self):
     return {
@@ -414,6 +416,7 @@ def get_data(self):
         'city': self.city, 
         'state_id:state': self.state_id.name if self.state_id else None, 
         'country_id:country': self.country_id.code if self.country_id else 'ES', 
+        'type': self.type, 
         'default': self.default_partner_by_type
     }</field>
         </record>
@@ -433,10 +436,8 @@ def get_data(self):
 )
 
 def is_notifiable(self, action, vals):
-    # Comprobamos si el cliente relaccionado es notificable
-    customer_notifiable = self.partner_id.commercial_partner_id.active and self.partner_id.commercial_partner_id.group_companies_ids and self.partner_id.commercial_partner_id.is_company and self.partner_id.commercial_partner_id.customer and self.partner_id.commercial_partner_id.email
     # Es de tipo out_invoice o out_refund y tiene asignado un número y el estado es open o cancel
-    return customer_notifiable and self.number and self.type in ('out_invoice', 'out_refund') and self.state in ('open', 'cancel')
+    return self.number and self.type in ('out_invoice', 'out_refund') and self.state in ('open', 'cancel')
 
 def get_data(self):
     # Obtenemos el documento PDF como un string
@@ -471,10 +472,8 @@ def get_data(self):
 )
 
 def is_notifiable(self, action, vals):
-    # Comprobamos si el cliente relaccionado es notificable
-    customer_notifiable = self.partner_id.commercial_partner_id.active and self.partner_id.commercial_partner_id.group_companies_ids and self.partner_id.commercial_partner_id.is_company and self.partner_id.commercial_partner_id.customer and self.partner_id.commercial_partner_id.email
     # Es un albarán y es de salida o dropshipping y el estado es done o cancel
-    return customer_notifiable and (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state in ('done', 'cancel')
+    return (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state in ('done', 'cancel')
 
 def get_data(self):
     # Obtenemos el documento PDF como un string
@@ -509,10 +508,8 @@ def get_data(self):
 )
 
 def is_notifiable(self, action, vals):
-    # Comprobamos si el cliente relaccionado es notificable
-    customer_notifiable = self.partner_id.commercial_partner_id.active and self.partner_id.commercial_partner_id.group_companies_ids and self.partner_id.commercial_partner_id.is_company and self.partner_id.commercial_partner_id.customer and self.partner_id.commercial_partner_id.email
     # Es un pedido de venta y (se recibe date_order en vals y el estado es pending o lqdr) o el estado es cancel
-    return customer_notifiable and (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
+    return (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel'
 
 def get_data(self):
     # Obtenemos el documento PDF como un string
