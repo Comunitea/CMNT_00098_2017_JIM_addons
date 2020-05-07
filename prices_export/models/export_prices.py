@@ -52,7 +52,7 @@ class ExportPrices(models.Model):
 
     @api.model
     def create_export_qtys_prices_records(self, pricelist, product_prices):
-        import ipdb; ipdb.set_trace()
+        # import ipdb; ipdb.set_trace()
         tot = len(product_prices)
         idx = 0
         for t in product_prices:
@@ -146,7 +146,7 @@ class ExportPrices(models.Model):
         obtengo los precios para esos productos, y creo los registros en la
         tabla
         """
-        import ipdb; ipdb.set_trace()
+        # import ipdb; ipdb.set_trace()
         domain = [
             ('to_export', '=', True),
         ]
@@ -157,9 +157,9 @@ class ExportPrices(models.Model):
         for pl in pricelists:
             # MANERA LENTA
             a = datetime.now()
-            related_products = pl.get_related_products()
-            # product_prices = pl.get_export_product_prices(related_products)
-            product_prices = self.env['product.product'].search([])
+            # related_products = pl.get_related_products()
+            related_products = self.env['product.product'].search([])
+            product_prices = pl.get_export_product_prices(related_products)
             self.create_export_prices_records(pl, product_prices)
            
             # products_qtys = self.sql_get_related_products_qtys(pl.id)
@@ -179,7 +179,7 @@ class ExportPrices(models.Model):
         if create_all:
             return self.create_export_prices()
 
-        import ipdb; ipdb.set_trace()
+        # import ipdb; ipdb.set_trace()
         # base_date = self.env['ir.config_parameter'].get_param(
         #     'last_call_export_prices', default='')
         # domain = [
