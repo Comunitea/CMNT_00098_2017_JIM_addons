@@ -166,7 +166,7 @@ class ExportPrices(models.Model):
             # product_prices = pl.get_export_product_qtys_prices(products_qtys)
             # self.create_export_qtys_prices_records(pl, product_prices)
             b = datetime.now()
-            print('Finalizamos tarifa {} en {}'.format(self.name, datetime.now()))
+            print('Finalizamos tarifa {} en {}'.format(pl.name, datetime.now()))
             print('TOTAL: {}'.format(b - a))
         return
 
