@@ -57,7 +57,7 @@ class ExportPrices(models.Model):
         idx = 0
         for t in product_prices:
             idx += 1
-            if not t[1]:
+            if not t[2]:
                 continue
             print('Creando record producto: {} qty: {}, precio: {} ({}/{})'.format(t[0], t[1], t[2], tot, idx))
             vals = {
@@ -153,7 +153,7 @@ class ExportPrices(models.Model):
         obtengo los precios para esos productos, y creo los registros en la
         tabla
         """
-        # import ipdb; ipdb.set_trace()
+        import ipdb; ipdb.set_trace()
         domain = [
             ('to_export', '=', True),
         ]
