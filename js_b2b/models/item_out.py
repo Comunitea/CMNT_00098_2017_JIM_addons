@@ -20,10 +20,6 @@ class B2bItemsOut(models.Model):
         def is_notifiable(self, action, vals):
             return True
 
-        # Update default action (experimental)
-        def get_action(self, action, vals):
-            return action
-
         # Object data to send
         def get_data(self):
             return {
@@ -73,56 +69,18 @@ class B2bItemsOut(models.Model):
 		except Exception as e:
 			raise UserError(_('Syntax Error?\n') + str(e))
 		# Check required vars and methods to avoid fatal errors
-		variables = { 'fields_to_watch': tuple }
-		methods = ['is_notifiable', 'get_action', 'get_data']
+		variables = { 'fields_to_watch': (list, tuple) }
+		methods = ['is_notifiable', 'get_data']
 		for var in tuple(variables.keys() + methods):
 			if not var in locals():
 				raise UserError(_('Code Error!\n %s not defined' % (var)))
 		for var, typ in variables.items():
 			var_content = eval(var)
-			if var_content and type(var_content) is not typ:
+			if var_content and type(var_content) not in typ:
 				raise UserError(_('Code Error!\nItem: %s\nVar name: %s\nReceived type: %s\nExpected type: %s' % (self.name, var, type(var_content), typ)))
 		for method in methods:
 			if not callable(eval(method)):
 				raise UserError(_('Code Error!\n %s must be a function' % (method)))
-
-	@api.model
-	def must_notify(self, record, mode='create', vals=None):
-		"""
-		Check if item record is notifiable
-		"""
-		# Default
-		is_notifiable = True
-		# Basic checks, model and code
-		if record and record._name in self.model.split(',') and type(self.code) is unicode:
-			import datetime
-			import base64
-			b2b = dict()
-			# Ejecutamos el código con exec(self.code)
-			# establece localmente las siguentes variables y métodos:
-			#   b2b['fields_to_watch'] <type 'tuple'>
-			#   b2b['is_notifiable'] <type 'function'>
-			#	b2b['get_action'] <type 'function'>
-			#   b2b['get_data'] <type 'function'>
-			exec(self.code, locals(), b2b)
-			# Comprobamos si es notificable
-			is_notifiable = b2b['is_notifiable'](record, mode, vals)
-			# Devuelve False si ninguno de los campos recibidos en vals
-			# está presente en b2b_fields_to_watch (cuando los tipos coinciden)
-			if type(b2b['fields_to_watch']) is tuple and type(vals) is dict:
-				vals_set = set(vals)
-				fields_set = set(b2b['fields_to_watch'])
-				is_notifiable =  is_notifiable and bool(vals_set.intersection(fields_set))
-			# Comprobamos si se debe notificar según el código
-			if is_notifiable:
-				return {
-					# Obtener la acción a realizar con los datos
-					'action': b2b['get_action'](record, mode, vals), 
-					# Obtener los datos del registro
-					'data': b2b['get_data'](record)
-				}
-			return False
-		return False
 
 	@api.one
 	def sync_item(self, mode='create'):
@@ -162,23 +120,13 @@ class B2bItemsOut(models.Model):
 			record_percent = round((record_number / total_records) * 100, 1)
 			record_percent_str = str(record_percent) + '%'
 			record = self.env[self.model].browse(id)
-			# Exec code
-			item_to_send = self.must_notify(record, mode) or dict()
-			# Action to do
-			item_action = item_to_send.get('action')
-			# Data to send
-			item_data = item_to_send.get('data')
-			# If have data
-			if item_data:
-				print("@@ RECORD ID#%s IS NOTIFIABLE!" % (record.id), record_percent_str)
-				# Make & send packet
-				packet = JSync()
-				packet.name = self.name
-				packet.data = item_data
-				packet.filter_data()
-				packet.send(action=item_action)
+			notifiable_items = record.is_notifiable()
+			# Is notifiable
+			if notifiable_items:
+				print("@@ RECORD ID#%s IS NOTIFIABLE!" % (id), record_percent_str)
+				record.b2b_record('create', conf_items_before=notifiable_items)
 			else:
-				print("@@ RECORD ID#%s NOT NOTIFIABLE" % (record.id), record_percent_str)
+				print("@@ RECORD ID#%s NOT NOTIFIABLE" % (id), record_percent_str)
 		# End line
 		print("************* FIN B2B ITEM *************")
 

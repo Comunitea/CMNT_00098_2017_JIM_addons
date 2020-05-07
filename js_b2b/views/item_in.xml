@@ -24,6 +24,7 @@
 					<group>
 						<field name="model"/>
 						<field name="description"/>
+						<field name="code" widget="js_code"/>
 					</group>
 				</sheet>
 			</form>

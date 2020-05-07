@@ -1,0 +1,55 @@
+<?xml version="1.0"?>
+<odoo>
+
+    <template id="js_pdf_last_page.css" inherit_id="report.assets_pdf">
+        <xpath expr="link[last()]" position="after">
+            <link rel="stylesheet" type="text/less" href="/js_pdf_last_page/static/less/reports.less" />
+        </xpath>
+    </template>
+
+    <template id="js_pdf_last_page_content" inherit_id="report.layout" name="Last Reports Page">
+        <xpath expr="." position="inside">
+            <!-- Multicompañía -->
+            <t t-if="not o and doc" t-set="o" t-value="doc"/>
+            <t t-if="o and 'company_id' in o" t-set="company" t-value="o.company_id"/>
+            <!-- Por alguna razón aquí llega docs a veces con sólo un documento -->
+            <t t-if="not o or not 'company_id' in o and len(docs) == 1 and 'company_id' in docs[0]" t-set="company" t-value="docs[0].company_id"/>
+            <t t-else="" t-set="company" t-value="res_company"/>
+
+            <!-- Última página -->
+            <t t-foreach="company.pdf_last_pages" t-as="last_page">
+                <t t-if="xmlid in last_page.report_ids.mapped('report_name')">
+                    <div class="page js_last_page">
+                        <!-- Se mete en el header para que no quede un espacio en la parte superior -->
+                        <div class="header">
+                            <div style="padding-top: 20px">
+                                <t t-raw="last_page.body" />
+                            </div>
+                        </div>
+                        <!-- Fake Divs -->
+                        <div class="invisible">Fake</div>
+                        <div class="footer"></div>
+                    </div>
+                </t>
+            </t>
+
+            <t t-if="debug">
+                <!-- Con debug ON, otra página -->
+                <div class="page js_debug_page">
+                    <div class="header">
+                        <div class="alert alert-info">
+                            <div><b>LAST PAGE DEBUG INFO</b> (you have debug mode active)</div>
+                            <div>ACTUAL COMPANY: <t t-raw="company.name"/></div>
+                            <div>ACTUAL REPORT XML NAME: <t t-raw="xmlid"/></div>
+                            <div>ON COMPANY CONFIG: <t t-raw="company.mapped('pdf_last_pages.report_ids').mapped('report_name')"/></div>
+                        </div>
+                    </div>
+                    <!-- Fake Divs -->
+                    <div class="invisible">Fake</div>
+                    <div class="footer"></div>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>

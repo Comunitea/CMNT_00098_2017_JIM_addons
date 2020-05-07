@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
 from ..base.helper import JSync
-from datetime import datetime
 from os import path, pardir
+from datetime import datetime
 
 class B2BBulkExport(models.Model):
 	_name = "b2b.export"
@@ -15,15 +15,15 @@ class B2BBulkExport(models.Model):
 		module_dir = path.abspath(path.join(path.dirname(path.realpath(__file__)), pardir))
 		log_file = path.join(module_dir, 'static', 'log', file or self._log_filename)
 		with open(log_file, mode) as file:
-			date = datetime.now()
+			date = fields.Datetime.now()
 			file.write("%s %s\n" % (date, txt))
 			print("%s %s" % (date, txt))
 
 	# ------------------------------------ CUSTOM QUERIES ------------------------------------
 
 	def __pricelists_unique_quantities(self):
-		self.env.cr.execute(
-			"SELECT pricelist_id, CASE \
+		self.env.cr.execute("SELECT pricelist_id, \
+			CASE \
 				WHEN min_quantity > 0 THEN min_quantity \
 				ELSE 1 \
 			END min_qty \
@@ -35,8 +35,8 @@ class B2BBulkExport(models.Model):
 		return self.env.cr.fetchall()
 
 	def __products_in_pricelists(self):
-		self.env.cr.execute(
-			"SELECT product_tmpl_id FROM product_product \
+		self.env.cr.execute("SELECT product_tmpl_id \
+			FROM product_product \
 			WHERE id IN ( \
 				SELECT product_id FROM product_pricelist_item \
 				WHERE active = true \
@@ -50,8 +50,8 @@ class B2BBulkExport(models.Model):
 		return tuple(r[0] for r in self.env.cr.fetchall())
 
 	def __products_with_stock_moves(self, date=None):
-		self.env.cr.execute(
-			"SELECT product_tmpl_id FROM product_product \
+		self.env.cr.execute("SELECT product_tmpl_id \
+			FROM product_product \
 			WHERE id IN ( \
 				SELECT product_id FROM stock_move WHERE \
 				write_date > %s \
@@ -67,6 +67,17 @@ class B2BBulkExport(models.Model):
 			) \
 			GROUP BY product_tmpl_id", [date, date, date])
 		return tuple(r[0] for r in self.env.cr.fetchall())
+
+	# ------------------------------------ STATIC METHODS ------------------------------------
+
+	@staticmethod
+	def is_time_between(begin_time, end_time, check_time=None):
+		# If check time is not given, default to current UTC time
+		check_time = check_time or datetime.now().strftime("%H:%M:%S")
+		if begin_time < end_time:
+			return check_time >= begin_time and check_time <= end_time
+		else: # crosses midnight
+			return check_time >= begin_time or check_time <= end_time
 
 	# ------------------------------------ PUBLIC METHODS ------------------------------------
 
@@ -160,7 +171,8 @@ class B2BBulkExport(models.Model):
 			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
 			packet.name = 'pricelist_item'
 			packet.data = prices
-			packet.send(action='update' if templates_filter is not None else 'replace', timeout_sec=300)
+			packet.mode = 'update' if templates_filter is not None else 'replace'
+			packet.send(timeout_sec=300)
 			self.write_to_log(str(prices), 'pricelist_item', "w+")
 
 	def b2b_customers_prices(self, lines_filter=None):
@@ -170,7 +182,7 @@ class B2BBulkExport(models.Model):
 		# Get decimals number
 		prices_precision = self.env['decimal.precision'].precision_get('Product Price')
 		# Price lines filter
-		prices_filter = [('id', 'in', lines_filter)] if lines_filter else list()
+		prices_filter = [('id', 'in', lines_filter)] if lines_filter and type(lines_filter) is list else list()
 		try:
 			# Get all prices
 			for price_line in self.env['customer.price'].read_group(prices_filter, ('partner_id', 'product_tmpl_id', 'product_id', 'min_qty', 'price'), groupby=('partner_id', 'product_tmpl_id', 'product_id', 'min_qty'), orderby=('id DESC'), lazy=False):
@@ -204,15 +216,32 @@ class B2BBulkExport(models.Model):
 			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
 			packet.name = 'customer_price'
 			packet.data = prices
-			packet.send(action='update' if prices_filter is not None else 'replace', timeout_sec=300)
+			packet.mode = 'update' if lines_filter is not None else 'replace'
+			packet.send(timeout_sec=300)
 			self.write_to_log(str(prices), 'customer_price', "w+")
 
 	def b2b_products_stock(self, test_limit=None, test_date=None):
+		# If actual time is between 00:30 & 00:45 set "all" to True
+		all_products = B2BBulkExport.is_time_between('00:30:00', '00:45:00')
+		print(":::::: ALL PRODUCTS", all_products)
+		stock = self.env['exportxml.object'].compute_product_ids(all=True, from_time=test_date, inc=test_limit or 999999999)
+		print(":::::: STOCK COMUNITEA", stock)
+
+		# Send to JSync
+		if stock:
+			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
+			packet.name = 'product_stock'
+			packet.data = stock
+			packet.mode = 'replace' if all_products else 'update'
+			if packet.send(timeout_sec=300):
+				self.write_to_log(str(stock), 'product_stock', "w+")
+
+	"""def b2b_products_stock(self, test_limit=None, test_date=None):
 		self.write_to_log('[b2b_products_stock] Starts!')
 		# Out stock
 		stock = list()
 		# Time now
-		start_date = datetime.now()
+		start_date = fields.Datetime.now()
 		# Last time executed
 		last_date = test_date or self.env['b2b.settings'].get_default_params().get('last_stock_date', False)
 		# Search params
@@ -237,11 +266,11 @@ class B2BBulkExport(models.Model):
 				product = self.env['product.template'].browse(product_id)
 				print(":: %s%% PROCESANDO... [%s] %s" % (percent, product.default_code, product.name))
 				for variant in product.product_variant_ids:
-					stock_for_product = variant.web_global_stock or 0
+					stock_for_product = variant.web_global_stock
 					stock.append({ 
 						'product_id': variant.product_tmpl_id.id,
 						'variant_id': variant.id if variant.product_attribute_count else None,
-						'stock': stock_for_product
+						'stock': stock_for_product if stock_for_product > 0 else 0
 					})
 		except Exception as e:
 			self.write_to_log('[b2b_products_stock] ERROR ON LOOP! %s' % e)
@@ -253,12 +282,14 @@ class B2BBulkExport(models.Model):
 			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
 			packet.name = 'product_stock'
 			packet.data = stock
-			packet.send(action='update' if last_date else 'replace', timeout_sec=300)
+			packet.mode = 'update' if last_date else 'replace'
+			packet.send(timeout_sec=300)
 			self.write_to_log(str(stock), 'product_stock', "w+")
 
 		# Update last stock date
 		if start_date and not test_date:
 			self.env['b2b.settings'].update_param('last_stock_date', start_date)
+	"""
 		
 
 	# ------------------------------------ EXTRA ------------------------------------

@@ -7,6 +7,7 @@ class BaseB2B(models.AbstractModel):
 
 	_inherit = 'base'
 
+	@api.model
 	def get_field_translations(self, field='name'):
 		"""
 		Get field translations dict for all models
@@ -31,109 +32,138 @@ class BaseB2B(models.AbstractModel):
 		# Return lang -> str dict
 		return translations
 
-	def __must_notify(self, model, fields_to_watch=None, vals=None):
+	@api.multi
+	def is_notifiable(self, mode='create', vals=None):
 		"""
-		Check if this model and item is notifiable 
+		Notifiable config items
 
-		:param fields_to_watch: Fields to watch tuple
+		:param models: Item config models
+		:param code: Item config code
 		:param vals: Default model data update dict (to check fields)
 		:return: boolean
 		"""
-		if not self._name == model:
-			return False
-		# Return true if have fields to watch
-		if type(fields_to_watch) is tuple and type(vals) is dict:
-			return bool(set(vals).intersection(set(fields_to_watch)))
-		# Watch all by default
-		return True
+		b2b_items_out = self.env['b2b.item.out'].search([])
+		for record in self:
+			items_list = list()
+			for item in b2b_items_out:
+				item_models = [x.strip() for x in item.model.split(',')]
+				if record._name in item_models and type(item.code) is unicode:
+					b2b = dict()
 
-	def __b2b_record(self, mode=None, vals=None):
-		"""
-		Private method to check configured items and send the data
+					# Ejecutamos el código con exec(item.code)
+					# establece en la variable local b2b los siguientes atributos:
+					#   b2b['fields_to_watch'] <type 'tuple'>
+					#   b2b['is_notifiable'] <type 'function'>
+					#   b2b['pre_data'] <type 'function'> ¡No usado aquí! ¡Opcional!
+					#   b2b['get_data'] <type 'function'> ¡No usado aquí!
+					#   b2b['pos_data'] <type 'function'> ¡No usado aquí! ¡Opcional!
+					exec(item.code, locals(), b2b)
 
-		:param mode: String, CRUD mode
-		:param vals: Default model data update dict (to check changes)
-		:return: boolean
-		"""
+					# Si este registro es notificable
+					if b2b['is_notifiable'](record, mode, vals):
+						if type(b2b['fields_to_watch']) in (list, tuple) and type(vals) is dict:
+							# Si se están actualizando campos notificables
+							if bool(set(vals).intersection(set(b2b['fields_to_watch']))):
+								items_list.append(item.name)
+						else:
+							items_list.append(item.name)
+
+			# All notifiable items
+			return items_list
+
+	@api.model
+	def b2b_record(self, mode, vals=None, conf_items_before=None):
 		packets = []
-		send_items = self.env['b2b.item.out'].sudo().search([])
-		# Para cada elemento activo
-		for item in send_items:
-			# Comprobamos si se debe notificar y recogemos los datos
-			item_to_send = item.must_notify(self, mode, vals) or dict()
-			# Acción a realizar
-			item_action = item_to_send.get('action')
-			# Datos a enviar
-			item_data = item_to_send.get('data')
-			# Si tiene acción y datos
-			if item_action and item_data:
-				# Obtenemos el id
-				packet = JSync(self.id)
-				# Obtenemos el nombre
-				packet.name = item.name
-				# Obtenemos los datos
-				packet.data = item_data
-				# Normalizamos los datos
-				packet.filter_data(vals)
-				# Guardamos el paquete
-				packets.append(packet)
-				# No se puede crear un elemento si se está llamando desde unlink()
-				# esto solo pasará si hemos modificado la acción por defecto
-				bad_action = item_action == 'create' and mode == False
-				# Si los datos son correctos lo enviamos
-				if packet.data and not bad_action:
-					packet.send(action=item_action)
-					#break
-		# Paquetes creados
+		jsync_conf = self.env['b2b.settings'].get_default_params()
+		conf_items_after = self.is_notifiable(mode, vals)
+		for item in self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)]):
+			import datetime
+			import base64
+			b2b = dict()
+
+			# Ejecutamos el código con exec(item.code)
+			# establece en la variable local b2b los siguientes atributos:
+			#   b2b['fields_to_watch'] <type 'tuple'> ¡No usado aquí!
+			#   b2b['is_notifiable'] <type 'function'> ¡No usado aquí!
+			#   b2b['pre_data'] <type 'function'> ¡Opcional!
+			#   b2b['get_data'] <type 'function'>
+			#   b2b['pos_data'] <type 'function'> ¡Opcional!
+			exec(item.code, locals(), b2b)
+
+			# No se puede buscar dentro de un None
+			if conf_items_before is None:
+				conf_items_before = list()
+			# Si antes era notificable y ahora no lo eliminamos
+			if mode and item.name in conf_items_before and item.name not in conf_items_after:
+				mode = 'delete'
+			# Si antes no era notificable y ahora si lo creamos (ponemos vals a none para que se envíe todo)
+			elif mode and item.name not in conf_items_before and item.name in conf_items_after:
+				mode = 'create'
+				vals = None
+
+			# Creamos un paquete
+			packet = JSync(settings=jsync_conf)
+			# Obtenemos el modo
+			packet.mode = mode
+			# Obtenemos el nombre
+			packet.name = item.name
+
+			# Ejecutamos la función pre_data si existe
+			if 'pre_data' in b2b and callable(b2b['pre_data']):
+				b2b['pre_data'](self, mode)
+
+			# Obtenemos los datos
+			packet.data = b2b['get_data'](self)
+			# Filtramos los datos
+			packet.filter_data(vals)
+			# Guardamos el paquete
+			packets.append(packet)
+
+			# Lo enviamos si procede
+			if vals != False:
+				if packet.send():
+					item_id = '[PACKET]'
+					if packet.data and type(packet.data) is dict:
+						item_id = packet.data.get('jim_id', self.id)
+					self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (mode.capitalize(), packet.name, item_id))
+
+			# Ejecutamos la función pos_data si existe
+			if 'pos_data' in b2b and callable(b2b['pos_data']):
+				b2b['pos_data'](self, mode)
+
+		# Paquetes a enviar
 		return packets
 
 	# ------------------------------------ OVERRIDES ------------------------------------
 
 	@api.model
 	def create(self, vals):
-		print("----------- [B2B BASE] CREATE", self._name, vals)
+		#print("----------- [B2B BASE] CREATE", self._name, vals)
 		item = super(BaseB2B, self).create(vals)
-		# Los productos no se envían cuando se crean
-		if item._name not in ('product.template', 'product.product'):
-			item.__b2b_record('create')
+		if item._name != 'product.template':
+			item.b2b_record('create')
 		return item
 
 	@api.multi
 	def write(self, vals):
-		print("----------- [B2B BASE] WRITE", self._name, vals)
-		active_before = { item.id:bool('active' in item and item.active) for item in self } 
-		website_published_before = { item.id:bool('website_published' in item and item.website_published) for item in self } 
+		#print("----------- [B2B BASE] WRITE", self._name, vals)
+		items_to_send = self.is_notifiable('update', vals)
 		super(BaseB2B, self).write(vals)
 		for item in self:
-			item_active = vals.get('active')
-			item_status = vals.get('state')
-			# Los productos se envían de forma diferente, tienen su propio botón
-			if item._name in ('product.template', 'product.product'):
-				# Se está publicando
-				if not website_published_before[item.id] and vals.get('website_published') == True:
-					item.__b2b_record('create')
-				# Se está des-publicando
-				elif website_published_before[item.id] and vals.get('website_published') == False:
-					item.__b2b_record('delete', False)
-			# Al activarse y no estar cancelado se crea de nuevo
-			elif (not active_before[item.id] and item_active == True) and item_status != 'cancel':
-				item.__b2b_record('create')
-			# Al desactivarse o cancelarse se elimina
-			elif (active_before[item.id] and item_active == False) or item_status == 'cancel':
-				item.__b2b_record('delete', False)
-			# Para otros cambios se actualiza (si está activo)
-			elif item_active in (True, None):
-				item.__b2b_record('update', vals)
+			item.b2b_record('update', vals, conf_items_before=items_to_send)
 		return True
 
 	@api.multi
 	def unlink(self):
-		print("----------- [B2B BASE] DELETE", self._name, self)
+		#print("----------- [B2B BASE] DELETE", self._name, self)
 		packets = list()
 		for item in self:
-			packets += item.__b2b_record(False, False)
+			packets += item.b2b_record('delete', False, conf_items_before=item.is_notifiable('delete'))
 		if super(BaseB2B, self).unlink():
 			for packet in packets:
-				if packet:
-					packet.send(action='delete')
+				if packet and packet.send():
+					item_id = '[PACKET]'
+					if packet.data and type(packet.data) is dict:
+						item_id = packet.data.get('jim_id', self.id)
+					self.env.user.notify_info('[B2B] Delete <b>%s</b> %s' % (packet.name, item_id))
 		return True

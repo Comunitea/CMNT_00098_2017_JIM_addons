@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
+from requests import Session
 from requests.adapters import HTTPAdapter
 from odoo.http import request as HttpRequest
 from requests.packages.urllib3.util.retry import Retry as httpRetry
@@ -10,7 +11,6 @@ from unidecode import unidecode
 from sys import getsizeof
 from os import environ
 from math import ceil
-import requests
 
 class OutputHelper:
 
@@ -38,6 +38,7 @@ class OutputHelper:
 
 class JSync:
 
+	mode = 'create'
 	name = None # Data item name
 	data = {} # Item data dict
 	session = None # HTTP Session
@@ -47,7 +48,7 @@ class JSync:
 	def __init__(self, retries=3, settings=dict()):
 		retry = httpRetry(total=retries, connect=retries, backoff_factor=0.3, status_forcelist=(500, 502, 504))
 		adapter = HTTPAdapter(max_retries=retry)
-		self.session = requests.Session()
+		self.session = Session()
 		self.session.mount('http://', adapter)
 		self.session.mount('https://', adapter)
 		self.settings = settings or HttpRequest.env['b2b.settings'].get_default_params()
@@ -65,7 +66,7 @@ class JSync:
 		if not self.data or type(self.data) not in (list, tuple):
 			return False
 
-		packet_size_mb = self.settings.get('packet_size', 5)
+		packet_size_mb = self.settings.get('packet_size', 10)
 		data_size = getsizeof(self.data)/1048576
 		num_packets_total = ceil(data_size / packet_size_mb) or 1
 		data_items_count = len(self.data)
@@ -119,7 +120,7 @@ class JSync:
 
 		return self.data
 
-	def __send(self, data_dict, action, timeout_sec=10, settings=None):
+	def __send(self, data_dict, timeout_sec=10, settings=None):
 		"""
 		Sends data to JSync server and prints on screen (low private method)
 
@@ -146,10 +147,8 @@ class JSync:
 			endpoint = self.settings.get('url') + self.path
 			jsync_res = self.session.post(endpoint, timeout=timeout_sec, headers=header_dict, data=json_data)
 			OutputHelper.print_message(debug_msg.format(jsync_res.text, data_dict.get('name'), data_dict.get('operation'), debug_data, data_dict.get('part')), OutputHelper.OK)
-
 			if jsync_res.status_code is not 200 and self.settings['conexion_error'] and self.settings['response_error']:
 				raise ValidationError("JSync Server Response Error\n%s" % (jsync_res.text.encode('latin1').capitalize()))
-
 			try:
 				return json_load(jsync_res.text)
 			except:
@@ -171,8 +170,7 @@ class JSync:
 		:param timeout_sec: POST Request timeout
 
 		"""
-		if self.name and kwargs.get('action'):
-
+		if self.name and self.data and self.mode:
 			# Get multiple data iterators
 			# large data sets have to be divided in multiple parts
 			# determined by packet_size on settings
@@ -184,7 +182,7 @@ class JSync:
 				for i in range(num_packets):
 					self.__send({
 							'name': self.name,
-							'operation': kwargs['action'],
+							'operation': self.mode,
 							'data': list(data_list_multiple[i]),
 							'part': [i + 1, num_packets]
 						}, **kwargs)
@@ -192,9 +190,10 @@ class JSync:
 				# One
 				self.__send({
 						'name': self.name,
-						'operation': kwargs['action'],
+						'operation': self.mode,
 						'data': self.data
 					}, **kwargs)
+		return True
 
 class Google:
 

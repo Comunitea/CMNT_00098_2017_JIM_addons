@@ -90,3 +90,4 @@ ENV/
 .ropeproject
 *.json
 *.xls
+js_b2b/static/log/pricelist_item

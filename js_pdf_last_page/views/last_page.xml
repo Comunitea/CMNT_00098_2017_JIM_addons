@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<!-- FORMULARIO -->
+
+	<record id="js_pdf_last_page_form" model="ir.ui.view">
+		<field name="name">reports.last_page.form</field>
+		<field name="model">reports.last_page</field>
+		<field name="arch" type="xml">
+			<form>
+				<sheet>
+					<field name="id" invisible="1"/>
+					<group>
+						<field name="body" widget="html"/>
+						<field name="company_id" invisible="context.get('default_company_id', False)"/>
+						<field name="report_ids" domain="[('report_type', '=', 'qweb-pdf')]"/>
+					</group>
+				</sheet>
+			</form>
+		</field>
+	</record>
+
+	<!-- LISTADO -->
+
+	<record id="js_pdf_last_page_tree" model="ir.ui.view">
+		<field name="name">reports.last_page.tree</field>
+		<field name="model">reports.last_page</field>
+		<field name="arch" type="xml">
+			<tree>
+				<field name="company_id" invisible="context.get('default_company_id', False)"/>
+				<field name="report_ids"/>
+			</tree>
+		</field>
+	</record>
+
+	<!-- VISTAS -->
+
+	<record id="js_pdf_last_page_view" model="ir.actions.act_window">
+		<field name="name">Last Documents Page</field>
+		<field name="type">ir.actions.act_window</field>
+		<field name="res_model">reports.last_page</field>
+		<field name="view_type">form</field>
+		<field name="view_mode">tree,form</field>
+		<field name="help" type="html">
+		  <p class="oe_view_nocontent_create">
+			Push here to create a new page
+		  </p>
+		</field>
+	</record>
+	
+	<!-- ACCIONES DE MENÚ -->
+
+	<menuitem id="js_pdf_last_page_action" name="PDF Last Pages" parent="report.reporting_menuitem" sequence="50" action="js_pdf_last_page_view" groups="base_technical_features.group_technical_features"  />
+
+</odoo>
