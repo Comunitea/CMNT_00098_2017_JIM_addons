@@ -204,8 +204,15 @@ class ProductPricelist(models.Model):
         idx = 0
         a = datetime.now()
         print('Iniciamos tarifa {} en {}'.format(self.name, datetime.now()))
-        for t in products_qtys:
-            product = self.env['product.product'].browse(t[0])
+        # import ipdb; ipdb.set_trace()
+        product_ids = [x[0] for x in products_qtys]
+        products = self.env['product.product'].browse(product_ids)
+        qtys = [x[1] for x in products_qtys]
+        recod_prod_qtys = zip(products, qtys)
+        # import ipdb; ipdb.set_trace()
+        for t in recod_prod_qtys:
+            # product = self.env['product.product'].browse(t[0])
+            product = t[0]
             idx += 1
             print("{} / {}").format(idx, tot)
             price = self.get_product_price(product, t[1], False, False)

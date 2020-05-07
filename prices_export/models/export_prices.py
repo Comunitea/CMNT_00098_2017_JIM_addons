@@ -70,26 +70,31 @@ class ExportPrices(models.Model):
     
     
     @api.model
-    def get_item_related_product_qtys(self, i):
+    def get_item_related_product_qtys(self, i, total_res):
         """
         Devuelvo [(p_id, qty)...] que representan los productos implicados
         por la regla de precios.
+        Devuelvo solo los activos
         """
         # import ipdb; ipdb.set_trace()
         qty = i['min_quantity']
         res = []
         if i['applied_on'] == '0_product_variant':
-            res.append((i['product_id'], qty))
+            if (i['product_id'], qty) not in total_res:
+                res.append((i['product_id'], qty))
         elif i['applied_on'] == '1_product':
             domain = [('product_tmpl_id', '=', i['product_tmpl_id'])]
             products = self.env['product.product'].search(domain)
+            # import ipdb; ipdb.set_trace()
             for p in products:
-                res.append((p.id, qty))
+                if (p.id, qty) not in total_res:
+                    res.append((p.id, qty))
         elif i['applied_on'] == '2_product_category':
             domain = [('categ_id', '=', self.categ_id.id)]
             res = self.env['product.product'].search(domain)
             for p in products:
-                res.append((p.id, qty))
+                if (p.id, qty) not in total_res:
+                    res.append((p.id, qty))
         elif i['applied_on'] == '3_global':
             # import ipdb; ipdb.set_trace()
             # Calculo los productos de la tarifa en la que se basa
@@ -116,9 +121,11 @@ class ExportPrices(models.Model):
         # res = self.env['product.pricelist.item'].search_read(domain, fields)
 
         sql = """
-        select id, applied_on, product_id, product_tmpl_id, categ_id, min_quantity, 
-               compute_price, base, base_pricelist_id, pricelist_id 
-        from product_pricelist_item where pricelist_id = {};
+        select ppi.id, ppi.applied_on, ppi.product_id, ppi.product_tmpl_id, ppi.categ_id, ppi.min_quantity, 
+               ppi.compute_price, ppi.base, ppi.base_pricelist_id, ppi.pricelist_id 
+        from product_pricelist_item ppi
+        inner join product_product pp on pp.id=ppi.product_id
+        where ppi.pricelist_id = {} and pp.active=true;
         """.format(pricelist_id) 
         self._cr.execute(sql)
         sql_res = self._cr.fetchall()
@@ -135,7 +142,7 @@ class ExportPrices(models.Model):
                 'base_pricelist_id': t[8],
                 'pricelist_id': t[9],
             }
-            res2 = self.get_item_related_product_qtys(item_info)
+            res2 = self.get_item_related_product_qtys(item_info, res)
             res.extend(res2)
         return res
 
@@ -158,13 +165,13 @@ class ExportPrices(models.Model):
             # MANERA LENTA
             a = datetime.now()
             # related_products = pl.get_related_products()
-            related_products = self.env['product.product'].search([])
-            product_prices = pl.get_export_product_prices(related_products)
-            self.create_export_prices_records(pl, product_prices)
+            # related_products = self.env['product.product'].search([])
+            # product_prices = pl.get_export_product_prices(related_products)
+            # self.create_export_prices_records(pl, product_prices)
            
-            # products_qtys = self.sql_get_related_products_qtys(pl.id)
-            # product_prices = pl.get_export_product_qtys_prices(products_qtys)
-            # self.create_export_qtys_prices_records(pl, product_prices)
+            products_qtys = self.sql_get_related_products_qtys(pl.id)
+            product_prices = pl.get_export_product_qtys_prices(products_qtys)
+            self.create_export_qtys_prices_records(pl, product_prices)
             b = datetime.now()
             print('Finalizamos tarifa {} en {}'.format(pl.name, datetime.now()))
             print('TOTAL: {}'.format(b - a))
