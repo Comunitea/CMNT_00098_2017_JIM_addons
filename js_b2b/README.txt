@@ -68,4 +68,4 @@ def get_action(action, data):
 def get_data(self, data):
 	...
 
-	Deverá devolver un único diccionario de datos, que se pasará al modelo para crear el registro
+	Devolverá un único diccionario de datos, que se pasará al modelo para crear el registro
