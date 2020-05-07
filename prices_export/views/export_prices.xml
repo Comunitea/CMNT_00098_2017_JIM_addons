@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- export.prices tree view -->
+    <record id="export_prices_view_tree" model="ir.ui.view">
+        <field name="name">export.prices.view.tree</field>
+        <field name="model">export.prices</field>
+        <field name="arch" type="xml">
+            <tree create="0">
+               <field name="create_date"/>
+               <field name="write_date"/>
+               <field name="product_id"/>
+               <field name="pricelist_id"/>
+               <field name="qty"/>
+               <field name="price"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="export_prices_action" model="ir.actions.act_window">
+        <field name="name">export.prices.action</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">export.prices</field>
+        <field name="view_mode">tree</field>
+        <field name="view_type">form</field>
+    </record>
+
+    <menuitem id="menu_export_prices" name="Export Prices" parent="sale.menu_product_pricelist_main"
+              action="export_prices_action"/>
+
+</odoo>
