@@ -14,24 +14,25 @@ class ExportPrices(models.Model):
     qty = fields.Float('Min Quantity')
     price = fields.Float('Price')
     
-    # @api.model
-    # def calculate(self, pricelist_id):
-    #     """
-    #     Sobre 4 minutos para pvp02, SOLO una vez despues siempre me tarda +25
-    #     """
-    #     pricelist = self.env['product.pricelist'].browse(pricelist_id)
-    #     products = self.env['product.product'].with_context(prefetch_fields=False).search([])
-    #     qtys = map(lambda x: (x, 1, 1), products)
-    #     print('Iniciamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
-    #     a = datetime.now()
-    #     # res = pricelist._compute_price_rule(qtys)
-    #     pricelist._compute_price_rule(qtys)
-    #     b = datetime.now()
-    #     print(b - a)
-    #     print('Finalizamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
-    #     # import ipdb; ipdb.set_trace()
-    #     return res
+    @api.model
+    def calculate(self, pricelist_id):
+        """
+        Sobre 4 minutos para pvp02, SOLO una vez despues siempre me tarda +25
+        """
+        pricelist = self.env['product.pricelist'].browse(pricelist_id)
+        products = self.env['product.product'].with_context(prefetch_fields=False).search([])
+        qtys = map(lambda x: (x, 1, 1), products)
+        print('Iniciamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
+        a = datetime.now()
+        # res = pricelist._compute_price_rule(qtys)
+        pricelist._compute_price_rule(qtys)
+        b = datetime.now()
+        print(b - a)
+        print('Finalizamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
+        # import ipdb; ipdb.set_trace()
+        return res
 
+    # METODO A
     @api.model
     def create_export_prices_records(self, pricelist, product_prices):
         tot = len(product_prices)
@@ -40,7 +41,7 @@ class ExportPrices(models.Model):
             idx += 1
             if not t[1]:
                 continue
-            print('Creando record producto: {} precio: {} ({}/{})'.format(t[0], t[1], tot, idx))
+            print('Creando record producto: {} precio: {} ({}/{})'.format(t[0], t[1], idx, tot))
             vals = {
                 'product_id':t[0],
                 'pricelist_id': pricelist.id,
@@ -49,7 +50,7 @@ class ExportPrices(models.Model):
             }
             self.create(vals)
     
-
+    # METODO B
     @api.model
     def create_export_qtys_prices_records(self, pricelist, product_prices):
         # import ipdb; ipdb.set_trace()
@@ -59,7 +60,7 @@ class ExportPrices(models.Model):
             idx += 1
             if not t[2]:
                 continue
-            print('Creando record producto: {} qty: {}, precio: {} ({}/{})'.format(t[0], t[1], t[2], tot, idx))
+            print('Creando record producto: {} qty: {}, precio: {} ({}/{})'.format(t[0], t[1], t[2], idx, tot))
             vals = {
                 'product_id':t[0],
                 'pricelist_id': pricelist.id,
@@ -68,7 +69,7 @@ class ExportPrices(models.Model):
             }
             self.create(vals)
     
-    
+    # METODO B
     @api.model
     def get_item_related_product_qtys(self, i, total_res):
         """
@@ -104,7 +105,7 @@ class ExportPrices(models.Model):
                     self.sql_get_related_products_qtys(i['base_pricelist_id']))
         return res
     
-
+    # METODO B
     @api.model
     def sql_get_related_products_qtys(self, pricelist_id):
         """
@@ -124,8 +125,10 @@ class ExportPrices(models.Model):
         select ppi.id, ppi.applied_on, ppi.product_id, ppi.product_tmpl_id, ppi.categ_id, ppi.min_quantity, 
                ppi.compute_price, ppi.base, ppi.base_pricelist_id, ppi.pricelist_id 
         from product_pricelist_item ppi
-        inner join product_product pp on pp.id=ppi.product_id
-        where ppi.pricelist_id = {} and pp.active=true;
+        left join product_product pp on pp.id=ppi.product_id
+        left join product_template pt on pt.id=ppi.product_tmpl_id
+        left join product_category pc on pc.id=ppi.categ_id
+        where ppi.pricelist_id = {} and (pp.active=true or pt.active or pc.active);
         """.format(pricelist_id) 
         self._cr.execute(sql)
         sql_res = self._cr.fetchall()
@@ -153,7 +156,8 @@ class ExportPrices(models.Model):
         obtengo los precios para esos productos, y creo los registros en la
         tabla
         """
-        import ipdb; ipdb.set_trace()
+        start = datetime.now()
+        # import ipdb; ipdb.set_trace()
         domain = [
             ('to_export', '=', True),
         ]
@@ -162,19 +166,23 @@ class ExportPrices(models.Model):
 
         # product_prices = self.calculate(12)
         for pl in pricelists:
-            # MANERA LENTA
             a = datetime.now()
+            # METODO A MANERA LENTA
             # related_products = pl.get_related_products()
-            # related_products = self.env['product.product'].search([])
+            # # related_products = self.env['product.product'].search([])
             # product_prices = pl.get_export_product_prices(related_products)
             # self.create_export_prices_records(pl, product_prices)
-           
+
+            # METODO B al meenos 2 veces mas rápida
             products_qtys = self.sql_get_related_products_qtys(pl.id)
             product_prices = pl.get_export_product_qtys_prices(products_qtys)
             self.create_export_qtys_prices_records(pl, product_prices)
+
             b = datetime.now()
             print('Finalizamos tarifa {} en {}'.format(pl.name, datetime.now()))
             print('TOTAL: {}'.format(b - a))
+        end = datetime.now()
+        print('TOTAL EXPORTACION: {}'.format(end - start))
         return
 
 
