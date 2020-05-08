@@ -66,4 +66,6 @@
 			</p>
 		</field>
 	</record>
+
+	<menuitem id="menu_public_categories" name="Categorías Web" parent="stock.menu_product_in_config_stock" action="product_public_category_action" sequence="80" />
 </odoo>
