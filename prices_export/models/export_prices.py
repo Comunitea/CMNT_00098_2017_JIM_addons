@@ -4,6 +4,9 @@
 from odoo import fields, models, api, _
 from datetime import datetime
 
+import logging
+_logger = logging.getLogger('--EXPORTACIÓN PRECIOS--')
+
 
 class ExportPrices(models.Model):
 
@@ -22,13 +25,13 @@ class ExportPrices(models.Model):
         pricelist = self.env['product.pricelist'].browse(pricelist_id)
         products = self.env['product.product'].with_context(prefetch_fields=False).search([])
         qtys = map(lambda x: (x, 1, 1), products)
-        print('Iniciamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
+        _logger.info('Iniciamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
         a = datetime.now()
         # res = pricelist._compute_price_rule(qtys)
         pricelist._compute_price_rule(qtys)
         b = datetime.now()
-        print(b - a)
-        print('Finalizamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
+        _logger.info(b - a)
+        _logger.info('Finalizamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
         # import ipdb; ipdb.set_trace()
         return res
 
@@ -41,7 +44,7 @@ class ExportPrices(models.Model):
             idx += 1
             if not t[1]:
                 continue
-            print('Creando record producto: {} precio: {} ({}/{})'.format(t[0], t[1], idx, tot))
+            _logger.info('Creando record producto: {} precio: {} ({}/{})'.format(t[0], t[1], idx, tot))
             vals = {
                 'product_id':t[0],
                 'pricelist_id': pricelist.id,
@@ -60,7 +63,7 @@ class ExportPrices(models.Model):
             idx += 1
             if not t[2]:
                 continue
-            print('Creando record producto: {} qty: {}, precio: {} ({}/{})'.format(t[0], t[1], t[2], idx, tot))
+            _logger.info('Creando record producto: {} qty: {}, precio: {} ({}/{})'.format(t[0], t[1], t[2], idx, tot))
             vals = {
                 'product_id':t[0],
                 'pricelist_id': pricelist.id,
@@ -91,8 +94,8 @@ class ExportPrices(models.Model):
                 if (p.id, qty) not in total_res:
                     res.append((p.id, qty))
         elif i['applied_on'] == '2_product_category':
-            domain = [('categ_id', '=', self.categ_id.id)]
-            res = self.env['product.product'].search(domain)
+            domain = [('categ_id', '=', i['product_tmpl_id'])]
+            products = self.env['product.product'].search(domain)
             for p in products:
                 if (p.id, qty) not in total_res:
                     res.append((p.id, qty))
@@ -128,7 +131,11 @@ class ExportPrices(models.Model):
         left join product_product pp on pp.id=ppi.product_id
         left join product_template pt on pt.id=ppi.product_tmpl_id
         left join product_category pc on pc.id=ppi.categ_id
-        where ppi.pricelist_id = {} and (pp.active=true or pt.active or pc.active);
+        where ppi.pricelist_id = {}
+        and 
+        ( (ppi.applied_on != '3_global') and (pp.active=true or pt.active or pc.active)
+         or
+        (ppi.applied_on = '3_global'));
         """.format(pricelist_id) 
         self._cr.execute(sql)
         sql_res = self._cr.fetchall()
@@ -166,10 +173,11 @@ class ExportPrices(models.Model):
 
         # product_prices = self.calculate(12)
         for pl in pricelists:
+            # import ipdb; ipdb.set_trace()
             a = datetime.now()
             # METODO A MANERA LENTA
             # related_products = pl.get_related_products()
-            # # related_products = self.env['product.product'].search([])
+            # related_products = self.env['product.product'].search([])
             # product_prices = pl.get_export_product_prices(related_products)
             # self.create_export_prices_records(pl, product_prices)
 
@@ -179,34 +187,153 @@ class ExportPrices(models.Model):
             self.create_export_qtys_prices_records(pl, product_prices)
 
             b = datetime.now()
-            print('Finalizamos tarifa {} en {}'.format(pl.name, datetime.now()))
-            print('TOTAL: {}'.format(b - a))
+            _logger.info('Finalizamos tarifa {} en {}'.format(pl.name, datetime.now()))
+            _logger.info('TOTAL: {}'.format(b - a))
         end = datetime.now()
-        print('TOTAL EXPORTACION: {}'.format(end - start))
+        _logger.info('TOTAL EXPORTACION: {}'.format(end - start))
         return
 
+    #************************************************************************** 
+    #************************CÁLCULO CAMBIOS DE PRECIOS************************
+    #**************************************************************************
+
+    @api.model
+    def get_related_pricelist_ids(self, i):
+        """
+        Para un elemento calculo las tarifas donde deberá recalcularse el
+        precio
+        """
+        # import ipdb; ipdb.set_trace()
+        pricelist_id = i['pricelist_id']
+        domain = [
+            ('pricelist_id.to_export', '=', True),
+            ('base_pricelist_id', '=', pricelist_id)
+        ]
+        items = self.env['product.pricelist.item'].search(domain)
+        pricelists = items.mapped('pricelist_id')
+        return pricelists._ids
+    
+    @api.model
+    def create_updated_prices(self):
+        start = datetime.now()
+        # import ipdb; ipdb.set_trace()
+        base_date = self.env['ir.config_parameter'].get_param(
+            'last_call_export_prices', default='')
+        
+        # Primera búsqueda rápida por fechas
+        domain = [
+            ('pricelist_id.to_export', '=', True),
+            '|',
+            ('write_date', '>=', base_date),
+            ('create_date', '>=', base_date),
+        ]
+        items = self.env['product.pricelist.item'].search(domain)
+        # items = self.env['product.pricelist.item'].with_context(prefetch_fields=['applied_on', 'product_id']).search_read(domain,['applied_on', 'product_id'] )
+        
+        # Búsqueda sql de los activos, ya que el campo applied_on proboca mucha
+        # lentitud
+        sql = """
+        select ppi.id, ppi.applied_on, ppi.product_id, ppi.product_tmpl_id, ppi.categ_id, ppi.min_quantity, 
+               ppi.compute_price, ppi.base, ppi.base_pricelist_id, ppi.pricelist_id 
+        from product_pricelist_item ppi
+        left join product_product pp on pp.id=ppi.product_id
+        left join product_template pt on pt.id=ppi.product_tmpl_id
+        left join product_category pc on pc.id=ppi.categ_id
+        where  ppi.id in {} and
+        ( (ppi.applied_on != '3_global') and (pp.active=true or pt.active or pc.active)
+         or
+        (ppi.applied_on = '3_global'));
+        """.format(tuple(items._ids))
+        self._cr.execute(sql)
+        sql_res = self._cr.fetchall()
+        items_info = []
+        for t in sql_res:
+            item_info = {
+                'id': t[0],
+                'applied_on': t[1],
+                'product_id': t[2],
+                'product_tmpl_id': t[3],
+                'categ_id': t[4],
+                'min_quantity': t[5],
+                'compute_price': t[6],
+                'base': t[7],
+                'base_pricelist_id': t[8],
+                'pricelist_id': t[9],
+            }
+            items_info.append(item_info)
+        # import ipdb; ipdb.set_trace()
+
+        # Calculo todos los productos qty a actualizar en cada tarifa sin
+        # repetirlos
+        pricelist2update = {}
+        idx = 0
+        tot = len(items_info)
+        pricelist_computed = []
+        for i in items_info:
+            idx += 1
+            _logger.info('CALCULANDO ITEM: {} /{}'.format(idx, tot))
+            pricelist_id = i['pricelist_id']
+            
+            # Inicializo diccionario tarifas
+            if not pricelist_id in pricelist2update:
+                pricelist2update[pricelist_id] = []
+            
+            # Obtengo los productos cantidades asociados a ese item
+            products_qtys = self.get_item_related_product_qtys(i, [])
+
+            # Añado los productos,qtys para esta tarifa solo si no están ya.
+            for t in products_qtys:
+                if t not in pricelist2update[pricelist_id]:
+                    pricelist2update[pricelist_id].append(t)
+            
+            # Busco las tarifas asociadas a recalcular
+            # if i['pricelist_id'] not in pricelist_computed:
+            related_pricelist_ids = self.get_related_pricelist_ids(i)
+            # pricelist_computed.append(i['pricelist_id'])
+            _logger.info(' - tarifas relacionadas: {}'.format(related_pricelist_ids))
+            for pl_id in related_pricelist_ids:
+                if not pl_id in pricelist2update:
+                    pricelist2update[pl_id] = []
+                # Añado los productos,qtys para esta tarifa solo si no están ya.
+                for t in products_qtys:
+                    if t not in pricelist2update[pl_id]:
+                        pricelist2update[pl_id].append(t)
+
+        # Para cada tarifa tenfo sus [(productos, qtys)...] los paso a la
+        # función de la tarifa que me devuelve los precios en formato
+        # [(prod,qty,price)...], despues creo todos los registros para
+        # esa tarifa
+        # import ipdb; ipdb.set_trace()
+        
+        pricelist_ids = pricelist2update.keys()
+        pricelists = self.env['product.pricelist'].browse(pricelist_ids)
+        idx = 0
+        tot = len(pricelists)
+        for pl in pricelists:
+            idx += 1
+            _logger.info('CREANDO REGISTROS TARIFA {} {}/{} '.format(pl.name, idx, tot))
+            products_qtys = pricelist2update[pl.id]
+            product_prices = pl.get_export_product_qtys_prices(products_qtys)
+            self.create_export_qtys_prices_records(pl, product_prices)
+        end = datetime.now()
+        _logger.info('TOTAL EXPORTACION: {}'.format(end - start))
+
+    #************************************************************************** 
+    #******************************** CRON ************************************ 
+    #**************************************************************************
 
     @api.model
     def compute_export_prices(self, create_all=True):
         """
         Cron que actualiza solo los cambios de precios
         """
+        create_all = True
         if create_all:
             return self.create_export_prices()
-
+        else:
+            return self.create_updated_prices()
         # import ipdb; ipdb.set_trace()
-        # base_date = self.env['ir.config_parameter'].get_param(
-        #     'last_call_export_prices', default='')
-        # domain = [
-        #     ('pricelist_id.to_export', '=', True),
-        #     '|',
-        #     ('write_date', '>=', base_date),
-        #     ('create_date', '>=', base_date),
-        # ]
-        # items = self.env['product.pricelist.item'].search(domain)
-
-        # for pli in items:
-        #     self.create_records(pli)
+       
 
         # time_now = fields.datetime.now()
         # time_now_str = fields.Datetime.to_string(time_now)

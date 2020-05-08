@@ -4,6 +4,8 @@
 from odoo import fields, models, api, _
 from datetime import datetime
 
+import logging
+_logger = logging.getLogger('--EXPORTACIÓN PRECIOS--')
 
 class ProductPricelist(models.Model):
 
@@ -68,7 +70,7 @@ class ProductPricelist(models.Model):
         tot = len(item_ids)
         for item in item_ids:
             i += 1
-            print('proceso {}/{}').format(i, tot)
+            _logger.info('proceso {}/{}'.format(i, tot))
             res |= item.get_item_related_products()
         # import ipdb; ipdb.set_trace()
         return  res
@@ -91,15 +93,15 @@ class ProductPricelist(models.Model):
         tot = len(products)
         idx = 0
         a = datetime.now()
-        print('Iniciamos tarifa {} en {}'.format(self.name, datetime.now()))
+        _logger.info('Iniciamos tarifa {} en {}'.format(self.name, datetime.now()))
         for product in products:
             idx += 1
-            print("{} / {}").format(idx, tot)
+            _logger.info("{} / {}").format(idx, tot)
             price = self.get_product_price(product, 1, 1, False)
             res.append((product.id, price))
         b = datetime.now()
-        print('Finalizamos tarifa {} en {}'.format(self.name, datetime.now()))
-        print('TOTAL: {}'.format(b - a))
+        _logger.info('Finalizamos tarifa {} en {}'.format(self.name, datetime.now()))
+        _logger.info('TOTAL: {}'.format(b - a))
 
         # MUY LENTO CON Y SIN PREFETCH, MEJOR TENERLO
         # read_info = products.with_context(prefetch_fields=False, pricelist=12).read(['price'])
@@ -122,7 +124,7 @@ class ProductPricelist(models.Model):
         tot = len(products_qtys)
         idx = 0
         a = datetime.now()
-        print('Iniciamos tarifa {} en {}'.format(self.name, datetime.now()))
+        _logger.info('Iniciamos tarifa {} en {}'.format(self.name, datetime.now()))
         # import ipdb; ipdb.set_trace()
         # product_ids = list(set([x[0] for x in products_qtys]))
         product_ids = [x[0] for x in products_qtys]  # Esto me da alguno repetido
@@ -134,12 +136,12 @@ class ProductPricelist(models.Model):
             # product = self.env['product.product'].browse(t[0])
             product = t[0]
             idx += 1
-            print("{} / {}").format(idx, tot)
+            _logger.info("{} / {}".format(idx, tot))
             price = self.get_product_price(product, t[1], False, False)
             res.append((product.id, t[1], price))
         b = datetime.now()
-        print('Finalizamos tarifa {} en {}'.format(self.name, datetime.now()))
-        print('TOTAL: {}'.format(b - a))
+        _logger.info('Finalizamos tarifa {} en {}'.format(self.name, datetime.now()))
+        _logger.info('TOTAL: {}'.format(b - a))
 
         # MUY LENTO CON Y SIN PREFETCH, MEJOR TENERLO
         # read_info = products.with_context(prefetch_fields=False, pricelist=12).read(['price'])
