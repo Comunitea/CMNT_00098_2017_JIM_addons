@@ -348,6 +348,10 @@ class ExportPrices(models.Model):
         time_now_str = fields.Datetime.to_string(time_now)
         self.env['ir.config_parameter'].set_param(
             'last_call_export_prices', time_now_str)
+        
+        # Borro la tabla auxiliar
+        auxs = self.env['aux.export'].search([])
+        auxs.unlink()
         return
 
 
