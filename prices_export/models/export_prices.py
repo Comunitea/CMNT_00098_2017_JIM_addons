@@ -17,41 +17,49 @@ class ExportPrices(models.Model):
     qty = fields.Float('Min Quantity')
     price = fields.Float('Price')
     
-    @api.model
-    def calculate(self, pricelist_id):
-        """
-        Sobre 4 minutos para pvp02, SOLO una vez despues siempre me tarda +25
-        """
-        pricelist = self.env['product.pricelist'].browse(pricelist_id)
-        products = self.env['product.product'].with_context(prefetch_fields=False).search([])
-        qtys = map(lambda x: (x, 1, 1), products)
-        _logger.info('Iniciamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
-        a = datetime.now()
-        # res = pricelist._compute_price_rule(qtys)
-        pricelist._compute_price_rule(qtys)
-        b = datetime.now()
-        _logger.info(b - a)
-        _logger.info('Finalizamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
-        # import ipdb; ipdb.set_trace()
-        return res
+    # @api.model
+    # def calculate(self, pricelist_id):
+    #     """
+    #     Sobre 4 minutos para pvp02, SOLO una vez despues siempre me tarda +25
+    #     """
+    #     pricelist = self.env['product.pricelist'].browse(pricelist_id)
+    #     # products = self.env['product.product'].search([])
+    #     products = self.env['product.product'].with_context(pricelist=12).search([])
+    #     qtys = map(lambda x: (x, 1, 1), products)
+    #     _logger.info('Iniciamos Tarifa {} en {}'.format(pricelist.id, datetime.now()))
+    #     a = datetime.now()
+    #     res = pricelist._compute_price_rule(qtys)
+    #     # pricelist._compute_price_rule(qtys)
+    #     b = datetime.now()
+    #     _logger.info('Finalizamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
+    #     _logger.info('TOTAL calculo precios: {}'.format(b - a))
+    #     import ipdb; ipdb.set_trace()
+    #     # _logger.info('Iniciamos Tarifa {} en {}'.format(pricelist.id, datetime.now()))
+    #     # a = datetime.now()
+    #     # res = products.read(['price']) 
+    #     # b = datetime.now()
+    #     # _logger.info('Finalizamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
+    #     # _logger.info('TOTAL calculo precios: {}'.format(b - a))
+    #     import ipdb; ipdb.set_trace()
+        # return res
 
     # METODO A
-    @api.model
-    def create_export_prices_records(self, pricelist, product_prices):
-        tot = len(product_prices)
-        idx = 0
-        for t in product_prices:
-            idx += 1
-            if not t[1]:
-                continue
-            _logger.info('Creando record producto: {} precio: {} ({}/{})'.format(t[0], t[1], idx, tot))
-            vals = {
-                'product_id':t[0],
-                'pricelist_id': pricelist.id,
-                'qty': 1,
-                'price':t[1]
-            }
-            self.create(vals)
+    # @api.model
+    # def create_export_prices_records(self, pricelist, product_prices):
+    #     tot = len(product_prices)
+    #     idx = 0
+    #     for t in product_prices:
+    #         idx += 1
+    #         if not t[1]:
+    #             continue
+    #         _logger.info('Creando record producto: {} precio: {} ({}/{})'.format(t[0], t[1], idx, tot))
+    #         vals = {
+    #             'product_id':t[0],
+    #             'pricelist_id': pricelist.id,
+    #             'qty': 1,
+    #             'price':t[1]
+    #         }
+    #         self.create(vals)
     
     # METODO B
     @api.model
@@ -94,7 +102,7 @@ class ExportPrices(models.Model):
                 if (p.id, qty) not in total_res:
                     res.append((p.id, qty))
         elif i['applied_on'] == '2_product_category':
-            domain = [('categ_id', '=', i['product_tmpl_id'])]
+            domain = [('product_tmpl_id.categ_id', '=', i['product_tmpl_id'])]
             products = self.env['product.product'].search(domain)
             for p in products:
                 if (p.id, qty) not in total_res:
@@ -203,6 +211,7 @@ class ExportPrices(models.Model):
         Para un elemento calculo las tarifas donde deberá recalcularse el
         precio
         """
+        # TODO MAS TARIFAS EN CADENA
         # import ipdb; ipdb.set_trace()
         pricelist_id = i['pricelist_id']
         domain = [
@@ -317,28 +326,23 @@ class ExportPrices(models.Model):
             self.create_export_qtys_prices_records(pl, product_prices)
         end = datetime.now()
         _logger.info('TOTAL EXPORTACION: {}'.format(end - start))
+        return
 
     #************************************************************************** 
     #******************************** CRON ************************************ 
     #**************************************************************************
 
     @api.model
-    def compute_export_prices(self, create_all=True):
+    def compute_export_prices(self, create_all=False):
         """
         Cron que actualiza solo los cambios de precios
         """
-        create_all = True
         if create_all:
-            return self.create_export_prices()
+            self.create_export_prices()
         else:
-            return self.create_updated_prices()
-        # import ipdb; ipdb.set_trace()
-       
-
-        # time_now = fields.datetime.now()
-        # time_now_str = fields.Datetime.to_string(time_now)
-        # self.env['ir.config_parameter'].set_param(
-        #     'last_call_export_prices', 'time_now_str')
+            self.create_updated_prices()
+        time_now = fields.datetime.now()
+        time_now_str = fields.Datetime.to_string(time_now)
+        self.env['ir.config_parameter'].set_param(
+            'last_call_export_prices', time_now_str)
         return
-    
-   
