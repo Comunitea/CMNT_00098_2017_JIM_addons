@@ -225,10 +225,9 @@ class ExportPrices(models.Model):
     @api.model
     def create_updated_prices(self):
         start = datetime.now()
-        # import ipdb; ipdb.set_trace()
         base_date = self.env['ir.config_parameter'].get_param(
-            'last_call_export_prices', default='')
-        
+            'last_call_export_prices', default='')   
+        # items = self.env['product.pricelist.item'].with_context(prefetch_fields=['applied_on', 'product_id']).search_read(domain,['applied_on', 'product_id'] )
         # Primera búsqueda rápida por fechas
         domain = [
             ('pricelist_id.to_export', '=', True),
@@ -236,9 +235,9 @@ class ExportPrices(models.Model):
             ('write_date', '>=', base_date),
             ('create_date', '>=', base_date),
         ]
-        items = self.env['product.pricelist.item'].search(domain)
-        # items = self.env['product.pricelist.item'].with_context(prefetch_fields=['applied_on', 'product_id']).search_read(domain,['applied_on', 'product_id'] )
-        
+        items = self.env['product.pricelist.item'].search(domain)    
+        item_ids = tuple(items._ids) if items else '(-1)'
+        # aux_ids = tuple(auxs._ids) if auxs else '(-1)'
         # Búsqueda sql de los activos, ya que el campo applied_on proboca mucha
         # lentitud
         sql = """
@@ -251,8 +250,12 @@ class ExportPrices(models.Model):
         where  ppi.id in {} and
         ( (ppi.applied_on != '3_global') and (pp.active=true or pt.active or pc.active)
          or
-        (ppi.applied_on = '3_global'));
-        """.format(tuple(items._ids))
+        (ppi.applied_on = '3_global'))
+        UNION 
+        select aux.item_id, aux.applied_on, aux.product_id, aux.product_tmpl_id, aux.categ_id, aux.min_quantity, 
+               aux.compute_price, aux.base, aux.base_pricelist_id, aux.pricelist_id
+        from aux_export aux
+        """.format(item_ids)
         self._cr.execute(sql)
         sql_res = self._cr.fetchall()
         items_info = []
@@ -277,7 +280,7 @@ class ExportPrices(models.Model):
         pricelist2update = {}
         idx = 0
         tot = len(items_info)
-        pricelist_computed = []
+        # pricelist_computed = []
         for i in items_info:
             idx += 1
             _logger.info('CALCULANDO ITEM: {} /{}'.format(idx, tot))
@@ -346,3 +349,19 @@ class ExportPrices(models.Model):
         self.env['ir.config_parameter'].set_param(
             'last_call_export_prices', time_now_str)
         return
+
+
+class AuxExport(models.Model):
+
+    _name = 'aux.export'
+
+    item_id = fields.Integer('item_id')
+    applied_on = fields.Char('applied_on')
+    product_id = fields.Integer('product_id')
+    product_tmpl_id = fields.Integer('product_tmpl_id')
+    categ_id = fields.Integer('categ_id')
+    min_quantity = fields.Integer('min_quantity')
+    compute_price = fields.Char('compute_price')
+    base = fields.Char('Base')
+    base_pricelist_id = fields.Integer('base_pricelist_id')
+    pricelist_id = fields.Integer('pricelist_id')

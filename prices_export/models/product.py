@@ -12,20 +12,20 @@ class ProductProduct(models.Model):
 
     _inherit = 'product.product'
 
-    # @api.multi
-    # def write(self, vals):
-    #     # import ipdb; ipdb.set_trace
-    #     """
-    #     Quizás no tengo que controlar activado desactivado?
-    #     Si cambia la categoría A por B, debo buscar los itemes para esta
-    #     categoría A
-    #     """
-    #     res = super(ProductProduct, self).write(vals)
-    #     if 'active' in vals:
-    #         if vals['active'] == False:
-    #             self.set_items_update()
+    @api.multi
+    def write(self, vals):
+        # import ipdb; ipdb.set_trace
+        """
+        Quizás no tengo que controlar activado desactivado?
+        Si cambia la categoría A por B, debo buscar los itemes para esta
+        categoría A
+        """
+        res = super(ProductProduct, self).write(vals)
+        if 'active' in vals or:
+            if vals['active'] == True:
+                self.set_items_update()
     
-    # @api.multi
-    # def set_items_update(self):
-    #     # import ipdb; ipdb.set_trace
-    #     return
+    @api.multi
+    def set_items_update(self):
+        # import ipdb; ipdb.set_trace
+        return

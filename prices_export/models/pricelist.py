@@ -187,9 +187,42 @@ class ProductPricelistItem(models.Model):
         Si cambia el producto A a B, debría recalcular el precio en todas las
         tarifas implicadas el prodcto A (B se recalculará por el write)
         (el producto que cambio podría estar en otro item de la misma tarifa,
-         con precio) con lo que vuelvo a recalcular 
+         con precio) con lo que vuelvo a recalcular.
+        Esto de recalcular lo hará el cron, yo creo una copia del item en la
+        tabla auxiliar 
         """
-        if vals.get('product_id'):
-            old_products = self.mapped('product_id')
-        res = super(ProductPricelistItem, self).write(vals)
-        return self
+        if 'product_id' in vals or 'product_tmpl_id' in vals or \
+                'categ_id' in vals or 'applied_on' in vals:
+            self.create_in_aux_table()
+        return super(ProductPricelistItem, self).write(vals)
+
+    @api.multi
+    def unlink(self, vals):
+        """
+        Creo una copia del item en la tabla auxiliar para calcular despues los
+        productos afectados
+        """
+        self.create_in_aux_table()
+        return super(ProductPricelistItem, self).unlink()
+    
+    @api.multi
+    def create_in_aux_table(self):
+        """
+        Creo una copia en la tabla auxiliar, lista para ser leida por el mismo
+        sql que lee los items a actualizar. De este modo entrará en el flijo ya
+        programado para el cálculo de precios en las tarifas implicadas
+        """
+        for item in self:
+            item_info = {
+                'item_id': item.id,
+                'applied_on': item.applied_on,
+                'product_id':item.product_id.id,
+                'product_tmpl_id': item.product_tmpl_id.id,
+                'categ_id': item.categ_id.id,
+                'min_quantity': item.min_quantity,
+                'compute_price': item.compute_price,
+                'base': item.base,
+                'base_pricelist_id': item.base_pricelist_id.id,
+                'pricelist_id': item.pricelist_id.id,
+            }
+            self.env['aux.export'].create(item_info)
