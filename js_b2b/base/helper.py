@@ -51,7 +51,12 @@ class JSync:
 		self.session = Session()
 		self.session.mount('http://', adapter)
 		self.session.mount('https://', adapter)
-		self.settings = settings or HttpRequest.env['b2b.settings'].get_default_params()
+		self.settings = settings or HttpRequest.env['b2b.settings'].get_default_params(fields=[
+			'url', 
+			'conexion_error', 
+			'response_error', 
+			'packet_size'
+		])
 
 	def __data_iterator(self):
 		"""

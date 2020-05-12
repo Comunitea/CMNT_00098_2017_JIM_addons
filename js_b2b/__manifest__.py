@@ -6,7 +6,8 @@
 	'author': 'Jim Sports',
 	'category': 'Connector',
 	'website': 'https://jimsports.com',
-	'description': 'Conector para sincronizar datos con otras plataformas/clientes. Envía los datos por HTTP a un servidor secundario que los procesa y recibe datos de Google Pub/Sub.',
+	'summary': 'Permite extraer datos de los modelos de Odoo y enviarlos a otro servidor',
+	'description': 'Conector para sincronizar datos con otras plataformas/clientes. Envía los datos por HTTP a un servidor secundario que los procesa y crea un punto de entrada para recibir datos',
 	'license': 'AGPL-3',
 	'qweb': [
 		'static/xml/widgets.xml',
@@ -25,8 +26,9 @@
 		'base',
 		'sale',
 		'product',
+        'product_brand',
+        'product_tags',
 		'jim_sale',
-		'js_product_images',
 		'js_categorization',
 		'stock_export'
 	],

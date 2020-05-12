@@ -5,3 +5,5 @@ access_js_b2b_category,product.public.category,model_product_public_category,sal
 access_js_b2b_item_out_public,js_b2b.item.out,model_b2b_item_out,,1,0,0,0
 access_js_b2b_item_in_public,js_b2b.item.in,model_b2b_item_in,,1,0,0,0
 access_js_b2b_category_public,product.public.category,model_product_public_category,,1,0,0,0
+access_js_b2b_product_images_users,product.image.users,model_product_image,base.group_user,1,1,1,1
+access_js_b2b_product_images_public,product.image.public,model_product_image,,1,0,0,0
