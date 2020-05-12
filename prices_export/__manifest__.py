@@ -20,7 +20,6 @@
         'security/ir.model.access.csv',
         'data/export_data.xml',
         'views/export_prices.xml',
-        'views/export_customer_prices.xml',
         'views/pricelist_view.xml'
     ],
     "installable": True

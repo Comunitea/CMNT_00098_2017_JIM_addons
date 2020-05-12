@@ -25,7 +25,6 @@ class ProductTemplate(models.Model):
         Busco los productos de la plantilla, y lanzo los cálculos bajo demanda
         de para esos prodtos eb los items de la vieja y nueva categoría
         """
-        # import ipdb; ipdb.set_trace()
         for tmpl in self:
             domain = [('product_tmpl_id', '=', tmpl.id)]
             products = self.env['product.product'].search(domain)
@@ -53,7 +52,6 @@ class ProductProduct(models.Model):
         Se supone que el precio de todos los productos se los da una tarifa
         base.
         """
-        # import ipdb; ipdb.set_trace()
         domain = [
             '&',
             '&',
@@ -85,12 +83,8 @@ class ProductProduct(models.Model):
         Estos no los recalculará el cron, los creo bajo demanda para no dispar
         el cálculo de todas las categorías
         """
-        # import ipdb; ipdb.set_trace()
         _logger.info('Exportando precios bajo demanda (CAMBIO DE CATEGORÍA)')
         for product in self:
-            # categ_ids = [new_categ_id]
-            # categ_ids.extend(self.mapped('categ_id')._ids)
-            # )
             domain = [
                 ('pricelist_id.to_export', '=', True),
                 ('categ_id', 'in', [product.categ_id.id, new_categ_id]),

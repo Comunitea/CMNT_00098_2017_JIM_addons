@@ -17,54 +17,9 @@ class ExportPrices(models.Model):
     qty = fields.Float('Min Quantity')
     price = fields.Float('Price')
     
-    # @api.model
-    # def calculate(self, pricelist_id):
-    #     """
-    #     Sobre 4 minutos para pvp02, SOLO una vez despues siempre me tarda +25
-    #     """
-    #     pricelist = self.env['product.pricelist'].browse(pricelist_id)
-    #     # products = self.env['product.product'].search([])
-    #     products = self.env['product.product'].with_context(pricelist=12).search([])
-    #     qtys = map(lambda x: (x, 1, 1), products)
-    #     _logger.info('Iniciamos Tarifa {} en {}'.format(pricelist.id, datetime.now()))
-    #     a = datetime.now()
-    #     res = pricelist._compute_price_rule(qtys)
-    #     # pricelist._compute_price_rule(qtys)
-    #     b = datetime.now()
-    #     _logger.info('Finalizamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
-    #     _logger.info('TOTAL calculo precios: {}'.format(b - a))
-    #     import ipdb; ipdb.set_trace()
-    #     # _logger.info('Iniciamos Tarifa {} en {}'.format(pricelist.id, datetime.now()))
-    #     # a = datetime.now()
-    #     # res = products.read(['price']) 
-    #     # b = datetime.now()
-    #     # _logger.info('Finalizamos tarifa {} en {}'.format(pricelist.id, datetime.now()))
-    #     # _logger.info('TOTAL calculo precios: {}'.format(b - a))
-    #     import ipdb; ipdb.set_trace()
-        # return res
-
-    # METODO A
-    # @api.model
-    # def create_export_prices_records(self, pricelist, product_prices):
-    #     tot = len(product_prices)
-    #     idx = 0
-    #     for t in product_prices:
-    #         idx += 1
-    #         if not t[1]:
-    #             continue
-    #         _logger.info('Creando record producto: {} precio: {} ({}/{})'.format(t[0], t[1], idx, tot))
-    #         vals = {
-    #             'product_id':t[0],
-    #             'pricelist_id': pricelist.id,
-    #             'qty': 1,
-    #             'price':t[1]
-    #         }
-    #         self.create(vals)
     
-    # METODO B
     @api.model
     def create_export_qtys_prices_records(self, pricelist, product_prices):
-        # import ipdb; ipdb.set_trace()
         tot = len(product_prices)
         idx = 0
         for t in product_prices:
@@ -80,7 +35,6 @@ class ExportPrices(models.Model):
             }
             self.create(vals)
     
-    # METODO B
     @api.model
     def get_item_related_product_qtys(self, i, total_res):
         """
@@ -88,7 +42,6 @@ class ExportPrices(models.Model):
         por la regla de precios.
         Devuelvo solo los activos
         """
-        # import ipdb; ipdb.set_trace()
         qty = i['min_quantity']
         res = []
         if i['applied_on'] == '0_product_variant':
@@ -97,7 +50,6 @@ class ExportPrices(models.Model):
         elif i['applied_on'] == '1_product':
             domain = [('product_tmpl_id', '=', i['product_tmpl_id'])]
             products = self.env['product.product'].search(domain)
-            # import ipdb; ipdb.set_trace()
             for p in products:
                 if (p.id, qty) not in total_res:
                     res.append((p.id, qty))
@@ -108,7 +60,6 @@ class ExportPrices(models.Model):
                 if (p.id, qty) not in total_res:
                     res.append((p.id, qty))
         elif i['applied_on'] == '3_global':
-            # import ipdb; ipdb.set_trace()
             # Calculo los productos de la tarifa en la que se basa
             if i['base'] == 'pricelist' and i['base_pricelist_id']:
                 # RECURSIVO A LA FUNCIÓN QUE LLAMA A ESTA
@@ -116,22 +67,14 @@ class ExportPrices(models.Model):
                     self.sql_get_related_products_qtys(i['base_pricelist_id']))
         return res
     
-    # METODO B
     @api.model
     def sql_get_related_products_qtys(self, pricelist_id):
         """
         Devuelvo los productos asociados a esta tarifa
         """
-        # import ipdb; ipdb.set_trace()
         res = []
-        item_infos = []
-        Pli = self.env['product.pricelist.item']
 
-        # SLOW
-        # domain = [('pricelist_id', '=', self.id)]
-        # fields = ['applied_on', 'product_id', 'product_tmpl_id', 'categ_id', 'min_quantity', 'compute_price', 'base', 'base_pricelist_id']
-        # res = self.env['product.pricelist.item'].search_read(domain, fields)
-
+        # Busco por sql sino es lento
         sql = """
         select ppi.id, ppi.applied_on, ppi.product_id, ppi.product_tmpl_id, ppi.categ_id, ppi.min_quantity, 
                ppi.compute_price, ppi.base, ppi.base_pricelist_id, ppi.pricelist_id 
@@ -172,26 +115,18 @@ class ExportPrices(models.Model):
         tabla
         """
         start = datetime.now()
-        # import ipdb; ipdb.set_trace()
         domain = [
             ('to_export', '=', True),
         ]
-        # pricelists = self.env['product.pricelist'].with_context(prefetch_fields=False).search(domain)
         pricelists = self.env['product.pricelist'].search(domain)
 
-        # product_prices = self.calculate(12)
         for pl in pricelists:
-            # import ipdb; ipdb.set_trace()
             a = datetime.now()
-            # METODO A MANERA LENTA
-            # related_products = pl.get_related_products()
-            # related_products = self.env['product.product'].search([])
-            # product_prices = pl.get_export_product_prices(related_products)
-            # self.create_export_prices_records(pl, product_prices)
-
-            # METODO B al meenos 2 veces mas rápida
+            # Obetener productos-qtys relaccionados
             products_qtys = self.sql_get_related_products_qtys(pl.id)
+            # Obtener precios por producto-cantidad
             product_prices = pl.get_export_product_qtys_prices(products_qtys)
+            # Crear los registros
             self.create_export_qtys_prices_records(pl, product_prices)
 
             b = datetime.now()
@@ -212,7 +147,6 @@ class ExportPrices(models.Model):
         precio, solo se busca un nivel ya que no tienen mas
         """
         # TODO MAS TARIFAS EN CADENA ?(no de momento, solo la cmnt nuestra)
-        # import ipdb; ipdb.set_trace()
         domain = [
             ('pricelist_id.to_export', '=', True),
             ('base_pricelist_id', '=', pricelist_id)
@@ -226,7 +160,6 @@ class ExportPrices(models.Model):
         start = datetime.now()
         base_date = self.env['ir.config_parameter'].get_param(
             'last_call_export_prices', default='')   
-        # items = self.env['product.pricelist.item'].with_context(prefetch_fields=['applied_on', 'product_id']).search_read(domain,['applied_on', 'product_id'] )
         # Primera búsqueda rápida por fechas
         domain = [
             ('pricelist_id.to_export', '=', True),
@@ -236,7 +169,6 @@ class ExportPrices(models.Model):
         ]
         items = self.env['product.pricelist.item'].search(domain)    
         item_ids = tuple(items._ids) if items else '(-1)'
-        # aux_ids = tuple(auxs._ids) if auxs else '(-1)'
         # Búsqueda sql de los activos, ya que el campo applied_on proboca mucha
         # lentitud
         sql = """
@@ -272,7 +204,6 @@ class ExportPrices(models.Model):
                 'pricelist_id': t[9],
             }
             items_info.append(item_info)
-        # import ipdb; ipdb.set_trace()
 
         # Calculo todos los productos qty a actualizar en cada tarifa sin
         # repetirlos
@@ -315,9 +246,7 @@ class ExportPrices(models.Model):
         # Para cada tarifa tenfo sus [(productos, qtys)...] los paso a la
         # función de la tarifa que me devuelve los precios en formato
         # [(prod,qty,price)...], despues creo todos los registros para
-        # esa tarifa
-        # import ipdb; ipdb.set_trace()
-        
+        # esa tarifa        
         pricelist_ids = pricelist2update.keys()
         pricelists = self.env['product.pricelist'].browse(pricelist_ids)
         idx = 0
