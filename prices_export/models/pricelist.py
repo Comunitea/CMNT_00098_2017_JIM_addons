@@ -192,7 +192,8 @@ class ProductPricelistItem(models.Model):
         tabla auxiliar 
         """
         if 'product_id' in vals or 'product_tmpl_id' in vals or \
-                'categ_id' in vals or 'applied_on' in vals:
+                'categ_id' in vals or 'applied_on' in vals or \
+                'base_pricelist_id' in vals:
             self.create_in_aux_table()
         return super(ProductPricelistItem, self).write(vals)
 
@@ -209,7 +210,7 @@ class ProductPricelistItem(models.Model):
     def create_in_aux_table(self):
         """
         Creo una copia en la tabla auxiliar, lista para ser leida por el mismo
-        sql que lee los items a actualizar. De este modo entrará en el flijo ya
+        sql que lee los items a actualizar. De este modo entrará en el flujo ya
         programado para el cálculo de precios en las tarifas implicadas
         """
         for item in self:

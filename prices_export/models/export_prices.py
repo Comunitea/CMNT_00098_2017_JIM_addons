@@ -206,14 +206,13 @@ class ExportPrices(models.Model):
     #**************************************************************************
 
     @api.model
-    def get_related_pricelist_ids(self, i):
+    def get_related_pricelist_ids(self, pricelist_id):
         """
         Para un elemento calculo las tarifas donde deberá recalcularse el
-        precio
+        precio, solo se busca un nivel ya que no tienen mas
         """
-        # TODO MAS TARIFAS EN CADENA
+        # TODO MAS TARIFAS EN CADENA ?(no de momento, solo la cmnt nuestra)
         # import ipdb; ipdb.set_trace()
-        pricelist_id = i['pricelist_id']
         domain = [
             ('pricelist_id.to_export', '=', True),
             ('base_pricelist_id', '=', pricelist_id)
@@ -300,9 +299,11 @@ class ExportPrices(models.Model):
             
             # Busco las tarifas asociadas a recalcular
             # if i['pricelist_id'] not in pricelist_computed:
-            related_pricelist_ids = self.get_related_pricelist_ids(i)
+            related_pricelist_ids = self.get_related_pricelist_ids(
+                i['pricelist_id'])
             # pricelist_computed.append(i['pricelist_id'])
-            _logger.info(' - tarifas relacionadas: {}'.format(related_pricelist_ids))
+            _logger.info(' - tarifas relacionadas: {}'.\
+                format(related_pricelist_ids))
             for pl_id in related_pricelist_ids:
                 if not pl_id in pricelist2update:
                     pricelist2update[pl_id] = []
