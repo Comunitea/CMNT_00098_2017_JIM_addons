@@ -67,16 +67,16 @@ class ProductTemplate(models.Model, PublicImage):
 
 	@api.model
 	def create(self, vals):
-		if vals.get('image'):
-			vals.update({ 'image': self._resize_large_image(vals['image']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
+		if vals.get('image_medium'):
+			vals.update({ 'image_medium': self._resize_large_image(vals['image_medium']) })
+			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image_medium']) })
 		return super(ProductTemplate, self).create(vals)
 
 	@api.multi
 	def write(self, vals):
-		if vals.get('image'):
-			vals.update({ 'image': self._resize_large_image(vals['image']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
+		if vals.get('image_medium'):
+			vals.update({ 'image_medium': self._resize_large_image(vals['image_medium']) })
+			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image_medium']) })
 		return super(ProductTemplate, self).write(vals)
 
 	@api.multi
