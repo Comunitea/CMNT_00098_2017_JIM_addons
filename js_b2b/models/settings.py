@@ -12,7 +12,7 @@ PARAMS = {
 	'response_error': ('b2b.show_response_error', True),
 	'packet_size': ('b2b.packet_size_mb', 10),
 	'server': ('b2b.ftp_server', 'premium17.web-hosting.com'),
-	'public_base_url': ('b2b.base_url', 'https://jimsports.com/b2b_images/'),
+	'base_url': ('b2b.public_base_url', 'https://jimsports.com/b2b_images/'),
 	'user': ('b2b.ftp_user', False),
 	'password': ('b2b.ftp_password', False)
 }
