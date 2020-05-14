@@ -16,10 +16,11 @@ class ExportPrices(models.Model):
     pricelist_id = fields.Many2one('product.pricelist', 'Pricelist')
     qty = fields.Float('Min Quantity')
     price = fields.Float('Price')
+    create_mode = fields.Boolean('Is created')
     
     
     @api.model
-    def create_export_qtys_prices_records(self, pricelist, product_prices):
+    def create_export_qtys_prices_records(self, pricelist, product_prices, create_mode=False):
         tot = len(product_prices)
         idx = 0
         for t in product_prices:
@@ -31,7 +32,8 @@ class ExportPrices(models.Model):
                 'product_id':t[0],
                 'pricelist_id': pricelist.id,
                 'qty': t[1],
-                'price':t[2]
+                'price':t[2],
+                'create_mode': create_mode
             }
             self.create(vals)
     
@@ -127,7 +129,8 @@ class ExportPrices(models.Model):
             # Obtener precios por producto-cantidad
             product_prices = pl.get_export_product_qtys_prices(products_qtys)
             # Crear los registros
-            self.create_export_qtys_prices_records(pl, product_prices)
+            self.create_export_qtys_prices_records(pl, product_prices,
+                                                   create_mode=True)
 
             b = datetime.now()
             _logger.info('Finalizamos tarifa {} en {}'.format(pl.name, datetime.now()))
