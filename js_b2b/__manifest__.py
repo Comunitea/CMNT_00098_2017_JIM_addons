@@ -17,6 +17,7 @@
 		'product_tags',
 		'jim_sale',
 		'js_categorization',
+		'prices_export',
 		'stock_export'
 	],
 	'qweb': [

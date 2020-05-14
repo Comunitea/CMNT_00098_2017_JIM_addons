@@ -21,7 +21,7 @@ class B2BBulkExport(models.Model):
 
 	# ------------------------------------ CUSTOM QUERIES ------------------------------------
 
-	def __pricelists_unique_quantities(self):
+	"""def __pricelists_unique_quantities(self):
 		self.env.cr.execute("SELECT pricelist_id, \
 			CASE \
 				WHEN min_quantity > 0 THEN min_quantity \
@@ -66,7 +66,7 @@ class B2BBulkExport(models.Model):
 				GROUP BY product_id \
 			) \
 			GROUP BY product_tmpl_id", [date, date, date])
-		return tuple(r[0] for r in self.env.cr.fetchall())
+		return tuple(r[0] for r in self.env.cr.fetchall())"""
 
 	# ------------------------------------ STATIC METHODS ------------------------------------
 
@@ -81,7 +81,31 @@ class B2BBulkExport(models.Model):
 
 	# ------------------------------------ PUBLIC METHODS ------------------------------------
 
-	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None):
+	def b2b_pricelists_prices(self, test_limit=None):
+		# Out prices
+		prices = list()
+		# Get calculated prices
+		calculated_prices = self.env['export.prices'].search([], limit=test_limit)
+		for price in calculated_prices:
+			prices.append({
+				'pricelist_id': price.pricelist_id.id,
+				'product_id': price.product_id.product_tmpl_id.id,
+				'variant_id': price.product_id.id if price.product_id.product_tmpl_id.product_attribute_count else None,
+				'quantity': price.qty if price.qty > 1 else 1,
+				'price': price.price
+			})
+
+		# Send to JSync
+		if prices:
+			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
+			packet.name = 'pricelist_item'
+			packet.data = prices
+			packet.mode = 'update'
+			packet.send(timeout_sec=300)
+			self.write_to_log(str(prices), 'pricelist_item', "w+")
+			calculated_prices.unlink()
+
+	"""def b2b_pricelists_prices(self, test_limit=None, templates_filter=None):
 		self.write_to_log('[b2b_pricelists_prices] Starts!')
 		# Out prices
 		prices = list()
@@ -173,7 +197,7 @@ class B2BBulkExport(models.Model):
 			packet.data = prices
 			packet.mode = 'update' if templates_filter is not None else 'replace'
 			packet.send(timeout_sec=300)
-			self.write_to_log(str(prices), 'pricelist_item', "w+")
+			self.write_to_log(str(prices), 'pricelist_item', "w+")"""
 
 	def b2b_customers_prices(self, lines_filter=None):
 		self.write_to_log('[b2b_customers_prices] Starts!')
@@ -225,7 +249,6 @@ class B2BBulkExport(models.Model):
 		all_products = B2BBulkExport.is_time_between('00:30:00', '00:45:00')
 		print(":::::: ALL PRODUCTS", all_products)
 		stock = self.env['exportxml.object'].compute_product_ids(all=True, from_time=test_date, inc=test_limit or 999999999)
-		print(":::::: STOCK COMUNITEA", stock)
 
 		# Send to JSync
 		if stock:

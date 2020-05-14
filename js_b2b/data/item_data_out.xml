@@ -67,7 +67,7 @@ def get_data(self):
         'fixed:jim_id': self.id,
         'name': self.name,
         'description': self.get_field_translations('description'),
-        'logo': self.public_file_name or None
+        'logo': b2b['images_base'] + self.public_file_name if self.public_file_name else None
     }</field>
         </record>
 
@@ -88,7 +88,7 @@ def get_data(self):
         'fixed:jim_id': self.id,
         'name': self.get_field_translations('name'),
         'parent_id': self.parent_id.id if self.parent_id else None,
-        'image': self.public_file_name or None,
+        'image': b2b['images_base'] + self.public_file_name if self.public_file_name else None,
         'sequence': 0
     }</field>
         </record>
@@ -109,7 +109,7 @@ def get_data(self):
         'fixed:jim_id': self.id,
         'name': self.get_field_translations('name'),
         'parent_id': self.parent_id.id if self.parent_id else None,
-        'image': self.public_file_name or None,
+        'image': b2b['images_base'] + self.public_file_name if self.public_file_name else None,
         'sequence': 0
     }</field>
         </record>
@@ -147,7 +147,7 @@ def get_data(self):
         'brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
         'weight': self.weight,
-        'image': self.public_file_name or None
+        'image': b2b['images_base'] + self.public_file_name if self.public_file_name else None
     }
 
 def pos_data(self, action):
@@ -280,7 +280,7 @@ def get_data(self):
         'fixed:jim_id': self.id,
         'fixed:product_id': self.product_tmpl_id.id, 
         'name': self.get_field_translations('name'), 
-        'image': self.public_file_name or None, 
+        'image': b2b['images_base'] + self.public_file_name if self.public_file_name else None, 
         'product_attributes_values:attributes': self.product_attributes_values.ids
     }</field>
         </record>

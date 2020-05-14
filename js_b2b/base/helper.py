@@ -96,32 +96,24 @@ class JSync:
 		"""
 		if self.data and type(self.data) is dict:
 			for field, value in self.data.items():
-				# Uploads are handled different
-				if not field.startswith('upload:'):
-					obj_old = obj_new = field
-					# If field have :
-					if ':' in field:
-						# Before :
-						obj_old = field[:field.index(':')]
-						# After :
-						obj_new = field[field.index(':') + 1:]
-						# Replace key
-						self.data[obj_new] = self.data.pop(field)
-					if obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
-						# Remove field because is not found in vals
-						del self.data[obj_new]
-					elif type(value) is list:
-						# Convert lits to tuples
-						self.data[obj_new] = tuple(value)
-					elif type(value) is unicode:
-						# Decode unicode str's to utf-8
-						self.data[obj_new] = value.strip().decode('utf-8', 'replace')
-				# Updating other fields, delete upload
-				elif type(vals) is dict and field[7:] not in vals:
-					del self.data[field]
-				# If we are deleting an image set to NULL
-				elif vals is False:
-					self.data[field] = None
+				obj_old = obj_new = field
+				# If field have :
+				if ':' in field:
+					# Before :
+					obj_old = field[:field.index(':')]
+					# After :
+					obj_new = field[field.index(':') + 1:]
+					# Replace key
+					self.data[obj_new] = self.data.pop(field)
+				if obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
+					# Remove field because is not found in vals
+					del self.data[obj_new]
+				elif type(value) is list:
+					# Convert lits to tuples
+					self.data[obj_new] = tuple(value)
+				elif type(value) is unicode:
+					# Decode unicode str's to utf-8
+					self.data[obj_new] = value.strip().decode('utf-8', 'replace')
 
 		return self.data
 
