@@ -189,7 +189,7 @@ class ExportPrices(models.Model):
         select aux.item_id, aux.applied_on, aux.product_id, aux.product_tmpl_id, aux.categ_id, aux.min_quantity, 
                aux.compute_price, aux.base, aux.base_pricelist_id, aux.pricelist_id
         from aux_export aux
-        """.format(item_ids)
+        """.format(str(item_ids)).replace(',)', ')')
         self._cr.execute(sql)
         sql_res = self._cr.fetchall()
         items_info = []
