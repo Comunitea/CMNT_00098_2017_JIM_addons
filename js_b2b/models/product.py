@@ -82,9 +82,12 @@ class ProductTemplate(models.Model, PublicImage):
 	@api.multi
 	def unlink(self):
 		for record in self:
-			image_name = record.public_file_name
+			template_id = record.id
+			default_image = record.public_file_name
 			if super(ProductTemplate, record).unlink():
-				ftp.delete_file(image_name)
+				ftp.delete_file(default_image)
+				# Delete images with product_tmpl_id = null
+				self.env['product.image'].search([('product_tmpl_id', '=', False)]).unlink()
 
 ####################### VARIANTE #######################
 
@@ -101,6 +104,18 @@ class ProductProduct(models.Model):
 		# To exclude images without all attribute of variant use this line instead
 		# filtered(lambda image: all(map(lambda x,y: x in product_attrs and y in image.product_attributes_values._ids, image.product_attributes_values._ids, product_attrs)))
 
+
+	@api.one
+	@api.depends('product_image_ids')
+	def _compute_variant_images(self):
+		if self.product_image_ids:
+			self.image_variant = self.product_image_ids[0].image
+		elif self.product_tmpl_id.image_medium:
+			self.image_variant = self.product_tmpl_id.image_medium
+		else:
+			self.image_variant = False
+
+	image_variant = fields.Binary(compute='_compute_variant_images', store=False)
 	product_image_ids = fields.One2many('product.image', string='Images', compute='_filter_variant_images')
 	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
 
@@ -116,6 +131,13 @@ class ProductProduct(models.Model):
 		template = self.env['product.template'].browse(vals.get('product_tmpl_id', 0))
 		vals.update({ 'website_published': template.website_published })
 		return super(ProductProduct, self).create(vals)
+
+	@api.multi
+	def unlink(self):
+		for record in self:
+			linked_images_ids = self.product_image_ids.ids
+			if super(ProductProduct, record).unlink():
+				self.env['product.image'].search([('id', 'in', linked_images_ids)]).unlink()
 
 ####################### MARCA #######################
 
@@ -231,21 +253,23 @@ class ProductPublicCategory(models.Model, PublicImage):
 
 class ProductImage(models.Model, PublicImage):
 	_name = "product.image"
-
-	@api.model
-	def _filter_product_attributes(self):
-		product_tmpl_id = self.env.context.get('default_product_tmpl_id')
-		if product_tmpl_id:
-			product_attributes = self.env['product.attribute.line'].search([('product_tmpl_id', '=', product_tmpl_id)])
-			return [('id', 'in', [id for attr in product_attributes for id in attr.value_ids._ids])]
-		else:
-			return []
-
+	
 	name = fields.Char('Name')
-	image = fields.Binary('Image', attachment=True)
+	image = fields.Binary('Image', attachment=True, required=True)
 	public_file_name = fields.Char('Variant Image Public File Name')
-	product_tmpl_id = fields.Many2one('product.template', string='Related Product', ondelete='cascade', copy=True)
-	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel', domain=_filter_product_attributes)
+	product_tmpl_id = fields.Many2one('product.template', string='Related Product', copy=True)
+	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel')
+
+	@api.onchange('product_tmpl_id', 'product_attributes_values')
+	def _onchange_product_attributes_values(self):
+		product_attributes_values_ids = set(self.product_tmpl_id.attribute_line_ids.mapped('value_ids').ids)
+		exclude_attributes_ids = set(self.product_attributes_values.mapped('attribute_id.value_ids').ids)
+		attributes_values_ids = list(product_attributes_values_ids - exclude_attributes_ids)
+		return { 
+			'domain': {
+				'product_attributes_values': [('id', 'in', attributes_values_ids)]
+			}
+		}
 
 	@api.model
 	def create(self, vals):

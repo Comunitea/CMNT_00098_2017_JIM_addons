@@ -74,13 +74,14 @@ class BaseB2B(models.AbstractModel):
 	@api.model
 	def b2b_record(self, mode, vals=None, conf_items_before=None):
 		packets = []
-		jsync_conf = self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error', 'packet_size'])
+		jsync_conf = self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error', 'packet_size', 'base_url'])
 		conf_items_after = self.is_notifiable(mode, vals)
 		for item in self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)]):
 			import datetime
 			import base64
-			b2b = dict()
 
+			b2b = dict()
+			b2b['images_base'] = jsync_conf['base_url']
 			# Ejecutamos el código con exec(item.code)
 			# establece en la variable local b2b los siguientes atributos:
 			#   b2b['fields_to_watch'] <type 'tuple'> ¡No usado aquí!

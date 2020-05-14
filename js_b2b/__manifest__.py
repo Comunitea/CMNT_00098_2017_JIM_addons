@@ -9,6 +9,16 @@
 	'summary': 'Permite extraer datos de los modelos de Odoo y enviarlos a otro servidor',
 	'description': 'Conector para sincronizar datos con otras plataformas/clientes. Envía los datos por HTTP a un servidor secundario que los procesa y crea un punto de entrada para recibir datos',
 	'license': 'AGPL-3',
+	'depends': [
+		'base',
+		'sale',
+		'product',
+		'product_brand',
+		'product_tags',
+		'jim_sale',
+		'js_categorization',
+		'stock_export'
+	],
 	'qweb': [
 		'static/xml/widgets.xml',
 	],
@@ -21,16 +31,6 @@
 		'views/settings.xml',
 		'views/item_out.xml',
 		'views/item_in.xml'
-	],
-	'depends': [
-		'base',
-		'sale',
-		'product',
-        'product_brand',
-        'product_tags',
-		'jim_sale',
-		'js_categorization',
-		'stock_export'
 	],
 	'contributors': [
 		"Pablo Luaces <pablo@jimsports.com>",

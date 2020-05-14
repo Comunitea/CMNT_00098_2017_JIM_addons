@@ -21,6 +21,7 @@
 					</group>
 
 					<group string="FTP Server Settings">
+						<field name="base_url" class="oe_inline"/>
 						<field name="server" class="oe_inline"/>
 						<field name="user" class="oe_inline"/>
 						<field name="password" password="True" class="oe_inline"/>

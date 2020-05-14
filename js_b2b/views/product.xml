@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <record id="product_template_form_view" model="ir.ui.view">
-        <field name="name">product.template.product.images.form</field>
+    <!-- Product & Variant -->
+    <record id="product_template_form_view_b2b" model="ir.ui.view">
+        <field name="name">product.template.product.b2b.form</field>
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
-			<div name="button_box" position="inside">
-				<button class="oe_stat_button" name="website_publish_button" type="object" icon="fa-globe">
-					<field name="website_published" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Published', 'hover_true': 'Unpublish on website', 'string_false': 'Not published', 'hover_false': 'Publish on website' }}"/>
-				</button>
-			</div>
+            <div name="button_box" position="inside">
+                <button class="oe_stat_button" name="website_publish_button" type="object" icon="fa-globe">
+                    <field name="website_published" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Published', 'hover_true': 'Unpublish on website', 'string_false': 'Not published', 'hover_false': 'Publish on website' }}"/>
+                </button>
+            </div>
 
-			<group name="email_template_and_project"  position="before">
-				<group name="website" string="Website">
-					<field name="public_categ_ids" widget="many2many_tags" string="Website Categories"/>
-				</group>
-			</group>
+            <group name="email_template_and_project"  position="before">
+                <group name="website" string="Website">
+                    <field name="public_categ_ids" widget="many2many_tags" string="Website Categories"/>
+                </group>
+            </group>
 
             <xpath expr="//notebook[last()]" position="inside">
                 <page string="Images" groups="product.group_product_variant">
@@ -45,72 +46,98 @@
         </field>
     </record>
 
-	<record model="ir.ui.view" id="product_template_form_view_b2b">
-		<field name="name">product.template.product.b2b.form</field>
-		<field name="model">product.template</field>
-		<field name="inherit_id" ref="product.product_template_form_view"/>
-		<field name="arch" type="xml">
-			<div name="button_box" position="inside">
-				<button class="oe_stat_button" name="website_publish_button" type="object" icon="fa-globe">
-					<field name="website_published" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Published', 'hover_true': 'Unpublish on website', 'string_false': 'Not published', 'hover_false': 'Publish on website' }}"/>
-				</button>
-			</div>
-			<group name="email_template_and_project"  position="before">
-				<group name="website" string="Website">
-					<field name="public_categ_ids" widget="many2many_tags" string="Website Categories"/>
-				</group>
-			</group>
-		</field>
-	</record>
+    <record id="product_variant_easy_edit_view_b2b" model="ir.ui.view">
+        <field name="name">product.product.view.form.easy.b2b</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+        <field name="arch" type="xml">
+            <field name="image_medium" position="replace">
+                <field name="image_variant" widget="image" class="oe_avatar" readonly="1" options="{ 'no_cache': True  }"/>
+            </field>
+        </field>
+    </record>
 
-	<!-- Product Public Categories -->
-	<record id="product_public_category_form_view" model="ir.ui.view">
-		<field name="name">product.public.category.form</field>
-		<field name="model">product.public.category</field>
-		<field name="arch" type="xml">
-			<form string="Website Public Categories">
-				<sheet>
-					<field name="image" widget='image' class="oe_avatar"/>
-					<div class="oe_left">
-						<group>
-							<field name="name"/>
-							<field name="parent_id"/>
-							<field name="sequence"/>
-						</group>
-					</div>
-				</sheet>
-			</form>
-		</field>
-	</record>
+    <record id="product_normal_form_view_b2b" model="ir.ui.view">
+        <field name="name">product.product.form.b2b</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <field name="image_medium" position="replace">
+                <field name="image_variant" widget="image" class="oe_avatar" readonly="1" options="{ 'no_cache': True  }"/>
+            </field>
+        </field>
+    </record>
 
-	<record id="product_public_category_tree_view" model="ir.ui.view">
-		<field name="name">product.public.category.tree</field>
-		<field name="model">product.public.category</field>
-		<field name="field_parent" eval="False"/>
-		<field name="arch" type="xml">
-			<tree string="Product Public Categories">
-				<field name="sequence" invisible="1"/>
-				<field name="display_name"/>
-			</tree>
-		</field>
-	</record>
+    <!-- Product Images -->
+    <record id="view_product_image_form" model="ir.ui.view">
+        <field name="name">product.image.form</field>
+        <field name="model">product.image</field>
+        <field name="arch" type="xml">
+            <form string="Product Images">
+                <sheet>
+                    <field name="image" widget="image" class="oe_avatar" required="True" options="{'size': [160, 120]}"/>
+                    <div class="oe_title">
+                        <field name="product_tmpl_id" options="{'relational_on_load': 'change'}" invisible="1"/>
+                        <label class="oe_edit_only" for="name" string="Image Description (alt text)"/>
+                        <h1><field name="name" placeholder="alt image text" required="True"/></h1>
+                    </div>
+                    <div class="oe_other">
+                        <label class="oe_edit_only" for="product_attributes" string="Attributes Applied" />
+                        <div><field name="product_attributes_values" widget="many2many_tags" options="{ 'no_create_edit':True, 'no_quick_create': True }" /></div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-	<record id="product_public_category_action" model="ir.actions.act_window">
-		<field name="name">Website Product Categories</field>
-		<field name="type">ir.actions.act_window</field>
-		<field name="res_model">product.public.category</field>
-		<field name="view_type">form</field>
-		<field name="view_mode">tree,form</field>
-		<field name="view_id" eval="False"/>
-		<field name="help" type="html">
-			<p class="oe_view_nocontent_create">
-				Click to define a new category.
-			</p><p>
-				Categories are used to browse your products through the
-				touchscreen interface.
-			</p>
-		</field>
-	</record>
+    <!-- Product Public Categories -->
+    <record id="product_public_category_form_view" model="ir.ui.view">
+        <field name="name">product.public.category.form.b2b</field>
+        <field name="model">product.public.category</field>
+        <field name="arch" type="xml">
+            <form string="Website Public Categories">
+                <sheet>
+                    <field name="image" widget='image' class="oe_avatar"/>
+                    <div class="oe_left">
+                        <group>
+                            <field name="name"/>
+                            <field name="parent_id"/>
+                            <field name="sequence"/>
+                        </group>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
 
-	<menuitem id="menu_public_categories" name="Categorías Web" parent="stock.menu_product_in_config_stock" action="product_public_category_action" sequence="80" />
+    <record id="product_public_category_tree_view" model="ir.ui.view">
+        <field name="name">product.public.category.tree.b2b</field>
+        <field name="model">product.public.category</field>
+        <field name="field_parent" eval="False"/>
+        <field name="arch" type="xml">
+            <tree string="Product Public Categories">
+                <field name="sequence" invisible="1"/>
+                <field name="display_name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="product_public_category_action" model="ir.actions.act_window">
+        <field name="name">Website Product Categories</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.public.category</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" eval="False"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to define a new category.
+            </p><p>
+                Categories are used to browse your products through the
+                touchscreen interface.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_public_categories" name="Categorías Web" parent="stock.menu_product_in_config_stock" action="product_public_category_action" sequence="80" />
 </odoo>
