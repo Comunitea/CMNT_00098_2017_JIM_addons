@@ -17,6 +17,8 @@ class ExportPrices(models.Model):
     qty = fields.Float('Min Quantity')
     price = fields.Float('Price')
     create_mode = fields.Boolean('Is created')
+    # ID DEL ITEM PARA QUE ELLOS BORREN SIEMPRE?
+    item_id = fields.Integer('Id item')
     
     
     @api.model
@@ -33,34 +35,35 @@ class ExportPrices(models.Model):
                 'pricelist_id': pricelist.id,
                 'qty': t[1],
                 'price':t[2],
-                'create_mode': create_mode
+                'create_mode': create_mode,
+                'item_id': t[3]
             }
             self.create(vals)
     
     @api.model
     def get_item_related_product_qtys(self, i, total_res):
         """
-        Devuelvo [(p_id, qty)...] que representan los productos implicados
+        Devuelvo [(p_id, qty, item_id)...] que representan los productos implicados
         por la regla de precios.
         Devuelvo solo los activos
         """
         qty = i['min_quantity']
         res = []
         if i['applied_on'] == '0_product_variant':
-            if (i['product_id'], qty) not in total_res:
-                res.append((i['product_id'], qty))
+            if (i['product_id'], qty, i['id']) not in total_res:
+                res.append((i['product_id'], qty, i['id']))
         elif i['applied_on'] == '1_product':
             domain = [('product_tmpl_id', '=', i['product_tmpl_id'])]
             products = self.env['product.product'].search(domain)
             for p in products:
-                if (p.id, qty) not in total_res:
-                    res.append((p.id, qty))
+                if (p.id, qty, i['id']) not in total_res:
+                    res.append((p.id, qty, i['id']))
         elif i['applied_on'] == '2_product_category':
             domain = [('product_tmpl_id.categ_id', '=', i['product_tmpl_id'])]
             products = self.env['product.product'].search(domain)
             for p in products:
-                if (p.id, qty) not in total_res:
-                    res.append((p.id, qty))
+                if (p.id, qty, i['id']) not in total_res:
+                    res.append((p.id, qty, i['id']))
         elif i['applied_on'] == '3_global':
             # Calculo los productos de la tarifa en la que se basa
             if i['base'] == 'pricelist' and i['base_pricelist_id']:
