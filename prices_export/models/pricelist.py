@@ -16,7 +16,7 @@ class ProductPricelist(models.Model):
     @api.multi
     def get_export_product_qtys_prices(self, products_qtys):
         """
-        Return list touple of product_id, price for this pricelists:
+        Return list touple of product_id, qty, price, item_id for this pricelists:
         """
         res = []
 
@@ -31,13 +31,14 @@ class ProductPricelist(models.Model):
         product_ids = [x[0] for x in products_qtys]
         products = self.env['product.product'].browse(product_ids)
         qtys = [x[1] for x in products_qtys]
-        recod_prod_qtys = zip(products, qtys)
+        item_ids = [x[2] for x in products_qtys]
+        recod_prod_qtys = zip(products, qtys, item_ids)
         for t in recod_prod_qtys:
             product = t[0]
             idx += 1
             _logger.info("{} / {}".format(idx, tot))
             price = self.get_product_price(product, t[1], False, False)
-            res.append((product.id, t[1], price))
+            res.append((product.id, t[1], price, t[2]))
         b = datetime.now()
         _logger.info('Finalizamos tarifa {} en {}'.format(self.name, datetime.now()))
         _logger.info('TOTAL: {}'.format(b - a))
@@ -63,7 +64,7 @@ class ProductPricelistItem(models.Model):
         """
         if 'product_id' in vals or 'product_tmpl_id' in vals or \
                 'categ_id' in vals or 'applied_on' in vals or \
-                'base_pricelist_id' in vals or 'min_quantity' in vals:
+                'base_pricelist_id' in vals:
             self.create_in_aux_table()
         return super(ProductPricelistItem, self).write(vals)
 
