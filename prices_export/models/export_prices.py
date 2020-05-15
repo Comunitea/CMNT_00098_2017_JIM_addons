@@ -16,10 +16,11 @@ class ExportPrices(models.Model):
     pricelist_id = fields.Many2one('product.pricelist', 'Pricelist')
     qty = fields.Float('Min Quantity')
     price = fields.Float('Price')
+    create_mode = fields.Boolean('Is created')
     
     
     @api.model
-    def create_export_qtys_prices_records(self, pricelist, product_prices):
+    def create_export_qtys_prices_records(self, pricelist, product_prices, create_mode=False):
         tot = len(product_prices)
         idx = 0
         for t in product_prices:
@@ -31,7 +32,8 @@ class ExportPrices(models.Model):
                 'product_id':t[0],
                 'pricelist_id': pricelist.id,
                 'qty': t[1],
-                'price':t[2]
+                'price':t[2],
+                'create_mode': create_mode
             }
             self.create(vals)
     
@@ -127,7 +129,8 @@ class ExportPrices(models.Model):
             # Obtener precios por producto-cantidad
             product_prices = pl.get_export_product_qtys_prices(products_qtys)
             # Crear los registros
-            self.create_export_qtys_prices_records(pl, product_prices)
+            self.create_export_qtys_prices_records(pl, product_prices,
+                                                   create_mode=True)
 
             b = datetime.now()
             _logger.info('Finalizamos tarifa {} en {}'.format(pl.name, datetime.now()))
@@ -167,8 +170,9 @@ class ExportPrices(models.Model):
             ('write_date', '>=', base_date),
             ('create_date', '>=', base_date),
         ]
-        items = self.env['product.pricelist.item'].search(domain)    
-        item_ids = tuple(items._ids) if items else '(-1)'
+        items = self.env['product.pricelist.item'].search(domain)
+        items_tuple = '(%s)' %', '.join(map(repr, items._ids))
+        item_ids = items_tuple if items else '(-1)'
         # Búsqueda sql de los activos, ya que el campo applied_on proboca mucha
         # lentitud
         sql = """

@@ -13,6 +13,7 @@
                <field name="pricelist_id"/>
                <field name="qty"/>
                <field name="price"/>
+               <field name="create_mode"/>
             </tree>
         </field>
     </record>

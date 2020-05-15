@@ -11,8 +11,8 @@ DESCRIPCIÓN
 
 Este módulo mantiene sincronizada una base de datos secundaria (Postgres) con una estructura diferente a la de Odoo enviando peticiones POST por protocolo HTTP a otro servidor a la vez que gestiona las configuraciones que envían o reciben esos datos.
 
-VERSIONES SOPORTADAS
-====================
+VERSIONES SOPORTADAS (Probadas)
+===============================
 
 * Python 2.7
 * Odoo 10 CE
@@ -27,45 +27,54 @@ CONFIGURACIÓN
 
 Enlazaremos este módulo con el servidor secundario mediante la configuración del mismo, Configuración -> B2B -> Settings -> JSync URL
 
+También cambiaremos los datos del FTP público si es necesario, este se usa para publicar las imágenes de Marcas, Categorías y Productos
+
 Después podemos modificar las configuraciones para cada modelo de Odoo en "Items Out" e "Items In", esta configuración es un tanto especial y sólo debe hacerla una persona con conocimientos de programación, ya que hay que escribir una parte de código. El motivo de hacerlo así fué poder realizar cambios en producción sin necesidad de reiniciar el servidor.
 
-Todas las variables y métodos que se definan en esta configuración pasarán a un diccionario llamado b2b en tiempo de ejecución.
+Todas las variables y métodos que se definan en esta configuración pasarán a un diccionario llamado b2b en tiempo de ejecución, por lo tanto si definimos un nuevo método ej. "def test_method(param):" para llamarlo usaremos b2b['test_method'](param)".
 
 -- CONFIGURACIÓN ITEMS OUT --
 
-fields_to_watch = None
+Model Names: Nombre del modelo o modelos separados por comas de los que se obtendrán los datos
+Description: Descripción de la configuración que estamos creando
+Code:
 
-	Permite especificar que campos del modelo se vigilarán, si no se le pasa una lista o tupla serán todos
+	fields_to_watch = None
 
-def is_notifiable(self, action, vals):
-    ...
+		Permite especificar que campos del modelo se vigilarán, si no se le pasa una lista o tupla serán todos
 
-    Aquí debemos devolver True o False si queremos que se notifique sólo cuando el registro cumpla unas condiciones, en caso contrario True
+	def is_notifiable(self, action, vals):
+		...
 
-(opcional) def pre_data(self, action):
-	...
+		Aquí debemos devolver True o False si queremos que se notifique sólo cuando el registro cumpla unas condiciones, en caso contrario True
 
-	Acción que se ejecutará si existe antes de llamara a b2b['get_data'](record)
+	(opcional) def pre_data(self, action):
+		...
 
-def get_data(self):
-    ...
+		Acción que se ejecutará si existe antes de llamara a b2b['get_data'](record)
 
-    Esta función deverá devolver normalmente un diccionario con los datos a enviar, aunque también puede retornar una lista de diccionarios
+	def get_data(self):
+		...
 
-(opcional) def pos_data(self, action):
-	...
+		Esta función deverá devolver normalmente un diccionario con los datos a enviar, aunque también puede retornar una lista de diccionarios
 
-	Acción que se ejecutará si existe después de llamara a b2b['get_data'](record)
+	(opcional) def pos_data(self, action):
+		...
 
+		Acción que se ejecutará si existe después de llamara a b2b['get_data'](record)
 
 -- CONFIGURACIÓN ITEMS IN --
 
-def get_action(action, data):
-    return action
+Model Names: Nombre del modelo al que se incorporarán los datos
+Description: Descripción de la configuración que estamos creando
+Code:
 
-    Permite cambiar la acción cuando se recibe un dato de entrada en función de unas condiciones, por defecto se pasa tal cual
-    
-def get_data(self, data):
-	...
+	def get_action(action, data):
+		return action
 
-	Devolverá un único diccionario de datos, que se pasará al modelo para crear el registro
+		Permite cambiar la acción cuando se recibe un dato de entrada en función de unas condiciones, por defecto se pasa tal cual
+		
+	def get_data(self, data):
+		...
+
+		Devolverá un único diccionario de datos, que se pasará al modelo para crear el registro
