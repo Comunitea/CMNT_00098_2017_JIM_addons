@@ -25,8 +25,8 @@ class ExportPrices(models.Model):
         idx = 0
         for t in product_prices:
             idx += 1
-            if not t[2]:
-                continue
+            # if not t[2]:  # Si precio 0 ignorar
+            #     continue
             _logger.info('Creando record producto: {} qty: {}, precio: {} ({}/{})'.format(t[0], t[1], t[2], idx, tot))
             vals = {
                 'product_id':t[0],
