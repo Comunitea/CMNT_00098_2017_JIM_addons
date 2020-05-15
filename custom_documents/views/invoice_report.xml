@@ -190,10 +190,15 @@
                         </div>
                     </div>
 
+
                 </div>
+
+
+
             </t>
         </xpath>
     </template>
+
 
     <record id="account.account_invoices" model="ir.actions.report.xml">
         <field name="paperformat_id" ref="sale_paperformat_euro" />

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record model="ir.cron" id="autovacuum_job">
+            <field name='name'>Exportar Stock</field>
+            <field name='interval_number'>15</field>
+            <field name='interval_type'>minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">exportxml.object</field>
+            <field name="function">compute_product_ids</field>
+            <field name="args">()</field>
+        </record>
+</odoo>

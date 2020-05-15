@@ -140,12 +140,11 @@ class SaleOrder(models.Model):
         Avoid check risk in action confirm
         """
         ctx = self._context.copy()
-        ctx.update(bypass_risk=True)
-        self2 = self.with_context(ctx)
-        res =  super(SaleOrder, self2).action_confirm()
         for order in self:
+            ctx.update(bypass_risk=True, force_company=order.company_id.id)
+            res = super(SaleOrder, order.with_context(ctx)).action_confirm()
             order.picking_ids.write({'scheduled_order': order.scheduled_order})
-        return res
+        return True
 
     @api.model
     def get_risk_msg(self, order_id):

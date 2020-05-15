@@ -42,7 +42,6 @@
                                 </tr>
                                 <tr>
                                     <td>
-
                                         <strong style="margin-left: 5px;">Packages: </strong><span t-field="o.pick_packages"/>
                                         <strong>kilos: </strong><span t-field="o.pick_weight"/>
                                     </td>
@@ -65,7 +64,6 @@
                                 </tr>
                             </tfoot>
                         </table>
-
                         <table class="custom_table" style="margin-top: 20px;">
                             <thead>
                                 <tr>

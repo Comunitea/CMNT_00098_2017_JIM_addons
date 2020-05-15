@@ -1,0 +1,201 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+#	* prices_export
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-05-11 23:06+0000\n"
+"PO-Revision-Date: 2020-05-11 23:06+0000\n"
+"Last-Translator: <>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_base
+msgid "Base"
+msgstr "Base"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_create_uid
+#: model:ir.model.fields,field_description:prices_export.field_export_customer_prices_create_uid
+#: model:ir.model.fields,field_description:prices_export.field_export_prices_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_create_date
+#: model:ir.model.fields,field_description:prices_export.field_export_customer_prices_create_date
+#: model:ir.model.fields,field_description:prices_export.field_export_prices_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_display_name
+#: model:ir.model.fields,field_description:prices_export.field_export_customer_prices_display_name
+#: model:ir.model.fields,field_description:prices_export.field_export_prices_display_name
+msgid "Display Name"
+msgstr "Nombre mostrado"
+
+#. module: prices_export
+#: model:ir.ui.menu,name:prices_export.menu_export_customer_prices
+msgid "Export Customer Prices"
+msgstr "Export Customer Prices"
+
+#. module: prices_export
+#: model:ir.ui.menu,name:prices_export.menu_export_prices
+msgid "Export Prices"
+msgstr "Exporar precios"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_id
+#: model:ir.model.fields,field_description:prices_export.field_export_customer_prices_id
+#: model:ir.model.fields,field_description:prices_export.field_export_prices_id
+msgid "ID"
+msgstr "ID"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export___last_update
+#: model:ir.model.fields,field_description:prices_export.field_export_customer_prices___last_update
+#: model:ir.model.fields,field_description:prices_export.field_export_prices___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_write_uid
+#: model:ir.model.fields,field_description:prices_export.field_export_customer_prices_write_uid
+#: model:ir.model.fields,field_description:prices_export.field_export_prices_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_write_date
+#: model:ir.model.fields,field_description:prices_export.field_export_customer_prices_write_date
+#: model:ir.model.fields,field_description:prices_export.field_export_prices_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_export_customer_prices_last_sinc
+msgid "Last sync"
+msgstr "Útmima sync"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_export_prices_qty
+msgid "Min Quantity"
+msgstr "Cantidad mínima"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_export_customer_prices_price
+#: model:ir.model.fields,field_description:prices_export.field_export_prices_price
+msgid "Price"
+msgstr "Precio"
+
+#. module: prices_export
+#: model:ir.model,name:prices_export.model_product_pricelist
+#: model:ir.model.fields,field_description:prices_export.field_export_customer_prices_partner_id
+#: model:ir.model.fields,field_description:prices_export.field_export_prices_pricelist_id
+msgid "Pricelist"
+msgstr "Tarifa"
+
+#. module: prices_export
+#: model:ir.model,name:prices_export.model_product_pricelist_item
+msgid "Pricelist item"
+msgstr "Elemento de la tarifa"
+
+#. module: prices_export
+#: model:ir.model,name:prices_export.model_product_product
+#: model:ir.model.fields,field_description:prices_export.field_export_customer_prices_product_id
+#: model:ir.model.fields,field_description:prices_export.field_export_prices_product_id
+msgid "Product"
+msgstr "Producto"
+
+#. module: prices_export
+#: model:ir.model,name:prices_export.model_product_template
+msgid "Product Template"
+msgstr "Plantilla de producto"
+
+#. module: prices_export
+#: model:ir.ui.view,arch_db:prices_export.product_pricelist_view_search_export_prices
+msgid "To Export"
+msgstr "A exportar"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_product_pricelist_to_export
+msgid "To export"
+msgstr "A exportar"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_applied_on
+msgid "applied_on"
+msgstr "applied_on"
+
+#. module: prices_export
+#: model:ir.model,name:prices_export.model_aux_export
+msgid "aux.export"
+msgstr "aux.export"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_base_pricelist_id
+msgid "base_pricelist_id"
+msgstr "base_pricelist_id"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_categ_id
+msgid "categ_id"
+msgstr "categ_id"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_compute_price
+msgid "compute_price"
+msgstr "compute_price"
+
+#. module: prices_export
+#: model:ir.model,name:prices_export.model_export_customer_prices
+msgid "export.customer.prices"
+msgstr "export.customer.prices"
+
+#. module: prices_export
+#: model:ir.actions.act_window,name:prices_export.export_customer_prices_action
+msgid "export.customer.prices.action"
+msgstr "export.customer.prices.action"
+
+#. module: prices_export
+#: model:ir.model,name:prices_export.model_export_prices
+msgid "export.prices"
+msgstr "export.prices"
+
+#. module: prices_export
+#: model:ir.actions.act_window,name:prices_export.export_prices_action
+msgid "export.prices.action"
+msgstr "export.prices.action"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_item_id
+msgid "item_id"
+msgstr "item_id"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_min_quantity
+msgid "min_quantity"
+msgstr "min_quantity"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_pricelist_id
+msgid "pricelist_id"
+msgstr "pricelist_id"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_product_id
+msgid "product_id"
+msgstr "product_id"
+
+#. module: prices_export
+#: model:ir.model.fields,field_description:prices_export.field_aux_export_product_tmpl_id
+msgid "product_tmpl_id"
+msgstr "product_tmpl_id"
+

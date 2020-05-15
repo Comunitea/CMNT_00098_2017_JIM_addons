@@ -186,6 +186,8 @@
                         <span t-field="o.payment_mode_id.report_refund_warning"/>
                     </div>
                 </div>
+
+
             </div>
         </t>
     </template>
