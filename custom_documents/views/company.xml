@@ -4,12 +4,27 @@
 
 <odoo>
 
+     <report id="company_advise_report"
+            model="res.company"
+            string="Página de condiciones"
+            report_type="qweb-pdf"
+            name="custom_documents.company_advise"
+            menu="True"/>
+
+
     <record id="res_company_add_qweb_footer" model="ir.ui.view">
         <field name="name">res.company.form</field>
         <field name="model">res.company</field>
         <field name="inherit_id" ref="base.view_company_form"/>
         <field name="arch" type="xml">
             <notebook position="inside">
+                <!--page string="Advise page">
+                    <separator string="Page"/>
+
+                    <field name="show_company_advise"/>
+                    <field name="company_advise"/>
+
+                </page-->
                 <page string="Qweb">
                     <group>
                         <field name="show_discount"/>
@@ -21,6 +36,9 @@
                     <field name="qweb_footer"/>
                     <separator string="Invoice footer"/>
                     <field name="qweb_invoice_footer"/>
+                    <separator string="Purchase footer"/>
+                    <field name="iso_purchase_order_text"/>
+
                 </page>
             </notebook>
         </field>

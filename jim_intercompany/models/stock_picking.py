@@ -48,7 +48,7 @@ class StockPicking(models.Model):
             [('procurement_group_id', 'in', [ic_purchase.mapped(
                 'group_id').id])])
         sale = sales.filtered(lambda x: x.auto_generated == False)
-        return sale and sale[0].name or ''
+        return sale and sale[0] or False
 
     @api.multi
     def _compute_orig_sale(self):
@@ -61,13 +61,12 @@ class StockPicking(models.Model):
                     [('procurement_group_id', '=', record.group_id.id)])
                 sale = sales.filtered(lambda x : x.auto_generated == False)
                 if sale:
-                    name = sale[0].name
-                    id = sale[0].id
+                    sale = sale[0]
                 elif sales:
-                    name = self.sudo()._get_ic_sale(sales)
-                    id = False
-            record.orig_sale_str = name
-            record.orig_sale_id = id
+                    sale = self.sudo()._get_ic_sale(sales)
+            if sale:
+                record.orig_sale_str = sale.name
+                record.orig_sale_id = sale
 
 
 

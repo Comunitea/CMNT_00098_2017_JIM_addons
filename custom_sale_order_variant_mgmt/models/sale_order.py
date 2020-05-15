@@ -56,8 +56,10 @@ class SaleOrderLineTemplate(models.Model):
 
     @api.model
     def create(self, vals):
+        ctx = self._context.copy()
         # Se controla el create con order_lines debido que al duplicar un
         # pedido el vals de las lineas viene sin order_id
+        order_id = vals.get('order_id', False)
         if vals.get('order_lines', False):
             for line_vals in vals['order_lines']:
                 if line_vals[0] == 0:
@@ -65,15 +67,36 @@ class SaleOrderLineTemplate(models.Model):
         if not self._context.get('no_create_line', False):
             # Nos aseguramos que el name de sale.order.line sea el correcto
             # (con referencia y atributos de variante)
+            ctx.update(no_create_template_line=True)
             line_vals = vals.copy()
-            template_product = self.env['product.template'].browse(vals['product_template'])
-            if template_product.display_name == line_vals['name']:
-                product_vals = self.env['product.product'].browse(
-                    line_vals['product_id'])
-                line_vals['name'] = product_vals.display_name
-            new_line = self.env['sale.order.line'].with_context(
-                no_create_template_line=True).create(line_vals)
-            vals['order_lines'] = [(6, 0, [new_line.id])]
+            orig = True
+            if orig:
+                line_vals = vals.copy()
+                template_product = self.env['product.template'].browse(vals['product_template'])
+                if template_product.display_name == line_vals['name']:
+                    product_vals = self.env['product.product'].browse(
+                        line_vals['product_id'])
+                    line_vals['name'] = product_vals.display_name
+                new_line = self.env['sale.order.line'].with_context(ctx).create(line_vals)
+                vals['order_lines'] = [(6, 0, [new_line.id])]
+            else:
+                new_line_ids = self.env['sale.order.line']
+
+                template_product = self.env['product.template'].browse(vals['product_template'])
+
+                product_id = self.env['product.product'].browse(line_vals['product_id'])
+                if template_product.display_name == line_vals['name']:
+                    line_vals['name'] = product_id.display_name
+                line_vals.update({
+                    'product_id': product_id.id,
+                    'product_uom': product_id.uom_id,
+                    'order_id': order_id,
+                })
+                order_line = self.env['sale.order.line'].with_context(ctx).new(line_vals)
+                order_line.product_id_change()
+                order_line_vals = order_line._convert_to_write(order_line._cache)
+                new_line_ids |= new_line_ids.with_context(ctx).create(order_line_vals)
+                vals['order_lines'] = [(6, 0, new_line_ids.ids)]
         return super(
             SaleOrderLineTemplate,
             self.with_context(no_create_template_line=True)).create(vals)

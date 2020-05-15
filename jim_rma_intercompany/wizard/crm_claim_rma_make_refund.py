@@ -71,6 +71,9 @@ class CrmClaimRmaMakeRefund(models.TransientModel):
             invoice_line = invoice_line_obj.new(invoice_line_vals)
             invoice_line._onchange_product_id()
             invoice_line_vals = invoice_line._convert_to_write(invoice_line._cache)
+            if claim.claim_type.name == "Customer":
+                account = self.env['account.account'].search([('code', 'like', '7080%')])[0]
+                invoice_line_vals['account_id'] = account.id
             new_line = invoice_line_obj.create(invoice_line_vals)
             new_line.write({'price_unit': line.unit_sale_price,
                             'name': line.name})

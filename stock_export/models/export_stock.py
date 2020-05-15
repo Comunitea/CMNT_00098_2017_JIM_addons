@@ -367,7 +367,11 @@ class DeletedObject(models.Model):
         res_id = self._cr.fetchall()
         if res_id:
             last_call = res_id[0][0]
+<<<<<<< HEAD
         else:
+=======
+        if not last_call:
+>>>>>>> master
             last_call = time_now_str
         start_time = time.time()
         if not from_time:

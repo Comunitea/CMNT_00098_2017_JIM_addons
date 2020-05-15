@@ -10,3 +10,4 @@ from . import sale_order
 from . import stock_picking
 from . import ir_qweb
 from . import purchase
+from . import ir_actions_report

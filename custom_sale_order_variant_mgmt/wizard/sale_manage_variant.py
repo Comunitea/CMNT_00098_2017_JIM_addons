@@ -32,6 +32,7 @@ class SaleManageVariant(models.TransientModel):
                 {'product_uom_qty': 0, 'price_unit': 0, 'purchase_price': 0})
             template = self.env['sale.order.line.template'].create(vals)
 
+
         super(SaleManageVariant,
               self.with_context(
                 template_line=template.id, active_model='sale.order',
@@ -43,7 +44,8 @@ class SaleManageVariant(models.TransientModel):
             sum_qty = 0
             for line in template.order_lines:
                 sum_qty += line.product_uom_qty
-                #line.product_uom_change()  # Update prices depend of qty
+                if context['active_model'] != 'sale.order.line.template':
+                    line.product_uom_change()  # Update prices depend of qty
                 line._onchange_discount()  # Update variant pricelist discount.
             # Get total qty
             template.product_uom_qty = sum_qty

@@ -119,6 +119,7 @@
                     <field name="do_backorder" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
                     <field name="shipping_city" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
                     <field name="shipping_partner_name" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
+                    <field name="account_code" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
                     <!--<field name="sga_state" attrs="{'invisib1le': [('sga_state', '=', 'NI')], 'readonly': '1'}"/>-->
                 </field>
 
