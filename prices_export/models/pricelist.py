@@ -63,20 +63,12 @@ class ProductPricelistItem(models.Model):
         """
         if 'product_id' in vals or 'product_tmpl_id' in vals or \
                 'categ_id' in vals or 'applied_on' in vals or \
-<<<<<<< HEAD
-                'base_pricelist_id' in vals:
-=======
                 'base_pricelist_id' in vals or 'min_quantity' in vals:
->>>>>>> master
             self.create_in_aux_table()
         return super(ProductPricelistItem, self).write(vals)
 
     @api.multi
-<<<<<<< HEAD
-    def unlink(self, vals):
-=======
     def unlink(self):
->>>>>>> master
         """
         Creo una copia del item en la tabla auxiliar para calcular despues los
         productos afectados
@@ -104,9 +96,6 @@ class ProductPricelistItem(models.Model):
                 'base_pricelist_id': item.base_pricelist_id.id,
                 'pricelist_id': item.pricelist_id.id,
             }
-<<<<<<< HEAD
-            self.env['aux.export'].create(item_info)
-=======
             self.env['aux.export'].create(item_info)
 
     def button_edit_items(self):
@@ -128,4 +117,3 @@ class ProductPricelistItem(models.Model):
             'res_id': self.id,
             'context': ctx,
         }
->>>>>>> master

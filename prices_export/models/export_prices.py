@@ -25,13 +25,8 @@ class ExportPrices(models.Model):
         idx = 0
         for t in product_prices:
             idx += 1
-<<<<<<< HEAD
-            if not t[2]:
-                continue
-=======
             # if not t[2]:  # Si precio 0 ignorar
             #     continue
->>>>>>> master
             _logger.info('Creando record producto: {} qty: {}, precio: {} ({}/{})'.format(t[0], t[1], t[2], idx, tot))
             vals = {
                 'product_id':t[0],
@@ -175,14 +170,8 @@ class ExportPrices(models.Model):
             ('write_date', '>=', base_date),
             ('create_date', '>=', base_date),
         ]
-<<<<<<< HEAD
-        items = self.env['product.pricelist.item'].search(domain)
-        items_tuple = '(%s)' %', '.join(map(repr, items._ids))
-        item_ids = items_tuple if items else '(-1)'
-=======
         items = self.env['product.pricelist.item'].search(domain)    
         item_ids = tuple(items._ids) if items else '(-1)'
->>>>>>> master
         # Búsqueda sql de los activos, ya que el campo applied_on proboca mucha
         # lentitud
         sql = """
@@ -200,11 +189,7 @@ class ExportPrices(models.Model):
         select aux.item_id, aux.applied_on, aux.product_id, aux.product_tmpl_id, aux.categ_id, aux.min_quantity, 
                aux.compute_price, aux.base, aux.base_pricelist_id, aux.pricelist_id
         from aux_export aux
-<<<<<<< HEAD
-        """.format(item_ids)
-=======
         """.format(str(item_ids)).replace(',)', ')')
->>>>>>> master
         self._cr.execute(sql)
         sql_res = self._cr.fetchall()
         items_info = []
