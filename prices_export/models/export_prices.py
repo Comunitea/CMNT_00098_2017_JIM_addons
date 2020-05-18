@@ -161,21 +161,6 @@ class ExportPrices(models.Model):
     #**************************************************************************
 
     @api.model
-    def get_related_pricelist_ids(self, pricelist_id):
-        """
-        Para un elemento calculo las tarifas donde deberá recalcularse el
-        precio, solo se busca un nivel ya que no tienen mas
-        """
-        # TODO MAS TARIFAS EN CADENA ?(no de momento, solo la cmnt nuestra)
-        domain = [
-            ('pricelist_id.to_export', '=', True),
-            ('base_pricelist_id', '=', pricelist_id)
-        ]
-        items = self.env['product.pricelist.item'].search(domain)
-        pricelists = items.mapped('pricelist_id')
-        return pricelists._ids
-    
-    @api.model
     def get_related_items(self, pricelist_id):
         domain = [
             ('pricelist_id.to_export', '=', True),
@@ -263,23 +248,6 @@ class ExportPrices(models.Model):
             for t in products_qtys:
                 if t not in pricelist2update[pricelist_id]:
                     pricelist2update[pricelist_id].append(t)
-            
-            # Busco las tarifas asociadas a recalcular
-            # if i['pricelist_id'] not in pricelist_computed:
-            # related_pricelist_ids = self.get_related_pricelist_ids(
-            #     i['pricelist_id'])
-            
-            
-            # # pricelist_computed.append(i['pricelist_id'])
-            # _logger.info(' - tarifas relacionadas: {}'.\
-            #     format(related_pricelist_ids))
-            # for pl_id in related_pricelist_ids:
-            #     if not pl_id in pricelist2update:
-            #         pricelist2update[pl_id] = []
-            #     # Añado los productos,qtys para esta tarifa solo si no están ya.
-            #     for t in products_qtys:
-            #         if t not in pricelist2update[pl_id]:
-            #             pricelist2update[pl_id].append(t)
 
             # Para cada item relaccionado tengo que añadir su ID a la tupla.
             # y recalcular en su tarifa esos productos cantidades
