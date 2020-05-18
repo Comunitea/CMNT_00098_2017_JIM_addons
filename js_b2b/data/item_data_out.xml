@@ -281,7 +281,7 @@ def get_data(self):
         'fixed:product_id': self.product_tmpl_id.id, 
         'name': self.get_field_translations('name'), 
         'image': b2b['images_base'] + self.public_file_name if self.public_file_name else None, 
-        'product_attributes_values:attributes': self.product_attributes_values.ids
+        'fixed:attributes': self.product_attributes_values.ids
     }</field>
         </record>
 
