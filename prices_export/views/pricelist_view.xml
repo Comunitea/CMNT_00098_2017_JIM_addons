@@ -29,6 +29,7 @@
         <field name="inherit_id" ref="product.product_pricelist_view_tree"/>
         <field name="arch" type="xml">
             <field name="currency_id" position="after">
+                <field name="pricelist_id"/>
                 <field name="to_export"/>
             </field>
         </field>
@@ -40,7 +41,7 @@
         <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
         <field name="arch" type="xml">
             <field name="applied_on" position="before">
-                <field name="pricelist_id"/>
+                <field name="pricelist_id"/ required="1">
             </field>
         </field>
     </record>

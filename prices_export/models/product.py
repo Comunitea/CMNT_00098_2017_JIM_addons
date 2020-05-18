@@ -19,6 +19,13 @@ class ProductTemplate(models.Model):
             self.set_template_categ_update(vals['categ_id'])
         return super(ProductTemplate, self).write(vals)
     
+    @api.model
+    def create(self, vals):
+        res = super(ProductTemplate, self).create(vals)
+        if 'categ_id' in vals:
+            res.set_template_categ_update(vals['categ_id']) 
+        return res
+    
     @api.multi
     def set_template_categ_update(self, new_categ_id):
         """
@@ -93,7 +100,7 @@ class ProductProduct(models.Model):
             # CREO LOS REGISTROS BAJO DEMANDA PARA LAS TARIFAS DE CADA ITEM
             # Y SUS RELACCIONADAS
             for item in items:
-                products_qtys = [(product.id, item.min_quantity)]
+                products_qtys = [(product.id, item.min_quantity, item.id)]
                 
                 # CALCULO PRECIOS
                 product_prices = item.pricelist_id.\
