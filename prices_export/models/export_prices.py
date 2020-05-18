@@ -199,9 +199,6 @@ class ExportPrices(models.Model):
         ]
         items = self.env['product.pricelist.item'].search(domain)
 
-        if not items:
-            _logger.info('NO SE ENCUENTRAN MODIFICACIONES')
-            return
 
         item_ids = tuple(items._ids) if items else '(-1)'
         # Búsqueda sql de los activos, ya que el campo applied_on proboca mucha
@@ -224,6 +221,9 @@ class ExportPrices(models.Model):
         """.format(str(item_ids)).replace(',)', ')')
         self._cr.execute(sql)
         sql_res = self._cr.fetchall()
+        if not sql_res:
+            _logger.info('NO SE ENCUENTRAN MODIFICACIONES')
+            return
         items_info = []
         for t in sql_res:
             item_info = {
