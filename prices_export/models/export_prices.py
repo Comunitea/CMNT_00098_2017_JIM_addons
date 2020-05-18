@@ -160,20 +160,20 @@ class ExportPrices(models.Model):
     #************************CÁLCULO CAMBIOS DE PRECIOS************************
     #**************************************************************************
 
-    # @api.model
-    # def get_related_pricelist_ids(self, pricelist_id):
-    #     """
-    #     Para un elemento calculo las tarifas donde deberá recalcularse el
-    #     precio, solo se busca un nivel ya que no tienen mas
-    #     """
-    #     # TODO MAS TARIFAS EN CADENA ?(no de momento, solo la cmnt nuestra)
-    #     domain = [
-    #         ('pricelist_id.to_export', '=', True),
-    #         ('base_pricelist_id', '=', pricelist_id)
-    #     ]
-    #     items = self.env['product.pricelist.item'].search(domain)
-    #     pricelists = items.mapped('pricelist_id')
-    #     return pricelists._ids
+    @api.model
+    def get_related_pricelist_ids(self, pricelist_id):
+        """
+        Para un elemento calculo las tarifas donde deberá recalcularse el
+        precio, solo se busca un nivel ya que no tienen mas
+        """
+        # TODO MAS TARIFAS EN CADENA ?(no de momento, solo la cmnt nuestra)
+        domain = [
+            ('pricelist_id.to_export', '=', True),
+            ('base_pricelist_id', '=', pricelist_id)
+        ]
+        items = self.env['product.pricelist.item'].search(domain)
+        pricelists = items.mapped('pricelist_id')
+        return pricelists._ids
     
     @api.model
     def get_related_items(self, pricelist_id):
