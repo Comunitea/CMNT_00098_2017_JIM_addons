@@ -175,7 +175,6 @@ class ExportPrices(models.Model):
     
     @api.model
     def create_updated_prices(self):
-        import ipdb; ipdb.set_trace()
         start = datetime.now()
         base_date = self.env['ir.config_parameter'].get_param(
             'last_call_export_prices', default='')   
