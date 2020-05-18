@@ -56,7 +56,7 @@ def get_data(self):
             <field name="code">fields_to_watch = (
     'name', 
     'description', 
-    'logo'
+    'image'
 )
 
 def is_notifiable(self, action, vals):
@@ -67,7 +67,7 @@ def get_data(self):
         'fixed:jim_id': self.id,
         'name': self.name,
         'description': self.get_field_translations('description'),
-        'logo': b2b['images_base'] + self.public_file_name if self.public_file_name else None
+        'logo:image': b2b['images_base'] + self.public_file_name if self.public_file_name else None
     }</field>
         </record>
 

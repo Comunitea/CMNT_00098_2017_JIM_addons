@@ -77,13 +77,14 @@
                 <sheet>
                     <field name="image" widget="image" class="oe_avatar" required="True" options="{'size': [160, 120]}"/>
                     <div class="oe_title">
-                        <field name="product_tmpl_id" options="{'relational_on_load': 'change'}" invisible="1"/>
+                        <field name="id" invisible="1"/>
+                        <field name="product_tmpl_id" invisible="1"/>
                         <label class="oe_edit_only" for="name" string="Image Description (alt text)"/>
                         <h1><field name="name" placeholder="alt image text" required="True"/></h1>
                     </div>
                     <div class="oe_other">
                         <label class="oe_edit_only" for="product_attributes" string="Attributes Applied" />
-                        <div><field name="product_attributes_values" widget="many2many_tags" options="{ 'no_create_edit':True, 'no_quick_create': True }" /></div>
+                        <div><field name="product_attributes_values" widget="many2many_tags" options="{ 'no_create_edit':True, 'no_quick_create': True }" attrs="{'readonly': [('id', '!=', False)]}" /></div>
                     </div>
                 </sheet>
             </form>

@@ -1,4 +1,4 @@
-odoo.define('js_b2b.relational_on_load', function (require) {
+/*odoo.define('js_b2b.relational_on_load', function (require) {
     "use strict";
 
     var form_relational = require('web.form_relational');
@@ -14,7 +14,7 @@ odoo.define('js_b2b.relational_on_load', function (require) {
         },
     });
 
-    /*form_relational.FieldX2Many.include({
+    form_relational.FieldX2Many.include({
         load_views: function () {
             var self = this;
             $.when(self._super()).then(function(){
@@ -23,6 +23,6 @@ odoo.define('js_b2b.relational_on_load', function (require) {
                 }
             });
         },
-    });*/
+    });
 
-});
+});*/
