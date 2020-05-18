@@ -80,8 +80,11 @@ class ExportPrices(models.Model):
             # Calculo los productos de la tarifa en la que se basa
             if i['base'] == 'pricelist' and i['base_pricelist_id']:
                 # RECURSIVO A LA FUNCIÓN QUE LLAMA A ESTA
-                res.extend(
-                    self.sql_get_related_products_qtys(i['base_pricelist_id']))
+                # Debido a que ahora también devuelvo el item_id tengo que
+                # corregirlo, porque esto me devuelve el id de la otra tarifa
+                rec_res =  self.sql_get_related_products_qtys(i['base_pricelist_id'])
+                res2 = [(x[0], x[1], i['id']) for x in rec_res]
+                res.extend(res2)
         return res
     
     @api.model
@@ -136,7 +139,6 @@ class ExportPrices(models.Model):
             ('to_export', '=', True),
         ]
         pricelists = self.env['product.pricelist'].search(domain)
-
         for pl in pricelists:
             a = datetime.now()
             # Obetener productos-qtys relaccionados
@@ -158,20 +160,30 @@ class ExportPrices(models.Model):
     #************************CÁLCULO CAMBIOS DE PRECIOS************************
     #**************************************************************************
 
+    # @api.model
+    # def get_related_pricelist_ids(self, pricelist_id):
+    #     """
+    #     Para un elemento calculo las tarifas donde deberá recalcularse el
+    #     precio, solo se busca un nivel ya que no tienen mas
+    #     """
+    #     # TODO MAS TARIFAS EN CADENA ?(no de momento, solo la cmnt nuestra)
+    #     domain = [
+    #         ('pricelist_id.to_export', '=', True),
+    #         ('base_pricelist_id', '=', pricelist_id)
+    #     ]
+    #     items = self.env['product.pricelist.item'].search(domain)
+    #     pricelists = items.mapped('pricelist_id')
+    #     return pricelists._ids
+    
     @api.model
-    def get_related_pricelist_ids(self, pricelist_id):
-        """
-        Para un elemento calculo las tarifas donde deberá recalcularse el
-        precio, solo se busca un nivel ya que no tienen mas
-        """
+    def get_related_items(self, pricelist_id):
         # TODO MAS TARIFAS EN CADENA ?(no de momento, solo la cmnt nuestra)
         domain = [
             ('pricelist_id.to_export', '=', True),
             ('base_pricelist_id', '=', pricelist_id)
         ]
         items = self.env['product.pricelist.item'].search(domain)
-        pricelists = items.mapped('pricelist_id')
-        return pricelists._ids
+        return items
     
     @api.model
     def create_updated_prices(self):
@@ -185,7 +197,12 @@ class ExportPrices(models.Model):
             ('write_date', '>=', base_date),
             ('create_date', '>=', base_date),
         ]
-        items = self.env['product.pricelist.item'].search(domain)    
+        items = self.env['product.pricelist.item'].search(domain)
+
+        if not items:
+            _logger.info('NO SE ENCUENTRAN MODIFICACIONES')
+            return
+
         item_ids = tuple(items._ids) if items else '(-1)'
         # Búsqueda sql de los activos, ya que el campo applied_on proboca mucha
         # lentitud
@@ -248,20 +265,34 @@ class ExportPrices(models.Model):
             
             # Busco las tarifas asociadas a recalcular
             # if i['pricelist_id'] not in pricelist_computed:
-            related_pricelist_ids = self.get_related_pricelist_ids(
-                i['pricelist_id'])
-            # pricelist_computed.append(i['pricelist_id'])
-            _logger.info(' - tarifas relacionadas: {}'.\
-                format(related_pricelist_ids))
-            for pl_id in related_pricelist_ids:
+            # related_pricelist_ids = self.get_related_pricelist_ids(
+            #     i['pricelist_id'])
+            
+            
+            # # pricelist_computed.append(i['pricelist_id'])
+            # _logger.info(' - tarifas relacionadas: {}'.\
+            #     format(related_pricelist_ids))
+            # for pl_id in related_pricelist_ids:
+            #     if not pl_id in pricelist2update:
+            #         pricelist2update[pl_id] = []
+            #     # Añado los productos,qtys para esta tarifa solo si no están ya.
+            #     for t in products_qtys:
+            #         if t not in pricelist2update[pl_id]:
+            #             pricelist2update[pl_id].append(t)
+
+            # Para cada item relaccionado tengo que añadir su ID a la tupla.
+            # y recalcular en su tarifa esos productos cantidades
+            related_items = self.get_related_items(i['pricelist_id'])
+            for rel_it in related_items:
+                pl_id = rel_it.pricelist_id.id
                 if not pl_id in pricelist2update:
                     pricelist2update[pl_id] = []
                 # Añado los productos,qtys para esta tarifa solo si no están ya.
                 for t in products_qtys:
                     if t not in pricelist2update[pl_id]:
-                        pricelist2update[pl_id].append(t)
+                        pricelist2update[pl_id].append((t[0], t[1], rel_it.id))
 
-        # Para cada tarifa tenfo sus [(productos, qtys)...] los paso a la
+        # Para cada tarifa tenfo sus [(productos, qtys, item_id)...] los paso a la
         # función de la tarifa que me devuelve los precios en formato
         # [(prod,qty,price)...], despues creo todos los registros para
         # esa tarifa        
