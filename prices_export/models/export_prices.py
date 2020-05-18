@@ -177,12 +177,13 @@ class ExportPrices(models.Model):
     
     @api.model
     def get_related_items(self, pricelist_id):
-        # TODO MAS TARIFAS EN CADENA ?(no de momento, solo la cmnt nuestra)
         domain = [
             ('pricelist_id.to_export', '=', True),
             ('base_pricelist_id', '=', pricelist_id)
         ]
         items = self.env['product.pricelist.item'].search(domain)
+        for it in items:
+            items |= self.get_related_items(it.pricelist_id.id)
         return items
     
     @api.model
