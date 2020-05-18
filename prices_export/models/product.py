@@ -75,7 +75,7 @@ class ProductProduct(models.Model):
             # Actualizo el write date para que lo encuentre el cron la siguiente
             # vez
             _logger.info('Marcando items para actualizar después')
-            items.write({'write_date': fields.Datetime.now()})
+            items.write({'active': True})
         return
     
     @api.multi
@@ -83,12 +83,6 @@ class ProductProduct(models.Model):
         """
         Busco los items donde está involucrado y cambio el write date para
         lanzar el recálculo.
-        Como al recalcular buscará las tarifas que dependen de la suya evito
-        traerme reglas que se basan en otra tarifa.
-        Se supone que el precio de todos los productos se los da una tarifa.
-        base.
-        Estos no los recalculará el cron, los creo bajo demanda para no dispar
-        el cálculo de todas las categorías
         """
         _logger.info('Exportando precios bajo demanda (CAMBIO DE CATEGORÍA)')
         for product in self:
@@ -97,29 +91,9 @@ class ProductProduct(models.Model):
                 ('categ_id', 'in', [product.categ_id.id, new_categ_id]),
             ]
             items = self.env['product.pricelist.item'].search(domain)
-            # CREO LOS REGISTROS BAJO DEMANDA PARA LAS TARIFAS DE CADA ITEM
-            # Y SUS RELACCIONADAS
-            for item in items:
-                products_qtys = [(product.id, item.min_quantity, item.id)]
-                
-                # CALCULO PRECIOS
-                product_prices = item.pricelist_id.\
-                    get_export_product_qtys_prices(products_qtys)
-    
-                # CREO REGISTROS EN LA TABLA
-                self.env['export.prices'].\
-                    create_export_qtys_prices_records(item.pricelist_id, product_prices)
-                
-                # También por si hay tarifas relaccionadas
-                rel_pl_ids = self.env['export.prices'].\
-                    get_related_pricelist_ids(item.pricelist_id.id)
-                product_prices = item.pricelist_id.\
-                    get_export_product_qtys_prices(products_qtys)
-                pricelists = self.env['product.pricelist'].browse(rel_pl_ids)
-                for pl in pricelists:
-                    # CALCULO PRECIOS
-                    product_prices =pl.get_export_product_qtys_prices(products_qtys)
-                    # CREO REGISTROS EN LA TABLA
-                    self.env['export.prices'].\
-                    create_export_qtys_prices_records(pl, product_prices)
+            if items:
+                # Actualizo el write date para que lo encuentre el cron la siguiente
+                # vez
+                _logger.info('Marcando items para actualizar después')
+                items.write({'active': True})
         return
