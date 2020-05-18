@@ -25,6 +25,18 @@ class ExportPrices(models.Model):
     def create_export_qtys_prices_records(self, pricelist, product_prices, create_mode=False):
         tot = len(product_prices)
         idx = 0
+
+        # Borrar los items que ya existan
+        item_ids = [x[3] for x in product_prices]
+        item_ids = tuple(item_ids) if item_ids else '(-1)'
+        sql = """
+        delete
+        from export_prices
+        where  item_id in {}
+        """.format(str(item_ids)).replace(',)', ')')
+        self._cr.execute(sql)
+        self._cr.commit()
+
         for t in product_prices:
             idx += 1
             # if not t[2]:  # Si precio 0 ignorar
@@ -59,7 +71,7 @@ class ExportPrices(models.Model):
                 if (p.id, qty, i['id']) not in total_res:
                     res.append((p.id, qty, i['id']))
         elif i['applied_on'] == '2_product_category':
-            domain = [('product_tmpl_id.categ_id', '=', i['product_tmpl_id'])]
+            domain = [('product_tmpl_id.categ_id', '=', i['categ_id'])]
             products = self.env['product.product'].search(domain)
             for p in products:
                 if (p.id, qty, i['id']) not in total_res:
@@ -163,6 +175,7 @@ class ExportPrices(models.Model):
     
     @api.model
     def create_updated_prices(self):
+        import ipdb; ipdb.set_trace()
         start = datetime.now()
         base_date = self.env['ir.config_parameter'].get_param(
             'last_call_export_prices', default='')   
