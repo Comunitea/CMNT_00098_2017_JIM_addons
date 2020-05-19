@@ -68,6 +68,28 @@ class B2BBulkExport(models.Model):
 			GROUP BY product_tmpl_id", [date, date, date])
 		return tuple(r[0] for r in self.env.cr.fetchall())"""
 
+	def __pricelists_prices_to_update(self, replace=False, limit='ALL'):
+		self.env.cr.execute("SELECT \
+				export_prices.id AS jim_id, \
+				export_prices.pricelist_id, \
+				product_product.product_tmpl_id AS product_id, \
+				CASE \
+					WHEN product_product.attribute_names <> '' THEN product_product.id \
+					ELSE NULL \
+				END variant_id, \
+				CASE \
+					WHEN export_prices.qty > 0 THEN export_prices.qty \
+					ELSE 1 \
+				END quantity, \
+				export_prices.price \
+			FROM export_prices \
+			LEFT JOIN product_product ON export_prices.product_id = product_product.id \
+			WHERE create_mode = %s \
+			GROUP BY export_prices.id, export_prices.pricelist_id, product_product.product_tmpl_id, product_product.id, export_prices.qty \
+			ORDER BY export_prices.id ASC \
+			LIMIT %s", replace, limit)
+		return self.env.cr.fetchall()
+
 	# ------------------------------------ STATIC METHODS ------------------------------------
 
 	@staticmethod
@@ -82,28 +104,33 @@ class B2BBulkExport(models.Model):
 	# ------------------------------------ PUBLIC METHODS ------------------------------------
 
 	def b2b_pricelists_prices(self, test_limit=None):
-		# Out prices
-		prices = list()
-		# Get calculated prices
-		calculated_prices = self.env['export.prices'].search([], limit=test_limit)
-		for price in calculated_prices:
-			prices.append({
-				'pricelist_id': price.pricelist_id.id,
-				'product_id': price.product_id.product_tmpl_id.id,
-				'variant_id': price.product_id.id if price.product_id.product_tmpl_id.product_attribute_count else None,
-				'quantity': price.qty if price.qty > 1 else 1,
-				'price': price.price
-			})
+		# Get calculated prices to replace
+		self.__pricelists_unique_quantities()
+		r_prices = self.__pricelists_prices_to_update(True, test_limit or 'ALL')
+		print(":::::: PRECIOS COMUNITEA A REEMPLAZAR", prices)
 
 		# Send to JSync
-		if prices:
+		if r_prices:
 			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
 			packet.name = 'pricelist_item'
-			packet.data = prices
+			packet.data = r_prices
+			packet.mode = 'replace'
+			packet.send(timeout_sec=300)
+			self.write_to_log(str(r_prices), 'pricelist_item_replace', "w+")
+
+		# Get calculated prices to update
+		self.__pricelists_unique_quantities()
+		u_prices = self.__pricelists_prices_to_update(False, test_limit or 'ALL')
+		print(":::::: PRECIOS COMUNITEA A ACTUALIZAR", prices)
+
+		# Send to JSync
+		if u_prices:
+			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
+			packet.name = 'pricelist_item'
+			packet.data = u_prices
 			packet.mode = 'update'
 			packet.send(timeout_sec=300)
-			self.write_to_log(str(prices), 'pricelist_item', "w+")
-			calculated_prices.unlink()
+			self.write_to_log(str(u_prices), 'pricelist_item_update', "w+")
 
 	"""def b2b_pricelists_prices(self, test_limit=None, templates_filter=None):
 		self.write_to_log('[b2b_pricelists_prices] Starts!')

@@ -69,7 +69,7 @@
     </record>
 
     <!-- Product Images -->
-    <record id="view_product_image_form" model="ir.ui.view">
+    <record id="view_product_image_form_b2b" model="ir.ui.view">
         <field name="name">product.image.form</field>
         <field name="model">product.image</field>
         <field name="arch" type="xml">
@@ -91,8 +91,20 @@
         </field>
     </record>
 
+    <!-- Product Categories -->
+    <record id="product_category_tree_view_b2b" model="ir.ui.view">
+        <field name="name">product.tag.tree.b2b</field>
+        <field name="model">product.tag</field>
+        <field name="inherit_id" ref="product_tags.product_tag_tree"/>
+        <field name="arch" type="xml">
+            <field name="display_name" position="before">
+                <field name="sequence" widget="handle"/>
+            </field>
+        </field>
+    </record>
+
     <!-- Product Public Categories -->
-    <record id="product_public_category_form_view" model="ir.ui.view">
+    <record id="product_public_category_form_view_b2b" model="ir.ui.view">
         <field name="name">product.public.category.form.b2b</field>
         <field name="model">product.public.category</field>
         <field name="arch" type="xml">
@@ -111,19 +123,19 @@
         </field>
     </record>
 
-    <record id="product_public_category_tree_view" model="ir.ui.view">
+    <record id="product_public_category_tree_view_b2b" model="ir.ui.view">
         <field name="name">product.public.category.tree.b2b</field>
         <field name="model">product.public.category</field>
         <field name="field_parent" eval="False"/>
         <field name="arch" type="xml">
             <tree string="Product Public Categories">
-                <field name="sequence" invisible="1"/>
+                <field name="sequence" widget="handle"/>
                 <field name="display_name"/>
             </tree>
         </field>
     </record>
 
-    <record id="product_public_category_action" model="ir.actions.act_window">
+    <record id="product_public_category_action_b2b" model="ir.actions.act_window">
         <field name="name">Website Product Categories</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">product.public.category</field>
@@ -140,5 +152,5 @@
         </field>
     </record>
 
-    <menuitem id="menu_public_categories" name="Categorías Web" parent="stock.menu_product_in_config_stock" action="product_public_category_action" sequence="80" />
+    <menuitem id="menu_public_categories" name="Categorías Web" parent="stock.menu_product_in_config_stock" action="product_public_category_action_b2b" sequence="80" />
 </odoo>
