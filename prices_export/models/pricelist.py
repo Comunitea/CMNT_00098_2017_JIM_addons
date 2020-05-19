@@ -72,10 +72,42 @@ class ProductPricelistItem(models.Model):
     def unlink(self):
         """
         Creo una copia del item en la tabla auxiliar para calcular despues los
-        productos afectados
+        productos afectados.
+        Escribo bajo demanda los borrados de los item_ids, relaccionados
         """
-        self.create_in_aux_table()
+        # self.create_in_aux_table()
+        delete_items = self
+        for item in self:
+            delete_items |= item
+            related_items = self.env['export.prices'].\
+                get_related_items(item.pricelist_id.id)
+            delete_items |= related_items
+        
+        for item in delete_items:
+            vals = {
+                'price': -1,
+                'item_id':item.id,
+                'product_id': False,
+                'pricelist_id': item.pricelist_id.id
+                
+            }
+            self.env['export.prices'].create(vals)
         return super(ProductPricelistItem, self).unlink()
+
+    def get_item_info(self):
+        self.ensure_one()
+        return {
+            'item_id': self.id,
+            'applied_on': self.applied_on,
+            'product_id':self.product_id.id,
+            'product_tmpl_id': self.product_tmpl_id.id,
+            'categ_id': self.categ_id.id,
+            'min_quantity': self.min_quantity,
+            'compute_price': self.compute_price,
+            'base': self.base,
+            'base_pricelist_id': self.base_pricelist_id.id,
+            'pricelist_id': self.pricelist_id.id,
+        }
     
     @api.multi
     def create_in_aux_table(self):
@@ -85,18 +117,7 @@ class ProductPricelistItem(models.Model):
         programado para el cálculo de precios en las tarifas implicadas
         """
         for item in self:
-            item_info = {
-                'item_id': item.id,
-                'applied_on': item.applied_on,
-                'product_id':item.product_id.id,
-                'product_tmpl_id': item.product_tmpl_id.id,
-                'categ_id': item.categ_id.id,
-                'min_quantity': item.min_quantity,
-                'compute_price': item.compute_price,
-                'base': item.base,
-                'base_pricelist_id': item.base_pricelist_id.id,
-                'pricelist_id': item.pricelist_id.id,
-            }
+            item_info = item.get_item_info()
             self.env['aux.export'].create(item_info)
 
     def button_edit_items(self):
