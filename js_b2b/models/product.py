@@ -185,7 +185,7 @@ class ProductBrand(models.Model, PublicImage):
 
 class ProductTag(models.Model, PublicImage):
 	_inherit = "product.tag"
-	_order = "sequence, parent_id, name"
+	_order = "sequence, parent_id"
 
 	_max_public_file_size = (1280, None)
 
@@ -221,7 +221,7 @@ class ProductTag(models.Model, PublicImage):
 class ProductPublicCategory(models.Model, PublicImage):
 	_name = "product.public.category"
 	_description = "Website Product Category"
-	_order = "sequence, parent_id, name"
+	_order = "sequence, parent_id"
 
 	_max_public_file_size = (1280, None)
 
