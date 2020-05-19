@@ -7,21 +7,29 @@ from ..base import ftp
 # lib copied from odoo 11
 from ..base import pycompat
 
-base_product_publish_error = 'Error! You can not publish this product because '
+base_product_publish_error = _('Error! You can not publish this product because ')
+image_without_file_error = _('Error! Can not save an image without media file!')
 
 ####################### IMÁGENES PÚBLICAS #######################
 
 class PublicImage:
 
 	_max_public_file_size = (1920, None)
+	_attr_public_file_name = 'public_file_name'
 
 	@api.multi
 	def _ftp_save_base64(self, base64_str):
+		self._ftp_delete_file()
+		return ftp.save_base64(base64_str)
+
+	@api.multi
+	def _ftp_delete_file(self):
 		for record in self:
 			# Delete old image
-			if record.public_file_name:
-				ftp.delete_file(record.public_file_name)
-		return ftp.save_base64(base64_str)
+			if hasattr(record, self._attr_public_file_name) and getattr(record, self._attr_public_file_name):
+				file_name = getattr(record, self._attr_public_file_name)
+				ftp.delete_file(file_name)
+		return False
 
 	def _resize_large_image(self, base64_str=None):
 		if base64_str:
@@ -43,9 +51,9 @@ class ProductTemplate(models.Model, PublicImage):
 		for product in self:
 			if not product.website_published:
 				if not self.tag_ids:
-					raise ValidationError(_(base_product_publish_error + 'does not have tags.'))
+					raise ValidationError(_(base_product_publish_error + _('does not have tags.')))
 				if not self.public_categ_ids:
-					raise ValidationError(_(base_product_publish_error + 'does not have web categories.'))
+					raise ValidationError(_(base_product_publish_error + _('does not have web categories.')))
 			toggled_status = bool(not product.website_published)
 			product.website_published = toggled_status
 			product.mapped('product_variant_ids').write({ 'website_published': toggled_status })
@@ -74,7 +82,10 @@ class ProductTemplate(models.Model, PublicImage):
 
 	@api.multi
 	def write(self, vals):
-		if vals.get('image_medium'):
+		if vals.get('image_medium') == False:
+			self._ftp_delete_file()
+			vals.update({ 'public_file_name': None })
+		elif vals.get('image_medium'):
 			vals.update({ 'image_medium': self._resize_large_image(vals['image_medium']) })
 			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image_medium']) })
 		return super(ProductTemplate, self).write(vals)
@@ -123,7 +134,7 @@ class ProductProduct(models.Model):
 	def website_publish_button(self):
 		for variant in self:
 			if not variant.product_tmpl_id.website_published:
-				raise ValidationError(_(base_product_publish_error + 'template is unpublished.'))
+				raise ValidationError(_(base_product_publish_error + _('template is unpublished.')))
 			variant.website_published = not variant.website_published
 
 	@api.model
@@ -155,7 +166,10 @@ class ProductBrand(models.Model, PublicImage):
 
 	@api.multi
 	def write(self, vals):
-		if vals.get('logo'):
+		if vals.get('logo') == False:
+			self._ftp_delete_file()
+			vals.update({ 'public_file_name': None })
+		elif vals.get('logo'):
 			vals.update({ 'logo': self._resize_large_image(vals['logo']) })
 			vals.update({ 'public_file_name': self._ftp_save_base64(vals['logo']) })
 		return super(ProductBrand, self).write(vals)
@@ -183,7 +197,10 @@ class ProductTag(models.Model, PublicImage):
 
 	@api.multi
 	def write(self, vals):
-		if vals.get('image'):
+		if vals.get('image') == False:
+			self._ftp_delete_file()
+			vals.update({ 'public_file_name': None })
+		elif vals.get('image'):
 			vals.update({ 'image': self._resize_large_image(vals['image']) })
 			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
 		return super(ProductTag, self).write(vals)
@@ -220,7 +237,10 @@ class ProductPublicCategory(models.Model, PublicImage):
 
 	@api.multi
 	def write(self, vals):
-		if vals.get('image'):
+		if vals.get('image') == False:
+			self._ftp_delete_file()
+			vals.update({ 'public_file_name': None })
+		elif vals.get('image'):
 			vals.update({ 'image': self._resize_large_image(vals['image']) })
 			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
 		return super(ProductPublicCategory, self).write(vals)
@@ -273,16 +293,23 @@ class ProductImage(models.Model, PublicImage):
 
 	@api.model
 	def create(self, vals):
-		if vals.get('image'):
+		if not vals.get('image'):
+			raise ValidationError(image_without_file_error)
+		else:
 			vals.update({ 'image': self._resize_large_image(vals['image']) })
 			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
+
 		return super(ProductImage, self).create(vals)
 
 	@api.multi
 	def write(self, vals):
+		if not vals.get('image', self.image):
+			raise ValidationError(image_without_file_error)
+
 		if vals.get('image'):
 			vals.update({ 'image': self._resize_large_image(vals['image']) })
 			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
+
 		return super(ProductImage, self).write(vals)
 
 	@api.multi

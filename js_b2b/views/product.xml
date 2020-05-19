@@ -75,12 +75,12 @@
         <field name="arch" type="xml">
             <form string="Product Images">
                 <sheet>
-                    <field name="image" widget="image" class="oe_avatar" required="True" options="{'size': [160, 120]}"/>
+                    <field name="image" widget="image" class="oe_avatar" required="1" options="{'size': [160, 120]}"/>
                     <div class="oe_title">
                         <field name="id" invisible="1"/>
                         <field name="product_tmpl_id" invisible="1"/>
                         <label class="oe_edit_only" for="name" string="Image Description (alt text)"/>
-                        <h1><field name="name" placeholder="alt image text" required="True"/></h1>
+                        <h1><field name="name" placeholder="alt image text" required="1"/></h1>
                     </div>
                     <div class="oe_other">
                         <label class="oe_edit_only" for="product_attributes" string="Attributes Applied" />
