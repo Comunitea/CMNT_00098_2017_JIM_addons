@@ -78,7 +78,7 @@ class ExportPrices(models.Model):
                     res.append((p.id, qty, i['id']))
         elif i['applied_on'] == '3_global':
             # Calculo los productos de la tarifa en la que se basa
-            if i['base'] == 'pricelist' and i['base_pricelist_id']:
+            if i['compute_price'] == 'formula' and i['base'] == 'pricelist' and i['base_pricelist_id']:
                 # RECURSIVO A LA FUNCIÓN QUE LLAMA A ESTA
                 # Debido a que ahora también devuelvo el item_id tengo que
                 # corregirlo, porque esto me devuelve el id de la otra tarifa
@@ -164,7 +164,9 @@ class ExportPrices(models.Model):
     def get_related_items(self, pricelist_id):
         domain = [
             ('pricelist_id.to_export', '=', True),
-            ('base_pricelist_id', '=', pricelist_id)
+            ('compute_price', '=', 'formula'),
+            ('base_pricelist_id', '=', pricelist_id),
+            ('base', '=', 'pricelist'),
         ]
         items = self.env['product.pricelist.item'].search(domain)
         for it in items:
