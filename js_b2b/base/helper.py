@@ -131,7 +131,7 @@ class JSync:
 
 		# Debug
 		debug_msg = "JSync Response: {}" \
-					"\n    - name: {}" \
+					"\n    - object: {}" \
 					"\n    - operation: {}" \
 					"\n    - data: {}" \
 					"\n    - part: {}"
@@ -178,7 +178,7 @@ class JSync:
 				num_packets = len(data_list_multiple)
 				for i in range(num_packets):
 					self.__send({
-							'name': self.name,
+							'object': self.name,
 							'operation': self.mode,
 							'data': list(data_list_multiple[i]),
 							'part': [i + 1, num_packets]
@@ -186,7 +186,7 @@ class JSync:
 			else:
 				# One
 				self.__send({
-						'name': self.name,
+						'object': self.name,
 						'operation': self.mode,
 						'data': self.data
 					}, **kwargs)

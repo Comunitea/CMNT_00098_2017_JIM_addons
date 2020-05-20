@@ -16,9 +16,9 @@
 		'product_brand',
 		'product_tags',
 		'jim_sale',
-		'js_categorization',
-		'prices_export',
-		'stock_export'
+		'js_categorization'
+		#'prices_export',
+		#'stock_export'
 	],
 	'qweb': [
 		'static/xml/widgets.xml',
