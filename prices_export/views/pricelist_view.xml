@@ -11,7 +11,8 @@
                 <field name="to_export"/>
             </field>
             <xpath expr="//field[@name='item_ids']/tree" position="attributes">
-                <attribute name="options">{'no_create_edit': True, 'no_create':True, 'no_open':True}</attribute>
+                <attribute name="options">{'no_create_edit': True, 'no_create':True, 'no_open':True, 'no_delete':True}</attribute>
+                <attribute name="delete">0</attribute>
             </xpath>
             <xpath expr="//field[@name='item_ids']//field[@name='name']" position="before">
                 <button name="button_edit_items"

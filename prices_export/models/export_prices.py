@@ -260,8 +260,12 @@ class ExportPrices(models.Model):
                     pricelist2update[pl_id] = []
                 # Añado los productos,qtys para esta tarifa solo si no están ya.
                 for t in products_qtys:
-                    if t not in pricelist2update[pl_id]:
-                        pricelist2update[pl_id].append((t[0], t[1], rel_it.id))
+                    qty = max(t[1], rel_it.min_quantity)
+                    t2 = (t[0], qty, rel_it.id)
+                    if t2 not in pricelist2update[pl_id]:
+                        # coger el mas grande de los dos???
+                        pricelist2update[pl_id].append(t2)
+                        # pricelist2update[pl_id].append((t[0], rel_it.min_quantity, rel_it.id))
 
         # Para cada tarifa tenfo sus [(productos, qtys, item_id)...] los paso a la
         # función de la tarifa que me devuelve los precios en formato
