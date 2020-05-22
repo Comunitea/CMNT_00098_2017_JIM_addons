@@ -10,16 +10,7 @@
             <field name="company_id" position="after">
                 <field name="to_export"/>
             </field>
-            <xpath expr="//field[@name='item_ids']/tree" position="attributes">
-                <attribute name="options">{'no_create_edit': True, 'no_create':True, 'no_open':True, 'no_delete':True}</attribute>
-                <attribute name="delete">0</attribute>
-            </xpath>
-            <xpath expr="//field[@name='item_ids']//field[@name='name']" position="before">
-                <button name="button_edit_items"
-                        icon="fa-list"
-                        type="object"
-                />
-            </xpath>
+
         </field>
     </record>
 
@@ -35,27 +26,7 @@
         </field>
     </record>
 
-    <record id="product_pricelist_item_form_view_add_pricelist" model="ir.ui.view">
-        <field name="name">product_pricelist_item_form_view_add_pricelist</field>
-        <field name="model">product.pricelist.item</field>
-        <field name="inherit_id" ref="product.product_pricelist_item_form_view"/>
-        <field name="arch" type="xml">
-            <field name="applied_on" position="before">
-                <field name="pricelist_id" required="1"/>
-            </field>
-        </field>
-    </record>
 
-    <record id="product_pricelist_item_treeview_add_pricelist" model="ir.ui.view">
-        <field name="name">product_pricelist_item_tree_view_add_pricelist</field>
-        <field name="model">product.pricelist.item</field>
-        <field name="inherit_id" ref="product.product_pricelist_item_tree_view"/>
-        <field name="arch" type="xml">
-            <field name="product_id" position="before">
-                <field name="pricelist_id"/>
-            </field>
-        </field>
-    </record>
 
 
     <!-- product.pricelist inherit search view -->
