@@ -216,6 +216,53 @@ class ProductTag(models.Model, PublicImage):
 			if super(ProductTag, record).unlink():
 				ftp.delete_file(image_name)
 
+####################### ATRIBUTOS #######################
+
+class ProductAttributeValue(models.Model, PublicImage):
+	_inherit = "product.attribute.value"
+
+	_max_public_file_size = (62, 62)
+
+	is_color = fields.Boolean(related='attribute_id.is_color', store=False)
+	html_color = fields.Char(string='HTML Color', oldname='color', help="Here you can set a specific HTML color index (e.g. #ff0000) to display the color on the website if the attibute type is 'Color'.")
+	image_color = fields.Binary(attachment=True, help="This field holds the image used as thumbnail for the attribute colors, limited to 62px.")
+	image_color_filename = fields.Char(string='Color Image Name') # To check extension
+	public_file_name = fields.Char('Attribute Value Public File Name')
+
+	@api.one
+	@api.constrains('image_color_filename')
+	def _check_filename(self):
+		if self.image_color and self.image_color_filename:
+			# Check the file's extension
+			tmp = self.image_color_filename.split('.')
+			ext = tmp[len(tmp)-1]
+			if ext != 'jpg':
+				raise ValidationError(_("The image must be a jpg file"))
+
+	@api.model
+	def create(self, vals):
+		if vals.get('image_color'):
+			vals.update({ 'image_color': self._resize_large_image(vals['image_color']) })
+			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image_color']) })
+		return super(ProductAttributeValue, self).create(vals)
+
+	@api.multi
+	def write(self, vals):
+		if vals.get('image_color') == False:
+			self._ftp_delete_file()
+			vals.update({ 'public_file_name': None })
+		elif vals.get('image_color'):
+			vals.update({ 'image_color': self._resize_large_image(vals['image_color']) })
+			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image_color']) })
+		return super(ProductAttributeValue, self).write(vals)
+
+	@api.multi
+	def unlink(self):
+		for record in self:
+			image_name = record.public_file_name
+			if super(ProductAttributeValue, record).unlink():
+				ftp.delete_file(image_name)
+
 ####################### CATEGORÍA WEB #######################
 
 class ProductPublicCategory(models.Model, PublicImage):

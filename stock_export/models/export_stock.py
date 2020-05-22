@@ -367,7 +367,7 @@ class DeletedObject(models.Model):
         res_id = self._cr.fetchall()
         if res_id:
             last_call = res_id[0][0]
-        if not last_call:
+        if not 'last_call' in locals():
             last_call = time_now_str
         start_time = time.time()
         if not from_time:

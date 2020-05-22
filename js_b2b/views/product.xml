@@ -103,6 +103,21 @@
         </field>
     </record>
 
+    <!-- Product Attributes -->
+    <record id="variants_tree_view_b2b" model="ir.ui.view">
+        <field name="name">product.attribute.value.tree.b2b</field>
+        <field name="model">product.attribute.value</field>
+        <field name="inherit_id" ref="product.variants_tree_view"/>
+        <field name="arch" type="xml">
+            <tree position="inside">
+                <field name="is_color" invisible="1" />
+                <field name="image_color_filename" invisible="1" />
+                <field name="html_color" widget="js_colorpicker" attrs="{'invisible':[('is_color', '!=', True)]}"/>
+                <field name="image_color" filename="image_color_filename" class="oe_avatar" options="{'size': [62, 62]}" attrs="{'invisible':[('is_color', '!=', True)]}"/>
+            </tree>
+        </field>
+    </record>
+
     <!-- Product Public Categories -->
     <record id="product_public_category_form_view_b2b" model="ir.ui.view">
         <field name="name">product.public.category.form.b2b</field>

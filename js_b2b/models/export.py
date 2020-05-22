@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
+from odoo.addons.queue_job.job import job
 from ..base.helper import JSync
 from os import path, pardir
 from datetime import datetime
@@ -22,7 +23,7 @@ class B2BBulkExport(models.Model):
 
 	# ------------------------------------ CUSTOM QUERIES ------------------------------------
 
-	"""def __pricelists_unique_quantities(self):
+	def __pricelists_unique_quantities(self):
 		self.env.cr.execute("SELECT pricelist_id, \
 			CASE \
 				WHEN min_quantity > 0 THEN min_quantity \
@@ -50,7 +51,7 @@ class B2BBulkExport(models.Model):
 			GROUP BY product_tmpl_id")
 		return tuple(r[0] for r in self.env.cr.fetchall())
 
-	def __products_with_stock_moves(self, date=None):
+	"""def __products_with_stock_moves(self, date=None):
 		self.env.cr.execute("SELECT product_tmpl_id \
 			FROM product_product \
 			WHERE id IN ( \
@@ -67,7 +68,7 @@ class B2BBulkExport(models.Model):
 				GROUP BY product_id \
 			) \
 			GROUP BY product_tmpl_id", [date, date, date])
-		return tuple(r[0] for r in self.env.cr.fetchall())"""
+		return tuple(r[0] for r in self.env.cr.fetchall())
 
 	def _pricelists_prices_to_update(self, replace=False, limit='ALL'):
 		self.env.cr.execute("SELECT \
@@ -88,7 +89,7 @@ class B2BBulkExport(models.Model):
 			GROUP BY export_prices.id, export_prices.pricelist_id, product_product.product_tmpl_id, product_product.id, export_prices.qty \
 			ORDER BY export_prices.id ASC \
 			LIMIT %s" % (replace, limit))
-		return self.env.cr.dictfetchall()
+		return self.env.cr.dictfetchall()"""
 
 	# ------------------------------------ STATIC METHODS ------------------------------------
 
@@ -103,7 +104,7 @@ class B2BBulkExport(models.Model):
 
 	# ------------------------------------ PUBLIC METHODS ------------------------------------
 
-	def b2b_pricelists_prices(self, test_limit=None):
+	"""def b2b_pricelists_prices(self, test_limit=None):
 		# Get calculated prices to replace
 		r_prices = self._pricelists_prices_to_update(True, test_limit or 'ALL')
 		print("::::::::::: REPLACE PRICES", r_prices)
@@ -130,9 +131,10 @@ class B2BBulkExport(models.Model):
 			packet.mode = 'update'
 			packet.send(timeout_sec=300)
 			self.write_to_log(str(u_prices), 'pricelist_item_update', "w+")
-			self.env['export.prices'].search([('create_mode', '=', False)]).unlink()
+			self.env['export.prices'].search([('create_mode', '=', False)]).unlink()"""
 
-	"""def b2b_pricelists_prices(self, test_limit=None, templates_filter=None):
+	@job
+	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None):
 		self.write_to_log('[b2b_pricelists_prices] Starts!')
 		# Out prices
 		prices = list()
@@ -224,8 +226,9 @@ class B2BBulkExport(models.Model):
 			packet.data = prices
 			packet.mode = 'update' if templates_filter is not None else 'replace'
 			packet.send(timeout_sec=300)
-			self.write_to_log(str(prices), 'pricelist_item', "w+")"""
+			self.write_to_log(str(prices), 'pricelist_item', "w+")
 
+	@job
 	def b2b_customers_prices(self, lines_filter=None):
 		self.write_to_log('[b2b_customers_prices] Starts!')
 		# Out prices
@@ -344,6 +347,7 @@ class B2BBulkExport(models.Model):
 
 	# ------------------------------------ EXTRA ------------------------------------
 
+	@job
 	def covert_published_products(self):
 		self.write_to_log('[covert_published_products] Starts!')
 		# All products

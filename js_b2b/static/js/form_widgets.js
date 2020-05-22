@@ -7,6 +7,10 @@ odoo.define('js_b2b.form_widgets', function (require) {
     var FieldChar = core.form_widget_registry.get('char');
     var _t = core._t;
 
+    var FieldColor = FieldChar.extend({
+        template: 'FieldColorHex'
+    });
+
     var FieldCode = AceEditor.extend({
         template: 'FieldCode',
         willStart: function() {
@@ -100,11 +104,13 @@ odoo.define('js_b2b.form_widgets', function (require) {
     });
 
     core.form_widget_registry.add('js_code', FieldCode);
+    core.form_widget_registry.add('js_colorpicker', FieldColor);
     core.form_widget_registry.add('js_clipboard', FieldClipboard);
     core.form_widget_registry.add('js_website_button', WidgetWebsiteButton);
 
     return {
-        FieldCode: FieldCode,
+        FieldCode: FieldCode, 
+        FieldColor: FieldColor,
         FieldClipboard : FieldClipboard,
         WidgetWebsiteButton: WidgetWebsiteButton
     };

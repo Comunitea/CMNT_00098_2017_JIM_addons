@@ -30,6 +30,14 @@
         </div>
     </t>
 
+    <t t-name="FieldColorHex">
+        <input class="o_form_input"
+            t-att-type="'color'" 
+            t-att-tabindex="widget.node.attrs.tabindex"
+            t-att-autofocus="widget.node.attrs.autofocus"
+            t-att-maxlength="7" />
+    </t>
+
     <t t-name="WidgetWebsiteButton">
         <div class="o_stat_info published">
             <span class="o_stat_text o_value"/>
