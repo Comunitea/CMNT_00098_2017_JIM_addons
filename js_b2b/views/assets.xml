@@ -5,7 +5,7 @@
 
 	<template id="assets" inherit_id="web.assets_backend" name="B2B Assets">
 		<xpath expr="link[last()]" position="after">
-			<link href="/js_b2b/static/less/styles.less" rel="stylesheet" type="text/less"/>
+			<link href="/js_b2b/static/less/styles.less" rel="stylesheet" type="text/less" />
 		</xpath>
 
 		<xpath expr="." position="inside">

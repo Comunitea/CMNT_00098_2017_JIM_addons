@@ -30,12 +30,17 @@
         </div>
     </t>
 
-    <t t-name="FieldColorHex">
-        <input class="o_form_input"
-            t-att-type="'color'" 
-            t-att-tabindex="widget.node.attrs.tabindex"
-            t-att-autofocus="widget.node.attrs.autofocus"
-            t-att-maxlength="7" />
+    <t t-name="FieldColor">
+        <div t-if="!widget.get('effective_readonly')" class="o_form_field_many2one o_with_button o_form_field">
+            <div class="o_form_input_dropdown">
+                <input class="o_form_colorselect" type="color" 
+                    t-att-name="widget.name" 
+                    t-att-tabindex="widget.node.attrs.tabindex"
+                    t-att-autofocus="widget.node.attrs.autofocus" />
+            </div>
+
+            <button type="button" class="btn" tabindex="-1" draggable="false" title="Edit value"><span class="fa fa-edit"></span></button>
+        </div>
     </t>
 
     <t t-name="WidgetWebsiteButton">

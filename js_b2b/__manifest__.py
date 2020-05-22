@@ -27,6 +27,7 @@
 		'security/ir.model.access.csv',
 		'data/item_data_out.xml',
 		'data/item_data_in.xml',
+		'views/res_partner.xml',
 		'views/product.xml',
 		'views/assets.xml',
 		'views/settings.xml',
