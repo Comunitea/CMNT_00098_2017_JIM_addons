@@ -143,7 +143,7 @@ class JSync:
 			
 			endpoint = self.settings.get('url') + self.path
 			jsync_res = self.session.post(endpoint, timeout=timeout_sec, headers=header_dict, data=json_data)
-			OutputHelper.print_message(debug_msg.format(jsync_res.text, data_dict.get('name'), data_dict.get('operation'), debug_data, data_dict.get('part')), OutputHelper.OK)
+			OutputHelper.print_message(debug_msg.format(jsync_res.text, data_dict.get('object'), data_dict.get('operation'), debug_data, data_dict.get('part')), OutputHelper.OK)
 			if jsync_res.status_code is not 200 and self.settings['conexion_error'] and self.settings['response_error']:
 				raise ValidationError("JSync Server Response Error\n%s" % (jsync_res.text.encode('latin1').capitalize()))
 			try:
@@ -152,7 +152,7 @@ class JSync:
 				return jsync_res.text
 
 		except Exception as e:
-			OutputHelper.print_message(debug_msg.format('CONNECTION ERROR!', data_dict.get('name'), data_dict.get('operation'), debug_data, data_dict.get('part')), OutputHelper.ERROR)
+			OutputHelper.print_message(debug_msg.format('CONNECTION ERROR!', data_dict.get('object'), data_dict.get('operation'), debug_data, data_dict.get('part')), OutputHelper.ERROR)
 			if self.settings['conexion_error']:
 				if type(e) is not ValidationError:
 					raise ValidationError("JSync Server Connection Error\n%s" % (e))
@@ -191,16 +191,3 @@ class JSync:
 						'data': self.data
 					}, **kwargs)
 		return True
-
-class Google:
-
-	subscriber = None # Google Sub
-
-	def __init__(self):
-		self.subscriber = pubsub_v1.SubscriberClient()
-
-	def receive(self, subscription, callback_obj):
-		if self.subscriber:
-			sub_path = self.subscriber.subscription_path(environ['GOOGLE_CLOUD_PROJECT_ID'], subscription)
-			flow_control_obj = pubsub_v1.types.FlowControl(max_messages=10)
-			return self.subscriber.subscribe(sub_path, callback=callback_obj, flow_control=flow_control_obj)
