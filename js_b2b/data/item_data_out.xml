@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
+        
         <record id="b2b_item_out_1" model="b2b.item.out">
             <field name="sequence">1</field>
             <field name="active">True</field>
@@ -372,13 +373,13 @@ def get_data(self):
     'parent_id', 
     'property_product_pricelist',
     'commercial_partner_id', 
-    'group_companies_ids',
+    'vip_web_access', 
     'active'
 )
 
 def is_notifiable(self, action, vals):
     # Es un contacto y es empresa y tiene asignada por lo menos una empresa para la web y tiene correo electrónico y tiene contraseña web y es el contacto principal
-    return self.active and self.is_company and self.group_companies_ids and self.customer and self.email and self.commercial_partner_id.id == self.id  and self.type == 'contact'
+    return self.active and self.is_company and self.vip_web_access and self.customer and self.email and self.commercial_partner_id.id == self.id  and self.type == 'contact'
     
 def get_primary_email(email):
     # Separadores válidos
@@ -397,8 +398,8 @@ def get_data(self):
         'vat': self.vat or None,
         'email': b2b['get_primary_email'](self.email),
         'ref:reference': self.ref or None,
-        'property_product_pricelist:pricelist_id': self.property_product_pricelist.id or None,
-        'group_companies_ids:companies': [company.partner_id.id for company in self.group_companies_ids]
+        'property_product_pricelist:customer_pricelists': [tuple([x[0].partner_id.id, x[1]]) for x in self.get_field_multicompany('property_product_pricelist')],
+        'fixed:companies': [company.partner_id.id for company in self.vip_web_access]
     }
 
 def pos_data(self, action):
@@ -481,6 +482,7 @@ def get_data(self):
     return {
         'fixed:jim_id': self.id,
         'fixed:customer_id': self.commercial_partner_id.id,
+        'fixed:company_client_id': self.company_id.id,
         'fixed:number': self.number, 
         'fixed:date': self.date_invoice, 
         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
@@ -517,6 +519,7 @@ def get_data(self):
     return {
         'fixed:jim_id': self.id,
         'fixed:customer_id': self.partner_id.commercial_partner_id.id,
+        'fixed:company_client_id': self.company_id.id,
         'fixed:name': self.name, 
         'fixed:date': self.date_done, 
         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
@@ -553,6 +556,7 @@ def get_data(self):
     return {
         'fixed:jim_id': self.id,
         'fixed:customer_id': self.partner_id.commercial_partner_id.id,
+        'fixed:company_client_id': self.company_id.id,
         'fixed:name': self.name, 
         'fixed:date': self.date_order, 
         'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
@@ -594,5 +598,6 @@ def get_data(self):
     self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[template_obj.id,])
     return list()</field>
         </record>
+
     </data>
 </odoo>

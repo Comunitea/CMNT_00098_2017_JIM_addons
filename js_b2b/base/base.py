@@ -32,6 +32,38 @@ class BaseB2B(models.AbstractModel):
 		# Return lang -> str dict
 		return translations
 
+	@api.model
+	def get_field_multicompany(self, field='name'):
+		"""
+		Get values for multicompany fields (only for )
+
+		:param field: Field name string
+		:return: list of tuples (company, record_id)
+
+		Return example:
+		[
+			(res.company(5), 28),
+			(res.company(8), 12)
+		]
+		"""
+		result = list()
+		res_id = '%s,%s' % (self._name, self.id)
+		for value in self.env['ir.property'].with_context().sudo().search([('name', 'like', field), ('res_id', 'like', res_id)]):
+			result_item = False
+			if value.type == 'many2one':
+				model, reg_id = value.value_reference.split(',')
+				result_item = int(self.env[model].browse(reg_id).id)
+			elif value.type == 'boolean':
+				result_item = bool(value.value_integer)
+			elif value.type == 'float':
+				result_item = int(value.value_integer)
+			elif value.type == 'text':
+				result_item = str(value.value_text)
+			elif value.type == 'binary':
+				result_item = value.value_binary
+			result.append((value.company_id, result_item))
+		return result
+
 	@api.multi
 	def is_notifiable(self, mode='create', vals=None):
 		"""

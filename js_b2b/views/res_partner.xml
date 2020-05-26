@@ -2,13 +2,13 @@
 <odoo>
 
     <!-- Res Partner Form -->
-    <record id="b2b_res_partner_form" model="ir.ui.view">
-        <field name="name">res.partner.form.b2b</field>
+    <record id="res_partner_form_b2b" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit</field>
         <field name="model">res.partner</field>
         <field name="inherit_id" ref="base.view_partner_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='category_id']" position="after">
-                <field name="web_vip_client" attrs="{'invisible': [('is_company', '=', False)]}"  />
+                <field name="vip_web_access" widget="many2many_tags" options="{ 'no_create_edit':True, 'no_quick_create': True }" attrs="{'invisible': [('is_company', '=', False)]}"  />
             </xpath>
         </field>
     </record>

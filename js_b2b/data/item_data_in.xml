@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
+
         <record id="b2b_item_in_1" model="b2b.item.in">
             <field name="sequence">1</field>
             <field name="active">True</field>
@@ -74,5 +75,6 @@ def get_data(self, data):
     # Devolvemos los datos para crear el pedido
     return b2b['prepare_order_fields'](self, data)</field>
         </record>
+        
     </data>
 </odoo>
