@@ -93,3 +93,5 @@ ENV/
 js_b2b/static/log/pricelist_item
 js_b2b/static/log/pricelist_item
 js_b2b/static/log/pricelist_item
+js_b2b/static/log/product_stock
+js_b2b/static/log/pricelist_item
