@@ -359,28 +359,26 @@ class DeletedObject(models.Model):
         values = {'all': True}
         return self.compute_product_ids_xmlrpc(values)
 
+
     def compute_product_ids(self, all=False, table=False, from_time=False, to_time=False, field_id='id', stock_field='web_global_stock', days=0, inc=80, limit=False):
         time_now = fields.datetime.now()
         time_now_str = fields.Datetime.to_string(time_now)
-        sql_ir_config = "select value from  ir_config_parameter where key = 'last_call_export_xmlstock'"
+        sql_ir_config = "select value from ir_config_parameter where key = 'last_call_export_xmlstock'"
         self._cr.execute(sql_ir_config)
         res_id = self._cr.fetchall()
         if res_id:
             last_call = res_id[0][0]
-        if not last_call:
+        else:
             last_call = time_now_str
         start_time = time.time()
         if not from_time:
-            #from_time = fields.Datetime.from_string(last_call)
             from_time = last_call
         if not to_time and days > 0:
             ##No debería entrar aquí nuca
             from_time_str = fields.Datetime.from_string(from_time)
             to_time = fields.Datetime.to_string(from_time_str + timedelta(days=days))
         print ("Comenzando la exportación desde {} hasta {}".format(from_time, to_time))
-
         ##stock.location.route, stock.location,mrp.bom, mrp.bom.line lo hacen en write/create
-
         print ("#######################\nFiltrando productos ....")
         if table:
             print ("-- Usando tabla intermedia")
@@ -412,14 +410,14 @@ class DeletedObject(models.Model):
             product_ids = product_table_ids
         else:
             product_ids = product_table_ids | p_ids
-
-
         if product_ids:
             mid_time = time.time()
             product_bom_ids = self.env['exportxml.object'].insert_product_ids(product_ids)
             product_ids |= product_bom_ids
-            print ("---- {} productos de listas de materiales en {}".format(len(product_bom_ids),time.time() - mid_time)); mid_time = time.time()
-        print ("-- Total: {} productos a evaluar en {}".format(len(product_ids), time.time() - mid_time)); mid_time = time.time()
+            print ("---- {} productos de listas de materiales en {}".format(len(product_bom_ids),time.time() - mid_time))
+            mid_time = time.time()
+        print ("-- Total: {} productos a evaluar en {}".format(len(product_ids), time.time() - mid_time))
+        mid_time = time.time()
         total = len(product_ids)
         res= []
         cont=0
@@ -432,7 +430,6 @@ class DeletedObject(models.Model):
             res += [{'variant_id': x[field_id] if x.attribute_names else None,
                      'product_id': x['product_tmpl_id']['id'],
                      'stock': x[stock_field]} for x in product_ids[cont-inc: cont] if x[stock_field] >= 0]
-
             print ("-- Evaluado. Tiempo: {} ".format(time.time() - mid_time))
             mid_time = time.time()
         if product_ids:
@@ -448,7 +445,6 @@ class DeletedObject(models.Model):
         self._cr.execute(sql_ir_config)
         self._cr.commit()
         #icp.last_call_export_xmlstock = last_call
-
         str = "Fin para {} con inc= {}. Tiempo : {}".format(len(product_ids), inc, time.time() - start_time)
         print (str)
         return res
