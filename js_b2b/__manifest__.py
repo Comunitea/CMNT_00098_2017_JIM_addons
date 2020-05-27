@@ -30,6 +30,7 @@
 		'data/ir_cron.xml',
 		'views/res_partner.xml',
 		'views/product.xml',
+		'views/product_pricelist.xml',
 		'views/assets.xml',
 		'views/settings.xml',
 		'views/item_out.xml',
@@ -38,6 +39,7 @@
 	'contributors': [
 		"Pablo Luaces <pablo@jimsports.com>",
 	],
+	'post_init_hook': 'post_init_actions',
 	'application': False,
 	'installable': True
 }

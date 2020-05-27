@@ -4,7 +4,7 @@
 
         <record id="b2b_item_in_1" model="b2b.item.in">
             <field name="sequence">1</field>
-            <field name="active">True</field>
+            <field name="active">False</field>
             <field name="name">sale_order</field>
             <field name="model">sale.order</field>
             <field name="description">Presupuesto de venta</field>

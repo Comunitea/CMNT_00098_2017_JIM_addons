@@ -343,28 +343,3 @@ class B2BBulkExport(models.Model):
 		if start_date and not test_date:
 			self.env['b2b.settings'].update_param('last_stock_date', start_date)
 	"""
-		
-
-	# ------------------------------------ EXTRA ------------------------------------
-
-	@job
-	def covert_published_products(self):
-		self.write_to_log('[covert_published_products] Starts!')
-		# All products
-		products = self.env['product.template'].search([('type', 'like', 'product'), ('tag_ids', '!=', False), ('sale_ok', '=', True)])
-		# Log info
-		product_number = 0.0
-		total_products = len(products)
-		# For each product
-		for product in products:
-			product_number += 1
-			percent = round((product_number / total_products) * 100, 2)
-			self.write_to_log(":: %s%% PROCESANDO... [%s] %s" % (percent, product.default_code, product.name))
-			product.website_published = True
-			for variant in product.product_variant_ids:
-				if variant.default_code and variant.attribute_names and variant.force_web != 'no':
-					variant.website_published = True
-				else:
-					variant.website_published = False
-
-		self.write_to_log('[covert_published_products] Ends!')
