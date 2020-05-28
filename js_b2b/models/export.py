@@ -134,7 +134,10 @@ class B2BBulkExport(models.Model):
 			self.env['export.prices'].search([('create_mode', '=', False)]).unlink()"""
 
 	@job
-	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None):
+	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, variant=None, operation=None):
+		print(':: OPERATION', operation)
+		print(':: VARIANT', variant)
+
 		self.write_to_log('[b2b_pricelists_prices] Starts!')
 		# Out prices
 		prices = list()
@@ -149,7 +152,7 @@ class B2BBulkExport(models.Model):
 			# Return sorted tuple
 			return sorted(tuple(unique_quantities))
 		# All pricelists
-		pricelists = tuple(self.env['product.pricelist'].search([('active', '=', True)]).mapped(lambda p: (p.id, p.name)))
+		pricelists = tuple(self.env['product.pricelist'].search([('web', '=', True), ('active', '=', True)]).mapped(lambda p: (p.id, p.name)))
 		# Search params
 		product_search_params = [('website_published', '=', True)]
 		# Limit search to this products
@@ -186,10 +189,10 @@ class B2BBulkExport(models.Model):
 						variants_prices = tuple(product_in_ctx.product_variant_ids.mapped('price'))
 						# Same price in all variants
 						if all(x==variants_prices[0] for x in variants_prices if variants_prices[0]):
-							price = round(variants_prices[0], prices_precision)
+							price = 0 if operation == 'delete' and not variant else round(variants_prices[0], prices_precision)
 							# If price is not 0 and not in prices list yet with qty 1
 							product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
-							if price and not bool(list(product_filter)):
+							if not bool(list(product_filter)):
 								print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
 								prices.append({ 
 									'pricelist_id': pricelist[0],
@@ -202,10 +205,10 @@ class B2BBulkExport(models.Model):
 							# For each variant
 							for v in range(len(variants_prices)):
 								variant_id = product_in_ctx.product_variant_ids.ids[v]
-								price = round(variants_prices[v], prices_precision)
+								price = 0 if operation == 'delete' and variant_id == variant else round(variants_prices[v], prices_precision)
 								# If price is not 0 and not in prices list yet with qty 1
 								product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == variant_id and x['quantity'] == 1 and x['price'] == price, prices)
-								if price and not bool(list(product_filter)):
+								if not bool(list(product_filter)) and (operation == 'delete' or price):
 									print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
 									prices.append({ 
 										'pricelist_id': pricelist[0],
@@ -229,7 +232,7 @@ class B2BBulkExport(models.Model):
 			self.write_to_log(str(prices), 'pricelist_item', "w+")
 
 	@job
-	def b2b_customers_prices(self, lines_filter=None):
+	def b2b_customers_prices(self, lines_filter=None, operation=None):
 		self.write_to_log('[b2b_customers_prices] Starts!')
 		# Out prices
 		prices = list()
@@ -240,7 +243,7 @@ class B2BBulkExport(models.Model):
 		try:
 			# Get all prices
 			for price_line in self.env['customer.price'].read_group(prices_filter, ('partner_id', 'product_tmpl_id', 'product_id', 'min_qty', 'price'), groupby=('partner_id', 'product_tmpl_id', 'product_id', 'min_qty'), orderby=('id DESC'), lazy=False):
-				if price_line.get('price') and (price_line.get('product_tmpl_id') or price_line.get('product_id')):
+				if 'price' in price_line and (price_line.get('product_tmpl_id') or price_line.get('product_id')):
 					# Get product ID's
 					template_id = price_line['product_tmpl_id'][0] if price_line.get('product_tmpl_id') else None
 					variant_id = price_line['product_id'][0] if price_line.get('product_id') else None
@@ -252,13 +255,13 @@ class B2BBulkExport(models.Model):
 					# Check if rule exists
 					price_found = bool(list(filter(lambda x: x['customer_id'] == price_line['partner_id'][0] and x['product_id'] == template_id and x['variant_id'] == variant_id and x['quantity'] == line_quantity, prices)))
 					# Add price
-					if not price_found:
+					if not price_found and (operation == 'delete' or price_line['price']):
 						prices.append({ 
 							'customer_id': price_line['partner_id'][0],
 							'product_id': template_id,
 							'variant_id': variant_id,
 							'quantity': line_quantity,
-							'price': round(price_line['price'], prices_precision)
+							'price': round(price_line['price'] if operation != 'delete' else 0, prices_precision)
 						})
 		except Exception as e:
 			self.write_to_log('[b2b_customers_prices] ERROR ON LOOP! %s' % e)

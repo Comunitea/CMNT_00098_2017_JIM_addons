@@ -21,7 +21,7 @@ class B2bItemsOut(models.Model):
             return True
 
         # Object data to send
-        def get_data(self):
+        def get_data(self, action):
             return {
                 # Item key (required)
                 # fixed: modifier forces send even if it has not changed

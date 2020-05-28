@@ -146,7 +146,7 @@ class BaseB2B(models.AbstractModel):
 				b2b['pre_data'](self, mode)
 
 			# Obtenemos los datos
-			packet.data = b2b['get_data'](self)
+			packet.data = b2b['get_data'](self, mode)
 			# Filtramos los datos
 			packet.filter_data(vals)
 			# Guardamos el paquete
