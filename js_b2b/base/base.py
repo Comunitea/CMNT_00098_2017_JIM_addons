@@ -65,7 +65,7 @@ class BaseB2B(models.AbstractModel):
 		return result
 
 	@api.multi
-	def is_notifiable(self, mode='create', vals=None):
+	def is_notifiable_check(self, mode='create', vals=None):
 		"""
 		Notifiable config items
 
@@ -107,7 +107,7 @@ class BaseB2B(models.AbstractModel):
 	def b2b_record(self, mode, vals=None, conf_items_before=None):
 		packets = []
 		jsync_conf = self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error', 'packet_size', 'base_url'])
-		conf_items_after = self.is_notifiable(mode, vals)
+		conf_items_after = self.is_notifiable_check(mode, vals)
 		for item in self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)]):
 			import datetime
 			import base64
@@ -180,7 +180,7 @@ class BaseB2B(models.AbstractModel):
 	@api.multi
 	def write(self, vals):
 		#print("----------- [B2B BASE] WRITE", self._name, vals)
-		items_to_send = self.is_notifiable('update', vals)
+		items_to_send = self.is_notifiable_check('update', vals)
 		super(BaseB2B, self).write(vals)
 		for item in self:
 			item.b2b_record('update', vals, conf_items_before=items_to_send)
@@ -191,7 +191,7 @@ class BaseB2B(models.AbstractModel):
 		#print("----------- [B2B BASE] DELETE", self._name, self)
 		packets = list()
 		for item in self:
-			packets += item.b2b_record('delete', False, conf_items_before=item.is_notifiable('delete'))
+			packets += item.b2b_record('delete', False, conf_items_before=item.is_notifiable_check('delete'))
 		if super(BaseB2B, self).unlink():
 			for packet in packets:
 				if packet and packet.send():

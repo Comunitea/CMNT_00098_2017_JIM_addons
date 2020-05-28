@@ -40,6 +40,6 @@
 		"Pablo Luaces <pablo@jimsports.com>",
 	],
 	'post_init_hook': 'post_init_actions',
-	'application': False,
+	'application': True,
 	'installable': True
 }
