@@ -277,6 +277,7 @@ class B2BBulkExport(models.Model):
 			packet.send(timeout_sec=300)
 			self.write_to_log(str(prices), 'customer_price', "w+")
 
+	@job
 	def b2b_products_stock(self, test_limit=None, test_date=None):
 		# If actual time is between 00:30 & 00:45 set "all" to True
 		all_products = B2BBulkExport.is_time_between('00:30:00', '00:45:00')

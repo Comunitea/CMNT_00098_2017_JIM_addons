@@ -120,7 +120,7 @@ class B2bItemsOut(models.Model):
 			record_percent = round((record_number / total_records) * 100, 1)
 			record_percent_str = str(record_percent) + '%'
 			record = self.env[self.model].browse(id)
-			notifiable_items = record.is_notifiable()
+			notifiable_items = record.is_notifiable_check()
 			# Is notifiable
 			if notifiable_items:
 				print("@@ RECORD ID#%s IS NOTIFIABLE!" % (id), record_percent_str)
