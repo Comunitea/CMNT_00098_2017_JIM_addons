@@ -43,21 +43,31 @@ class B2bItemsOut(models.Model):
 	sequence = fields.Integer(help="Determine the items order")
 
 	@api.model
-	def __check_model(self):
+	def __get_models(self):
 		"""
-		Check if is a valid model
+		Get item models list
 		"""
 		separators = (',', ';')
+		models = set()
 
 		for separator in separators:
 			if separator in self.model:
 				for model in self.model.split(separator):
 					model_name = model.strip()
-					
-					try:
-						self.env[model_name].search_count([])
-					except Exception as e:
-						raise UserError(_('Model %s not found!') % model_name)
+					models.add(model_name)
+
+		return list(models)
+
+	@api.model
+	def __check_model(self):
+		"""
+		Check if is a valid model or models
+		"""
+		for model in self.__get_models():
+			try:
+				self.env[model_name].search_count([])
+			except Exception as e:
+				raise UserError(_('Model %s not found!') % model_name)
 
 	@api.model
 	def __check_code(self):
@@ -91,44 +101,45 @@ class B2bItemsOut(models.Model):
 		record_number = 0.0 # Record counter
 		docs_min_date = '2019-01-01' # Begin date
 
-		# Acelerate certain models
-		# with specific queries
-		if self.model == 'product.product':
-			search_query = ['&', ('type', '=', 'product'), ('tag_ids', '!=', False)]
-		elif self.model == 'product.template':
-			search_query = ['&', '&', ('type', '=', 'product'), ('tag_ids', '!=', False), ('product_attribute_count', '>', 0)]
-		elif self.model == 'stock.move':
-			search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
-		elif self.model == 'res.partner':
-			search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
-		elif self.model == 'account.invoice':
-			search_query = [('date_invoice', '>=', docs_min_date)]
-		elif self.model == 'stock.picking':
-			search_query = [('date_done', '>=', docs_min_date)]
-		elif self.model == 'sale.order':
-			search_query = [('date_order', '>=', docs_min_date)]
+		for model in self.__get_models():
+			# Acelerate certain models
+			# with specific queries
+			if model == 'product.product':
+				search_query = ['&', ('type', '=', 'product'), ('tag_ids', '!=', False)]
+			elif model == 'product.template':
+				search_query = ['&', '&', ('type', '=', 'product'), ('tag_ids', '!=', False), ('product_attribute_count', '>', 0)]
+			elif model == 'stock.move':
+				search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
+			elif model == 'res.partner':
+				search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
+			elif model == 'account.invoice':
+				search_query = [('date_invoice', '>=', docs_min_date)]
+			elif model == 'stock.picking':
+				search_query = [('date_done', '>=', docs_min_date)]
+			elif model == 'sale.order':
+				search_query = [('date_order', '>=', docs_min_date)]
 
-		# Get code model records
-		records_ids = self.env[self.model].search(search_query, order='id ASC').ids
-		total_records =  len(records_ids)
-		print("*************** B2B ITEM ***************")
-		print("@@ ITEM NAME", str(self.name))
-		print("@@ ITEM MODEL", str(self.model))
-		print("@@ TOTAL RECORDS", total_records)
-		for id in records_ids:
-			record_number += 1
-			record_percent = round((record_number / total_records) * 100, 1)
-			record_percent_str = str(record_percent) + '%'
-			record = self.env[self.model].browse(id)
-			notifiable_items = record.is_notifiable_check()
-			# Is notifiable
-			if notifiable_items:
-				print("@@ RECORD ID#%s IS NOTIFIABLE!" % (id), record_percent_str)
-				record.b2b_record('create', conf_items_before=notifiable_items)
-			else:
-				print("@@ RECORD ID#%s NOT NOTIFIABLE" % (id), record_percent_str)
-		# End line
-		print("************* FIN B2B ITEM *************")
+			# Get code model records
+			records_ids = self.env[model].search(search_query, order='id ASC').ids
+			total_records =  len(records_ids)
+			print("*************** B2B ITEM ***************")
+			print("@@ ITEM NAME", str(self.name))
+			print("@@ ITEM MODEL", str(model))
+			print("@@ TOTAL RECORDS", total_records)
+			for id in records_ids:
+				record_number += 1
+				record_percent = round((record_number / total_records) * 100, 1)
+				record_percent_str = str(record_percent) + '%'
+				record = self.env[model].browse(id)
+				notifiable_items = record.is_notifiable_check()
+				# Is notifiable
+				if notifiable_items:
+					print("@@ RECORD ID#%s IS NOTIFIABLE!" % (id), record_percent_str)
+					record.b2b_record('create', conf_items_before=notifiable_items)
+				else:
+					print("@@ RECORD ID#%s NOT NOTIFIABLE" % (id), record_percent_str)
+			# End line
+			print("************* FIN B2B ITEM *************")
 
 	# ------------------------------------ OVERRIDES ------------------------------------
 

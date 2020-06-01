@@ -37,6 +37,7 @@
         'views/res_partner_view.xml',
         'views/payment_term_view.xml',
         'views/sale_history_view.xml',
+        'views/pricelist_view.xml',
         'report/report_stock_forecast.xml',
         'security/jim_sale_security.xml',
         'report/report_sale_line.xml',

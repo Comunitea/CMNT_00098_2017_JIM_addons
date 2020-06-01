@@ -224,14 +224,16 @@ class ParameterizationField(models.Model):
     #override
     @api.multi
     def write(self, values):
+        updating_secuence = (values.get('sequence') and len(values) == 1)
         model_values = copy.copy(values)
         # Reset XML to make changes
-        self._resetXml()
+        if not updating_secuence:
+            self._resetXml()
         # Loop records
         for record in self:
             try:
                 # Write model base field
-                if not (values.get('sequence') and len(values) == 1):
+                if not updating_secuence:
                     custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record.name), ('state', '=', 'manual')])
                     custom_field.ensure_one() # One record expected, if more abort
                     custom_field.write(self._transformValues(model_values))
@@ -240,7 +242,8 @@ class ParameterizationField(models.Model):
             except:
                 pass
         # Write fields to XML
-        self._createFieldsXml()
+        if not updating_secuence:
+            self._createFieldsXml()
         return True
 
     #override

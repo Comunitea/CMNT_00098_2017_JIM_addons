@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from odoo import api, models, tools
 from .helper import OutputHelper, JSync
-
+import datetime
+import base64
+			
 # Module base class
 class BaseB2B(models.AbstractModel):
 
@@ -109,9 +111,6 @@ class BaseB2B(models.AbstractModel):
 		jsync_conf = self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error', 'packet_size', 'base_url'])
 		conf_items_after = self.is_notifiable_check(mode, vals)
 		for item in self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)]):
-			import datetime
-			import base64
-
 			b2b = dict()
 			b2b['images_base'] = jsync_conf['base_url']
 			# Ejecutamos el código con exec(item.code)

@@ -9,3 +9,4 @@ import stock_picking
 import payment_term
 import partner
 import sale_history
+import pricelist

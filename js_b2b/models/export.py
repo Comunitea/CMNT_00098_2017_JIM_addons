@@ -135,9 +135,6 @@ class B2BBulkExport(models.Model):
 
 	@job
 	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, variant=None, operation=None):
-		print(':: OPERATION', operation)
-		print(':: VARIANT', variant)
-
 		self.write_to_log('[b2b_pricelists_prices] Starts!')
 		# Out prices
 		prices = list()
@@ -152,7 +149,7 @@ class B2BBulkExport(models.Model):
 			# Return sorted tuple
 			return sorted(tuple(unique_quantities))
 		# All pricelists
-		pricelists = tuple(self.env['product.pricelist'].search([('web', '=', True), ('active', '=', True)]).mapped(lambda p: (p.id, p.name)))
+		pricelists = tuple(self.env['product.pricelist'].search([('web', '=', True), ('active', '=', True)]).mapped(lambda p: (p.id, p.name, p.company_id.id)))
 		# Search params
 		product_search_params = [('website_published', '=', True)]
 		# Limit search to this products
@@ -195,6 +192,7 @@ class B2BBulkExport(models.Model):
 							if not bool(list(product_filter)):
 								print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
 								prices.append({ 
+									'company_id': pricelist[2] or None,
 									'pricelist_id': pricelist[0],
 									'product_id': product_id,
 									'variant_id': None,
@@ -211,6 +209,7 @@ class B2BBulkExport(models.Model):
 								if not bool(list(product_filter)) and (operation == 'delete' or price):
 									print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
 									prices.append({ 
+										'company_id': pricelist[2] or None,
 										'pricelist_id': pricelist[0],
 										'product_id': product_id,
 										'variant_id': variant_id,
@@ -242,7 +241,7 @@ class B2BBulkExport(models.Model):
 		prices_filter = [('id', 'in', lines_filter)] if lines_filter and type(lines_filter) is list else list()
 		try:
 			# Get all prices
-			for price_line in self.env['customer.price'].read_group(prices_filter, ('partner_id', 'product_tmpl_id', 'product_id', 'min_qty', 'price'), groupby=('partner_id', 'product_tmpl_id', 'product_id', 'min_qty'), orderby=('id DESC'), lazy=False):
+			for price_line in self.env['customer.price'].read_group(prices_filter, ('company_id', 'partner_id', 'product_tmpl_id', 'product_id', 'min_qty', 'price'), groupby=('company_id', 'partner_id', 'product_tmpl_id', 'product_id', 'min_qty'), orderby=('id DESC'), lazy=False):
 				if 'price' in price_line and (price_line.get('product_tmpl_id') or price_line.get('product_id')):
 					# Get product ID's
 					template_id = price_line['product_tmpl_id'][0] if price_line.get('product_tmpl_id') else None
@@ -257,6 +256,7 @@ class B2BBulkExport(models.Model):
 					# Add price
 					if not price_found and (operation == 'delete' or price_line['price']):
 						prices.append({ 
+							'company_id': price_line['company_id'][0] if price_line['company_id'] else None,
 							'customer_id': price_line['partner_id'][0],
 							'product_id': template_id,
 							'variant_id': variant_id,
