@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, models, tools
 from .helper import OutputHelper, JSync
-import datetime
-import base64
 			
 # Module base class
 class BaseB2B(models.AbstractModel):
@@ -24,7 +22,7 @@ class BaseB2B(models.AbstractModel):
 		}
 		"""
 		field_name = ','.join([self._name, field])
-		configured_langs = self.env['res.lang'].search([('active', '=', True), ('translatable', '=', True)])
+		configured_langs = self.env['res.lang'].search([('active', '=', True), ('translatable', '=', True), ('code', '!=', 'es')])
 		# Default values
 		translations = { lang.code.replace('_', '-'):self[field] or None for lang in configured_langs }
 		# Query to get translations
@@ -76,7 +74,11 @@ class BaseB2B(models.AbstractModel):
 		:param vals: Default model data update dict (to check fields)
 		:return: boolean
 		"""
-		b2b_items_out = self.env['b2b.item.out'].search([])
+		from datetime import datetime
+		import base64
+
+		b2b_items_out = self.env['b2b.item.out'].search([('active', '=', True)])
+
 		for record in self:
 			items_list = list()
 			for item in b2b_items_out:
@@ -107,9 +109,13 @@ class BaseB2B(models.AbstractModel):
 
 	@api.model
 	def b2b_record(self, mode, vals=None, conf_items_before=None):
+		from datetime import datetime
+		import base64
+
 		packets = []
 		jsync_conf = self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error', 'packet_size', 'base_url'])
 		conf_items_after = self.is_notifiable_check(mode, vals)
+
 		for item in self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)]):
 			b2b = dict()
 			b2b['images_base'] = jsync_conf['base_url']

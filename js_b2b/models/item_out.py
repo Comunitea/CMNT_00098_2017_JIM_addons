@@ -100,8 +100,13 @@ class B2bItemsOut(models.Model):
 		search_query = [] # Default query
 		record_number = 0.0 # Record counter
 		docs_min_date = '2019-01-01' # Begin date
+		# This models not needs to be sync directly
+		excluded_models = ('product.template.categorization', 'product.product.categorization', 'product.image')
 
 		for model in self.__get_models():
+			if model in excluded_models:
+				raise UserError(_('This item cannot be synchronized directly!'))
+
 			# Acelerate certain models
 			# with specific queries
 			if model == 'product.product':
