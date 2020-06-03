@@ -186,7 +186,7 @@ class B2BBulkExport(models.Model):
 						variants_prices = tuple(product_in_ctx.product_variant_ids.mapped('price'))
 						# Same price in all variants
 						if all(x==variants_prices[0] for x in variants_prices if variants_prices[0]):
-							price = 0 if operation == 'delete' and not variant else round(variants_prices[0], prices_precision)
+							price = None if operation == 'delete' and not variant else round(variants_prices[0], prices_precision)
 							# If price is not 0 and not in prices list yet with qty 1
 							product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
 							if not bool(list(product_filter)):
@@ -203,7 +203,7 @@ class B2BBulkExport(models.Model):
 							# For each variant
 							for v in range(len(variants_prices)):
 								variant_id = product_in_ctx.product_variant_ids.ids[v]
-								price = 0 if operation == 'delete' and variant_id == variant else round(variants_prices[v], prices_precision)
+								price = None if operation == 'delete' and variant_id == variant else round(variants_prices[v], prices_precision)
 								# If price is not 0 and not in prices list yet with qty 1
 								product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == variant_id and x['quantity'] == 1 and x['price'] == price, prices)
 								if not bool(list(product_filter)) and (operation == 'delete' or price):
@@ -261,7 +261,7 @@ class B2BBulkExport(models.Model):
 							'product_id': template_id,
 							'variant_id': variant_id,
 							'quantity': line_quantity,
-							'price': round(price_line['price'] if operation != 'delete' else 0, prices_precision)
+							'price': round(price_line['price'] if operation != 'delete' else None, prices_precision)
 						})
 		except Exception as e:
 			self.write_to_log('[b2b_customers_prices] ERROR ON LOOP! %s' % e)

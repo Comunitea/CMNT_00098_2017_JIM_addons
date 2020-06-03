@@ -22,6 +22,7 @@ class BaseB2B(models.AbstractModel):
 		}
 		"""
 		field_name = ','.join([self._name, field])
+		# Search active langs but skip 'es'
 		configured_langs = self.env['res.lang'].search([('active', '=', True), ('translatable', '=', True), ('code', '!=', 'es')])
 		# Default values
 		translations = { lang.code.replace('_', '-'):self[field] or None for lang in configured_langs }

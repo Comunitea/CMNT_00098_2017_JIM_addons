@@ -34,19 +34,22 @@ def get_data(self, action):
             <field name="description">Valores de atributos</field>
             <field name="code">fields_to_watch = (
     'name', 
-    'sequence'
+    'sequence',
+    'html_color',
+    'image_color'
 )
 
 def is_notifiable(self, action, vals):
-    # Valores que crean variantes
-    return self.create_variant
+    return True
 
 def get_data(self, action):
     return {
         'fixed:jim_id': self.id,
         'attribute_id': self.attribute_id.id,
         'name': self.get_field_translations('name'),
-        'sequence': self.sequence
+        'sequence': self.sequence,
+        'html_color': self.html_color,
+        'public_file_name:image_color': b2b['images_base'] + self.public_file_name if self.public_file_name else None
     }</field>
         </record>
 
@@ -150,7 +153,7 @@ def get_data(self, action):
         'brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
         'weight': self.weight,
-        'image': b2b['images_base'] + self.public_file_name if self.public_file_name else None
+        'public_file_name:image': b2b['images_base'] + self.public_file_name if self.public_file_name else None
     }
 
 def pos_data(self, action):
@@ -284,7 +287,7 @@ def get_data(self, action):
         'fixed:jim_id': self.id,
         'fixed:product_id': self.product_tmpl_id.id, 
         'name': self.get_field_translations('name'), 
-        'image': b2b['images_base'] + self.public_file_name if self.public_file_name else None, 
+        'public_file_name:image': b2b['images_base'] + self.public_file_name if self.public_file_name else None, 
         'fixed:attributes': self.product_attributes_values.ids
     }</field>
         </record>
@@ -480,25 +483,32 @@ def get_data(self, action):
 
 def is_notifiable(self, action, vals):
     # Es de tipo out_invoice o out_refund y tiene asignado un número y el estado es open o cancel
-    return self.number and self.type in ('out_invoice', 'out_refund') and self.state in ('open', 'cancel') and self.commercial_partner_id.is_notifiable_check()
+    return self.number and self.type in ('out_invoice', 'out_refund') and self.state in ('open', 'paid') and self.commercial_partner_id.is_notifiable_check()
 
 def get_data(self, action):
-    # Obtenemos el documento PDF como un string
-    docfile = self.env['report'].sudo().get_pdf([self.id], 'account.report_invoice')
     # Obtenemos la moneda y posición
     currency = self.currency_id.symbol
     position = self.currency_id.position
+    
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
     # de forma que los campos que no se modifican al validar no se enviarían
-    return {
-        'fixed:jim_id': self.id,
-        'commercial_partner_id:customer_id': self.commercial_partner_id.id,
-        'company_id': self.company_id.id,
-        'number': self.number, 
-        'date_invoice:date': self.date_invoice, 
-        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-        'fixed:pdf': base64.b64encode(docfile)
-    }</field>
+    doc_data = { 'fixed:jim_id': self.id }
+    
+    # If not a delete action
+    if action != 'delete':
+        # Obtenemos el documento PDF como un string
+        docfile = self.env['report'].sudo().get_pdf([self.id], 'account.report_invoice')
+        # Actualizamos los datos
+        doc_data.update({ 
+            'fixed:customer_id': self.commercial_partner_id.id,
+            'fixed:company_id': self.company_id.id,
+            'fixed:number': self.number, 
+            'fixed:date': self.date_invoice, 
+            'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
+            'fixed:pdf': base64.b64encode(docfile)
+        })
+        
+    return doc_data</field>
         </record>
 
         <record id="b2b_item_out_16" model="b2b.item.out">
@@ -519,25 +529,32 @@ def get_data(self, action):
 
 def is_notifiable(self, action, vals):
     # Es un albarán y es de salida o dropshipping y el estado es done o cancel
-    return (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state in ('done', 'cancel') and self.partner_id.is_notifiable_check()
+    return (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state not in ('draft', 'cancel') and self.partner_id.is_notifiable_check()
 
 def get_data(self, action):
-    # Obtenemos el documento PDF como un string
-    docfile = self.env['report'].sudo().get_pdf([self.id], 'stock.report_deliveryslip')
     # Obtenemos la moneda y posición
     currency = self.origin.pricelist_id.currency_id.symbol
     position = self.origin.pricelist_id.currency_id.position
+    
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
     # de forma que los campos que no se modifican al validar no se enviarían
-    return {
-        'fixed:jim_id': self.id,
-        'partner_id:customer_id': self.partner_id.commercial_partner_id.id,
-        'company_id': self.company_id.id,
-        'name': self.name, 
-        'date_done:date': self.date_done, 
-        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-        'fixed:pdf': base64.b64encode(docfile)
-    }</field>
+    doc_data = { 'fixed:jim_id': self.id }
+    
+    # If not a delete action
+    if action != 'delete':
+        # Obtenemos el documento PDF como un string
+        docfile = self.env['report'].sudo().get_pdf([self.id], 'stock.report_deliveryslip')
+        # Actualizamos los datos
+        doc_data.update({ 
+            'fixed:customer_id': self.partner_id.commercial_partner_id.id,
+            'fixed:company_id': self.company_id.id,
+            'fixed:name': self.name,
+            'fixed:date': self.date_done, 
+            'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
+            'fixed:pdf': base64.b64encode(docfile)
+        })
+        
+    return doc_data</field>
         </record>
 
         <record id="b2b_item_out_17" model="b2b.item.out">
@@ -557,25 +574,32 @@ def get_data(self, action):
 
 def is_notifiable(self, action, vals):
     # Es un pedido de venta y (se recibe date_order en vals y el estado es pending o lqdr) o el estado es cancel
-    return (type(vals) is dict and vals.get('date_order') and self.state in ('pending', 'lqdr')) or self.state == 'cancel' and self.partner_id.is_notifiable_check()
+    return (type(vals) is dict and not vals.get('date_order')) and self.state not in ('draft', 'cancel') and self.partner_id.is_notifiable_check()
 
 def get_data(self, action):
-    # Obtenemos el documento PDF como un string
-    docfile = self.env['report'].sudo().get_pdf([self.id], 'sale.report_saleorder')
     # Obtenemos la moneda y posición
     currency = self.pricelist_id.currency_id.symbol
     position = self.pricelist_id.currency_id.position
+    
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
     # de forma que los campos que no se modifican al validar no se enviarían
-    return {
-        'fixed:jim_id': self.id,
-        'partner_id:customer_id': self.partner_id.id,
-        'company_id': self.company_id.id,
-        'name': self.name, 
-        'date_order:date': self.date_order, 
-        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-        'fixed:pdf': base64.b64encode(docfile)
-    }</field>
+    doc_data = { 'fixed:jim_id': self.id }
+    
+    # If not a delete action
+    if action != 'delete':
+        # Obtenemos el documento PDF como un string
+        docfile = self.env['report'].sudo().get_pdf([self.id], 'sale.report_saleorder')
+        # Actualizamos los datos
+        doc_data.update({ 
+            'fixed:customer_id': self.partner_id.id,
+            'fixed:company_id': self.company_id.id,
+            'fixed:name': self.name, 
+            'fixed:date': self.date_order, 
+            'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
+            'fixed:pdf': base64.b64encode(docfile) 
+        })
+        
+    return doc_data</field>
         </record>
 
         <record id="b2b_item_out_18" model="b2b.item.out">
