@@ -16,7 +16,7 @@
 		'product_brand',
 		'product_tags',
 		'jim_sale',
-		'js_categorization'
+		#'js_categorization'
 		#'prices_export',
 		#'stock_export'
 	],

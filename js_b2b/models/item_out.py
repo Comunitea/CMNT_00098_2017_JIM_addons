@@ -63,7 +63,7 @@ class B2bItemsOut(models.Model):
 		"""
 		Check if is a valid model or models
 		"""
-		for model in self.__get_models():
+		for model_name in self.__get_models():
 			try:
 				self.env[model_name].search_count([])
 			except Exception as e:
@@ -165,6 +165,8 @@ class B2bItemsOut(models.Model):
 		"""
 		super(B2bItemsOut, self).write(vals)
 		for item in self:
-			item.__check_model()
-			item.__check_code()
+			if vals.get('model') or vals.get('active', item.active) == True:
+				item.__check_model()
+			if vals.get('code'):
+				item.__check_code()
 		return True

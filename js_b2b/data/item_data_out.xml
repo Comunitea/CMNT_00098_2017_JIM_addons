@@ -502,7 +502,7 @@ def get_data(self, action):
         doc_data.update({ 
             'fixed:customer_id': self.commercial_partner_id.id,
             'fixed:company_id': self.company_id.id,
-            'fixed:number': self.number, 
+            'fixed:name': self.number, 
             'fixed:date': self.date_invoice, 
             'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
             'fixed:pdf': base64.b64encode(docfile)
@@ -518,32 +518,33 @@ def get_data(self, action):
             <field name="model">stock.picking</field>
             <field name="description">Albarán de venta</field>
             <field name="code">fields_to_watch = (
-    'partner_id',
-    'customer_id',
-    'company_id',
-    'name', 
-    'date_done', 
-    'amount_total',
+    'recompute_pack_op',
+    'date_done',
     'state'
 )
 
 def is_notifiable(self, action, vals):
-    # Es un albarán y es de salida o dropshipping y el estado es done o cancel
-    return (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship') and self.state not in ('draft', 'cancel') and self.partner_id.is_notifiable_check()
+    # Es un albarán de salida o dropshipping
+    is_out_delivery = (self.picking_type_code == 'outgoing' or self.picking_type_id.name == 'Dropship')
+    # Está asociado a una venta y tiene fecha de validación y está validado
+    is_done = self.orig_sale_id and self.date_done and self.state == 'done'
+    # Está asociado a una venta y el estado es done y el cliente es notificable
+    return is_out_delivery and is_done and self.partner_id.is_notifiable_check()
 
 def get_data(self, action):
-    # Obtenemos la moneda y posición
-    currency = self.origin.pricelist_id.currency_id.symbol
-    position = self.origin.pricelist_id.currency_id.position
-    
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
     # de forma que los campos que no se modifican al validar no se enviarían
     doc_data = { 'fixed:jim_id': self.id }
     
     # If not a delete action
     if action != 'delete':
+        # Obtenemos la moneda y posición
+        currency = self.orig_sale_id.pricelist_id.currency_id.symbol
+        position = self.orig_sale_id.pricelist_id.currency_id.position
+        
         # Obtenemos el documento PDF como un string
         docfile = self.env['report'].sudo().get_pdf([self.id], 'stock.report_deliveryslip')
+        
         # Actualizamos los datos
         doc_data.update({ 
             'fixed:customer_id': self.partner_id.commercial_partner_id.id,

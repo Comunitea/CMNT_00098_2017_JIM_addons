@@ -98,6 +98,7 @@ class BaseB2B(models.AbstractModel):
 
 					# Si este registro es notificable
 					if b2b['is_notifiable'](record, mode, vals):
+
 						if type(b2b['fields_to_watch']) in (list, tuple) and type(vals) is dict:
 							# Si se están actualizando campos notificables
 							if bool(set(vals).intersection(set(b2b['fields_to_watch']))):
@@ -119,6 +120,7 @@ class BaseB2B(models.AbstractModel):
 
 		for item in self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)]):
 			b2b = dict()
+			b2b['crud_mode'] = mode
 			b2b['images_base'] = jsync_conf['base_url']
 			# Ejecutamos el código con exec(item.code)
 			# establece en la variable local b2b los siguientes atributos:
@@ -134,16 +136,16 @@ class BaseB2B(models.AbstractModel):
 				conf_items_before = list()
 			# Si antes era notificable y ahora no lo eliminamos
 			if mode and item.name in conf_items_before and item.name not in conf_items_after:
-				mode = 'delete'
+				b2b['crud_mode'] = 'delete'
 			# Si antes no era notificable y ahora si lo creamos (ponemos vals a none para que se envíe todo)
 			elif mode and item.name not in conf_items_before and item.name in conf_items_after:
-				mode = 'create'
+				b2b['crud_mode'] = 'create'
 				vals = None
 
 			# Creamos un paquete
 			packet = JSync(settings=jsync_conf)
 			# Obtenemos el modo
-			packet.mode = mode
+			packet.mode = b2b['crud_mode']
 			# Obtenemos el nombre
 			packet.name = item.name
 
@@ -164,7 +166,7 @@ class BaseB2B(models.AbstractModel):
 					item_id = '[PACKET]'
 					if packet.data and type(packet.data) is dict:
 						item_id = packet.data.get('jim_id', self.id)
-					self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (mode.capitalize(), packet.name, item_id))
+					self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (b2b['crud_mode'].capitalize(), packet.name, item_id))
 
 			# Ejecutamos la función pos_data si existe
 			if 'pos_data' in b2b and callable(b2b['pos_data']):
