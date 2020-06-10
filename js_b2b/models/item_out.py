@@ -42,19 +42,21 @@ class B2bItemsOut(models.Model):
 	active = fields.Boolean('Active', default=True, help="Enable or disable this item")
 	sequence = fields.Integer(help="Determine the items order")
 
-	@api.model
+	@api.multi
 	def __get_models(self):
 		"""
 		Get item models list
 		"""
+		self.ensure_one()
 		separators = (',', ';')
 		models = set()
 
 		for separator in separators:
 			if separator in self.model:
 				for model in self.model.split(separator):
-					model_name = model.strip()
-					models.add(model_name)
+					models.add(model.strip())
+			else:
+				models.add(self.model.strip())
 
 		return list(models)
 
