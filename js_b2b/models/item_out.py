@@ -111,11 +111,7 @@ class B2bItemsOut(models.Model):
 
 			# Acelerate certain models
 			# with specific queries
-			if model == 'product.product':
-				search_query = ['&', ('type', '=', 'product'), ('tag_ids', '!=', False)]
-			elif model == 'product.template':
-				search_query = ['&', '&', ('type', '=', 'product'), ('tag_ids', '!=', False), ('product_attribute_count', '>', 0)]
-			elif model == 'stock.move':
+			if model == 'stock.move':
 				search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
 			elif model == 'res.partner':
 				search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]

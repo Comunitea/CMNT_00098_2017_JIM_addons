@@ -357,15 +357,19 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    # El tipo de picking es 'Recepciones (MECALUX)' y el estado es 'assigned' y es un INT y hace referencia a una línea de compra y la fecha es superior a la actual
-    return self.picking_type_id.id == 13 and self.state == 'assigned' and self.picking_type_id.code == 'incoming' and self.purchase_line_id and datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now()
+    # El producto asociado está publicado
+    product_published = self.product_id.product_tmpl_id.website_published
+    # La variante asociada está publicada o es una variante única
+    variant_published = self.product_id.website_published if self.product_id.product_tmpl_id.product_variant_count > 1 else product_published
+    # El producto asociado está publicado y el tipo de picking es 'Recepciones (MECALUX)' y el estado es 'assigned' y es un INT y hace referencia a una línea de compra y la fecha es superior a la actual
+    return product_published and variant_published and self.product_id.product_tmpl_id.website_published and self.picking_type_id.id == 13 and self.state == 'assigned' and self.picking_type_id.code == 'incoming' and self.purchase_line_id and datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now()
 
 def get_data(self, action):
     return {
         'fixed:jim_id': self.id,
         'company_id': self.company_id.id,
         'purchase_line_id:order_id': self.purchase_line_id.order_id.id,
-        'product_id': self.product_id.product_tmpl_id.id if self.product_id else None,
+        'product_id': self.product_id.product_tmpl_id.id,
         'product_id:variant_id': self.product_id.id if self.product_id.product_tmpl_id.product_variant_count > 1 else None,
         'product_uom_qty:quantity': self.product_uom_qty if self.state == 'assigned' else 0,
         'date_expected:shipping_date': self.date_expected
