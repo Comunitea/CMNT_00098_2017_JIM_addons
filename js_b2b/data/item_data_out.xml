@@ -157,16 +157,16 @@ def get_data(self, action):
     }
 
 def pos_data(self, action):
-    # Creamos las imágenes
+    # Creamos los datos relaccionados
     if action == 'create':
+        # Crear las imágenes del producto
         for image in self.product_image_ids:
             image.b2b_record('create')
-    # Borramos las imágenes
-    # dejarán de estar accesibles antes de que 
-    # llege el mensaje al suscriptor
-    # elif action == 'delete':
-    #    for image in self.product_image_ids:
-    #        image.b2b_record('delete')</field>
+        # Crear la parametrización
+        if 'product.template.categorization' in self.env:
+            for p in self.env['product.template.categorization'].search([('product_id', '=', self.id)]):
+                print("CATEGORIZACION PARA PRODUCTO", p.id)
+                p.b2b_record('create')</field>
         </record>
 
         <record id="b2b_item_out_7" model="b2b.item.out">
@@ -201,7 +201,15 @@ def get_data(self, action):
         'barcode:ean13': self.barcode if self.barcode else None,
         'weight': self.weight,
         'default': False
-    }</field>
+    }
+    
+def pos_data(self, action):
+    # Creamos los datos relaccionados
+    if action == 'create':
+        # Crear la parametrización
+        if 'product.product.categorization' in self.env:
+            for p in self.env['product.product.categorization'].search([('product_id', '=', self.id)]):
+                p.b2b_record('create')</field>
         </record>
 
         <record id="b2b_item_out_8" model="b2b.item.out">
