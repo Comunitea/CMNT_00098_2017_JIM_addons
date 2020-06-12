@@ -143,16 +143,18 @@ class B2bItemsOut(models.Model):
 					if notifiable_items and not record_on_jsync:
 
 						print("@@ CREATE RECORD WITH ID#%s" % (id), record_percent_str)
-						record.b2b_record('create', conf_items_before=notifiable_items)
+						for packet in record.b2b_record('create', conf_items_before=notifiable_items):
+							packet.send()
 
-					elif record_on_jsync:
+					elif not notifiable_items and record_on_jsync:
 
 						print("@@ DELETE RECORD WITH ID#%s" % (id), record_percent_str)
-						record.b2b_record('delete', conf_items_before=[record_on_jsync.name,])
+						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,]):
+							packet.send()
 
 					else:
 
-						print("@@ RECORD ID#%s NOT NOTIFIABLE" % (id), record_percent_str)
+						print("@@ RECORD ID#%s NOT NOTIFIABLE OR ALREDY IN JSYNC" % (id), record_percent_str)
 
 				# End line
 				print("************* FIN B2B ITEM *************")
