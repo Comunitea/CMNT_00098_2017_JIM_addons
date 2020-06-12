@@ -4,6 +4,7 @@
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 from odoo.tools.safe_eval import safe_eval
+from odoo.tools import ormcache
 import requests as request
 
 PARAMS = {
@@ -54,11 +55,22 @@ class B2BSettings(models.TransientModel):
 		return super(B2BSettings, self).execute()
 
 	@api.model
+	@ormcache('param')
+	def get_param(self, param, value=None):
+		if param in PARAMS:
+			key_name = PARAMS[param][0]
+			default_val = PARAMS[param][1]
+			return safe_eval(self.env['ir.config_parameter'].sudo().get_param(key_name, repr(default_val)))
+		return False
+
+	@api.model
 	def update_param(self, param, value=None):
 		if param in PARAMS:
 			key_name = PARAMS[param][0]
 			default_val = PARAMS[param][1]
 			self.env['ir.config_parameter'].set_param(key_name, repr(value or default_val))
+			#self.get_param.clear_cache(self.filtered(lambda r: r.key == 'param'))
+			self.clear_caches()
 
 	@api.multi
 	def set_params(self):
@@ -68,8 +80,11 @@ class B2BSettings(models.TransientModel):
 			default_val = field_attrs[1]
 			value = repr(getattr(self, field_name, default_val))
 			self.env['ir.config_parameter'].set_param(key_name, value)
+			#self.get_default_params.clear_cache(self.filtered(lambda r: r.key == 'fields'))
+			self.clear_caches()
 
 	@api.model
+	@ormcache('fields')
 	def get_default_params(self, vals=[], fields=PARAMS.keys()):
 		res = dict()
 		for field_name in fields:

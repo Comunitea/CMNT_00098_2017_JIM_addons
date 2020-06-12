@@ -6,13 +6,40 @@ from os import path, pardir
 from datetime import datetime
 import psycopg2.extras
 
-class B2BBulkExport(models.Model):
+class B2BExport(models.Model):
 	_name = "b2b.export"
-
 	_log_filename = 'b2b.export.log'
+	_sql_constraints = [('res_id_unique', 'unique(res_id)', 'res_id needs to be unique!')]
+
+	res_id = fields.Char(required=True, translate=False)
+
+	@api.model
+	def sync_get(self, model_name, record_id):
+		res_id = '%s,%s' % (model_name, record_id)
+		return self.search([('res_id', '=', res_id)], limit=1)
+
+	@api.model
+	def sync_set(self, model_name, record_id):
+		#if not self.sync_get(model_name, record_id):
+		res_id = '%s,%s' % (model_name, record_id)
+		return self.create({ 'res_id': res_id })
+
+	@api.model
+	def sync_upd(self, model_name, record_id):
+		res_id = '%s,%s' % (model_name, record_id)
+		record = self.sync_get(model_name, record_id)
+		if record: record.res_id = res_id
+		else: self.sync_set(model_name, record_id)
+		return True
+
+	@api.model
+	def sync_del(self, model_name, record_id):
+		self.sync_get(model_name, record_id).unlink()
+		return True
 
 	# ------------------------------------ LOGGER ------------------------------------
 
+	@api.model
 	def write_to_log(self, txt, file=None, mode="aw+"):
 		module_dir = path.abspath(path.join(path.dirname(path.realpath(__file__)), pardir))
 		log_file = path.join(module_dir, 'static', 'log', file or self._log_filename)
@@ -23,6 +50,7 @@ class B2BBulkExport(models.Model):
 
 	# ------------------------------------ CUSTOM QUERIES ------------------------------------
 
+	@api.model
 	def __pricelists_unique_quantities(self):
 		self.env.cr.execute("SELECT pricelist_id, \
 			CASE \
@@ -36,6 +64,7 @@ class B2BBulkExport(models.Model):
 			ORDER BY pricelist_id, min_qty")
 		return self.env.cr.fetchall()
 
+	@api.model
 	def __products_in_pricelists(self):
 		self.env.cr.execute("SELECT product_tmpl_id \
 			FROM product_product \
@@ -51,46 +80,6 @@ class B2BBulkExport(models.Model):
 			GROUP BY product_tmpl_id")
 		return tuple(r[0] for r in self.env.cr.fetchall())
 
-	"""def __products_with_stock_moves(self, date=None):
-		self.env.cr.execute("SELECT product_tmpl_id \
-			FROM product_product \
-			WHERE id IN ( \
-				SELECT product_id FROM stock_move WHERE \
-				write_date > %s \
-				GROUP BY product_id \
-					UNION \
-				SELECT product_id FROM sale_order_line WHERE \
-				write_date > %s \
-				GROUP BY product_id \
-					UNION \
-				SELECT product_id FROM stock_quant WHERE \
-				write_date > %s \
-				GROUP BY product_id \
-			) \
-			GROUP BY product_tmpl_id", [date, date, date])
-		return tuple(r[0] for r in self.env.cr.fetchall())
-
-	def _pricelists_prices_to_update(self, replace=False, limit='ALL'):
-		self.env.cr.execute("SELECT \
-				export_prices.pricelist_id, \
-				product_product.product_tmpl_id AS product_id, \
-				CASE \
-					WHEN product_product.attribute_names <> '' THEN product_product.id \
-					ELSE NULL \
-				END variant_id, \
-				CASE \
-					WHEN export_prices.qty > 0 THEN export_prices.qty \
-					ELSE 1 \
-				END quantity, \
-				export_prices.price \
-			FROM export_prices \
-			LEFT JOIN product_product ON export_prices.product_id = product_product.id \
-			WHERE create_mode = %r \
-			GROUP BY export_prices.id, export_prices.pricelist_id, product_product.product_tmpl_id, product_product.id, export_prices.qty \
-			ORDER BY export_prices.id ASC \
-			LIMIT %s" % (replace, limit))
-		return self.env.cr.dictfetchall()"""
-
 	# ------------------------------------ STATIC METHODS ------------------------------------
 
 	@staticmethod
@@ -104,34 +93,36 @@ class B2BBulkExport(models.Model):
 
 	# ------------------------------------ PUBLIC METHODS ------------------------------------
 
-	"""def b2b_pricelists_prices(self, test_limit=None):
-		# Get calculated prices to replace
-		r_prices = self._pricelists_prices_to_update(True, test_limit or 'ALL')
-		print("::::::::::: REPLACE PRICES", r_prices)
+	@api.model
+	def send_multi(self, object_name, data_list, action_str='replace'):
+		"""
+		Splits data list in multiple parts if needed and sends it
+		"""
+		jsync_conf = self.env['b2b.settings'].get_default_params()
+		data_parts = list()
+		last = 0.0
 
-		# Send to JSync
-		if r_prices:
-			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
-			packet.name = 'pricelist_item'
-			packet.data = r_prices
-			packet.mode = 'replace'
+		# Divide packet if needed
+		# large datasets have to be divided in multiple parts
+		# determined by packet_size on settings
+		packet_size_mb = jsync_conf.get('packet_size', 10)
+		data_size = getsizeof(self.data)/1048576
+		num_packets_total = ceil(data_size / packet_size_mb) or 1
+		data_items_count = len(self.data)
+		avg = data_items_count / float(num_packets_total)
+		while last < data_items_count:
+			data_parts.append(iter(self.data[int(last):int(last + avg)]))
+			last += avg
+
+		# Construct & send packets
+		num_packets = len(data_parts)
+		for i, part in enumerate(data_parts):
+			packet = JSync(self.env, settings=jsync_conf)
+			packet.name = object_name
+			packet.data = list(part)
+			packet.mode = action_str
+			packet.part = [i + 1, num_packets]
 			packet.send(timeout_sec=300)
-			self.write_to_log(str(r_prices), 'pricelist_item_replace', "w+")
-			self.env['export.prices'].search([('create_mode', '=', True)]).unlink()
-
-		# Get calculated prices to update
-		u_prices = self._pricelists_prices_to_update(False, test_limit or 'ALL')
-		print("::::::::::: UPDATE PRICES", u_prices)
-
-		# Send to JSync
-		if u_prices:
-			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
-			packet.name = 'pricelist_item'
-			packet.data = u_prices
-			packet.mode = 'update'
-			packet.send(timeout_sec=300)
-			self.write_to_log(str(u_prices), 'pricelist_item_update', "w+")
-			self.env['export.prices'].search([('create_mode', '=', False)]).unlink()"""
 
 	@job
 	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, variant=None, operation=None):
@@ -223,11 +214,8 @@ class B2BBulkExport(models.Model):
 
 		# Send to JSync
 		if prices:
-			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
-			packet.name = 'pricelist_item'
-			packet.data = prices
-			packet.mode = 'update' if templates_filter is not None else 'replace'
-			packet.send(timeout_sec=300)
+			mode = 'update' if templates_filter is not None else 'replace'
+			self.send_multi('pricelist_item', prices, mode)
 			self.write_to_log(str(prices), 'pricelist_item', "w+")
 
 	@job
@@ -270,80 +258,19 @@ class B2BBulkExport(models.Model):
 
 		# Send to JSync
 		if prices:
-			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
-			packet.name = 'customer_price'
-			packet.data = prices
-			packet.mode = 'update' if lines_filter is not None else 'replace'
-			packet.send(timeout_sec=300)
+			mode = 'update' if lines_filter is not None else 'replace'
+			self.send_multi('customer_price', prices, mode)
 			self.write_to_log(str(prices), 'customer_price', "w+")
 
 	@job
 	def b2b_products_stock(self, test_limit=None, test_date=None):
 		# If actual time is between 00:30 & 00:45 set "all" to True
 		all_products = B2BBulkExport.is_time_between('00:30:00', '00:45:00')
-		print(":::::: ALL PRODUCTS", all_products)
+		print(":::::: SENDING ALL PRODUCTS", all_products)
 		stock = self.env['exportxml.object'].compute_product_ids(all=True, from_time=test_date, inc=test_limit or 999999999)
 
 		# Send to JSync
 		if stock:
-			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
-			packet.name = 'product_stock'
-			packet.data = stock
-			packet.mode = 'replace' if all_products else 'update'
-			if packet.send(timeout_sec=300):
-				self.write_to_log(str(stock), 'product_stock', "w+")
-
-	"""def b2b_products_stock(self, test_limit=None, test_date=None):
-		self.write_to_log('[b2b_products_stock] Starts!')
-		# Out stock
-		stock = list()
-		# Time now
-		start_date = fields.Datetime.now()
-		# Last time executed
-		last_date = test_date or self.env['b2b.settings'].get_default_params().get('last_stock_date', False)
-		# Search params
-		product_search_params = [('website_published', '=', True)]
-		# All stock moves
-		if last_date:
-			# Limit search to products with stock moves 
-			product_ids = self.__products_with_stock_moves(last_date)
-			product_search_params.append(('id', 'in', product_ids))
-		# Filtered products
-		products_ids = tuple(self.env['product.template'].search(product_search_params, limit=test_limit).ids)
-		# Log info
-		product_number = 0.0
-		total_products = len(products_ids)
-		self.write_to_log('# PRODUCTOS: %s' % total_products)
-
-		try:
-			# For each product
-			for product_id in products_ids:
-				product_number += 1
-				percent = round((product_number / total_products) * 100, 1)
-				product = self.env['product.template'].browse(product_id)
-				print(":: %s%% PROCESANDO... [%s] %s" % (percent, product.default_code, product.name))
-				for variant in product.product_variant_ids:
-					stock_for_product = variant.web_global_stock
-					stock.append({ 
-						'product_id': variant.product_tmpl_id.id,
-						'variant_id': variant.id if variant.product_attribute_count else None,
-						'stock': stock_for_product if stock_for_product > 0 else 0
-					})
-		except Exception as e:
-			self.write_to_log('[b2b_products_stock] ERROR ON LOOP! %s' % e)
-		finally:
-			self.write_to_log('[b2b_products_stock] Ends!')
-
-		# Send to JSync
-		if stock:
-			packet = JSync(settings=self.env['b2b.settings'].get_default_params(fields=['url', 'conexion_error', 'response_error']))
-			packet.name = 'product_stock'
-			packet.data = stock
-			packet.mode = 'update' if last_date else 'replace'
-			packet.send(timeout_sec=300)
+			mode = 'replace' if all_products else 'update'
+			self.send_multi('product_stock', stock, mode)
 			self.write_to_log(str(stock), 'product_stock', "w+")
-
-		# Update last stock date
-		if start_date and not test_date:
-			self.env['b2b.settings'].update_param('last_stock_date', start_date)
-	"""

@@ -20,6 +20,13 @@ VERSIONES SOPORTADAS (Probadas)
 REQUISITOS
 ==========
 
+Este módulo requiere las siguientes librerías de python, para instalarlas acceder al sandbox y ejecutar el comando: pip install -librería-
+
+* urllib3 >= 1.25.3
+* Unidecode >= 1.1.1
+* requests >= 2.22.0
+* barcodenumber >= 0.5.0
+
 Para poder utilizar este módulo es necesario que un servidor secundario ejecute el módulo de Pyhton 3 "jsync" y esté a la escucha
 
 CONFIGURACIÓN

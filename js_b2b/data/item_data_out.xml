@@ -140,14 +140,15 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    return self.website_published
+    # Los productos no se envían cuando se crean sino cuando se pulsa el botón de publicar
+    return action != 'create' and self.website_published
 
 def get_data(self, action):
     return {
         'fixed:jim_id': self.id,
         'name': self.get_field_translations('name'),
         'default_code:reference': self.template_code or self.default_code,
-        'barcode:ean13': self.barcode if self.barcode else None,
+        'barcode:ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
         'tag_ids:category_id': self.tag_ids.ids,
         'public_categ_ids:web_category_id': self.public_categ_ids.ids, 
         'brand_id': self.product_brand_id.id if self.product_brand_id else None,
@@ -198,7 +199,7 @@ def get_data(self, action):
         'fixed:product_id': self.product_tmpl_id.id,
         'default_code:reference': self.default_code,
         'attribute_value_ids:attribute_value': self.attribute_value_ids.ids,
-        'barcode:ean13': self.barcode if self.barcode else None,
+        'barcode:ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
         'weight': self.weight,
         'default': False
     }
@@ -396,25 +397,15 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    # Es un contacto y es empresa y tiene asignada por lo menos una empresa para la web y tiene correo electrónico y tiene contraseña web y es el contacto principal
-    return self.active and self.is_company and self.vip_web_access and self.customer and self.email and self.commercial_partner_id.id == self.id and self.type == 'contact'
-    
-def get_primary_email(email):
-    # Separadores válidos
-    email_separators = (',', ';')
-    # Si tiene un valor
-    if email:
-        for separator in email_separators:
-            if separator in email:
-                return email.split(separator)[0].strip()
-    return email
+    # Es un contacto y es empresa y tiene asignada por lo menos una empresa para la web y tiene correo electrónico válido y tiene contraseña web y es el contacto principal
+    return self.active and self.is_company and self.vip_web_access and self.customer and self.email and self.has_valid_emails() and self.commercial_partner_id.id == self.id  and self.type == 'contact'
 
 def get_data(self, action):
     return {
         'fixed:jim_id': self.id,
         'name': self.name,
         'vat': self.vat or None,
-        'email': b2b['get_primary_email'](self.email),
+        'email': self.primary_email(),
         'ref:reference': self.ref or None,
         'property_product_pricelist:customer_pricelists': [tuple([x[0].partner_id.id, x[1]]) for x in self.get_field_multicompany('property_product_pricelist')],
         'fixed:companies': self.vip_web_access.ids
@@ -508,8 +499,6 @@ def get_data(self, action):
     
     # If not a delete action
     if action != 'delete':
-        # Obtenemos el documento PDF como un string
-        docfile = self.env['report'].sudo().get_pdf([self.id], 'account.report_invoice')
         # Actualizamos los datos
         doc_data.update({ 
             'fixed:customer_id': self.commercial_partner_id.id,
@@ -517,7 +506,7 @@ def get_data(self, action):
             'fixed:name': self.number, 
             'fixed:date': self.date_invoice, 
             'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-            'fixed:pdf': base64.b64encode(docfile)
+            'fixed:pdf': self.get_base64_report_pdf('account.report_invoice')
         })
         
     return doc_data</field>
@@ -554,9 +543,6 @@ def get_data(self, action):
         currency = self.orig_sale_id.pricelist_id.currency_id.symbol
         position = self.orig_sale_id.pricelist_id.currency_id.position
         
-        # Obtenemos el documento PDF como un string
-        docfile = self.env['report'].sudo().get_pdf([self.id], 'stock.report_deliveryslip')
-        
         # Actualizamos los datos
         doc_data.update({ 
             'fixed:customer_id': self.partner_id.commercial_partner_id.id,
@@ -564,7 +550,7 @@ def get_data(self, action):
             'fixed:name': self.name,
             'fixed:date': self.date_done, 
             'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-            'fixed:pdf': base64.b64encode(docfile)
+            'fixed:pdf': self.get_base64_report_pdf('stock.report_deliveryslip')
         })
         
     return doc_data</field>
@@ -600,8 +586,6 @@ def get_data(self, action):
     
     # If not a delete action
     if action != 'delete':
-        # Obtenemos el documento PDF como un string
-        docfile = self.env['report'].sudo().get_pdf([self.id], 'sale.report_saleorder')
         # Actualizamos los datos
         doc_data.update({ 
             'fixed:customer_id': self.partner_id.id,
@@ -609,7 +593,7 @@ def get_data(self, action):
             'fixed:name': self.name, 
             'fixed:date': self.date_order, 
             'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
-            'fixed:pdf': base64.b64encode(docfile) 
+            'fixed:pdf': self.get_base64_report_pdf('sale.report_saleorder')
         })
         
     return doc_data</field>

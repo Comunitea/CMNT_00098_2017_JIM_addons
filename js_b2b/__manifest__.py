@@ -7,9 +7,14 @@
 	'category': 'Connector',
 	'website': 'https://jimsports.com',
 	'summary': 'Permite extraer datos de los modelos de Odoo y enviarlos a otro servidor',
-	'description': 'Conector para sincronizar datos con otras plataformas/clientes. Envía los datos por HTTP a un servidor secundario que los procesa y crea un punto de entrada para recibir datos',
+	'description': '''
+		<h1>Odoo Data Exchange Connector</h1>
+		<p>Conector para sincronizar datos con otras plataformas/clientes.</p>
+		<p>Transmite los datos por HTTP a un servidor secundario que los procesa.</p>
+	''',
 	'license': 'AGPL-3',
 	'depends': [
+		'web',
 		'base',
 		'sale',
 		'product',
@@ -22,11 +27,13 @@
 	],
 	'qweb': [
 		'static/xml/widgets.xml',
+		'static/xml/base.xml'
 	],
 	'data': [
 		'security/ir.model.access.csv',
 		'data/item_data_out.xml',
 		'data/item_data_in.xml',
+		'data/web_category.xml',
 		'data/ir_cron.xml',
 		'views/res_partner.xml',
 		'views/product.xml',

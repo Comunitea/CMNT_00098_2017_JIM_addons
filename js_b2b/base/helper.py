@@ -2,11 +2,9 @@
 from datetime import datetime
 from requests import Session
 from requests.adapters import HTTPAdapter
-from odoo.http import request as HttpRequest
+from odoo.exceptions import ValidationError
 from requests.packages.urllib3.util.retry import Retry as httpRetry
 from json import loads as json_load, dumps as json_dump
-from odoo.exceptions import ValidationError
-from google.cloud import pubsub_v1
 from unidecode import unidecode
 from sys import getsizeof
 from os import environ
@@ -38,48 +36,30 @@ class OutputHelper:
 
 class JSync:
 
-	mode = 'create'
-	name = None # Data item name
-	data = {} # Item data dict
-	session = None # HTTP Session
-	settings = dict() # JSync Settings
-	path = '' # URL Path
+	__slots__ = ['id', 'env', 'model', 'mode', 'name', 'data', 'part', 'session', 'settings']
 
-	def __init__(self, retries=3, settings=dict()):
+	def __init__(self, odoo_env, settings=None, retries=3):
 		retry = httpRetry(total=retries, connect=retries, backoff_factor=0.3, status_forcelist=(500, 502, 504))
 		adapter = HTTPAdapter(max_retries=retry)
-		self.session = Session()
+
+		self.id = None # Record ID
+		self.model = None # Record model name
+		self.mode = 'create' # CRUD mode
+		self.name = None # Data item name
+		self.data = {} # Item data dict
+		self.part = None # Multi-packet part
+		self.env = odoo_env # Odoo environment
+		self.session = Session() # HTTP Session
 		self.session.mount('http://', adapter)
 		self.session.mount('https://', adapter)
-		self.settings = settings or HttpRequest.env['b2b.settings'].get_default_params(fields=[
+
+		# If settings passed use it to avoid multiple calls
+		self.settings = settings or self.env['b2b.settings'].get_default_params(fields=[
 			'url', 
 			'conexion_error', 
 			'response_error', 
 			'packet_size'
 		])
-
-	def __data_iterator(self):
-		"""
-		Splits data list in multiple parts
-
-		:param parts: Number of parts
-		:return: list of iterators
-		"""
-		out_it = []
-		last = 0.0
-
-		if not self.data or type(self.data) not in (list, tuple):
-			return False
-
-		packet_size_mb = self.settings.get('packet_size', 10)
-		data_size = getsizeof(self.data)/1048576
-		num_packets_total = ceil(data_size / packet_size_mb) or 1
-		data_items_count = len(self.data)
-		avg = data_items_count / float(num_packets_total)
-		while last < data_items_count:
-			out_it.append(iter(self.data[int(last):int(last + avg)]))
-			last += avg
-		return out_it
 
 	def filter_data(self, vals=None):
 		"""
@@ -90,7 +70,6 @@ class JSync:
 
 		data key modifiers:
 			fixed:xxx -> Sends xxx always
-			upload:xxx -> Upload xxx to public server and returns URL
 			field_xxx_name:xxx -> Sends xxx field if field_xxx_name has changed
 			xxx: -> Sends xxx field if has changed (no modifier)
 		"""
@@ -117,49 +96,7 @@ class JSync:
 
 		return self.data
 
-	def __send(self, data_dict, timeout_sec=10, settings=None):
-		"""
-		Sends data to JSync server and prints on screen (low private method)
-
-		:param data_dict: valid data dict
-		:param action: valid action str
-
-		"""
-
-		# Header
-		header_dict = { 'Content-Type': 'application/json' }
-
-		# Debug
-		debug_msg = "JSync Response: {}" \
-					"\n    - object: {}" \
-					"\n    - operation: {}" \
-					"\n    - data: {}" \
-					"\n    - part: {}"
-
-		json_data = json_dump(data_dict)
-		debug_data = json_dump(data_dict.get('data'), indent=8, sort_keys=True)
-
-		try:
-			
-			endpoint = self.settings.get('url') + self.path
-			jsync_res = self.session.post(endpoint, timeout=timeout_sec, headers=header_dict, data=json_data)
-			OutputHelper.print_message(debug_msg.format(jsync_res.text, data_dict.get('object'), data_dict.get('operation'), debug_data, data_dict.get('part')), OutputHelper.OK)
-			if jsync_res.status_code is not 200 and self.settings['conexion_error'] and self.settings['response_error']:
-				raise ValidationError("JSync Server Response Error\n%s" % (jsync_res.text.encode('latin1').capitalize()))
-			try:
-				return json_load(jsync_res.text)
-			except:
-				return jsync_res.text
-
-		except Exception as e:
-			OutputHelper.print_message(debug_msg.format('CONNECTION ERROR!', data_dict.get('object'), data_dict.get('operation'), debug_data, data_dict.get('part')), OutputHelper.ERROR)
-			if self.settings['conexion_error']:
-				if type(e) is not ValidationError:
-					raise ValidationError("JSync Server Connection Error\n%s" % (e))
-				else:
-					raise e
-
-	def send(self, **kwargs):
+	def send(self, timeout_sec=10, **kwargs):
 		"""
 		Sends data to JSync server and prints on screen
 
@@ -168,26 +105,73 @@ class JSync:
 
 		"""
 		if self.name and self.data and self.mode:
-			# Get multiple data iterators
-			# large data sets have to be divided in multiple parts
-			# determined by packet_size on settings
-			data_list_multiple = self.__data_iterator()
 
-			if data_list_multiple:
-				# Multiple
-				num_packets = len(data_list_multiple)
-				for i in range(num_packets):
-					self.__send({
-							'object': self.name,
-							'operation': self.mode,
-							'data': list(data_list_multiple[i]),
-							'part': [i + 1, num_packets]
-						}, **kwargs)
-			else:
-				# One
-				self.__send({
-						'object': self.name,
-						'operation': self.mode,
-						'data': self.data
-					}, **kwargs)
-		return True
+			jsync_post = None
+
+			# Header
+			header_dict = { 'Content-Type': 'application/json' }
+
+			# Content
+			json_data = json_dump({
+				'object': self.name,
+				'operation': self.mode,
+				'data': self.data,
+				'part': self.part
+			})
+
+			# Debug
+			debug_msg = "JSync Response: {}" \
+						"\n    - object: {}" \
+						"\n    - operation: {}" \
+						"\n    - data: {}" \
+						"\n    - part: {}"
+
+			debug_data = json_dump(self.data, indent=8, sort_keys=True)
+
+			try:
+				
+				jsync_post = self.session.post(self.settings['url'], timeout=timeout_sec, headers=header_dict, data=json_data)
+					
+			except Exception as e:
+
+				OutputHelper.print_message(debug_msg.format('CONNECTION ERROR!', self.name, self.mode, debug_data, self.part), OutputHelper.ERROR)
+				
+				if self.settings['conexion_error']:
+					if type(e) is not ValidationError:
+						raise ValidationError("JSync Server Connection Error\n%s" % (e))
+					else:
+						raise e
+
+			# Si la respuesta es OK
+			if jsync_post and jsync_post.status_code is 200:
+
+				OutputHelper.print_message(debug_msg.format(jsync_post.text, self.name, self.mode, debug_data, self.part), OutputHelper.OK)
+
+				# En los paquetes múltiples no se establecen estos parámetros
+				# por lo que no se notifican al usuario ni se registran en el sistema
+				if self.id and self.model:
+
+					# Mostrar notificación no invasiva al usuario en Odoo
+					self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
+
+					# Guardar el estado en Odoo
+					if self.mode == 'create':
+						self.env['b2b.export'].sync_set(self.model, self.id)
+					elif self.mode == 'update':
+						self.env['b2b.export'].sync_upd(self.model, self.id)
+					elif self.mode == 'delete':
+						self.env['b2b.export'].sync_del(self.model, self.id)
+
+				try:
+					return json_load(jsync_post.text)
+				except:
+					return jsync_post.text
+
+			elif jsync_post:
+
+				OutputHelper.print_message(debug_msg.format('RESPONSE ERROR!', self.name, self.mode, debug_data, self.part), OutputHelper.ERROR)
+				
+				if self.settings['conexion_error'] and self.settings['response_error']:
+					raise ValidationError("JSync Server Response Error\n%s" % (jsync_post.text.encode('latin1').capitalize()))
+
+		return False

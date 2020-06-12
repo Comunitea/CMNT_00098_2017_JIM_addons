@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from ..base.helper import JSync
 import re
 
 class B2bItemsIn(models.Model):
@@ -33,12 +32,11 @@ class B2bItemsIn(models.Model):
 	@api.model
 	def __check_model(self):
 		"""
-		Check if is a valid model
+		Check if is a valid model or models
 		"""
-		try:
-			self.env[self.model].search_count([])
-		except Exception as e:
-			raise UserError(_('Model not found!'))
+		for model_name in self.get_models():
+			if not model_name in self.env:
+				raise UserError(_('Model %s not found!') % model_name)
 
 	@api.model
 	def __check_code(self):

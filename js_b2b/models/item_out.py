@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-from ..base.helper import JSync
 from datetime import datetime
 import base64
 import re
@@ -43,7 +42,7 @@ class B2bItemsOut(models.Model):
 	sequence = fields.Integer(help="Determine the items order")
 
 	@api.multi
-	def __get_models(self):
+	def get_models(self):
 		"""
 		Get item models list
 		"""
@@ -55,8 +54,9 @@ class B2bItemsOut(models.Model):
 			if separator in self.model:
 				for model in self.model.split(separator):
 					models.add(model.strip())
-			else:
-				models.add(self.model.strip())
+
+		if not models:
+			models.add(self.model.strip())
 
 		return list(models)
 
@@ -65,10 +65,8 @@ class B2bItemsOut(models.Model):
 		"""
 		Check if is a valid model or models
 		"""
-		for model_name in self.__get_models():
-			try:
-				self.env[model_name].search_count([])
-			except Exception as e:
+		for model_name in self.get_models():
+			if not model_name in self.env:
 				raise UserError(_('Model %s not found!') % model_name)
 
 	@api.model
@@ -102,47 +100,50 @@ class B2bItemsOut(models.Model):
 		search_query = [] # Default query
 		record_number = 0.0 # Record counter
 		docs_min_date = '2019-01-01' # Begin date
-		# This models not needs to be sync directly
-		excluded_models = ('product.template.categorization', 'product.product.categorization', 'product.image')
 
-		for model in self.__get_models():
-			if model in excluded_models:
-				raise UserError(_('This item cannot be synchronized directly!'))
+		# These models should not be synchronized directly
+		excluded_models = (
+			'product.template.categorization', 'product.product.categorization', 'product.image', # PRODUCT TRIGGER
+			'stock.picking', 'sale.order', 'account.invoice', # CUSTOMER TRIGGER
+			'customer.price', 'product.pricelist.item' # CRONJOBS
+		)
 
-			# Acelerate certain models
-			# with specific queries
-			if model == 'stock.move':
-				search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
-			elif model == 'res.partner':
-				search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
-			elif model == 'account.invoice':
-				search_query = [('date_invoice', '>=', docs_min_date)]
-			elif model == 'stock.picking':
-				search_query = [('date_done', '>=', docs_min_date)]
-			elif model == 'sale.order':
-				search_query = [('date_order', '>=', docs_min_date)]
+		for model in self.get_models():
+			if model not in excluded_models:
+				# Acelerate certain models
+				# with specific queries
+				if model == 'stock.move':
+					search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
+				elif model == 'res.partner':
+					search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
+				elif model == 'account.invoice':
+					search_query = [('date_invoice', '>=', docs_min_date)]
+				elif model == 'stock.picking':
+					search_query = [('date_done', '>=', docs_min_date)]
+				elif model == 'sale.order':
+					search_query = [('date_order', '>=', docs_min_date)]
 
-			# Get code model records
-			records_ids = self.env[model].search(search_query, order='id ASC').ids
-			total_records =  len(records_ids)
-			print("*************** B2B ITEM ***************")
-			print("@@ ITEM NAME", str(self.name))
-			print("@@ ITEM MODEL", str(model))
-			print("@@ TOTAL RECORDS", total_records)
-			for id in records_ids:
-				record_number += 1
-				record_percent = round((record_number / total_records) * 100, 1)
-				record_percent_str = str(record_percent) + '%'
-				record = self.env[model].browse(id)
-				notifiable_items = record.is_notifiable_check()
-				# Is notifiable
-				if notifiable_items:
-					print("@@ RECORD ID#%s IS NOTIFIABLE!" % (id), record_percent_str)
-					record.b2b_record('create', conf_items_before=notifiable_items)
-				else:
-					print("@@ RECORD ID#%s NOT NOTIFIABLE" % (id), record_percent_str)
-			# End line
-			print("************* FIN B2B ITEM *************")
+				# Get code model records
+				records_ids = self.env[model].search(search_query, order='id ASC').ids
+				total_records =  len(records_ids)
+				print("*************** B2B ITEM ***************")
+				print("@@ ITEM NAME", str(self.name))
+				print("@@ ITEM MODEL", str(model))
+				print("@@ TOTAL RECORDS", total_records)
+				for id in records_ids:
+					record_number += 1
+					record_percent = round((record_number / total_records) * 100, 1)
+					record_percent_str = str(record_percent) + '%'
+					record = self.env[model].browse(id)
+					notifiable_items = record.is_notifiable_check()
+					# Is notifiable
+					if notifiable_items:
+						print("@@ RECORD ID#%s IS NOTIFIABLE!" % (id), record_percent_str)
+						record.b2b_record('create', conf_items_before=notifiable_items)
+					else:
+						print("@@ RECORD ID#%s NOT NOTIFIABLE" % (id), record_percent_str)
+				# End line
+				print("************* FIN B2B ITEM *************")
 
 	# ------------------------------------ OVERRIDES ------------------------------------
 
@@ -161,10 +162,10 @@ class B2bItemsOut(models.Model):
 		"""
 		Check model & code on write
 		"""
-		super(B2bItemsOut, self).write(vals)
+		res = super(B2bItemsOut, self).write(vals)
 		for item in self:
 			if vals.get('model') or vals.get('active', item.active) == True:
 				item.__check_model()
 			if vals.get('code'):
 				item.__check_code()
-		return True
+		return res

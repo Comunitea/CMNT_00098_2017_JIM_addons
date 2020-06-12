@@ -12,7 +12,7 @@
                 </button>
             </div>
 
-            <group name="email_template_and_project"  position="before">
+            <group name="email_template_and_project" position="before">
                 <group name="website" string="Website">
                     <field name="public_categ_ids" widget="many2many_tags" string="Website Categories"/>
                 </group>

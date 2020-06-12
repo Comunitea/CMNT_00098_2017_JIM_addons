@@ -11,7 +11,7 @@ def post_init_actions(cr, registry):
 	# -------------- SET VIP WEB ACCESS ON PARTNERS --------------
 	print(':: [SET VIP WEB ACCESS] Starts!')
 
-	partner_ids = self.env['res.partner'].with_context(active_test=False).search([('group_companies_ids', '!=', False)])._ids
+	partner_ids = env['res.partner'].with_context(active_test=False).search([('group_companies_ids', '!=', False)])._ids
 
 	# Log info
 	partner_number = 0.0
@@ -51,12 +51,17 @@ def post_init_actions(cr, registry):
 	# For each product
 	for product_id in product_ids:
 		product = env['product.template'].browse(product_id)
-
 		product_number += 1
 		percent = round((product_number / total_products) * 100, 2)
 		print(":: %s%% PROCESANDO... [%s] %s" % (percent, product.default_code, product.name))
+
+		# Set default web category on published products
+		product.public_categ_ids = (6, 0, [env.ref('js_b2b.web_category_1').id])
+		
+		# Set website published
 		product.website_published = True
 
+		# Set variant website published
 		for variant in product.product_variant_ids:
 			if variant.default_code and variant.attribute_names and variant.force_web != 'no':
 				variant.website_published = True

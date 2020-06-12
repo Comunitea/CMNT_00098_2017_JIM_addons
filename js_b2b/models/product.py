@@ -6,6 +6,8 @@ from odoo.exceptions import ValidationError
 from ..base import ftp
 # lib copied from odoo 11
 from ..base import pycompat
+# barcode validation
+import barcodenumber
 
 base_product_publish_error = _('Error! You can not publish this product because ')
 image_without_file_error = _('Error! Can not save an image without media file!')
@@ -42,18 +44,25 @@ class ProductTemplate(models.Model, PublicImage):
 	_inherit = "product.template"
 
 	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
-	public_categ_ids = fields.Many2many('product.public.category', string='Website Product Category', help="Categories for stores that sell to the end customer")
+	public_categ_ids = fields.Many2many('product.public.category', string='Website Product Category', help="Categories for stores that sells to end customer")
 	product_image_ids = fields.One2many('product.image', 'product_tmpl_id', string='Images')
 	public_file_name = fields.Char('Product Public File Name')
+
+	@api.multi
+	def has_valid_barcode(self, code_type='ean13'):
+		self.ensure_one()
+		return barcodenumber.check_code(code_type, self.barcode)
 
 	@api.multi
 	def website_publish_button(self):
 		for product in self:
 			if not product.website_published:
 				if not self.tag_ids:
-					raise ValidationError(_(base_product_publish_error + _('does not have tags.')))
+					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
 				if not self.public_categ_ids:
-					raise ValidationError(_(base_product_publish_error + _('does not have web categories.')))
+					raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
+				if self.barcode and not self.has_valid_barcode():
+					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
 			toggled_status = bool(not product.website_published)
 			product.website_published = toggled_status
 			product.mapped('product_variant_ids').write({ 'website_published': toggled_status })
@@ -131,10 +140,19 @@ class ProductProduct(models.Model):
 	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
 
 	@api.multi
+	def has_valid_barcode(self, code_type='ean13'):
+		self.ensure_one()
+		return barcodenumber.check_code(code_type, self.barcode)
+
+	@api.multi
 	def website_publish_button(self):
 		for variant in self:
 			if not variant.product_tmpl_id.website_published:
-				raise ValidationError(_(base_product_publish_error + _('template is unpublished.')))
+				raise ValidationError(_(base_product_publish_error) + _('template is unpublished.'))
+			if not self.tag_ids:
+				raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
+			if self.barcode and not self.has_valid_barcode():
+				raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
 			variant.website_published = not variant.website_published
 
 	@api.model
