@@ -127,21 +127,33 @@ class B2bItemsOut(models.Model):
 				records_ids = self.env[model].search(search_query, order='id ASC').ids
 				total_records =  len(records_ids)
 				print("*************** B2B ITEM ***************")
+				
 				print("@@ ITEM NAME", str(self.name))
 				print("@@ ITEM MODEL", str(model))
 				print("@@ TOTAL RECORDS", total_records)
+
 				for id in records_ids:
 					record_number += 1
 					record_percent = round((record_number / total_records) * 100, 1)
 					record_percent_str = str(record_percent) + '%'
 					record = self.env[model].browse(id)
 					notifiable_items = record.is_notifiable_check()
-					# Is notifiable
-					if notifiable_items:
-						print("@@ RECORD ID#%s IS NOTIFIABLE!" % (id), record_percent_str)
+					record_on_jsync = self.env['b2b.export'].sync_get(record._name, record.id)
+
+					if notifiable_items and not record_on_jsync:
+
+						print("@@ CREATE RECORD WITH ID#%s" % (id), record_percent_str)
 						record.b2b_record('create', conf_items_before=notifiable_items)
+
+					elif record_on_jsync:
+
+						print("@@ DELETE RECORD WITH ID#%s" % (id), record_percent_str)
+						record.b2b_record('delete', conf_items_before=[record_on_jsync.name,])
+
 					else:
+
 						print("@@ RECORD ID#%s NOT NOTIFIABLE" % (id), record_percent_str)
+
 				# End line
 				print("************* FIN B2B ITEM *************")
 

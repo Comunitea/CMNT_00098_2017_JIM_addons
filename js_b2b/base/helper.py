@@ -149,16 +149,16 @@ class JSync:
 
 				# En los paquetes múltiples no se establecen estos parámetros
 				# por lo que no se notifican al usuario ni se registran en el sistema
-				if self.id and self.model:
+				if self.name and self.id and self.model:
 
 					# Mostrar notificación no invasiva al usuario en Odoo
 					self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
 
 					# Guardar el estado en Odoo
 					if self.mode == 'create':
-						self.env['b2b.export'].sync_set(self.model, self.id)
+						self.env['b2b.export'].sync_set(self.model, self.id, self.name)
 					elif self.mode == 'update':
-						self.env['b2b.export'].sync_upd(self.model, self.id)
+						self.env['b2b.export'].sync_upd(self.model, self.id, self.name)
 					elif self.mode == 'delete':
 						self.env['b2b.export'].sync_del(self.model, self.id)
 

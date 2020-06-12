@@ -11,6 +11,7 @@ class B2BExport(models.Model):
 	_log_filename = 'b2b.export.log'
 	_sql_constraints = [('res_id_unique', 'unique(res_id)', 'res_id needs to be unique!')]
 
+	name = fields.Char(required=True, translate=False)
 	res_id = fields.Char(required=True, translate=False)
 
 	@api.model
@@ -19,17 +20,17 @@ class B2BExport(models.Model):
 		return self.search([('res_id', '=', res_id)], limit=1)
 
 	@api.model
-	def sync_set(self, model_name, record_id):
+	def sync_set(self, model_name, record_id, conf_item):
 		#if not self.sync_get(model_name, record_id):
 		res_id = '%s,%s' % (model_name, record_id)
-		return self.create({ 'res_id': res_id })
+		return self.create({ 'res_id': res_id, 'name': conf_item })
 
 	@api.model
-	def sync_upd(self, model_name, record_id):
+	def sync_upd(self, model_name, record_id, conf_item):
 		res_id = '%s,%s' % (model_name, record_id)
 		record = self.sync_get(model_name, record_id)
-		if record: record.res_id = res_id
-		else: self.sync_set(model_name, record_id)
+		if record: record.conf_item = conf_item
+		else: self.sync_set(model_name, record_id, conf_item)
 		return True
 
 	@api.model

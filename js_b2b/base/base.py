@@ -97,7 +97,7 @@ class BaseB2B(models.AbstractModel):
 		for record in self:
 			for item in b2b_items_out:
 				# Comprobar que el modelo coincide exactamente ya que con el filtro anterior
-				# en el search() no es suficiente (ej: product.product.categorization y product.product)
+				# en el search() no es suficiente (ej: customer y customer.address)
 				if record._name in item.get_models() and type(item.code) is unicode:
 					b2b = dict()
 
@@ -112,7 +112,7 @@ class BaseB2B(models.AbstractModel):
 
 					# Si este registro es notificable
 					if b2b['is_notifiable'](record, mode, vals):
-
+						# Si este registro es notificable
 						if type(b2b['fields_to_watch']) in (list, tuple) and type(vals) is dict:
 							# Si se están actualizando campos notificables
 							if bool(set(vals).intersection(set(b2b['fields_to_watch']))):
@@ -142,6 +142,7 @@ class BaseB2B(models.AbstractModel):
 				b2b = dict()
 				b2b['crud_mode'] = mode
 				b2b['images_base'] = jsync_conf['base_url']
+
 				# Ejecutamos el código con exec(item.code)
 				# establece en la variable local b2b los siguientes atributos:
 				#   b2b['fields_to_watch'] <type 'tuple'> ¡No usado aquí!
