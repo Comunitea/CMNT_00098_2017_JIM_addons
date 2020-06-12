@@ -132,6 +132,8 @@ class B2bItemsOut(models.Model):
 				print("@@ ITEM MODEL", str(model))
 				print("@@ TOTAL RECORDS", total_records)
 
+				self.env.user.notify_info('[B2B SYNC] %s (%s)' % (self.name.capitalize(), total_records))
+
 				for id in records_ids:
 					record_number += 1
 					record_percent = round((record_number / total_records) * 100, 1)
@@ -144,13 +146,13 @@ class B2bItemsOut(models.Model):
 
 						print("@@ CREATE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('create', conf_items_before=notifiable_items):
-							packet.send()
+							packet.send(notify=False)
 
 					elif not notifiable_items and record_on_jsync:
 
 						print("@@ DELETE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,]):
-							packet.send()
+							packet.send(notify=False)
 
 					else:
 

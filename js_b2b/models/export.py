@@ -115,6 +115,8 @@ class B2BExport(models.Model):
 			data_parts.append(iter(self.data[int(last):int(last + avg)]))
 			last += avg
 
+		self.env.user.notify_info('[B2B PACKET] %s <b>%s</b> (%s)' % (object_name.capitalize(), object_name, data_items_count))
+
 		# Construct & send packets
 		num_packets = len(data_parts)
 		for i, part in enumerate(data_parts):

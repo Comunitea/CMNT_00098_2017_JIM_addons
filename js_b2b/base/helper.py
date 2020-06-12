@@ -96,7 +96,7 @@ class JSync:
 
 		return self.data
 
-	def send(self, timeout_sec=10, **kwargs):
+	def send(self, timeout_sec=10, notify=True, **kwargs):
 		"""
 		Sends data to JSync server and prints on screen
 
@@ -152,7 +152,8 @@ class JSync:
 				if self.name and self.id and self.model:
 
 					# Mostrar notificación no invasiva al usuario en Odoo
-					self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
+					if notify:
+						self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
 
 					# Guardar el estado en Odoo
 					if self.mode == 'create':
