@@ -161,11 +161,10 @@
             <p class="oe_view_nocontent_create">
                 Click to define a new category.
             </p><p>
-                Categories are used to browse your products through the
-                touchscreen interface.
+                Web categories are used on non VIP clients websites.
             </p>
         </field>
     </record>
 
-    <menuitem id="menu_public_categories" name="Categorías Web" parent="stock.menu_product_in_config_stock" action="product_public_category_action_b2b" sequence="80" />
+    <menuitem id="menu_public_categories" name="Web Categories" parent="stock.menu_product_in_config_stock" action="product_public_category_action_b2b" sequence="80" />
 </odoo>

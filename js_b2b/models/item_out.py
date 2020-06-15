@@ -126,13 +126,13 @@ class B2bItemsOut(models.Model):
 				# Get code model records
 				records_ids = self.env[model].search(search_query, order='id ASC').ids
 				total_records =  len(records_ids)
+				create_records = 0
+				delete_records = 0
+
 				print("*************** B2B ITEM ***************")
-				
 				print("@@ ITEM NAME", str(self.name))
 				print("@@ ITEM MODEL", str(model))
 				print("@@ TOTAL RECORDS", total_records)
-
-				self.env.user.notify_info('[B2B SYNC] %s (%s)' % (self.name.capitalize(), total_records))
 
 				for id in records_ids:
 					record_number += 1
@@ -144,12 +144,14 @@ class B2bItemsOut(models.Model):
 
 					if notifiable_items and not record_on_jsync:
 
+						create_records += 1
 						print("@@ CREATE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('create', conf_items_before=notifiable_items):
 							packet.send(notify=False)
 
 					elif not notifiable_items and record_on_jsync:
 
+						delete_records += 1
 						print("@@ DELETE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,]):
 							packet.send(notify=False)
@@ -158,8 +160,10 @@ class B2bItemsOut(models.Model):
 
 						print("@@ RECORD ID#%s NOT NOTIFIABLE OR ALREDY IN JSYNC" % (id), record_percent_str)
 
-				# End line
 				print("************* FIN B2B ITEM *************")
+
+				# Notify user
+				self.env.user.notify_info(_('Synchronizing <b>%s</b><br/><ul><li>Total: %s</li><li>Create: %s</li><li>Delete: %s</li></ul>') % (self.name, total_records, create_records, delete_records))
 
 	# ------------------------------------ OVERRIDES ------------------------------------
 

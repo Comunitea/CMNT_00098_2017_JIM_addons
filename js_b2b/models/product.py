@@ -245,7 +245,7 @@ class ProductAttributeValue(models.Model, PublicImage):
 	html_color = fields.Char(string='HTML Color', oldname='color', help="Here you can set a specific HTML color index (e.g. #ff0000) to display the color on the website if the attibute type is 'Color'.")
 	image_color = fields.Binary(attachment=True, help="This field holds the image used as thumbnail for the attribute colors, limited to 62px.")
 	image_color_filename = fields.Char(string='Color Image Name') # To check extension
-	public_file_name = fields.Char('Attribute Value Public File Name')
+	public_file_name = fields.Char('Color Public File Name')
 
 	@api.one
 	@api.constrains('image_color_filename')
