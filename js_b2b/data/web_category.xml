@@ -3,7 +3,7 @@
     <data noupdate="1">
 
         <record id="web_category_1" model="product.public.category">
-            <field name="name">Sin categorizar</field>
+            <field name="name">Without category</field>
             <field name="sequence">1</field>
         </record>
 
