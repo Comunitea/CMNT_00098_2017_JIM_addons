@@ -50,7 +50,7 @@ class ProductTemplate(models.Model):
                 imageBase64 = base64.b64encode(image)
             except urllib.URLError as e:
                     return(True)
-            new_image = self.env['product.image'].create({'product_tmpl_id': self.id, 'name': image_name, 'image': imageBase64}, resize=False)
+            new_image = self.env['product.image'].create({'product_tmpl_id': self.id, 'name': self.name, 'image': imageBase64}, resize=False)
             i += 1
 
     @api.model
@@ -71,3 +71,11 @@ class ProductTemplate(models.Model):
                 print('[js_fill_product] Descargadas las imágenes de {}'.format(product.default_code))
 
         print('[js_fill_product] ****** Fin del proceso de descarga de imágenes ******')
+
+class ProductProduct(models.Model):
+    _inherit = 'product.product'
+
+    @api.one
+    def js_download_images(self):
+        # Llamamos a la función del template para que no dé error desde product.product
+        self.product_tmpl_id.js_download_images()

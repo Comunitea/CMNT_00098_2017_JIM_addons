@@ -13,5 +13,8 @@
     'website': "http://miguel-angel-garcia.com",
     'category': 'Administration',
     'version': '0.1',
-    'depends': ['product']
+    'depends': ['product'],
+    'data': [
+        'views/views.xml'
+    ],
 }

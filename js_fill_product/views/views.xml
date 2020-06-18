@@ -1,0 +1,18 @@
+<odoo>
+  <data>
+	<!-- Botón para descargar las imágenes -->
+	<record id="view_product_form_inherit" model="ir.ui.view">
+		<field name="name">product.template.common.form.inherit</field>
+		<field name="model">product.template</field>
+		<field name="inherit_id" ref="product.product_template_form_view"/>
+		<field name="arch" type="xml">
+            <button name="toggle_active" position="before">
+                <button class="oe_stat_button" name="js_download_images" string="Descargar imágenes"
+                    type="object" icon="fa-cloud-download" attrs="{'invisible': [('sale_ok','=',False)]}">
+                    <!-- AQUÍ INFORMARÁ DEL ESTADO DE LA DESCARGA -->
+                </button>
+            </button>
+		</field>
+	</record>
+  </data>
+</odoo>
