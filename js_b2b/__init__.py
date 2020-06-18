@@ -5,10 +5,7 @@ import base
 import controllers
 from odoo import api
 
-def post_init_actions(cr, registry):
-	env = api.Environment(cr, SUPERUSER_ID, {})
-
-	# -------------- SET VIP WEB ACCESS ON PARTNERS --------------
+def __partner_actions(env):
 	print(':: [SET VIP WEB ACCESS] Starts!')
 
 	partner_ids = env['res.partner'].with_context(active_test=False).search([('group_companies_ids', '!=', False)])._ids
@@ -37,7 +34,7 @@ def post_init_actions(cr, registry):
 	print(':: EXCLUDED LIST', excluded_partners)
 	print(':: [SET VIP WEB ACCESS] Ends!')
 
-	# -------------- SET WEBSITE PUBLISHED ON PRODUCTS --------------
+def __product_actions(env):
 	print(':: [SET WEBSITE PUBLISHED] Starts!')
 	
 	# All products
@@ -72,5 +69,14 @@ def post_init_actions(cr, registry):
 	print(':: PRODUCTS PUBLISHED', total_products)
 	print(':: VARIANTS PUBLISHED', total_variants)
 	print(':: [SET WEBSITE PUBLISHED] Ends!')
+
+def post_init_actions(cr, registry):
+	env = api.Environment(cr, SUPERUSER_ID, {})
+
+	# -------------- SET VIP WEB ACCESS ON PARTNERS --------------
+	__partner_actions(env)
+
+	# -------------- SET WEBSITE PUBLISHED ON PRODUCTS --------------
+	__product_actions(env)
 
 	return True

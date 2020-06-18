@@ -393,6 +393,13 @@ msgid ""
 msgstr "¡El email del contacto no es correcto! Separadores válidos: %s"
 
 #. module: js_b2b
+#: code:addons/js_b2b/models/res_partner.py:76
+#, python-format
+msgid "Unable to set web access for %s\n"
+"Client don\'t have pricelist on this company!"
+msgstr "No se puede establecer el Acceso Web para la empresa %s\nEl cliente no tiene una tarifa asignada en esta compañía"
+
+#. module: js_b2b
 #: model:ir.model.fields,field_description:js_b2b.field_b2b_settings_password
 msgid "Password"
 msgstr "Contraseña"

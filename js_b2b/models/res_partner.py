@@ -62,3 +62,17 @@ class ResPartner(models.Model):
 				email_separators_str = ' '.join(['%s' % s for s in _partner_email_separators])
 				raise ValidationError(_('Partner email is not valid, check it!\nValid separators: %s') % email_separators_str)
 			self.email = self.email.strip()
+
+	@api.multi
+	def write(self, vals):
+		super(ResPartner, self).write(vals)
+
+		# Comprobar tarifa por compañía
+		for record in self:
+			partner_pricelists = record.get_field_multicompany('property_product_pricelist')
+			pricelists_company_ids = [c[0].id for c in partner_pricelists]
+			for company in record.vip_web_access:
+				if company.id not in pricelists_company_ids:
+					raise ValidationError(_('Unable to set web access for %s\nClient don\'t have pricelist on this company!') % company.name)
+
+		return True

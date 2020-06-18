@@ -6,33 +6,11 @@ from odoo.exceptions import ValidationError
 from requests.packages.urllib3.util.retry import Retry as httpRetry
 from json import loads as json_load, dumps as json_dump
 from unidecode import unidecode
-from sys import getsizeof
 from os import environ
 from math import ceil
+import logging
 
-class OutputHelper:
-
-	OK = '\033[92m' # Green
-	ERROR = '\033[91m' # Red
-	INFO = '\033[38;5;039m' # Blue
-	ENDC = '\033[0m' # End
-	DIVIDER = "=" * 80 # Divider line
-
-	@staticmethod
-	def log(msg, msg_type=''):
-		print("{}{}{}".format(msg_type, msg, OutputHelper.ENDC if msg_type else ''))
-
-	@staticmethod
-	def print_message(msg, msg_type=''):
-		"""
-		Prints a formatted output message
-
-		"""
-		print("\n")
-		print("{}{}{}".format(msg_type, OutputHelper.DIVIDER, OutputHelper.ENDC))
-		print("    {}{}{}".format(msg_type, msg, OutputHelper.ENDC))
-		print("{}{}{}".format(msg_type, OutputHelper.DIVIDER, OutputHelper.ENDC))
-		print("\n")
+_logger = logging.getLogger(__name__)
 
 class JSync:
 
@@ -134,7 +112,7 @@ class JSync:
 					
 			except Exception as e:
 
-				OutputHelper.print_message(debug_msg.format('CONNECTION ERROR!', self.name, self.mode, debug_data, self.part), OutputHelper.ERROR)
+				_logger.error(debug_msg.format('CONNECTION ERROR!', self.name, self.mode, debug_data, self.part))
 				
 				if self.settings['conexion_error']:
 					if type(e) is not ValidationError:
@@ -145,7 +123,7 @@ class JSync:
 			# Si la respuesta es OK
 			if jsync_post and jsync_post.status_code is 200:
 
-				OutputHelper.print_message(debug_msg.format(jsync_post.text, self.name, self.mode, debug_data, self.part), OutputHelper.OK)
+				_logger.info(debug_msg.format(jsync_post.text, self.name, self.mode, debug_data, self.part))
 
 				# En los paquetes múltiples no se establecen estos parámetros
 				# por lo que no se notifican al usuario ni se registran en el sistema
@@ -170,7 +148,7 @@ class JSync:
 
 			elif jsync_post:
 
-				OutputHelper.print_message(debug_msg.format('RESPONSE ERROR!', self.name, self.mode, debug_data, self.part), OutputHelper.ERROR)
+				_logger.error(debug_msg.format('RESPONSE ERROR!', self.name, self.mode, debug_data, self.part))
 				
 				if self.settings['conexion_error'] and self.settings['response_error']:
 					raise ValidationError("JSync Server Response Error\n%s" % (jsync_post.text.encode('latin1').capitalize()))

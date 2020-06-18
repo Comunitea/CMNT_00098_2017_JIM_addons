@@ -103,15 +103,14 @@ class B2bItemsOut(models.Model):
 
 		# These models should not be synchronized directly
 		excluded_models = (
-			'product.template.categorization', 'product.product.categorization', 'product.image', # PRODUCT TRIGGER
+			'product.template.categorization', 'product.product.categorization', # PRODUCT TRIGGER
 			'stock.picking', 'sale.order', 'account.invoice', # CUSTOMER TRIGGER
 			'customer.price', 'product.pricelist.item' # CRONJOBS
 		)
 
 		for model in self.get_models():
 			if model not in excluded_models:
-				# Acelerate certain models
-				# with specific queries
+				# Model specific queries
 				if model == 'stock.move':
 					search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
 				elif model == 'res.partner':
@@ -122,6 +121,8 @@ class B2bItemsOut(models.Model):
 					search_query = [('date_done', '>=', docs_min_date)]
 				elif model == 'sale.order':
 					search_query = [('date_order', '>=', docs_min_date)]
+				elif model == 'product.tag':
+					search_query = ['|', ('active', '=', True), ('active', '=', False)]
 
 				# Get code model records
 				records_ids = self.env[model].search(search_query, order='id ASC').ids
@@ -146,20 +147,22 @@ class B2bItemsOut(models.Model):
 
 						create_records += 1
 						print("@@ CREATE RECORD WITH ID#%s" % (id), record_percent_str)
-						for packet in record.b2b_record('create', conf_items_before=notifiable_items):
+						for packet in record.b2b_record('create', conf_items_before=notifiable_items, auto_send=False):
 							packet.send(notify=False)
 
 					elif not notifiable_items and record_on_jsync:
 
 						delete_records += 1
 						print("@@ DELETE RECORD WITH ID#%s" % (id), record_percent_str)
-						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,]):
+						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], auto_send=False):
 							packet.send(notify=False)
 
 					else:
 
 						print("@@ RECORD ID#%s NOT NOTIFIABLE OR ALREDY IN JSYNC" % (id), record_percent_str)
 
+				print("@@ CREATE RECORDS", create_records)
+				print("@@ DELETE RECORDS", delete_records)
 				print("************* FIN B2B ITEM *************")
 
 				# Notify user

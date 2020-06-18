@@ -83,11 +83,10 @@ def get_data(self, action):
             <field name="name">category</field>
             <field name="model">product.tag</field>
             <field name="description">Categorías de producto</field>
-            <field name="code">fields_to_watch = ('id', 'name', 'parent_id', 'public_file_name', 'sequence')
+            <field name="code">fields_to_watch = ('id', 'name', 'parent_id', 'public_file_name', 'sequence', 'active', 'web')
 
 def is_notifiable(self, action, vals):
-    # Está activa para la web (y la categoría padre también) y está activa
-    return self.web and (not self.parent_id or (self.parent_id and self.parent_id.web)) and self.active
+    return True
 
 def get_data(self, action):
     return {
@@ -95,7 +94,9 @@ def get_data(self, action):
         'name': self.get_field_translations('name'),
         'parent_id': self.parent_id.id if self.parent_id else None,
         'image': b2b['images_base'] + self.public_file_name if self.public_file_name else None,
-        'sequence': self.sequence
+        'sequence': self.sequence,
+        # Está activa y activa para la web (y la categoría padre también)
+        'fixed:active': bool(self.active and self.web and (not self.parent_id or (self.parent_id and self.parent_id.web)))
     }</field>
         </record>
 
@@ -141,7 +142,7 @@ def get_data(self, action):
 
 def is_notifiable(self, action, vals):
     # Los productos no se envían cuando se crean sino cuando se pulsa el botón de publicar
-    return action != 'create' and self.website_published
+    return self.website_published
 
 def get_data(self, action):
     return {
@@ -159,7 +160,7 @@ def get_data(self, action):
 
 def pos_data(self, action):
     # Creamos los datos relaccionados
-    if action == 'create':
+    if b2b['crud_mode'] == 'create':
         # Crear las imágenes del producto
         for image in self.product_image_ids:
             image.b2b_record('create')
@@ -189,10 +190,13 @@ def pos_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    # La plantilla está publicada y tiene código y es almacenable y tiene etiquetas 
-    # y tiene atributos (las variantes únicas no tienen atributos)
-    return self.product_tmpl_id.website_published and self.default_code and self.product_tmpl_id.type == 'product' and self.attribute_names and self.website_published
-    
+    return self.product_tmpl_id.website_published # La plantilla está publicada
+        and self.default_code # Y tiene código
+        and self.product_tmpl_id.type == 'product' # Y es almacenable
+        and self.attribute_names # Y tiene atributos (las variantes únicas no tienen atributos)
+        and len(self.attribute_value_ids) == 2 # Y tiene 2 atributos
+        and self.website_published # Y está publicada
+
 def get_data(self, action):
     return {
         'fixed:jim_id': self.id,
@@ -206,7 +210,7 @@ def get_data(self, action):
     
 def pos_data(self, action):
     # Creamos los datos relaccionados
-    if action == 'create':
+    if b2b['crud_mode'] == 'create':
         # Crear la parametrización
         if 'product.product.categorization' in self.env:
             for p in self.env['product.product.categorization'].search([('product_id', '=', self.id)]):
@@ -222,8 +226,9 @@ def pos_data(self, action):
             <field name="code">fields_to_watch = None
 
 def is_notifiable(self, action, vals):
-    # Está asociada a un producto, y el producto está publicado y se está editando y se recibe "lang" o se está creando
-    return self.product_id and self.product_id.website_published and (not vals or (type(vals) is dict and vals.get('lang')))
+    return self.product_id # Está asociada a un producto
+        and self.product_id.website_published # Y el producto está publicado
+        and (not vals or (type(vals) is dict and vals.get('lang'))) # Y se recibe "lang" o se está creando
     
 def model_parameterization(self):
     parameters = dict()
@@ -289,6 +294,7 @@ def get_data(self, action):
             <field name="code">fields_to_watch = None
 
 def is_notifiable(self, action, vals):
+    # El producto relaccionado está publicado
     return self.product_tmpl_id.website_published
 
 def get_data(self, action):
@@ -331,6 +337,7 @@ def get_data(self, action):
             <field name="code">fields_to_watch = ('name', 'currency_id', 'web')
 
 def is_notifiable(self, action, vals):
+    # Activa para la web
     return self.web
 
 def get_data(self, action):
@@ -358,12 +365,15 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    # El producto asociado está publicado
     product_published = self.product_id.product_tmpl_id.website_published
-    # La variante asociada está publicada o es una variante única
     variant_published = self.product_id.website_published if self.product_id.product_tmpl_id.product_variant_count > 1 else product_published
-    # El producto asociado está publicado y el tipo de picking es 'Recepciones (MECALUX)' y el estado es 'assigned' y es un INT y hace referencia a una línea de compra y la fecha es superior a la actual
-    return product_published and variant_published and self.product_id.product_tmpl_id.website_published and self.picking_type_id.id == 13 and self.state == 'assigned' and self.picking_type_id.code == 'incoming' and self.purchase_line_id and datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now()
+    return product_published # El producto relaccionado está publicado
+        and variant_published # La variante relaccionada está publicada
+        and self.picking_type_id.id == 13 # Y el tipo de picking es 'Recepciones (MECALUX)'
+        and self.state == 'assigned' # Y el estado es 'assigned'
+        and self.picking_type_id.code == 'incoming' # Y es un INT
+        and self.purchase_line_id # Y hace referencia a una línea de compra
+        and datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now() # Y la fecha es superior a la actual
 
 def get_data(self, action):
     return {
@@ -397,8 +407,13 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    # Es un contacto y es empresa y tiene asignada por lo menos una empresa para la web y tiene correo electrónico válido y tiene contraseña web y es el contacto principal
-    return self.active and self.is_company and self.vip_web_access and self.customer and self.email and self.has_valid_emails() and self.commercial_partner_id.id == self.id  and self.type == 'contact'
+    return self.active # Está activo
+        and self.is_company # Y es empresa
+        and self.vip_web_access # Y tiene asignada por lo menos una empresa para la web
+        and self.customer # Y es cliente
+        and self.email and self.has_valid_emails() # Y tiene un email válido
+        and self.commercial_partner_id.id == self.id # Y es el contacto principal
+        and self.type == 'contact' # Y es un contacto
 
 def get_data(self, action):
     return {
@@ -412,19 +427,10 @@ def get_data(self, action):
     }
 
 def pos_data(self, action):
-    if action == 'create':
+    if b2b['crud_mode'] == 'create':
         # Creamos las direcciones
         for child in self.child_ids:
-            child.b2b_record('create')
-        # Creamos los pedidos
-        for order in self.sale_order_ids:
-            order.b2b_record('create')
-        # Creamos las facturas
-        for invoice in self.invoice_ids:
-            invoice.b2b_record('create')
-        # Creamos los albaranes
-        for picking in self.env['stock.picking'].search([('partner_id', '=', self.id)]):
-            picking.b2b_record('create')</field>
+            child.b2b_record('create')</field>
         </record>
 
         <record id="b2b_item_out_14" model="b2b.item.out">
@@ -450,8 +456,10 @@ def pos_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    # Es de tipo 'invoice' o 'delivery' y no es una dirección de dropshipping
-    return self.active and self.type in ('invoice', 'delivery') and self.name != 'DROPSHIPPING' and self.parent_id.is_notifiable_check()
+    return self.active # Está activa
+        and self.type in ('invoice', 'delivery') # Y es de tipo 'invoice' o 'delivery'
+        and self.name != 'DROPSHIPPING' # Y no es una dirección de dropshipping
+        and self.parent_id.is_notifiable_check() # Y el cliente es notificable
 
 def get_data(self, action):
     return {
@@ -485,8 +493,10 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    # Es de tipo out_invoice o out_refund y tiene asignado un número y el estado es open o cancel
-    return self.number and self.type in ('out_invoice', 'out_refund') and self.state in ('open', 'paid') and self.commercial_partner_id.is_notifiable_check()
+    return self.number # Tiene un número asignado
+        and self.type in ('out_invoice', 'out_refund') # Y es de tipo out_invoice o out_refund
+        and self.state in ('open', 'paid') # Y el estado es abierta o pagada
+        and self.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
 
 def get_data(self, action):
     # Obtenemos la moneda y posición
@@ -497,8 +507,8 @@ def get_data(self, action):
     # de forma que los campos que no se modifican al validar no se enviarían
     doc_data = { 'fixed:jim_id': self.id }
     
-    # If not a delete action
-    if action != 'delete':
+    # If not a delete mode
+    if b2b['crud_mode'] != 'delete':
         # Actualizamos los datos
         doc_data.update({ 
             'fixed:customer_id': self.commercial_partner_id.id,
@@ -525,20 +535,19 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    # Es un albarán de salida o dropshipping
     is_out_delivery = (self.picking_type_code == 'outgoing' or self.picking_type_id.name == 'Dropship')
-    # Está asociado a una venta y tiene fecha de validación y está validado
     is_done = self.orig_sale_id and self.date_done and self.state == 'done'
-    # Está asociado a una venta y el estado es done y el cliente es notificable
-    return is_out_delivery and is_done and self.partner_id.is_notifiable_check()
+    return is_out_delivery # Es un albarán de salida o dropshipping
+        and is_done # Y stá asociado a una venta y tiene fecha de validación y está validado
+        and self.partner_id.is_notifiable_check() # Y el cliente es notificable
 
 def get_data(self, action):
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
     # de forma que los campos que no se modifican al validar no se enviarían
     doc_data = { 'fixed:jim_id': self.id }
     
-    # If not a delete action
-    if action != 'delete':
+    # If not a delete mode
+    if b2b['crud_mode'] != 'delete':
         # Obtenemos la moneda y posición
         currency = self.orig_sale_id.pricelist_id.currency_id.symbol
         position = self.orig_sale_id.pricelist_id.currency_id.position
@@ -572,8 +581,9 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    # Es un pedido de venta y (se recibe date_order en vals y el estado es pending o lqdr) o el estado es cancel
-    return (type(vals) is dict and not vals.get('date_order')) and self.state not in ('draft', 'cancel') and self.partner_id.is_notifiable_check()
+    return (type(vals) is dict and not vals.get('date_order')) # Se recibe date_order en vals
+        and self.state not in ('draft', 'cancel') # Y el estado no es borrador o cancelado
+        and self.partner_id.is_notifiable_check() # Y el cliente es notificable
 
 def get_data(self, action):
     # Obtenemos la moneda y posición
@@ -584,8 +594,8 @@ def get_data(self, action):
     # de forma que los campos que no se modifican al validar no se enviarían
     doc_data = { 'fixed:jim_id': self.id }
     
-    # If not a delete action
-    if action != 'delete':
+    # If not a delete mode
+    if b2b['crud_mode'] != 'delete':
         # Actualizamos los datos
         doc_data.update({ 
             'fixed:customer_id': self.partner_id.id,
@@ -608,6 +618,7 @@ def get_data(self, action):
             <field name="code">fields_to_watch = None
 
 def is_notifiable(self, action, vals):
+    # Está asociada a un producto o variante
     return self.product_id or self.product_tmpl_id
 
 def get_data(self, action):

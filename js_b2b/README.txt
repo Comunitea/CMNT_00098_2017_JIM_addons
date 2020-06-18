@@ -20,9 +20,11 @@ VERSIONES SOPORTADAS (Probadas)
 REQUISITOS
 ==========
 
-Este módulo requiere las siguientes librerías de python, para instalarlas acceder al sandbox y ejecutar el comando: pip install -librería-
+Este módulo requiere las siguientes librerías de python, para instalarlas acceder al sandbox y ejecutar el comando: pip install module/requirements.txt
+o bien pip install -librería- por cada una de ellas
 
 * urllib3 >= 1.25.3
+* httplib2 >= 0.13.1
 * Unidecode >= 1.1.1
 * requests >= 2.22.0
 * barcodenumber >= 0.5.0

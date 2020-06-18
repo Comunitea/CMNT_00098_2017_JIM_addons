@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, models, tools
-from .helper import OutputHelper, JSync
+from .helper import JSync
 from base64 import b64encode
 			
 # Module base class
@@ -124,7 +124,16 @@ class BaseB2B(models.AbstractModel):
 		return items_list
 
 	@api.multi
-	def b2b_record(self, mode, vals=None, conf_items_before=None):
+	def b2b_record(self, mode, vals=None, conf_items_before=None, auto_send=True):
+		"""
+		B2B Action Trigger
+
+		:param mode: Real action
+		:param vals: Values to update
+		:param conf_items_before: Applicable configs before action
+		:param auto_send: Send packets after creation
+		:return: JSync Packets
+		"""
 
 		# Librerías permitidas en el código
 		from datetime import datetime
@@ -182,6 +191,8 @@ class BaseB2B(models.AbstractModel):
 				packet.data = b2b['get_data'](record, mode)
 				# Filtramos los datos
 				packet.filter_data(vals)
+				# Si procede enviamos el paquete
+				if auto_send: packet.send(notify=True)
 				# Guardamos el paquete
 				packets.append(packet)
 
@@ -214,8 +225,7 @@ class BaseB2B(models.AbstractModel):
 	def create(self, vals):
 		#print("----------- [B2B BASE] CREATE", self._name, vals)
 		item = super(BaseB2B, self).create(vals)
-		for packet in item.b2b_record('create'):
-			packet.send()
+		item.b2b_record('create')
 		return item
 
 	@api.multi
@@ -223,15 +233,14 @@ class BaseB2B(models.AbstractModel):
 		#print("----------- [B2B BASE] WRITE", self._name, vals)
 		items_to_send = self.is_notifiable_check('update', vals)
 		items = super(BaseB2B, self).write(vals)
-		for packet in self.b2b_record('update', vals, conf_items_before=items_to_send):
-			packet.send()
+		self.b2b_record('update', vals, conf_items_before=items_to_send)
 		return items
 
 	@api.multi
 	def unlink(self):
 		#print("----------- [B2B BASE] DELETE", self._name, self)
 		items_to_send = self.is_notifiable_check('delete')
-		packets = self.b2b_record('delete', False, conf_items_before=items_to_send)
+		packets = self.b2b_record('delete', False, conf_items_before=items_to_send, auto_send=False)
 		if super(BaseB2B, self).unlink():
 			for packet in packets:
 				packet.send()

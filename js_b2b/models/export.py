@@ -4,6 +4,7 @@ from odoo.addons.queue_job.job import job
 from ..base.helper import JSync
 from os import path, pardir
 from datetime import datetime
+from sys import getsizeof
 import psycopg2.extras
 
 class B2BExport(models.Model):
