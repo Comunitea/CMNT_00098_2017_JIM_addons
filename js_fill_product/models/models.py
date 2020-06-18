@@ -3,7 +3,7 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import models, fields, api
-import urllib
+import urllib2 as urllib
 import base64
 
 class ProductTemplate(models.Model):
@@ -28,34 +28,29 @@ class ProductTemplate(models.Model):
         # Carga la imagen principal
         try:
             print(URL + image_name)
-            image = urllib.request.urlopen(URL + image_name).read()
-        except urllib.error.URLError as e:
+            image = urllib.urlopen(URL + image_name).read()
+        except urllib.URLError as e:
             print("ERROR en la descarga de la imagen: ", e.reason)
             return(False)
         imageBase64 = base64.b64encode(image)
-        self.image_medium = imageBase64
+        self.write({ 'image_medium':imageBase64 }, resize=False)
 
         print("################ DESCARGANDO IMAGENES (VARIANTES)")
+        # Eliminar imágenes antiguas
+        self.product_image_ids.unlink()
+
         # Carga las imágenes secundarias
-        images = []
         i = 1
         # Bucle para generar las combinaciones de nombres
         while True:
             image_name = self.default_code + '-' + str(i)
             try:
                 print(URL + image_name)
-                image = urllib.request.urlopen(URL + image_name + ".jpg").read()
-            except urllib.error.URLError as e:
-                # Borramos las imágenes antiguas
-                for product_image in self.product_image_ids:
-                    product_image.unlink()
-
-                # Si la combinación de nombre no se encuentra, guardamos las imágenes encontradas y salimos
-                self.write({'product_image_ids': [(6, 0, images)]})
-                return(True)
-            imageBase64 = base64.b64encode(image)
-            new_image = self.product_image_ids.create({'name': image_name, 'image': imageBase64})
-            images.append(new_image.id)
+                image = urllib.urlopen(URL + image_name + ".jpg").read()
+                imageBase64 = base64.b64encode(image)
+            except urllib.URLError as e:
+                    return(True)
+            new_image = self.env['product.image'].create({'product_tmpl_id': self.id, 'name': image_name, 'image': imageBase64}, resize=False)
             i += 1
 
     @api.model
@@ -65,7 +60,7 @@ class ProductTemplate(models.Model):
         product_list = self.search([('sale_ok', '=', True),
                                         ('default_code', '!=', False),
                                         ('type', '=', 'product')],
-                                        order='id')
+                                        order='id', limit=10)
 
         debug_total = str(len(product_list))
         

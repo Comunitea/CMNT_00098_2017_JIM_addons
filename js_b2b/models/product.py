@@ -83,20 +83,22 @@ class ProductTemplate(models.Model, PublicImage):
 		return res
 
 	@api.model
-	def create(self, vals):
+	def create(self, vals, resize=True):
 		if vals.get('image_medium'):
-			vals.update({ 'image_medium': self._resize_large_image(vals['image_medium']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image_medium']) })
+			img = self._resize_large_image(vals['image_medium']) if resize else vals['image_medium']
+			vals.update({ 'image_medium': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 		return super(ProductTemplate, self).create(vals)
 
 	@api.multi
-	def write(self, vals):
+	def write(self, vals, resize=True):
 		if vals.get('image_medium') == False:
 			self._ftp_delete_file()
 			vals.update({ 'public_file_name': None })
 		elif vals.get('image_medium'):
-			vals.update({ 'image_medium': self._resize_large_image(vals['image_medium']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image_medium']) })
+			img = self._resize_large_image(vals['image_medium']) if resize else vals['image_medium']
+			vals.update({ 'image_medium': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 		return super(ProductTemplate, self).write(vals)
 
 	@api.multi
@@ -176,20 +178,22 @@ class ProductBrand(models.Model, PublicImage):
 	public_file_name = fields.Char('Brand Public File Name')
 
 	@api.model
-	def create(self, vals):
+	def create(self, vals, resize=True):
 		if vals.get('logo'):
-			vals.update({ 'logo': self._resize_large_image(vals['logo']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['logo']) })
+			img = self._resize_large_image(vals['logo']) if resize else vals['logo']
+			vals.update({ 'logo': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 		return super(ProductBrand, self).create(vals)
 
 	@api.multi
-	def write(self, vals):
+	def write(self, vals, resize=True):
 		if vals.get('logo') == False:
 			self._ftp_delete_file()
 			vals.update({ 'public_file_name': None })
 		elif vals.get('logo'):
-			vals.update({ 'logo': self._resize_large_image(vals['logo']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['logo']) })
+			img = self._resize_large_image(vals['logo']) if resize else vals['logo']
+			vals.update({ 'logo': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 		return super(ProductBrand, self).write(vals)
 
 	@api.multi
@@ -211,20 +215,22 @@ class ProductTag(models.Model, PublicImage):
 	public_file_name = fields.Char('Tag Public File Name')
 
 	@api.model
-	def create(self, vals):
+	def create(self, vals, resize=True):
 		if vals.get('image'):
-			vals.update({ 'image': self._resize_large_image(vals['image']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
+			img = self._resize_large_image(vals['image']) if resize else vals['image']
+			vals.update({ 'image': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 		return super(ProductTag, self).create(vals)
 
 	@api.multi
-	def write(self, vals):
+	def write(self, vals, resize=True):
 		if vals.get('image') == False:
 			self._ftp_delete_file()
 			vals.update({ 'public_file_name': None })
 		elif vals.get('image'):
-			vals.update({ 'image': self._resize_large_image(vals['image']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
+			img = self._resize_large_image(vals['image']) if resize else vals['image']
+			vals.update({ 'image': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 		return super(ProductTag, self).write(vals)
 
 	@api.multi
@@ -258,20 +264,22 @@ class ProductAttributeValue(models.Model, PublicImage):
 				raise ValidationError(_("The image must be a jpg file"))
 
 	@api.model
-	def create(self, vals):
+	def create(self, vals, resize=True):
 		if vals.get('image_color'):
-			vals.update({ 'image_color': self._resize_large_image(vals['image_color']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image_color']) })
+			img = self._resize_large_image(vals['image_color']) if resize else vals['image_color']
+			vals.update({ 'image_color': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 		return super(ProductAttributeValue, self).create(vals)
 
 	@api.multi
-	def write(self, vals):
+	def write(self, vals, resize=True):
 		if vals.get('image_color') == False:
 			self._ftp_delete_file()
 			vals.update({ 'public_file_name': None })
 		elif vals.get('image_color'):
-			vals.update({ 'image_color': self._resize_large_image(vals['image_color']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image_color']) })
+			img = self._resize_large_image(vals['image_color']) if resize else vals['image_color']
+			vals.update({ 'image_color': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 		return super(ProductAttributeValue, self).write(vals)
 
 	@api.multi
@@ -298,20 +306,22 @@ class ProductPublicCategory(models.Model, PublicImage):
 	public_file_name = fields.Char('Category Public File Name')
 
 	@api.model
-	def create(self, vals):
+	def create(self, vals, resize=True):
 		if vals.get('image'):
-			vals.update({ 'image': self._resize_large_image(vals['image']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
+			img = self._resize_large_image(vals['image']) if resize else vals['image']
+			vals.update({ 'image': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 		return super(ProductPublicCategory, self).create(vals)
 
 	@api.multi
-	def write(self, vals):
+	def write(self, vals, resize=True):
 		if vals.get('image') == False:
 			self._ftp_delete_file()
 			vals.update({ 'public_file_name': None })
 		elif vals.get('image'):
-			vals.update({ 'image': self._resize_large_image(vals['image']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
+			img = self._resize_large_image(vals['image']) if resize else vals['image']
+			vals.update({ 'image': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 		return super(ProductPublicCategory, self).write(vals)
 
 	@api.multi
@@ -361,23 +371,25 @@ class ProductImage(models.Model, PublicImage):
 		}
 
 	@api.model
-	def create(self, vals):
+	def create(self, vals, resize=True):
 		if not vals.get('image'):
 			raise ValidationError(image_without_file_error)
 		else:
-			vals.update({ 'image': self._resize_large_image(vals['image']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
+			img = self._resize_large_image(vals['image']) if resize else vals['image']
+			vals.update({ 'image': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 
 		return super(ProductImage, self).create(vals)
 
 	@api.multi
-	def write(self, vals):
+	def write(self, vals, resize=True):
 		if not vals.get('image', self.image):
 			raise ValidationError(image_without_file_error)
 
 		if vals.get('image'):
-			vals.update({ 'image': self._resize_large_image(vals['image']) })
-			vals.update({ 'public_file_name': self._ftp_save_base64(vals['image']) })
+			img = self._resize_large_image(vals['image']) if resize else vals['image']
+			vals.update({ 'image': img })
+			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
 
 		return super(ProductImage, self).write(vals)
 
