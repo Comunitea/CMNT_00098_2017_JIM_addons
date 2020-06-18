@@ -54,13 +54,13 @@ class ProductTemplate(models.Model):
             i += 1
 
     @api.model
-    def batch_update(self):
+    def batch_update(self, test_limit=None):
         print('[js_fill_product] ****** Inicio del proceso de descarga de imágenes ******')
 
         product_list = self.search([('sale_ok', '=', True),
                                         ('default_code', '!=', False),
                                         ('type', '=', 'product')],
-                                        order='id', limit=10)
+                                        order='id', limit=test_limit)
 
         debug_total = str(len(product_list))
         
