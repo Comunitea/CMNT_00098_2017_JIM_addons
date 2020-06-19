@@ -69,6 +69,11 @@ msgid "B2B Items Out"
 msgstr "Registros Salida B2B"
 
 #. module: js_b2b
+#: model:ir.actions.act_window,name:js_b2b.export_action_b2b
+msgid "Export List"
+msgstr "Lista de Exportación"
+
+#. module: js_b2b
 #: model:ir.actions.act_window,name:js_b2b.js_b2b_settings
 #: model:ir.ui.view,arch_db:js_b2b.js_b2b_settings_form
 msgid "B2B Settings"
@@ -316,6 +321,11 @@ msgid "Items Out"
 msgstr "Registros de Salida"
 
 #. module: js_b2b
+#: model:ir.ui.menu,name:js_b2b.menu_public_export_b2b
+msgid "Records on JSync"
+msgstr "Registros en JSync"
+
+#. module: js_b2b
 #: model:ir.model.fields,field_description:js_b2b.field_b2b_settings_url
 msgid "JSync URL"
 msgstr "URL de JSync"
@@ -471,7 +481,22 @@ msgstr "Producto Relaccionado"
 #. module: js_b2b
 #: model:ir.model.fields,field_description:js_b2b.field_b2b_export_res_id
 msgid "Res id"
-msgstr "ID"
+msgstr "Elemento"
+
+#. module: js_b2b
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_export_rel_id
+msgid "Rel id"
+msgstr "Relación"
+
+#. module: js_b2b
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_export_created_date
+msgid "Created on"
+msgstr "Creado el"
+
+#. module: js_b2b
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_export_write_date
+msgid "Last Updated on"
+msgstr "Actualizado el"
 
 #. module: js_b2b
 #: model:ir.model.fields,field_description:js_b2b.field_b2b_settings_response_error
@@ -706,7 +731,7 @@ msgstr "product.image"
 #. module: js_b2b
 #: sql_constraint:b2b.export:0
 msgid "res_id needs to be unique!"
-msgstr "¡El ID debe ser único!"
+msgstr "¡El elemento a exportar debe ser único!"
 
 #. module: js_b2b
 #: code:addons/js_b2b/models/product.py:151

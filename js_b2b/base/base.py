@@ -178,14 +178,18 @@ class BaseB2B(models.AbstractModel):
 				packet.id = record.id
 				# Modelo del registro
 				packet.model = record._name
-				# Obtenemos el modo
-				packet.mode = b2b['crud_mode']
 				# Obtenemos el nombre
 				packet.name = item.name
+				# Obtenemos la copia del modo
+				packet.mode = b2b['crud_mode']
 
 				# Ejecutamos la función pre_data si existe
 				if 'pre_data' in b2b and callable(b2b['pre_data']):
 					b2b['pre_data'](record, mode)
+
+				# Obtenemos la relacción (si la tiene)
+				if 'related_to' in b2b and callable(b2b['related_to']):
+					packet.related = b2b['related_to'](record, mode)
 
 				# Obtenemos los datos
 				packet.data = b2b['get_data'](record, mode)
@@ -215,8 +219,9 @@ class BaseB2B(models.AbstractModel):
 		metadata = super(BaseB2B, self).get_metadata()
 		for i,v in enumerate(metadata):
 			record = self.browse(v['id'])
+			res_id = '%s,%s' % (self._name, record.id)
 			record_notifiable = record.is_notifiable_check()
-			record_in_jsync = self.env['b2b.export'].sync_get(self._name, record.id)
+			record_in_jsync = self.env['b2b.export'].sync_get(res_id)
 			metadata[i]['b2b_notifiable'] = ', '.join(record_notifiable) if record_notifiable else 'false'
 			metadata[i]['b2b_record_on_jsync'] = 'true' if record_in_jsync else 'false'
 		return metadata

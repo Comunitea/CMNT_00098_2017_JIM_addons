@@ -5,38 +5,37 @@ from ..base.helper import JSync
 from os import path, pardir
 from datetime import datetime
 from sys import getsizeof
+from math import ceil
 import psycopg2.extras
 
 class B2BExport(models.Model):
 	_name = "b2b.export"
 	_log_filename = 'b2b.export.log'
-	_sql_constraints = [('res_id_unique', 'unique(res_id)', 'res_id needs to be unique!')]
+	_sql_constraints = [('res_id_unique', 'unique(res_id)', 'Export res_id needs to be unique!')]
 
-	name = fields.Char(required=True, translate=False)
-	res_id = fields.Char(required=True, translate=False)
-
-	@api.model
-	def sync_get(self, model_name, record_id):
-		res_id = '%s,%s' % (model_name, record_id)
-		return self.search([('res_id', '=', res_id)], limit=1)
+	name = fields.Char(required=True, translate=False, help="Conf item name") 
+	res_id = fields.Char(required=True, translate=False, help="Record and model [model_name,record_id]")
+	rel_id = fields.Char(required=False, translate=False, help="Related to [model_name,record_id]")
 
 	@api.model
-	def sync_set(self, model_name, record_id, conf_item):
-		#if not self.sync_get(model_name, record_id):
-		res_id = '%s,%s' % (model_name, record_id)
-		return self.create({ 'res_id': res_id, 'name': conf_item })
+	def sync_get(self, resource):
+		return self.search([('res_id', '=', resource)], limit=1)
 
 	@api.model
-	def sync_upd(self, model_name, record_id, conf_item):
-		res_id = '%s,%s' % (model_name, record_id)
-		record = self.sync_get(model_name, record_id)
-		if record: record.conf_item = conf_item
-		else: self.sync_set(model_name, record_id, conf_item)
+	def sync_set(self, resource, conf_item, related=False):
+		return self.create({ 'name': conf_item, 'res_id': resource, 'rel_id': related })
+
+	@api.model
+	def sync_upd(self, resource, conf_item, related=False):
+		record = self.sync_get(resource)
+		if record: record.write({ 'name': conf_item, 'rel_id': related })
+		else: self.sync_set(resource, conf_item, related)
 		return True
 
 	@api.model
-	def sync_del(self, model_name, record_id):
-		self.sync_get(model_name, record_id).unlink()
+	def sync_del(self, resource, related=False):
+		self.sync_get(resource).unlink()
+		self.search([('rel_id', '=', related)]).unlink()
 		return True
 
 	# ------------------------------------ LOGGER ------------------------------------
@@ -108,12 +107,12 @@ class B2BExport(models.Model):
 		# large datasets have to be divided in multiple parts
 		# determined by packet_size on settings
 		packet_size_mb = jsync_conf.get('packet_size', 10)
-		data_size = getsizeof(self.data)/1048576
+		data_size = getsizeof(data_list)/1048576
 		num_packets_total = ceil(data_size / packet_size_mb) or 1
-		data_items_count = len(self.data)
+		data_items_count = len(data_list)
 		avg = data_items_count / float(num_packets_total)
 		while last < data_items_count:
-			data_parts.append(iter(self.data[int(last):int(last + avg)]))
+			data_parts.append(iter(data_list[int(last):int(last + avg)]))
 			last += avg
 
 		self.env.user.notify_info('[B2B PACKET] %s <b>%s</b> (%s)' % (object_name.capitalize(), object_name, data_items_count))
@@ -126,7 +125,7 @@ class B2BExport(models.Model):
 			packet.data = list(part)
 			packet.mode = action_str
 			packet.part = [i + 1, num_packets]
-			packet.send(timeout_sec=300)
+			packet.send(notify=False, timeout_sec=300)
 
 	@job
 	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, variant=None, operation=None):
@@ -167,9 +166,9 @@ class B2BExport(models.Model):
 				product_number += 1
 				percent = round((product_number / total_products) * 100, 1)
 				product = self.env['product.template'].browse(product_id)
-				print("---------------------------------------------------------------------------")
-				print(":: %s%% PROCESANDO... [%s] %s" % (percent, product.default_code, product.name))
-				print("---------------------------------------------------------------------------")
+				print("--------------------------------------------------------------------")
+				print(":: %s%% [%s] %s" % (percent, product.default_code, product.name))
+				print("--------------------------------------------------------------------")
 				print(":: %10s\t%10s\t%6s\t%8s" % ('PRICELIST', 'VARIANT', 'QTY', 'PRICE'))
 				# For each pricelist
 				for pricelist in pricelists:
@@ -184,7 +183,7 @@ class B2BExport(models.Model):
 							price = None if operation == 'delete' and not variant else round(variants_prices[0], prices_precision)
 							# If price is not 0 and not in prices list yet with qty 1
 							product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
-							if not bool(list(product_filter)):
+							if not bool(list(product_filter)) and (operation == 'delete' or price):
 								print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
 								prices.append({ 
 									'company_id': pricelist[2] or None,

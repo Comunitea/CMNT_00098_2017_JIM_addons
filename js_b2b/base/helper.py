@@ -6,15 +6,13 @@ from odoo.exceptions import ValidationError
 from requests.packages.urllib3.util.retry import Retry as httpRetry
 from json import loads as json_load, dumps as json_dump
 from unidecode import unidecode
-from os import environ
-from math import ceil
 import logging
 
 _logger = logging.getLogger(__name__)
 
 class JSync:
 
-	__slots__ = ['id', 'env', 'model', 'mode', 'name', 'data', 'part', 'session', 'settings']
+	__slots__ = ['id', 'env', 'model', 'mode', 'name', 'data', 'part', 'related', 'session', 'settings']
 
 	def __init__(self, odoo_env, settings=None, retries=3):
 		retry = httpRetry(total=retries, connect=retries, backoff_factor=0.3, status_forcelist=(500, 502, 504))
@@ -26,6 +24,7 @@ class JSync:
 		self.name = None # Data item name
 		self.data = {} # Item data dict
 		self.part = None # Multi-packet part
+		self.related = None # Odoo related model & record
 		self.env = odoo_env # Odoo environment
 		self.session = Session() # HTTP Session
 		self.session.mount('http://', adapter)
@@ -129,17 +128,20 @@ class JSync:
 				# por lo que no se notifican al usuario ni se registran en el sistema
 				if self.name and self.id and self.model:
 
+					# Odoo resource name
+					res_id = '%s,%s' % (self.model, self.id)
+
 					# Mostrar notificación no invasiva al usuario en Odoo
 					if notify:
 						self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
 
 					# Guardar el estado en Odoo
 					if self.mode == 'create':
-						self.env['b2b.export'].sync_set(self.model, self.id, self.name)
+						self.env['b2b.export'].sync_set(res_id, self.name, self.related)
 					elif self.mode == 'update':
-						self.env['b2b.export'].sync_upd(self.model, self.id, self.name)
+						self.env['b2b.export'].sync_upd(res_id, self.name, self.related)
 					elif self.mode == 'delete':
-						self.env['b2b.export'].sync_del(self.model, self.id)
+						self.env['b2b.export'].sync_del(res_id, self.related)
 
 				try:
 					return json_load(jsync_post.text)

@@ -19,6 +19,10 @@ class B2bItemsOut(models.Model):
         def is_notifiable(self, action, vals):
             return True
 
+        # Set the model and related record for a cascade delete
+        def related_to(self, action):
+            return None
+
         # Object data to send
         def get_data(self, action):
             return {
@@ -101,10 +105,12 @@ class B2bItemsOut(models.Model):
 		record_number = 0.0 # Record counter
 		docs_min_date = '2019-01-01' # Begin date
 
+		# TODO: ELIMINAR ESTO EN PRODUCCIÓN!
+		docs_min_date = '2020-04-01'
+
 		# These models should not be synchronized directly
 		excluded_models = (
 			'product.template.categorization', 'product.product.categorization', # PRODUCT TRIGGER
-			'stock.picking', 'sale.order', 'account.invoice', # CUSTOMER TRIGGER
 			'customer.price', 'product.pricelist.item' # CRONJOBS
 		)
 
@@ -135,6 +141,8 @@ class B2bItemsOut(models.Model):
 				print("@@ ITEM MODEL", str(model))
 				print("@@ TOTAL RECORDS", total_records)
 
+				packets = list()
+
 				for id in records_ids:
 					record_number += 1
 					record_percent = round((record_number / total_records) * 100, 1)
@@ -148,19 +156,23 @@ class B2bItemsOut(models.Model):
 						create_records += 1
 						print("@@ CREATE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('create', conf_items_before=notifiable_items, auto_send=False):
-							packet.send(notify=False)
+							packets.append(packet)
 
 					elif not notifiable_items and record_on_jsync:
 
 						delete_records += 1
 						print("@@ DELETE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], auto_send=False):
-							packet.send(notify=False)
+							packets.append(packet)
 
 					else:
 
 						print("@@ RECORD ID#%s NOT NOTIFIABLE OR ALREDY IN JSYNC" % (id), record_percent_str)
 
+				for packet in packets:
+					packet.send(notify=False)
+
+				print("@@ PACKETS TO SEND", len(packets))
 				print("@@ CREATE RECORDS", create_records)
 				print("@@ DELETE RECORDS", delete_records)
 				print("************* FIN B2B ITEM *************")

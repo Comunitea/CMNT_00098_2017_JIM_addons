@@ -42,6 +42,7 @@
 		'views/settings.xml',
 		'views/item_out.xml',
 		'views/item_in.xml',
+		'views/export.xml',
 		'views/reports.xml'
 	],
 	'external_dependencies': {
