@@ -148,8 +148,9 @@ class B2bItemsOut(models.Model):
 					record_percent = round((record_number / total_records) * 100, 1)
 					record_percent_str = str(record_percent) + '%'
 					record = self.env[model].browse(id)
+					res_id = '%s,%s' % (record._name, record.id)
 					notifiable_items = record.is_notifiable_check()
-					record_on_jsync = self.env['b2b.export'].sync_get(record._name, record.id)
+					record_on_jsync = self.env['b2b.export'].sync_get(res_id)
 
 					if notifiable_items and not record_on_jsync:
 
