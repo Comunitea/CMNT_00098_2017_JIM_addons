@@ -32,9 +32,7 @@ class B2bItemsOut(models.Model):
                 # Sends names dict when field has changed
                 'name': self.get_field_translations('name'),
                 # field: modifier sends if field has changed, if not setted send null
-                'categ_id:category_id': self.categ_id.id if self.categ_id else None,
-                # upload: modifier uploads base64 image to public server and replaces this param with the URL
-                'upload:logo': '/9j/4AAQSkZJRgABAQAAAQABAAD...'
+                'categ_id:category_id': self.categ_id.id if self.categ_id else None
             }
 	""", flags=re.M).strip()
 
@@ -106,7 +104,7 @@ class B2bItemsOut(models.Model):
 		docs_min_date = '2019-01-01' # Begin date
 
 		# TODO: ELIMINAR ESTO EN PRODUCCIÓN!
-		docs_min_date = '2020-04-01'
+		docs_min_date = '2020-05-15'
 
 		# These models should not be synchronized directly
 		excluded_models = (
@@ -141,8 +139,6 @@ class B2bItemsOut(models.Model):
 				print("@@ ITEM MODEL", str(model))
 				print("@@ TOTAL RECORDS", total_records)
 
-				packets = list()
-
 				for id in records_ids:
 					record_number += 1
 					record_percent = round((record_number / total_records) * 100, 1)
@@ -157,22 +153,19 @@ class B2bItemsOut(models.Model):
 						create_records += 1
 						print("@@ CREATE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('create', conf_items_before=notifiable_items, auto_send=False):
-							packets.append(packet)
+							packet.send(notify=False)
 
 					elif not notifiable_items and record_on_jsync:
 
 						delete_records += 1
 						print("@@ DELETE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], auto_send=False):
-							packets.append(packet)
+							packet.send(notify=False)
 
 					else:
 
 						print("@@ RECORD ID#%s NOT NOTIFIABLE OR ALREDY IN JSYNC" % (id), record_percent_str)
-
-				for packet in packets:
-					packet.send(notify=False)
-
+						
 				print("@@ PACKETS TO SEND", len(packets))
 				print("@@ CREATE RECORDS", create_records)
 				print("@@ DELETE RECORDS", delete_records)

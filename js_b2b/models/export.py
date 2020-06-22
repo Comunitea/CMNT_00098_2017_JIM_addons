@@ -266,11 +266,10 @@ class B2BExport(models.Model):
 			self.write_to_log(str(prices), 'customer_price', "w+")
 
 	@job
-	def b2b_products_stock(self, test_limit=None, test_date=None):
+	def b2b_products_stock(self, test_limit=None, from_date=None, export_all=None):
 		# If actual time is between 00:30 & 00:45 set "all" to True
-		all_products = B2BBulkExport.is_time_between('00:30:00', '00:45:00')
-		print(":::::: SENDING ALL PRODUCTS", all_products)
-		stock = self.env['exportxml.object'].compute_product_ids(all=True, from_time=test_date, inc=test_limit or 999999999)
+		all_products = export_all or B2BExport.is_time_between('00:30:00', '00:45:00')
+		stock = self.env['exportxml.object'].compute_product_ids(all=all_products, from_time=from_date, inc=test_limit or 1000)
 
 		# Send to JSync
 		if stock:

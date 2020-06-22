@@ -136,6 +136,7 @@ class BaseB2B(models.AbstractModel):
 		"""
 
 		# Librerías permitidas en el código
+		from odoo.addons.queue_job.job import job
 		from datetime import datetime
 
 		packets = list()
