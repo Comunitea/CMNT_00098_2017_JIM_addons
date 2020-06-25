@@ -9,22 +9,30 @@
 		<field name="arch" type="xml">
 			<form string="B2B Configuration" class="oe_form_configuration">
 				<header>
-					<button string="Apply" type="object" name="execute" class="oe_highlight mr4"/> 
-					<button string="Cancel" type="object" name="cancel" special="cancel"/>
+					<h1><img height="60" class="pull-right mr16" src="/js_b2b/static/description/logo-jim.png"/>B2B Settings</h1>
+
+					<p>
+						<button string="Apply" type="object" name="execute" class="btn-primary mr4"/> 
+						<button string="Cancel" type="object" name="cancel" special="cancel" class="btn-default"/>
+					</p>
 				</header>
 				<div>
-					<group string="B2B Settings">
-						<field name="packet_size" class="oe_inline"/>
-						<field name="url" class="oe_inline"/>
-						<field name="conexion_error" class="oe_inline"/>
-						<field name="response_error" class="oe_inline" attrs="{'invisible': [('conexion_error','=',False)]}"/>
+					<group string="General">
+						<field name="packet_size"/>
+						<field name="url"/>
+						<field name="conexion_error"/>
+						<field name="response_error" attrs="{'invisible': [('conexion_error','=',False)]}"/>
 					</group>
 
-					<group string="FTP Server Settings">
-						<field name="base_url" class="oe_inline"/>
-						<field name="server" class="oe_inline"/>
-						<field name="user" class="oe_inline"/>
-						<field name="password" password="True" class="oe_inline"/>
+					<group string="Documents">
+						<field name="docs_after"/>
+					</group>
+
+					<group string="FTP Server">
+						<field name="base_url"/>
+						<field name="server"/>
+						<field name="user"/>
+						<field name="password" password="True"/>
 					</group>
 				</div>
 			</form>

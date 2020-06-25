@@ -2,11 +2,36 @@
 from odoo import api, models, tools
 from .helper import JSync
 from base64 import b64encode
+from time import sleep
+import threading
 			
 # Module base class
 class BaseB2B(models.AbstractModel):
 
 	_inherit = 'base'
+
+	@api.model
+	def _background_method(self, method, record, mode):
+		"""
+		Method to be called in a separate thread
+
+		:param method: Object, method to call
+		:param record: Object, record to notify
+		:param mode: Str, CRUD mode
+		"""
+		while not self.env.cr.closed:
+			# Wait while parent process ends
+			sleep(5)
+
+		# Now create a new cursor
+		with api.Environment.manage():
+			with self.pool.cursor() as new_cr:
+				# Autocommit ON
+				new_cr.autocommit(True)
+				# Issolated record
+				record_issolated = record.with_env(record.env(cr=new_cr))
+				# Call the method
+				method(record_issolated, mode)
 
 	@api.model
 	def get_field_translations(self, field='name'):
@@ -92,23 +117,15 @@ class BaseB2B(models.AbstractModel):
 		from datetime import datetime
 
 		items_list = list()
-		b2b_items_out = self.env['b2b.item.out'].search([('active', '=', True), ('model', 'like', '%%%s%%' % self._name)])
+		jsync_conf = self.env['b2b.settings'].get_default_params(['base_url', 'docs_after'])
+		b2b_config = self.env['b2b.item.out'].search([('active', '=', True), ('model', 'like', '%%%s%%' % self._name)])
 
 		for record in self:
-			for item in b2b_items_out:
+			for item in b2b_config:
 				# Comprobar que el modelo coincide exactamente ya que con el filtro anterior
 				# en el search() no es suficiente (ej: customer y customer.address)
 				if record._name in item.get_models() and type(item.code) is unicode:
-					b2b = dict()
-
-					# Ejecutamos el código con exec(item.code)
-					# establece en la variable local b2b los siguientes atributos:
-					#   b2b['fields_to_watch'] <type 'tuple'>
-					#   b2b['is_notifiable'] <type 'function'>
-					#   b2b['pre_data'] <type 'function'> ¡No usado aquí! ¡Opcional!
-					#   b2b['get_data'] <type 'function'> ¡No usado aquí!
-					#   b2b['pos_data'] <type 'function'> ¡No usado aquí! ¡Opcional!
-					exec(item.code, locals(), b2b)
+					b2b = item.evaluate(mode, jsync_conf)
 
 					# Si este registro es notificable
 					if b2b['is_notifiable'](record, mode, vals):
@@ -136,7 +153,6 @@ class BaseB2B(models.AbstractModel):
 		"""
 
 		# Librerías permitidas en el código
-		from odoo.addons.queue_job.job import job
 		from datetime import datetime
 
 		packets = list()
@@ -145,22 +161,8 @@ class BaseB2B(models.AbstractModel):
 		b2b_config = self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)])
 
 		for record in self:
-
-			# record_on_jsync = self.env['b2b.export'].sync_get(record._name, record.id)
-
 			for item in b2b_config:
-				b2b = dict()
-				b2b['crud_mode'] = mode
-				b2b['images_base'] = jsync_conf['base_url']
-
-				# Ejecutamos el código con exec(item.code)
-				# establece en la variable local b2b los siguientes atributos:
-				#   b2b['fields_to_watch'] <type 'tuple'> ¡No usado aquí!
-				#   b2b['is_notifiable'] <type 'function'> ¡No usado aquí!
-				#   b2b['pre_data'] <type 'function'> ¡Opcional!
-				#   b2b['get_data'] <type 'function'>
-				#   b2b['pos_data'] <type 'function'> ¡Opcional!
-				exec(item.code, locals(), b2b)
+				b2b = item.evaluate(mode, jsync_conf)
 
 				# No se puede buscar dentro de un None
 				if conf_items_before is None:
@@ -184,13 +186,15 @@ class BaseB2B(models.AbstractModel):
 				# Obtenemos la copia del modo
 				packet.mode = b2b['crud_mode']
 
-				# Ejecutamos la función pre_data si existe
-				if 'pre_data' in b2b and callable(b2b['pre_data']):
-					b2b['pre_data'](record, mode)
-
 				# Obtenemos la relacción (si la tiene)
 				if 'related_to' in b2b and callable(b2b['related_to']):
 					packet.related = b2b['related_to'](record, mode)
+
+				# Ejecutamos la función pre_data si existe
+				if 'pre_data' in b2b and callable(b2b['pre_data']):
+					new_thread = threading.Thread(target=self._background_method, args=(b2b['pre_data'], record, mode))
+					new_thread.daemon = True
+					new_thread.start()
 
 				# Obtenemos los datos
 				packet.data = b2b['get_data'](record, mode)
@@ -203,7 +207,9 @@ class BaseB2B(models.AbstractModel):
 
 				# Ejecutamos la función pos_data si existe
 				if 'pos_data' in b2b and callable(b2b['pos_data']):
-					b2b['pos_data'](record, mode)
+					new_thread = threading.Thread(target=self._background_method, args=(b2b['pos_data'], record, mode))
+					new_thread.daemon = True
+					new_thread.start()
 
 		# Paquetes a enviar
 		return packets

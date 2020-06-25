@@ -168,7 +168,10 @@ def pos_data(self, action):
         if 'product.template.categorization' in self.env:
             for p in self.env['product.template.categorization'].search([('product_id', '=', self.id)]):
                 print("CATEGORIZACION PARA PRODUCTO", p.id)
-                p.b2b_record('create')</field>
+                p.b2b_record('create')
+        # Previsión de abastecimiento
+        for stock_move in self.product_variant_id.stock_move_ids:
+            stock_move.b2b_record('create')</field>
         </record>
 
         <record id="b2b_item_out_7" model="b2b.item.out">
@@ -217,7 +220,10 @@ def pos_data(self, action):
         # Crear la parametrización
         if 'product.product.categorization' in self.env:
             for p in self.env['product.product.categorization'].search([('product_id', '=', self.id)]):
-                p.b2b_record('create')</field>
+                p.b2b_record('create')
+        # Previsión de abastecimiento
+        for stock_move in self.stock_move_ids:
+            stock_move.b2b_record('create')</field>
         </record>
 
         <record id="b2b_item_out_8" model="b2b.item.out">
@@ -447,7 +453,16 @@ def pos_data(self, action):
     if b2b['crud_mode'] == 'create':
         # Creamos las direcciones
         for child in self.child_ids:
-            child.b2b_record('create')</field>
+            child.b2b_record('create')
+        # Creamos los pedidos
+        for order in self.sale_order_ids:
+            order.b2b_record('create')
+        # Creamos las facturas
+        for invoice in self.invoice_ids:
+            invoice.b2b_record('create')
+        # Creamos los albaranes
+        for picking in self.env['stock.picking'].search([('partner_id', '=', self.id)]):
+            picking.b2b_record('create')</field>
         </record>
 
         <record id="b2b_item_out_14" model="b2b.item.out">
@@ -517,6 +532,7 @@ def is_notifiable(self, action, vals):
         and self.type in ('out_invoice', 'out_refund') # Y es de tipo out_invoice o out_refund
         and self.state in ('open', 'paid') # Y el estado es abierta o pagada
         and self.commercial_partner_id.is_notifiable_check()) # Y el cliente es notificable
+        and self.date_invoice >= b2b['min_docs_date'] # Y es posterior a la fecha mínima
 
 def related_to(self, action):
     return 'res.partner,%s' % self.commercial_partner_id.id
@@ -563,6 +579,7 @@ def is_notifiable(self, action, vals):
     return (is_out_delivery # Es un albarán de salida o dropshipping
         and is_done # Y stá asociado a una venta y tiene fecha de validación y está validado
         and self.partner_id.commercial_partner_id.is_notifiable_check()) # Y el cliente es notificable
+        and self.date_done >= b2b['min_docs_date'] # Y es posterior a la fecha mínima
 
 def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
@@ -610,6 +627,7 @@ def is_notifiable(self, action, vals):
     return ((action == 'create' or (type(vals) is dict and not vals.get('date_order'))) # Se recibe date_order en vals o se está creando
         and self.state not in ('draft', 'proforma', 'pending', 'cancel') # Y el estado no es borrador, proforma, pendiente o cancelado
         and self.partner_id.commercial_partner_id.is_notifiable_check()) # Y el cliente es notificable
+        and self.date_order >= b2b['min_docs_date'] # Y es posterior a la fecha mínima
 
 def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id

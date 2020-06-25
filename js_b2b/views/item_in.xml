@@ -51,6 +51,9 @@
 							<p>
 								<b>Variables Locales</b>
 								<span class="help-block">Los métodos que se definen en este código se pueden llamar localmente sólo mediante la variable b2b.</span>
+								<ul class="help-block">
+									<li><b>b2b['crud_mode']</b> El método del modelo al que se pasarán los datos ['create'|'write'|'unlink']</li>
+								</ul>
 							</p>
 						</div>
 					</div>

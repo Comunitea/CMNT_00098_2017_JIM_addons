@@ -56,7 +56,8 @@
 							<p>
 								<b>pre_data</b>(self, action)
 								<span class="help-block">
-									Realiza acciones antes de obtener los datos (get_data). Opcional<br/>
+									<p>Realiza acciones antes de obtener los datos (get_data)</p>
+									<p>Se ejecuta de forma asíncrona y es opcional</p>
 									<b style="color:#E30059">return</b> void
 								</span>
 							</p>
@@ -84,7 +85,8 @@
 							<p>
 								<b>pos_data</b>(self, action)
 								<span class="help-block">
-									Realiza acciones después de obtener los datos (get_data). Opcional<br/>
+									<p>Realiza acciones después de obtener los datos (get_data)</p>
+									<p>Se ejecuta de forma asíncrona y es opcional</p>
 									<b style="color:#E30059">return</b> void
 								</span>
 							</p>
@@ -95,6 +97,7 @@
 								<ul class="help-block">
 									<li><b>b2b['crud_mode']</b> El modo con el que se enviará el mensaje ['create'|'update'|'delete']</li>
 									<li><b>b2b['images_base']</b> Ruta base para componer la ruta completa de las imágenes</li>
+									<li><b>b2b['min_docs_date']</b> Fecha mínima para enviar los documentos</li>
 								</ul>
 							</p>
 						</div>

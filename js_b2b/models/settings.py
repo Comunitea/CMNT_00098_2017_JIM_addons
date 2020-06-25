@@ -15,7 +15,8 @@ PARAMS = {
 	'server': ('b2b.ftp_server', 'premium17.web-hosting.com'),
 	'base_url': ('b2b.public_base_url', 'https://jimsports.website/b2b_images/'),
 	'user': ('b2b.ftp_user', False),
-	'password': ('b2b.ftp_password', False)
+	'password': ('b2b.ftp_password', False),
+	'docs_after': ('b2b.docs_min_date', '2019-01-01')
 }
 
 class B2BSettings(models.TransientModel):
@@ -30,6 +31,7 @@ class B2BSettings(models.TransientModel):
 	server = fields.Char('Public Server', required=False, translate=False, help="Set the server IP or domain")
 	user = fields.Char('User', required=False, translate=False, help="Set the FTP server username")
 	password = fields.Char('Password', required=False, translate=False, help="Set the TP server password")
+	docs_after = fields.Datetime('Min Date')
 
 	@staticmethod
 	def _url_check(url):

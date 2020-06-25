@@ -22,7 +22,7 @@ class B2bItemsIn(models.Model):
             }
 	""", flags=re.M).strip()
 
-	name = fields.Char('Item Name', required=True, translate=False, help="Set the item name")
+	name = fields.Char('Item Name', required=True, translate=False, help="Set the item name", index=True)
 	model = fields.Char('Model Name', required=True, translate=False, help="Odoo model name")
 	description = fields.Char('Description', required=False, translate=False, help="Set the item description")
 	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
@@ -57,7 +57,19 @@ class B2bItemsIn(models.Model):
 				raise UserError(_('Code Error!\n %s must be a function' % (method)))
 
 	@api.model
-	def must_process(self, object_name, partner_id, data, action='create'):
+	def evaluate(self, mode='create', data=dict()):
+		b2b = dict()
+		# Librerías permitidas en el código
+		from datetime import datetime
+		# Ejecutamos el código con exec(item.code)
+		exec(self.code, locals(), b2b)
+		# Obtener la acción a realizar con los datos
+		b2b['crud_mode'] = b2b['get_action'](mode, data)
+		# Devolvemos la variable b2b
+		return b2b
+
+	@api.model
+	def must_process(self, object_name, partner_id, data, mode='create'):
 		"""
 		Check if item record its configured and do save operation
 		"""
@@ -66,26 +78,18 @@ class B2bItemsIn(models.Model):
 			# Check if client exists
 			if self.env['res.partner'].browse(partner_id):
 				# Process item based on config
-				item_conf = self.search([('name', 'like', object_name), ('active', '=', True)], limit=1)
-				if item_conf and type(item_conf.code) is unicode:
-					b2b = dict()
+				item = self.search([('name', 'like', object_name), ('active', '=', True)], limit=1)
+				if item and type(item.code) is unicode:
+					b2b = item.evaluate(mode, data)
 
-					# Ejecutamos el código con exec(item_conf.code)
-					# establece localmente las siguentes variables y métodos:
-					#	b2b['get_action'] <type 'function'>
-					#   b2b['get_data'] <type 'function'>
-					exec(item_conf.code, locals(), b2b)
-
-					# Obtener la acción a realizar con los datos
-					action = b2b['get_action'](action, data)
-					if action:
+					if b2b['crud_mode']:
 						# Comprobaciones de seguridad
 						item_data = b2b['get_data'](self, data)
 						item_data_ok = type(item_data) is dict
 						incoming_user = self.env['res.users'].browse(188) # Prestadoo
-						item_model = self.env[item_conf.model].sudo(incoming_user)
-						item_action = getattr(item_model, action, None)
-						item_action_ok = action in ('create', 'update', 'cancel')
+						item_model = self.env[item.model].sudo(incoming_user)
+						item_action = getattr(item_model, mode, None)
+						item_action_ok = b2b['crud_mode'] in ('create', 'update', 'cancel')
 						if item_data and item_data_ok and callable(item_action) and item_action_ok:
 							item_action(item_data)
 							return True

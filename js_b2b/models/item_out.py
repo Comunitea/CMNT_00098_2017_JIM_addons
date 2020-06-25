@@ -36,7 +36,7 @@ class B2bItemsOut(models.Model):
             }
 	""", flags=re.M).strip()
 
-	name = fields.Char('Item Name', required=True, translate=False, help="Set the item name")
+	name = fields.Char('Item Name', required=True, translate=False, help="Set the item name", index=True)
 	model = fields.Char('Model Names', required=True, translate=False, help="Odoo model names to check separated by , or ;")
 	description = fields.Char('Description', required=False, translate=False, help="Set the item description")
 	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
@@ -94,6 +94,19 @@ class B2bItemsOut(models.Model):
 			if not callable(eval(method)):
 				raise UserError(_('Code Error!\n %s must be a function' % (method)))
 
+	@api.model
+	def evaluate(self, mode='create', config=dict()):
+		b2b = dict()
+		b2b['crud_mode'] = mode
+		b2b['images_base'] = config.get('base_url')
+		b2b['min_docs_date'] = config.get('docs_after')
+		# Librerías permitidas en el código
+		from datetime import datetime
+		# Ejecutamos el código con exec(item.code)
+		exec(self.code, locals(), b2b)
+		# Devolvemos la variable b2b
+		return b2b
+
 	@api.one
 	def sync_item(self, mode='create'):
 		"""
@@ -101,10 +114,6 @@ class B2bItemsOut(models.Model):
 		"""
 		search_query = [] # Default query
 		record_number = 0.0 # Record counter
-		docs_min_date = '2019-01-01' # Begin date
-
-		# TODO: ELIMINAR ESTO EN PRODUCCIÓN!
-		docs_min_date = '2020-05-15'
 
 		# These models should not be synchronized directly
 		excluded_models = (
@@ -114,19 +123,22 @@ class B2bItemsOut(models.Model):
 
 		for model in self.get_models():
 			if model not in excluded_models:
+				# Clients on Jsync
+				client_ids = self.env['b2b.export'].search([('name', '=', 'customer')]).ids
+
 				# Model specific queries
 				if model == 'stock.move':
 					search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
 				elif model == 'res.partner':
 					search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
-				elif model == 'account.invoice':
-					search_query = [('date_invoice', '>=', docs_min_date)]
-				elif model == 'stock.picking':
-					search_query = [('date_done', '>=', docs_min_date)]
-				elif model == 'sale.order':
-					search_query = [('date_order', '>=', docs_min_date)]
 				elif model == 'product.tag':
 					search_query = ['|', ('active', '=', True), ('active', '=', False)]
+				elif model == 'account.invoice':
+					search_query = [('commercial_partner_id', 'in', client_ids)]
+				elif model == 'stock.picking':
+					search_query = [('partner_id', 'in', client_ids)]
+				elif model == 'sale.order':
+					search_query = [('partner_id', 'in', client_ids)]
 
 				# Get code model records
 				records_ids = self.env[model].search(search_query, order='id ASC').ids
@@ -153,26 +165,32 @@ class B2bItemsOut(models.Model):
 						create_records += 1
 						print("@@ CREATE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('create', conf_items_before=notifiable_items, auto_send=False):
-							packet.send(notify=False)
+							packet.send(notify=False) # Don't notify
 
 					elif not notifiable_items and record_on_jsync:
 
 						delete_records += 1
 						print("@@ DELETE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], auto_send=False):
-							packet.send(notify=False)
+							packet.send(notify=False) # Don't notify
 
 					else:
 
 						print("@@ RECORD ID#%s NOT NOTIFIABLE OR ALREDY IN JSYNC" % (id), record_percent_str)
 						
-				print("@@ PACKETS TO SEND", len(packets))
 				print("@@ CREATE RECORDS", create_records)
 				print("@@ DELETE RECORDS", delete_records)
 				print("************* FIN B2B ITEM *************")
 
 				# Notify user
-				self.env.user.notify_info(_('Synchronizing <b>%s</b><br/><ul><li>Total: %s</li><li>Create: %s</li><li>Delete: %s</li></ul>') % (self.name, total_records, create_records, delete_records))
+				self.env.user.notify_info(
+					_('Synchronizing <b>%s</b><br/> \
+					<ul> \
+						<li>Total: %s</li> \
+						<li>Create: %s</li> \
+						<li>Delete: %s</li> \
+					</ul>') % (self.name, total_records, create_records, delete_records)
+				)
 
 	# ------------------------------------ OVERRIDES ------------------------------------
 

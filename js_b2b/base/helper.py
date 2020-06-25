@@ -141,7 +141,7 @@ class JSync:
 					elif self.mode == 'update':
 						self.env['b2b.export'].sync_upd(res_id, self.name, self.related)
 					elif self.mode == 'delete':
-						self.env['b2b.export'].sync_del(res_id, self.related)
+						self.env['b2b.export'].sync_del(res_id)
 
 				try:
 					return json_load(jsync_post.text)

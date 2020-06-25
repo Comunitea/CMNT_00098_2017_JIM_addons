@@ -33,21 +33,10 @@ class B2BExport(models.Model):
 		return True
 
 	@api.model
-	def sync_del(self, resource, related=False):
+	def sync_del(self, resource):
 		self.sync_get(resource).unlink()
-		self.search([('rel_id', '=', related)]).unlink()
+		self.search([('rel_id', '=', resource)]).unlink()
 		return True
-
-	# ------------------------------------ LOGGER ------------------------------------
-
-	@api.model
-	def write_to_log(self, txt, file=None, mode="aw+"):
-		module_dir = path.abspath(path.join(path.dirname(path.realpath(__file__)), pardir))
-		log_file = path.join(module_dir, 'static', 'log', file or self._log_filename)
-		with open(log_file, mode) as file:
-			date = fields.Datetime.now()
-			file.write("%s %s\n" % (date, txt))
-			print("%s %s" % (date, txt))
 
 	# ------------------------------------ CUSTOM QUERIES ------------------------------------
 
@@ -129,7 +118,7 @@ class B2BExport(models.Model):
 
 	@job
 	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, variant=None, operation=None):
-		self.write_to_log('[b2b_pricelists_prices] Starts!')
+		print('[b2b_pricelists_prices] Starts!')
 		# Out prices
 		prices = list()
 		# Get decimals number
@@ -157,8 +146,8 @@ class B2BExport(models.Model):
 		total_pricelists = len(pricelists)
 		total_products = len(products_ids)
 		product_number = 0.0
-		self.write_to_log('# LISTAS DE PRECIOS: %s' % total_pricelists)
-		self.write_to_log('# PRODUCTOS: %s' % total_products)
+		print('# LISTAS DE PRECIOS: %s' % total_pricelists)
+		print('# PRODUCTOS: %s' % total_products)
 
 		try:
 			# For each product
@@ -166,64 +155,66 @@ class B2BExport(models.Model):
 				product_number += 1
 				percent = round((product_number / total_products) * 100, 1)
 				product = self.env['product.template'].browse(product_id)
-				print("--------------------------------------------------------------------")
-				print(":: %s%% [%s] %s" % (percent, product.default_code, product.name))
-				print("--------------------------------------------------------------------")
-				print(":: %10s\t%10s\t%6s\t%8s" % ('PRICELIST', 'VARIANT', 'QTY', 'PRICE'))
-				# For each pricelist
-				for pricelist in pricelists:
-					# For each quantity
-					for min_qty in _search_pricelist_quantities(quantities, pricelist[1]):
-						# Product in pricelist & qty context
-						product_in_ctx = product.with_context({ 'pricelist': pricelist[1], 'quantity': min_qty })
-						# Get all variant prices
-						variants_prices = tuple(product_in_ctx.product_variant_ids.mapped('price'))
-						# Same price in all variants
-						if all(x==variants_prices[0] for x in variants_prices if variants_prices[0]):
-							price = None if operation == 'delete' and not variant else round(variants_prices[0], prices_precision)
-							# If price is not 0 and not in prices list yet with qty 1
-							product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
-							if not bool(list(product_filter)) and (operation == 'delete' or price):
-								print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
-								prices.append({ 
-									'company_id': pricelist[2] or None,
-									'pricelist_id': pricelist[0],
-									'product_id': product_id,
-									'variant_id': None,
-									'quantity': min_qty,
-									'price': price
-								})
-						else:
-							# For each variant
-							for v in range(len(variants_prices)):
-								variant_id = product_in_ctx.product_variant_ids.ids[v]
-								price = None if operation == 'delete' and variant_id == variant else round(variants_prices[v], prices_precision)
+				# Only for web published products
+				if product.website_published:
+					print("--------------------------------------------------------------------")
+					print(":: %s%% [%s] %s" % (percent, product.default_code, product.name))
+					print("--------------------------------------------------------------------")
+					print(":: %10s\t%10s\t%6s\t%8s" % ('PRICELIST', 'VARIANT', 'QTY', 'PRICE'))
+					# For each pricelist
+					for pricelist in pricelists:
+						# For each quantity
+						for min_qty in _search_pricelist_quantities(quantities, pricelist[1]):
+							# Product in pricelist & qty context
+							product_in_ctx = product.with_context({ 'pricelist': pricelist[1], 'quantity': min_qty })
+							# Get all variant prices
+							variants_prices = tuple(product_in_ctx.product_variant_ids.mapped('price'))
+							# Same price in all variants
+							if all(x==variants_prices[0] for x in variants_prices if variants_prices[0]):
+								price = None if operation == 'delete' and not variant else round(variants_prices[0], prices_precision)
 								# If price is not 0 and not in prices list yet with qty 1
-								product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == variant_id and x['quantity'] == 1 and x['price'] == price, prices)
+								product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
 								if not bool(list(product_filter)) and (operation == 'delete' or price):
-									print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
+									print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
 									prices.append({ 
 										'company_id': pricelist[2] or None,
 										'pricelist_id': pricelist[0],
 										'product_id': product_id,
-										'variant_id': variant_id,
+										'variant_id': None,
 										'quantity': min_qty,
 										'price': price
 									})
+							else:
+								# For each variant
+								for v in range(len(variants_prices)):
+									variant_id = product_in_ctx.product_variant_ids.ids[v]
+									price = None if operation == 'delete' and variant_id == variant else round(variants_prices[v], prices_precision)
+									# If price is not 0 and not in prices list yet with qty 1
+									product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == variant_id and x['quantity'] == 1 and x['price'] == price, prices)
+									if not bool(list(product_filter)) and (operation == 'delete' or price):
+										print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
+										prices.append({ 
+											'company_id': pricelist[2] or None,
+											'pricelist_id': pricelist[0],
+											'product_id': product_id,
+											'variant_id': variant_id,
+											'quantity': min_qty,
+											'price': price
+										})
 		except Exception as e:
-			self.write_to_log('[b2b_pricelists_prices] ERROR ON LOOP! %s' % e)
+			print('[b2b_pricelists_prices] ERROR ON LOOP! %s' % e)
 		finally:
-			self.write_to_log('[b2b_pricelists_prices] Ends!')
+			print('[b2b_pricelists_prices] Ends!')
 
 		# Send to JSync
 		if prices:
 			mode = 'update' if templates_filter is not None else 'replace'
 			self.send_multi('pricelist_item', prices, mode)
-			self.write_to_log(str(prices), 'pricelist_item', "w+")
+			print(str(prices), 'pricelist_item', "w+")
 
 	@job
 	def b2b_customers_prices(self, lines_filter=None, operation=None):
-		self.write_to_log('[b2b_customers_prices] Starts!')
+		print('[b2b_customers_prices] Starts!')
 		# Out prices
 		prices = list()
 		# Get decimals number
@@ -255,15 +246,15 @@ class B2BExport(models.Model):
 							'price': round(price_line['price'] if operation != 'delete' else None, prices_precision)
 						})
 		except Exception as e:
-			self.write_to_log('[b2b_customers_prices] ERROR ON LOOP! %s' % e)
+			print('[b2b_customers_prices] ERROR ON LOOP! %s' % e)
 		finally:
-			self.write_to_log('[b2b_customers_prices] Ends!')
+			print('[b2b_customers_prices] Ends!')
 
 		# Send to JSync
 		if prices:
 			mode = 'update' if lines_filter is not None else 'replace'
 			self.send_multi('customer_price', prices, mode)
-			self.write_to_log(str(prices), 'customer_price', "w+")
+			print(str(prices), 'customer_price', "w+")
 
 	@job
 	def b2b_products_stock(self, test_limit=None, from_date=None, export_all=None):
@@ -275,4 +266,4 @@ class B2BExport(models.Model):
 		if stock:
 			mode = 'replace' if all_products else 'update'
 			self.send_multi('product_stock', stock, mode)
-			self.write_to_log(str(stock), 'product_stock', "w+")
+			print(str(stock), 'product_stock', "w+")
