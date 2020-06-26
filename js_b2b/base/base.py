@@ -1,37 +1,12 @@
 # -*- coding: utf-8 -*-
 from odoo import api, models, tools
-from .helper import JSync
+from .helper import Thread, JSync
 from base64 import b64encode
-from time import sleep
-import threading
-			
+		
 # Module base class
 class BaseB2B(models.AbstractModel):
 
 	_inherit = 'base'
-
-	@api.model
-	def _background_method(self, method, record, mode):
-		"""
-		Method to be called in a separate thread
-
-		:param method: Object, method to call
-		:param record: Object, record to notify
-		:param mode: Str, CRUD mode
-		"""
-		while not self.env.cr.closed:
-			# Wait while parent process ends
-			sleep(5)
-
-		# Now create a new cursor
-		with api.Environment.manage():
-			with self.pool.cursor() as new_cr:
-				# Autocommit ON
-				new_cr.autocommit(True)
-				# Issolated record
-				record_issolated = record.with_env(record.env(cr=new_cr))
-				# Call the method
-				method(record_issolated, mode)
 
 	@api.model
 	def get_field_translations(self, field='name'):
@@ -86,7 +61,7 @@ class BaseB2B(models.AbstractModel):
 		"""
 		result = list()
 		res_id = '%s,%s' % (self._name, self.id)
-		for value in self.env['ir.property'].with_context().sudo().search([('name', 'like', field), ('res_id', 'like', res_id)]):
+		for value in self.env['ir.property'].sudo().search([('name', '=', field), ('res_id', '=', res_id)]):
 			result_item = False
 			if value.type == 'many2one':
 				model, reg_id = value.value_reference.split(',')
@@ -112,10 +87,6 @@ class BaseB2B(models.AbstractModel):
 		:param vals: Default model data update dict (to check fields)
 		:return: boolean
 		"""
-
-		# Librerías permitidas en el código
-		from datetime import datetime
-
 		items_list = list()
 		jsync_conf = self.env['b2b.settings'].get_default_params(['base_url', 'docs_after'])
 		b2b_config = self.env['b2b.item.out'].search([('active', '=', True), ('model', 'like', '%%%s%%' % self._name)])
@@ -151,14 +122,15 @@ class BaseB2B(models.AbstractModel):
 		:param auto_send: Send packets after creation
 		:return: JSync Packets
 		"""
-
-		# Librerías permitidas en el código
-		from datetime import datetime
-
 		packets = list()
 		conf_items_after = self.is_notifiable_check(mode, vals)
 		jsync_conf = self.env['b2b.settings'].get_default_params()
 		b2b_config = self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)])
+
+		def _launch_on_thread(method, record, mode):
+			new_thread = Thread(target=self, args=(method, record, mode))
+			new_thread.daemon = True
+			new_thread.start()
 
 		for record in self:
 			for item in b2b_config:
@@ -192,9 +164,7 @@ class BaseB2B(models.AbstractModel):
 
 				# Ejecutamos la función pre_data si existe
 				if 'pre_data' in b2b and callable(b2b['pre_data']):
-					new_thread = threading.Thread(target=self._background_method, args=(b2b['pre_data'], record, mode))
-					new_thread.daemon = True
-					new_thread.start()
+					_launch_on_thread(b2b['pre_data'], record, mode)
 
 				# Obtenemos los datos
 				packet.data = b2b['get_data'](record, mode)
@@ -207,9 +177,7 @@ class BaseB2B(models.AbstractModel):
 
 				# Ejecutamos la función pos_data si existe
 				if 'pos_data' in b2b and callable(b2b['pos_data']):
-					new_thread = threading.Thread(target=self._background_method, args=(b2b['pos_data'], record, mode))
-					new_thread.daemon = True
-					new_thread.start()
+					_launch_on_thread(b2b['pos_data'], record, mode)
 
 		# Paquetes a enviar
 		return packets
@@ -228,32 +196,50 @@ class BaseB2B(models.AbstractModel):
 			record = self.browse(v['id'])
 			res_id = '%s,%s' % (self._name, record.id)
 			record_notifiable = record.is_notifiable_check()
-			record_in_jsync = self.env['b2b.export'].sync_get(res_id)
+			record_in_jsync = self.search([('res_id', '=', res_id)], limit=1)
 			metadata[i]['b2b_notifiable'] = ', '.join(record_notifiable) if record_notifiable else 'false'
 			metadata[i]['b2b_record_on_jsync'] = 'true' if record_in_jsync else 'false'
 		return metadata
 
 	@api.model
 	def create(self, vals):
-		#print("----------- [B2B BASE] CREATE", self._name, vals)
+		"""
+		Overwrite to call B2B create actions
+
+		Set context var b2b_evaluate=False to skip
+		"""
 		item = super(BaseB2B, self).create(vals)
-		item.b2b_record('create')
+		if item and self.env.context.get('b2b_evaluate', True):
+			item.b2b_record('create')
 		return item
 
 	@api.multi
 	def write(self, vals):
-		#print("----------- [B2B BASE] WRITE", self._name, vals)
-		items_to_send = self.is_notifiable_check('update', vals)
+		"""
+		Overwrite to call B2B write actions
+
+		Set context var b2b_evaluate=False to skip
+		"""
+		b2b_evaluate = self.env.context.get('b2b_evaluate', True)
+		if b2b_evaluate:
+			items_to_send = self.is_notifiable_check('update', vals)
 		items = super(BaseB2B, self).write(vals)
-		self.b2b_record('update', vals, conf_items_before=items_to_send)
+		if items and b2b_evaluate:
+			self.b2b_record('update', vals, conf_items_before=items_to_send)
 		return items
 
 	@api.multi
 	def unlink(self):
-		#print("----------- [B2B BASE] DELETE", self._name, self)
-		items_to_send = self.is_notifiable_check('delete')
-		packets = self.b2b_record('delete', False, conf_items_before=items_to_send, auto_send=False)
-		if super(BaseB2B, self).unlink():
+		"""
+		Overwrite to call B2B unlink actions
+
+		Set context var b2b_evaluate=False to skip
+		"""
+		b2b_evaluate = self.env.context.get('b2b_evaluate', True)
+		if b2b_evaluate:
+			items_to_send = self.is_notifiable_check('delete')
+			packets = self.b2b_record('delete', False, conf_items_before=items_to_send, auto_send=False)
+		if super(BaseB2B, self).unlink() and b2b_evaluate:
 			for packet in packets:
 				packet.send()
 		return True

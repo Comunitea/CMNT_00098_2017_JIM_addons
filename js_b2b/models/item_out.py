@@ -115,17 +115,17 @@ class B2bItemsOut(models.Model):
 		search_query = [] # Default query
 		record_number = 0.0 # Record counter
 
-		# These models should not be synchronized directly
-		excluded_models = (
-			'product.template.categorization', 'product.product.categorization', # PRODUCT TRIGGER
-			'customer.price', 'product.pricelist.item' # CRONJOBS
-		)
+		# Documents min date
+		docs_min_date = self.env['b2b.settings'].get_param('docs_after')
+
+		# Clients on Jsync
+		client_ids = [int(x.split(',')[1]) for x in self.env['b2b.export'].search([('name', '=', 'customer')]).mapped('res_id')]
+
+		# These models should not be synchronized directly (CRONJOBS)
+		excluded_models = ('customer.price', 'product.pricelist.item')
 
 		for model in self.get_models():
 			if model not in excluded_models:
-				# Clients on Jsync
-				client_ids = self.env['b2b.export'].search([('name', '=', 'customer')]).ids
-
 				# Model specific queries
 				if model == 'stock.move':
 					search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
@@ -134,11 +134,11 @@ class B2bItemsOut(models.Model):
 				elif model == 'product.tag':
 					search_query = ['|', ('active', '=', True), ('active', '=', False)]
 				elif model == 'account.invoice':
-					search_query = [('commercial_partner_id', 'in', client_ids)]
+					search_query = [('date_invoice', '>=', docs_min_date), ('commercial_partner_id', 'in', client_ids)]
 				elif model == 'stock.picking':
-					search_query = [('partner_id', 'in', client_ids)]
+					search_query = [('date_done', '>=', docs_min_date), ('partner_id', 'in', client_ids)]
 				elif model == 'sale.order':
-					search_query = [('partner_id', 'in', client_ids)]
+					search_query = [('date_order', '>=', docs_min_date), ('partner_id', 'in', client_ids)]
 
 				# Get code model records
 				records_ids = self.env[model].search(search_query, order='id ASC').ids
@@ -158,7 +158,7 @@ class B2bItemsOut(models.Model):
 					record = self.env[model].browse(id)
 					res_id = '%s,%s' % (record._name, record.id)
 					notifiable_items = record.is_notifiable_check()
-					record_on_jsync = self.env['b2b.export'].sync_get(res_id)
+					record_on_jsync = self.env['b2b.export'].search([('res_id', '=', res_id)], limit=1)
 
 					if notifiable_items and not record_on_jsync:
 
@@ -200,7 +200,7 @@ class B2bItemsOut(models.Model):
 		Check model & code on create
 		"""
 		item = super(B2bItemsOut, self).create(vals)
-		item.__check_model()
+		# item.__check_model()
 		item.__check_code()
 		return item
 

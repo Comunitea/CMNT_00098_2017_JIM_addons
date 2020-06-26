@@ -17,27 +17,6 @@ class B2BExport(models.Model):
 	res_id = fields.Char(required=True, translate=False, help="Record and model [model_name,record_id]")
 	rel_id = fields.Char(required=False, translate=False, help="Related to [model_name,record_id]")
 
-	@api.model
-	def sync_get(self, resource):
-		return self.search([('res_id', '=', resource)], limit=1)
-
-	@api.model
-	def sync_set(self, resource, conf_item, related=False):
-		return self.create({ 'name': conf_item, 'res_id': resource, 'rel_id': related })
-
-	@api.model
-	def sync_upd(self, resource, conf_item, related=False):
-		record = self.sync_get(resource)
-		if record: record.write({ 'name': conf_item, 'rel_id': related })
-		else: self.sync_set(resource, conf_item, related)
-		return True
-
-	@api.model
-	def sync_del(self, resource):
-		self.sync_get(resource).unlink()
-		self.search([('rel_id', '=', resource)]).unlink()
-		return True
-
 	# ------------------------------------ CUSTOM QUERIES ------------------------------------
 
 	@api.model

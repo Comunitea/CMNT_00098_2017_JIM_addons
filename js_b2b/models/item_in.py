@@ -32,11 +32,10 @@ class B2bItemsIn(models.Model):
 	@api.model
 	def __check_model(self):
 		"""
-		Check if is a valid model or models
+		Check if is a valid model
 		"""
-		for model_name in self.get_models():
-			if not model_name in self.env:
-				raise UserError(_('Model %s not found!') % model_name)
+		if not self.model in self.env:
+			raise UserError(_('Model %s not found!') % model_name)
 
 	@api.model
 	def __check_code(self):

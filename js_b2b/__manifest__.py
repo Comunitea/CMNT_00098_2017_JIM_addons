@@ -6,9 +6,8 @@
 	'author': 'Jim Sports',
 	'category': 'Connector',
 	'website': 'https://jimsports.com',
-	'summary': 'Permite extraer datos de los modelos de Odoo y enviarlos a otro servidor',
+	'summary': 'Odoo JSync Connector',
 	'description': '''
-		- Odoo Data Exchange Connector -
 		Conector para sincronizar datos con otras plataformas/clientes.
 		Transmite los datos por HTTP a un servidor secundario que los procesa.
 	''',

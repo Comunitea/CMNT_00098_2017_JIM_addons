@@ -3,13 +3,27 @@ from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 from re import search as validate
 
+from ..base.helper import Chrono
+
 # Separadores de email válidos
 _partner_email_separators = (',', ';')
 
 class ResPartner(models.Model):
 	_inherit = 'res.partner'
 
-	vip_web_access = fields.Many2many('res.company', 'res_partner_res_company_rel', string='VIP Webs Access')
+	vip_web_access = fields.Many2many('res.company', 'res_partner_res_company_web_access', string='VIP Webs Access')
+
+	@api.multi
+	def __check_vip_web_access_companies_pricelists(self, vals=dict()):
+		if vals.get('vip_web_access', False):
+			# Comprobar tarifa por compañía web
+			# se usa una consulta porque la operación es más rápida que por el ORM
+			for record in self:
+				self.env.cr.execute("SELECT company_id FROM ir_property WHERE name LIKE 'property_product_pricelist' and res_id = 'res.partner,%s'", (record.id,))
+				pricelists_company_ids = [r[0] for r in self.env.cr.fetchall()]
+				for company in record.vip_web_access:
+					if company.id not in pricelists_company_ids:
+						raise ValidationError(_('Unable to set web access for %s\nClient don\'t have pricelist on this company!') % company.name)
 
 	@api.multi
 	def has_valid_emails(self):
@@ -63,16 +77,14 @@ class ResPartner(models.Model):
 				raise ValidationError(_('Partner email is not valid, check it!\nValid separators: %s') % email_separators_str)
 			self.email = self.email.strip()
 
+	@api.model
+	def create(self, vals):
+		item = super(B2bItemsOut, self).create(vals)
+		self.__check_vip_web_access_companies_pricelists(vals)
+		return item
+
 	@api.multi
 	def write(self, vals):
-		super(ResPartner, self).write(vals)
-
-		# Comprobar tarifa por compañía
-		for record in self:
-			partner_pricelists = record.get_field_multicompany('property_product_pricelist')
-			pricelists_company_ids = [c[0].id for c in partner_pricelists]
-			for company in record.vip_web_access:
-				if company.id not in pricelists_company_ids:
-					raise ValidationError(_('Unable to set web access for %s\nClient don\'t have pricelist on this company!') % company.name)
-
-		return True
+		result = super(ResPartner, self).write(vals)
+		self.__check_vip_web_access_companies_pricelists(vals)
+		return result

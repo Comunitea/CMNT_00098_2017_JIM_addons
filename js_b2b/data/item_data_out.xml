@@ -531,8 +531,8 @@ def is_notifiable(self, action, vals):
     return (self.number # Tiene un número asignado
         and self.type in ('out_invoice', 'out_refund') # Y es de tipo out_invoice o out_refund
         and self.state in ('open', 'paid') # Y el estado es abierta o pagada
-        and self.commercial_partner_id.is_notifiable_check()) # Y el cliente es notificable
-        and self.date_invoice >= b2b['min_docs_date'] # Y es posterior a la fecha mínima
+        and self.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
+        and self.date_invoice >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
 
 def related_to(self, action):
     return 'res.partner,%s' % self.commercial_partner_id.id
@@ -578,8 +578,8 @@ def is_notifiable(self, action, vals):
     is_done = self.orig_sale_id and self.date_done and self.state == 'done'
     return (is_out_delivery # Es un albarán de salida o dropshipping
         and is_done # Y stá asociado a una venta y tiene fecha de validación y está validado
-        and self.partner_id.commercial_partner_id.is_notifiable_check()) # Y el cliente es notificable
-        and self.date_done >= b2b['min_docs_date'] # Y es posterior a la fecha mínima
+        and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
+        and self.date_done >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
 
 def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
@@ -626,8 +626,8 @@ def get_data(self, action):
 def is_notifiable(self, action, vals):
     return ((action == 'create' or (type(vals) is dict and not vals.get('date_order'))) # Se recibe date_order en vals o se está creando
         and self.state not in ('draft', 'proforma', 'pending', 'cancel') # Y el estado no es borrador, proforma, pendiente o cancelado
-        and self.partner_id.commercial_partner_id.is_notifiable_check()) # Y el cliente es notificable
-        and self.date_order >= b2b['min_docs_date'] # Y es posterior a la fecha mínima
+        and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
+        and self.date_order >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
 
 def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id

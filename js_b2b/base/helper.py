@@ -6,11 +6,70 @@ from odoo.exceptions import ValidationError
 from requests.packages.urllib3.util.retry import Retry as httpRetry
 from json import loads as json_load, dumps as json_dump
 from unidecode import unidecode
+from timeit import default_timer
+from time import sleep
+from odoo import api
+import threading
 import logging
 
 _logger = logging.getLogger(__name__)
+_thread_semaphore = threading.BoundedSemaphore(20)
 
-class JSync:
+class Thread(threading.Thread):
+
+	def run(self):
+		_thread_semaphore.acquire()
+		try:
+			self.background_run(*self._Thread__args)
+		finally:
+			_thread_semaphore.release()
+
+	def background_run(self, method, record, mode):
+		"""
+		Method to be called in a separate thread
+
+		:param method: Object, method to call
+		:param record: Object, record to notify
+		:param mode: Str, CRUD mode
+		"""
+		while not self._Thread__target.env.cr.closed:
+			# Wait while parent process ends
+			sleep(5)
+
+		# Now create a new cursor
+		with api.Environment.manage():
+			with self._Thread__target.pool.cursor() as new_cr:
+				# Autocommit ON
+				new_cr.autocommit(True)
+				# Issolated record
+				record_issolated = record.with_env(record.env(cr=new_cr))
+				# Call the method
+				method(record_issolated, mode)
+
+class Chrono(object):
+
+	__slots__ = ['name', 'start', 'end', 'elapsed']
+
+	def __init__(self, name=None):
+		self.name = name
+		self.start = None
+		self.end = None
+		self.elapsed = None
+
+	def __enter__(self):
+		self.start = default_timer()
+		return self
+
+	def __exit__(self,ty,val,tb):
+		self.end = default_timer()
+		self.elapsed = self.end - self.start
+
+	def to_str(self):
+		if self.elapsed:
+			return "%.2fms" % (self.elapsed)
+		return None
+
+class JSync(object):
 
 	__slots__ = ['id', 'env', 'model', 'mode', 'name', 'data', 'part', 'related', 'session', 'settings']
 
@@ -81,7 +140,17 @@ class JSync:
 		:param timeout_sec: POST Request timeout
 
 		"""
-		if self.name and self.data and self.mode:
+
+		# Odoo resource name
+		res_id = '%s,%s' % (self.model, self.id)
+
+		# Check if record is synced with JSync
+		export_record = self.env['b2b.export'].search([('res_id', '=', res_id)], limit=1)
+
+		# Send the record?
+		record_send = (not export_record or self.mode != 'create')
+
+		if self.name and self.data and self.mode and record_send:
 
 			jsync_post = None
 
@@ -103,10 +172,12 @@ class JSync:
 						"\n    - data: {}" \
 						"\n    - part: {}"
 
+			# Data indented (pretified)
 			debug_data = json_dump(self.data, indent=8, sort_keys=True)
 
 			try:
 				
+				# Send HTTP POST data
 				jsync_post = self.session.post(self.settings['url'], timeout=timeout_sec, headers=header_dict, data=json_data)
 					
 			except Exception as e:
@@ -128,20 +199,17 @@ class JSync:
 				# por lo que no se notifican al usuario ni se registran en el sistema
 				if self.name and self.id and self.model:
 
-					# Odoo resource name
-					res_id = '%s,%s' % (self.model, self.id)
-
 					# Mostrar notificación no invasiva al usuario en Odoo
 					if notify:
 						self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
 
 					# Guardar el estado en Odoo
 					if self.mode == 'create':
-						self.env['b2b.export'].sync_set(res_id, self.name, self.related)
+						self.env['b2b.export'].create({ 'name': self.name, 'res_id': res_id, 'rel_id': self.related })
 					elif self.mode == 'update':
-						self.env['b2b.export'].sync_upd(res_id, self.name, self.related)
+						export_record.write({ 'name': self.name, 'res_id': res_id, 'rel_id': self.related })
 					elif self.mode == 'delete':
-						self.env['b2b.export'].sync_del(res_id)
+						export_record.unlink()
 
 				try:
 					return json_load(jsync_post.text)
