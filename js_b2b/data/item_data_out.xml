@@ -445,7 +445,7 @@ def get_data(self, action):
         'vat': self.vat or None,
         'email': self.primary_email(),
         'ref:reference': self.ref or None,
-        'property_product_pricelist:customer_pricelists': [tuple([x[0].partner_id.id, x[1]]) for x in self.get_field_multicompany('property_product_pricelist')],
+        'property_product_pricelist:customer_pricelists': [tuple([x[0].id, x[1]]) for x in self.get_field_multicompany('property_product_pricelist')],
         'fixed:companies': self.vip_web_access.ids
     }
 
