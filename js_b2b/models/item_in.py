@@ -89,7 +89,7 @@ class B2bItemsIn(models.Model):
 						# Comprobaciones de seguridad
 						item_data = b2b['get_data'](self, data)
 						item_data_ok = type(item_data) is dict
-						superuser_id = self.env['b2b.settings'].get_param('user')
+						superuser_id = self.env['b2b.settings'].get_param('superuser')
 						incoming_user = self.env['res.users'].browse(superuser_id)
 						item_model = self.env[item.model].sudo(incoming_user)
 						item_action = getattr(item_model, mode, None)
