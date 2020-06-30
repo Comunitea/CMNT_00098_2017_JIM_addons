@@ -196,7 +196,7 @@ class BaseB2B(models.AbstractModel):
 			record = self.browse(v['id'])
 			res_id = '%s,%s' % (self._name, record.id)
 			record_notifiable = record.is_notifiable_check()
-			record_in_jsync = self.search([('res_id', '=', res_id)], limit=1)
+			record_in_jsync = self.env['b2b.export'].search([('res_id', '=', res_id)], limit=1)
 			metadata[i]['b2b_notifiable'] = ', '.join(record_notifiable) if record_notifiable else 'false'
 			metadata[i]['b2b_record_on_jsync'] = 'true' if record_in_jsync else 'false'
 		return metadata

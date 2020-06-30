@@ -96,7 +96,7 @@ class B2BExport(models.Model):
 			packet.send(notify=False, timeout_sec=300)
 
 	@job
-	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, variant=None, operation=None):
+	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, pricelists_filter=None, variant=None, operation=None):
 		print('[b2b_pricelists_prices] Starts!')
 		# Out prices
 		prices = list()
@@ -110,8 +110,9 @@ class B2BExport(models.Model):
 				unique_quantities.add(1)
 			# Return sorted tuple
 			return sorted(tuple(unique_quantities))
-		# All pricelists
-		pricelists = tuple(self.env['product.pricelist'].search([('web', '=', True), ('active', '=', True)]).mapped(lambda p: (p.id, p.name, p.company_id.id)))
+		# All pricelists or filtered
+		pfilter = [('id', 'in', pricelists_filter)] if pricelists_filter else []
+		pricelists = tuple(self.env['product.pricelist'].search([('web', '=', True), ('active', '=', True)] + pfilter).mapped(lambda p: (p.id, p.name, p.company_id.id)))
 		# Search params
 		product_search_params = [('website_published', '=', True)]
 		# Limit search to this products
@@ -143,9 +144,11 @@ class B2BExport(models.Model):
 					# For each pricelist
 					for pricelist in pricelists:
 						# For each quantity
-						for min_qty in _search_pricelist_quantities(quantities, pricelist[1]):
+						for min_qty in _search_pricelist_quantities(quantities, pricelist[0]):
 							# Product in pricelist & qty context
-							product_in_ctx = product.with_context({ 'pricelist': pricelist[1], 'quantity': min_qty })
+							# pricelist_id = self.env['product.pricelist'].browse(pricelist[0])
+							# self.get_product_price(product, min_qty, False, False)
+							product_in_ctx = product.with_context({ 'pricelist': pricelist[0], 'quantity': min_qty })
 							# Get all variant prices
 							variants_prices = tuple(product_in_ctx.product_variant_ids.mapped('price'))
 							# Same price in all variants

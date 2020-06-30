@@ -49,7 +49,7 @@ def get_data(self, action):
         'name': self.get_field_translations('name'),
         'sequence': self.sequence,
         'html_color': self.html_color,
-        'public_file_name:image_color': b2b['images_base'] + self.public_file_name if self.public_file_name else None
+        'public_image_name:image_color': b2b['images_base'] + self.public_image_name if self.public_image_name else None
     }</field>
         </record>
 
@@ -73,7 +73,7 @@ def get_data(self, action):
         'fixed:jim_id': self.id,
         'name': self.name,
         'description': self.get_field_translations('description'),
-        'logo:image': b2b['images_base'] + self.public_file_name if self.public_file_name else None
+        'logo:image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
     }</field>
         </record>
 
@@ -83,7 +83,7 @@ def get_data(self, action):
             <field name="name">category</field>
             <field name="model">product.tag</field>
             <field name="description">Categorías de producto</field>
-            <field name="code">fields_to_watch = ('id', 'name', 'parent_id', 'public_file_name', 'sequence', 'active', 'web')
+            <field name="code">fields_to_watch = ('id', 'name', 'parent_id', 'public_image_name', 'sequence', 'active', 'web')
 
 def is_notifiable(self, action, vals):
     return True
@@ -93,7 +93,7 @@ def get_data(self, action):
         'fixed:jim_id': self.id,
         'name': self.get_field_translations('name'),
         'parent_id': self.parent_id.id if self.parent_id else None,
-        'image': b2b['images_base'] + self.public_file_name if self.public_file_name else None,
+        'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None,
         'sequence': self.sequence,
         # Está activa y activa para la web (y la categoría padre también)
         'fixed:active': bool(self.active and self.web and (not self.parent_id or (self.parent_id and self.parent_id.web)))
@@ -116,7 +116,7 @@ def get_data(self, action):
         'fixed:jim_id': self.id,
         'name': self.get_field_translations('name'),
         'parent_id': self.parent_id.id if self.parent_id else None,
-        'image': b2b['images_base'] + self.public_file_name if self.public_file_name else None,
+        'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None,
         'sequence': self.sequence
     }</field>
         </record>
@@ -155,7 +155,7 @@ def get_data(self, action):
         'brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
         'weight': self.weight,
-        'public_file_name:image': b2b['images_base'] + self.public_file_name if self.public_file_name else None
+        'public_image_name:image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
     }
 
 def pos_data(self, action):
@@ -163,15 +163,15 @@ def pos_data(self, action):
     if b2b['crud_mode'] == 'create':
         # Crear las imágenes del producto
         for image in self.product_image_ids:
-            image.b2b_record('create')
+            image.b2b_record('create', user_notify=False)
         # Crear la parametrización
         if 'product.template.categorization' in self.env:
             for p in self.env['product.template.categorization'].search([('product_id', '=', self.id)]):
                 print("CATEGORIZACION PARA PRODUCTO", p.id)
-                p.b2b_record('create')
+                p.b2b_record('create', user_notify=False)
         # Previsión de abastecimiento
         for stock_move in self.product_variant_id.stock_move_ids:
-            stock_move.b2b_record('create')</field>
+            stock_move.b2b_record('create', user_notify=False)</field>
         </record>
 
         <record id="b2b_item_out_7" model="b2b.item.out">
@@ -220,10 +220,10 @@ def pos_data(self, action):
         # Crear la parametrización
         if 'product.product.categorization' in self.env:
             for p in self.env['product.product.categorization'].search([('product_id', '=', self.id)]):
-                p.b2b_record('create')
+                p.b2b_record('create', user_notify=False)
         # Previsión de abastecimiento
         for stock_move in self.stock_move_ids:
-            stock_move.b2b_record('create')</field>
+            stock_move.b2b_record('create', user_notify=False)</field>
         </record>
 
         <record id="b2b_item_out_8" model="b2b.item.out">
@@ -322,7 +322,7 @@ def get_data(self, action):
         'fixed:jim_id': self.id,
         'fixed:product_id': self.product_tmpl_id.id, 
         'name': self.get_field_translations('name'), 
-        'public_file_name:image': b2b['images_base'] + self.public_file_name if self.public_file_name else None, 
+        'public_image_name:image': b2b['images_base'] + self.public_image_name if self.public_image_name else None, 
         'fixed:attributes': self.product_attributes_values.ids
     }</field>
         </record>
@@ -453,16 +453,17 @@ def pos_data(self, action):
     if b2b['crud_mode'] == 'create':
         # Creamos las direcciones
         for child in self.child_ids:
-            child.b2b_record('create')
+            child.b2b_record('create', user_notify=False)
         # Creamos los pedidos
         for order in self.sale_order_ids:
-            order.b2b_record('create')
+            order.b2b_record('create', user_notify=False)
         # Creamos las facturas
-        for invoice in self.invoice_ids:
+        # for invoice in self.invoice_ids: Esto no sirve ya que tenemos que coger el campo "Facturar a"
+        for invoice in self.env['account.invoice'].search([('comercial_partner_id', '=', self.id)]):
             invoice.b2b_record('create')
         # Creamos los albaranes
         for picking in self.env['stock.picking'].search([('partner_id', '=', self.id)]):
-            picking.b2b_record('create')</field>
+            picking.b2b_record('create', user_notify=False)</field>
         </record>
 
         <record id="b2b_item_out_14" model="b2b.item.out">

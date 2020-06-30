@@ -13,11 +13,16 @@ base_product_publish_error = _('Error! You can not publish this product because 
 image_without_file_error = _('Error! Can not save an image without media file!')
 
 ####################### IMÁGENES PÚBLICAS #######################
+# Esta clase permite simplificar mucho los modelos de las imágenes que se quieren subir al FTP
+# Ya que nos evita tener que sobreescribir el create, write y unlink con el mismo código
+# Para usarla haremos una herencia múltiple Ej. ["product.template", "b2b.image"]
 
-class PublicImage:
+class PublicImage(models.AbstractModel):
+	_name = "b2b.image"
 
 	_max_public_file_size = (1920, None)
-	_attr_public_file_name = 'public_file_name'
+	_attr_image_model_field = 'image'
+	_attr_public_file_name = 'public_image_name'
 
 	@api.multi
 	def _ftp_save_base64(self, base64_str):
@@ -38,15 +43,56 @@ class PublicImage:
 			base64_source = base64_str.encode('ascii') if isinstance(base64_str, pycompat.text_type) else base64_str
 			return tools.image_resize_image(base64_source, size=self._max_public_file_size)
 
+	@api.model
+	def create(self, vals, resize=True):
+		try:
+			if vals.get(self._attr_image_model_field):
+				img = self._resize_large_image(vals[self._attr_image_model_field]) if resize else vals[self._attr_image_model_field]
+				vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: self._ftp_save_base64(img) })
+			return super(PublicImage, self).create(vals)
+		except:
+			self._ftp_delete_file()
+			return False
+
+	@api.multi
+	def write(self, vals, resize=True):
+		new_image_name = None
+
+		try:
+			if vals.get(self._attr_image_model_field) == False:
+				self._ftp_delete_file()
+				vals.update({ self._attr_public_file_name: None })
+			elif vals.get(self._attr_image_model_field):
+				img = self._resize_large_image(vals[self._attr_image_model_field]) if resize else vals[self._attr_image_model_field]
+				new_image_name = self._ftp_save_base64(img) 
+				vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: new_image_name })
+			return super(PublicImage, self).write(vals)
+		except:
+			ftp.delete_file(new_image_name)
+			return False
+
+
+	@api.multi
+	def unlink(self):
+		for record in self:
+			record_image_name = getattr(record, self._attr_public_file_name)
+			if super(PublicImage, record).unlink():
+				ftp.delete_file(record_image_name)
+		return True
+
 ####################### PRODUCTO #######################
 
-class ProductTemplate(models.Model, PublicImage):
-	_inherit = "product.template"
+class ProductTemplate(models.Model):
+	_name = "product.template"
+	_inherit = ["product.template", "b2b.image"]
+
+	# PublicImage params
+	_attr_image_model_field = 'image_medium'
 
 	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
 	public_categ_ids = fields.Many2many('product.public.category', string='Website Product Category', help="Categories for stores that sells to end customer")
 	product_image_ids = fields.One2many('product.image', 'product_tmpl_id', string='Images')
-	public_file_name = fields.Char('Product Public File Name')
+	public_image_name = fields.Char('Product Public Image Name')
 
 	@api.multi
 	def has_valid_barcode(self, code_type='ean13'):
@@ -82,32 +128,11 @@ class ProductTemplate(models.Model, PublicImage):
 				tmpl_id.product_variant_ids[0].website_published = False
 		return res
 
-	@api.model
-	def create(self, vals, resize=True):
-		if vals.get('image_medium'):
-			img = self._resize_large_image(vals['image_medium']) if resize else vals['image_medium']
-			vals.update({ 'image_medium': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-		return super(ProductTemplate, self).create(vals)
-
-	@api.multi
-	def write(self, vals, resize=True):
-		if vals.get('image_medium') == False:
-			self._ftp_delete_file()
-			vals.update({ 'public_file_name': None })
-		elif vals.get('image_medium'):
-			img = self._resize_large_image(vals['image_medium']) if resize else vals['image_medium']
-			vals.update({ 'image_medium': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-		return super(ProductTemplate, self).write(vals)
-
 	@api.multi
 	def unlink(self):
 		for record in self:
-			template_id = record.id
-			default_image = record.public_file_name
+			default_image = record.public_image_name
 			if super(ProductTemplate, record).unlink():
-				ftp.delete_file(default_image)
 				# Delete images with product_tmpl_id = null
 				self.env['product.image'].search([('product_tmpl_id', '=', False)]).unlink()
 
@@ -172,86 +197,45 @@ class ProductProduct(models.Model):
 
 ####################### MARCA #######################
 
-class ProductBrand(models.Model, PublicImage):
-	_inherit = "product.brand"
+class ProductBrand(models.Model):
+	_name = "product.brand"
+	_inherit = ["product.brand", "b2b.image"]
+
+	# PublicImage params
 	_max_public_file_size = (600, None)
-	public_file_name = fields.Char('Brand Public File Name')
+	_attr_image_model_field = 'logo'
 
-	@api.model
-	def create(self, vals, resize=True):
-		if vals.get('logo'):
-			img = self._resize_large_image(vals['logo']) if resize else vals['logo']
-			vals.update({ 'logo': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-		return super(ProductBrand, self).create(vals)
-
-	@api.multi
-	def write(self, vals, resize=True):
-		if vals.get('logo') == False:
-			self._ftp_delete_file()
-			vals.update({ 'public_file_name': None })
-		elif vals.get('logo'):
-			img = self._resize_large_image(vals['logo']) if resize else vals['logo']
-			vals.update({ 'logo': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-		return super(ProductBrand, self).write(vals)
-
-	@api.multi
-	def unlink(self):
-		for record in self:
-			image_name = record.public_file_name
-			if super(ProductBrand, record).unlink():
-				ftp.delete_file(image_name)
+	public_image_name = fields.Char('Brand Public File Name')
 
 ####################### ETIQUETA (CATEGORÍA) #######################
 
-class ProductTag(models.Model, PublicImage):
-	_inherit = "product.tag"
+class ProductTag(models.Model):
+	_name = "product.tag"
+	_inherit = ["product.tag", "b2b.image"]
 	_order = "sequence, parent_id"
 
+	# PublicImage params
+	_attr_image_model_field = 'image'
 	_max_public_file_size = (1280, None)
 
 	sequence = fields.Integer(help="Gives the sequence order for tags")
-	public_file_name = fields.Char('Tag Public File Name')
-
-	@api.model
-	def create(self, vals, resize=True):
-		if vals.get('image'):
-			img = self._resize_large_image(vals['image']) if resize else vals['image']
-			vals.update({ 'image': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-		return super(ProductTag, self).create(vals)
-
-	@api.multi
-	def write(self, vals, resize=True):
-		if vals.get('image') == False:
-			self._ftp_delete_file()
-			vals.update({ 'public_file_name': None })
-		elif vals.get('image'):
-			img = self._resize_large_image(vals['image']) if resize else vals['image']
-			vals.update({ 'image': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-		return super(ProductTag, self).write(vals)
-
-	@api.multi
-	def unlink(self):
-		for record in self:
-			image_name = record.public_file_name
-			if super(ProductTag, record).unlink():
-				ftp.delete_file(image_name)
+	public_image_name = fields.Char('Tag Public File Name')
 
 ####################### ATRIBUTOS #######################
 
-class ProductAttributeValue(models.Model, PublicImage):
-	_inherit = "product.attribute.value"
+class ProductAttributeValue(models.Model):
+	_name = "product.attribute.value"
+	_inherit = ["product.attribute.value", "b2b.image"]
 
+	# PublicImage params
+	_attr_image_model_field = 'image_color'
 	_max_public_file_size = (62, 62)
 
 	is_color = fields.Boolean(related='attribute_id.is_color', store=False)
 	html_color = fields.Char(string='HTML Color', oldname='color', help="Here you can set a specific HTML color index (e.g. #ff0000) to display the color on the website if the attibute type is 'Color'.")
 	image_color = fields.Binary(attachment=True, help="This field holds the image used as thumbnail for the attribute colors, limited to 62px.")
 	image_color_filename = fields.Char(string='Color Image Name') # To check extension
-	public_file_name = fields.Char('Color Public File Name')
+	public_image_name = fields.Char('Color Public File Name')
 
 	@api.one
 	@api.constrains('image_color_filename')
@@ -263,39 +247,15 @@ class ProductAttributeValue(models.Model, PublicImage):
 			if ext != 'jpg':
 				raise ValidationError(_("The image must be a jpg file"))
 
-	@api.model
-	def create(self, vals, resize=True):
-		if vals.get('image_color'):
-			img = self._resize_large_image(vals['image_color']) if resize else vals['image_color']
-			vals.update({ 'image_color': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-		return super(ProductAttributeValue, self).create(vals)
-
-	@api.multi
-	def write(self, vals, resize=True):
-		if vals.get('image_color') == False:
-			self._ftp_delete_file()
-			vals.update({ 'public_file_name': None })
-		elif vals.get('image_color'):
-			img = self._resize_large_image(vals['image_color']) if resize else vals['image_color']
-			vals.update({ 'image_color': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-		return super(ProductAttributeValue, self).write(vals)
-
-	@api.multi
-	def unlink(self):
-		for record in self:
-			image_name = record.public_file_name
-			if super(ProductAttributeValue, record).unlink():
-				ftp.delete_file(image_name)
-
 ####################### CATEGORÍA WEB #######################
 
-class ProductPublicCategory(models.Model, PublicImage):
+class ProductPublicCategory(models.Model):
 	_name = "product.public.category"
+	_inherit = ["b2b.image"]
 	_description = "Website Product Category"
 	_order = "sequence, parent_id"
 
+	# PublicImage params
 	_max_public_file_size = (1280, None)
 
 	name = fields.Char(required=True, translate=True)
@@ -303,33 +263,7 @@ class ProductPublicCategory(models.Model, PublicImage):
 	child_id = fields.One2many('product.public.category', 'parent_id', string='Children Categories')
 	sequence = fields.Integer(help="Gives the sequence order when displaying a list of product categories.")
 	image = fields.Binary(attachment=True, help="This field holds the image used as image for the category, limited to 1280px.")
-	public_file_name = fields.Char('Category Public File Name')
-
-	@api.model
-	def create(self, vals, resize=True):
-		if vals.get('image'):
-			img = self._resize_large_image(vals['image']) if resize else vals['image']
-			vals.update({ 'image': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-		return super(ProductPublicCategory, self).create(vals)
-
-	@api.multi
-	def write(self, vals, resize=True):
-		if vals.get('image') == False:
-			self._ftp_delete_file()
-			vals.update({ 'public_file_name': None })
-		elif vals.get('image'):
-			img = self._resize_large_image(vals['image']) if resize else vals['image']
-			vals.update({ 'image': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-		return super(ProductPublicCategory, self).write(vals)
-
-	@api.multi
-	def unlink(self):
-		for record in self:
-			image_name = record.public_file_name
-			if super(ProductPublicCategory, record).unlink():
-				ftp.delete_file(image_name)
+	public_image_name = fields.Char('Category Public File Name')
 
 	@api.constrains('parent_id')
 	def check_parent_id(self):
@@ -350,12 +284,13 @@ class ProductPublicCategory(models.Model, PublicImage):
 
 ####################### IMÁGENES DE PRODUCTO #######################
 
-class ProductImage(models.Model, PublicImage):
+class ProductImage(models.Model):
 	_name = "product.image"
+	_inherit = ["b2b.image"]
 	
 	name = fields.Char('Name')
 	image = fields.Binary('Image', attachment=True, required=True)
-	public_file_name = fields.Char('Variant Image Public File Name')
+	public_image_name = fields.Char('Variant Image Public File Name')
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', copy=True)
 	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel')
 
@@ -369,33 +304,3 @@ class ProductImage(models.Model, PublicImage):
 				'product_attributes_values': [('id', 'in', attributes_values_ids)]
 			}
 		}
-
-	@api.model
-	def create(self, vals, resize=True):
-		if not vals.get('image'):
-			raise ValidationError(image_without_file_error)
-		else:
-			img = self._resize_large_image(vals['image']) if resize else vals['image']
-			vals.update({ 'image': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-
-		return super(ProductImage, self).create(vals)
-
-	@api.multi
-	def write(self, vals, resize=True):
-		if not vals.get('image', self.image):
-			raise ValidationError(image_without_file_error)
-
-		if vals.get('image'):
-			img = self._resize_large_image(vals['image']) if resize else vals['image']
-			vals.update({ 'image': img })
-			vals.update({ 'public_file_name': self._ftp_save_base64(img) })
-
-		return super(ProductImage, self).write(vals)
-
-	@api.multi
-	def unlink(self):
-		for record in self:
-			image_name = record.public_file_name
-			if super(ProductImage, record).unlink():
-				ftp.delete_file(image_name)

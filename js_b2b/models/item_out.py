@@ -108,7 +108,7 @@ class B2bItemsOut(models.Model):
 		return b2b
 
 	@api.one
-	def sync_item(self, mode='create'):
+	def sync_item(self, mode='create', user_notify=True):
 		"""
 		Sync all model records
 		"""
@@ -141,7 +141,7 @@ class B2bItemsOut(models.Model):
 					search_query = [('date_order', '>=', docs_min_date), ('partner_id', 'in', client_ids)]
 
 				# Get code model records
-				records_ids = self.env[model].search(search_query, order='id ASC').ids
+				records_ids = self.env[model].search(search_query, order='id ASC', limit=100).ids
 				total_records =  len(records_ids)
 				create_records = 0
 				delete_records = 0
@@ -165,14 +165,14 @@ class B2bItemsOut(models.Model):
 						create_records += 1
 						print("@@ CREATE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('create', conf_items_before=notifiable_items, auto_send=False):
-							packet.send(notify=False) # Don't notify
+							packet.send(notify=user_notify) # Don't notify
 
 					elif not notifiable_items and record_on_jsync:
 
 						delete_records += 1
 						print("@@ DELETE RECORD WITH ID#%s" % (id), record_percent_str)
 						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], auto_send=False):
-							packet.send(notify=False) # Don't notify
+							packet.send(notify=user_notify) # Don't notify
 
 					else:
 
