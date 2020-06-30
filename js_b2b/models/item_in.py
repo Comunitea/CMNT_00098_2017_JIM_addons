@@ -70,22 +70,27 @@ class B2bItemsIn(models.Model):
 	@api.model
 	def must_process(self, object_name, partner_id, data, mode='create'):
 		"""
-		Check if item record its configured and do save operation
+		Check if item record is configured and do operation
 		"""
+
 		# Data check
 		if data and type(data) is dict:
+
 			# Check if client exists
 			if self.env['res.partner'].browse(partner_id):
+
 				# Process item based on config
 				item = self.search([('name', 'like', object_name), ('active', '=', True)], limit=1)
 				if item and type(item.code) is unicode:
+					# Configuration eval
 					b2b = item.evaluate(mode, data)
 
 					if b2b['crud_mode']:
 						# Comprobaciones de seguridad
 						item_data = b2b['get_data'](self, data)
 						item_data_ok = type(item_data) is dict
-						incoming_user = self.env['res.users'].browse(188) # Prestadoo
+						superuser_id = self.env['b2b.settings'].get_param('user')
+						incoming_user = self.env['res.users'].browse(superuser_id)
 						item_model = self.env[item.model].sudo(incoming_user)
 						item_action = getattr(item_model, mode, None)
 						item_action_ok = b2b['crud_mode'] in ('create', 'update', 'cancel')

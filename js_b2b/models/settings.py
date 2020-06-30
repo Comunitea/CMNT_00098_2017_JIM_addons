@@ -8,6 +8,7 @@ from odoo.tools import ormcache
 import requests as request
 
 PARAMS = {
+	'superuser': ('b2b.admin_user', 0),
 	'url': ('b2b.server_url', 'http://0.0.0.0/'),
 	'conexion_error': ('b2b.show_conexion_error', True),
 	'response_error': ('b2b.show_response_error', True),
@@ -23,6 +24,7 @@ class B2BSettings(models.TransientModel):
 	_name = 'b2b.settings'
 	_inherit = 'base.config.settings'
 
+	superuser = fields.Integer('Superuser ID', help="User ID with administration privileges")
 	url = fields.Char('JSync URL', required=True, translate=False, help="Set the server URL (http://ip:port/)")
 	conexion_error = fields.Boolean('Conexion errors', help="Disturb user with conexion errors and do not execute the action")
 	response_error = fields.Boolean('Response errors', help="Disturb user with response errors and do not execute the action")
