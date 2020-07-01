@@ -12,9 +12,11 @@
             <!-- Multicompañía -->
             <t t-if="not o and doc" t-set="o" t-value="doc"/>
             <t t-if="o and 'company_id' in o" t-set="company" t-value="o.company_id"/>
-            <!-- Por alguna razón aquí llega docs a veces con sólo un documento -->
-            <t t-if="not o or not 'company_id' in o and len(docs) == 1 and 'company_id' in docs[0]" t-set="company" t-value="docs[0].company_id"/>
-            <t t-else="" t-set="company" t-value="res_company"/>
+            <t t-else="">
+                <!-- Por alguna razón aquí llega docs a veces con sólo un documento -->
+                <t t-if="docs and (len(docs) == 1 and 'company_id' in docs[0])" t-set="company" t-value="docs[0].company_id"/>
+                <t t-else="" t-set="company" t-value="res_company"/>
+            </t>
 
             <!-- Última página -->
             <t t-foreach="company.pdf_last_pages" t-as="last_page">
