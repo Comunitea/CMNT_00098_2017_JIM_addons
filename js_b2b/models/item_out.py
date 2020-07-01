@@ -108,7 +108,7 @@ class B2bItemsOut(models.Model):
 		return b2b
 
 	@api.one
-	def sync_item(self, mode='create', user_notify=True):
+	def sync_item(self, mode='create', user_notify=False):
 		"""
 		Sync all model records
 		"""
