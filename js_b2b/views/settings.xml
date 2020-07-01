@@ -24,8 +24,7 @@
 						<field name="response_error" attrs="{'invisible': [('conexion_error','=',False)]}"/>
 					</group>
 
-					<group string="Data">
-						<field name="superuser"/>
+					<group string="Documents">
 						<field name="docs_after"/>
 					</group>
 

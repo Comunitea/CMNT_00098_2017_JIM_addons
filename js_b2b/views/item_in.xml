@@ -53,6 +53,8 @@
 								<span class="help-block">Los métodos que se definen en este código se pueden llamar localmente sólo mediante la variable b2b.</span>
 								<ul class="help-block">
 									<li><b>b2b['crud_mode']</b> El método del modelo al que se pasarán los datos ['create'|'write'|'unlink']</li>
+									<li><b>b2b['partner_id']</b> ID del cliente que envía el dato</li>
+									<li><b>b2b['company_id']</b> ID de la compañia VIP que corresponde al cliente (si la tiene)</li>
 								</ul>
 							</p>
 						</div>

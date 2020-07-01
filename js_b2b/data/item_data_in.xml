@@ -51,6 +51,7 @@ def prepare_order_fields(self, order):
             }]))
     # Actualizar campos + datos extra
     order.update({
+        'company_id': b2b.get('company_id', False),
         'order_line': One2many_order_lines,
         'partner_id': int(order.get('partner_id', client.id)),
         'partner_invoice_id': partner_invoice_id,

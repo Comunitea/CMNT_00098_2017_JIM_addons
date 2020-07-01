@@ -68,7 +68,7 @@ class B2bItemsIn(models.Model):
 		return b2b
 
 	@api.model
-	def must_process(self, object_name, data, mode='create'):
+	def must_process(self, object_name, partner_id, company_id, data, mode='create'):
 		"""
 		Check if item record is configured and do operation
 		"""
@@ -81,14 +81,16 @@ class B2bItemsIn(models.Model):
 			if item and type(item.code) is unicode:
 				# Configuration eval
 				b2b = item.evaluate(mode, data)
+				b2b['partner_id'] = partner_id
+				b2b['company_id'] = company_id
 
 				if b2b['crud_mode']:
 					# Comprobaciones de seguridad
 					item_data = b2b['get_data'](self, data)
 					item_data_ok = type(item_data) is dict
-					superuser_id = self.env['b2b.settings'].get_param('superuser')
-					incoming_user = self.env['res.users'].browse(superuser_id)
-					item_model = self.env[item.model].sudo(incoming_user)
+					# superuser_id = self.env['b2b.settings'].get_param('superuser')
+					# incoming_user = self.env['res.users'].browse(superuser_id)
+					# item_model = self.env[item.model].sudo(incoming_user)
 					item_action = getattr(item_model, mode, None)
 					item_action_ok = b2b['crud_mode'] in ('create', 'update', 'cancel')
 					if item_data and item_data_ok and callable(item_action) and item_action_ok:
