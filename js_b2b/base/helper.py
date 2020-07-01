@@ -12,7 +12,7 @@ from odoo import api
 import threading
 import logging
 
-_logger = logging.getLogger(__name__)
+_logger = logging.getLogger('B2B-OUTGOING')
 _thread_semaphore = threading.BoundedSemaphore(20)
 
 class Thread(threading.Thread):
