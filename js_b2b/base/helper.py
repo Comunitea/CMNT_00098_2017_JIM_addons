@@ -34,7 +34,7 @@ class Thread(threading.Thread):
 		"""
 		while not self._Thread__target.env.cr.closed:
 			# Wait while parent process ends
-			sleep(5)
+			sleep(2)
 
 		# Now create a new cursor
 		with api.Environment.manage():
@@ -193,7 +193,7 @@ class JSync(object):
 			# Si la respuesta es OK
 			if jsync_post and jsync_post.status_code is 200:
 
-				_logger.info(debug_msg.format(jsync_post.text, self.name, self.mode, debug_data, self.part))
+				# _logger.info(debug_msg.format(jsync_post.text, self.name, self.mode, debug_data, self.part))
 
 				# En los paquetes múltiples no se establecen estos parámetros
 				# por lo que no se notifican al usuario ni se registran en el sistema

@@ -112,7 +112,7 @@ class BaseB2B(models.AbstractModel):
 		return items_list
 
 	@api.multi
-	def b2b_record(self, mode, vals=None, conf_items_before=None, auto_send=True):
+	def b2b_record(self, mode, vals=None, conf_items_before=None, auto_send=True, user_notify=True):
 		"""
 		B2B Action Trigger
 
@@ -171,7 +171,7 @@ class BaseB2B(models.AbstractModel):
 				# Filtramos los datos
 				packet.filter_data(vals)
 				# Si procede enviamos el paquete
-				if auto_send: packet.send(notify=True)
+				if auto_send: packet.send(notify=user_notify)
 				# Guardamos el paquete
 				packets.append(packet)
 

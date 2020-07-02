@@ -42,12 +42,19 @@ class B2bController(http.Controller):
 
 			# Process item
 			if http.request.env['b2b.item.in'].must_process(item_name, item_user, item_company, item_data, item_action):
+
 				# OK
 				_logger.info(debug_str)
+				return 'OK'
+
 			else:
+
 				# ERROR
 				_logger.error(debug_str)
+				return 'ERROR 500'
 
 		except ValueError:
+
 			# Invalid JSON
 			_logger.warning("Invalid JSON received: %s" % message.data)
+			return 'ERROR 400'

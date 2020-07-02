@@ -79,7 +79,7 @@ class ResPartner(models.Model):
 
 	@api.model
 	def create(self, vals):
-		item = super(B2bItemsOut, self).create(vals)
+		item = super(ResPartner, self).create(vals)
 		self.__check_vip_web_access_companies_pricelists(vals)
 		return item
 

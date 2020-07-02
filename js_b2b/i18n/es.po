@@ -204,6 +204,16 @@ msgid "Display Name"
 msgstr "Nombre"
 
 #. module: js_b2b
+#: model:ir.ui.view,arch_db:js_b2b.js_b2b_settings_form
+msgid "Documents"
+msgstr "Documentos"
+
+#. module: js_b2b
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_settings_docs_after
+msgid "Min Date"
+msgstr "Desde Fecha"
+
+#. module: js_b2b
 #: model:ir.model.fields,help:js_b2b.field_b2b_settings_conexion_error
 msgid "Disturb user with conexion errors and do not execute the action"
 msgstr "Avisar al usuario de los errores de conexión y no ejecutar la acción"
@@ -244,8 +254,8 @@ msgstr "Exportar esta tarifa a la web"
 
 #. module: js_b2b
 #: model:ir.ui.view,arch_db:js_b2b.js_b2b_settings_form
-msgid "FTP Server Settings"
-msgstr "Configuración de FTP Público"
+msgid "FTP Server"
+msgstr "FTP Público"
 
 #. module: js_b2b
 #: model:ir.model.fields,help:js_b2b.field_product_tag_sequence
@@ -494,9 +504,23 @@ msgid "Created on"
 msgstr "Creado el"
 
 #. module: js_b2b
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_export_create_uid
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_item_in_create_uid
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_settings_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: js_b2b
 #: model:ir.model.fields,field_description:js_b2b.field_b2b_export_write_date
 msgid "Last Updated on"
 msgstr "Actualizado el"
+
+#. module: js_b2b
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_export_write_uid
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_item_in_write_uid
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_settings_write_uid
+msgid "Last Updated by"
+msgstr "Actualizado por"
 
 #. module: js_b2b
 #: model:ir.model.fields,field_description:js_b2b.field_b2b_settings_response_error
@@ -668,21 +692,6 @@ msgid "alt image text"
 msgstr "Texto alt de imágen"
 
 #. module: js_b2b
-#: model:ir.model,name:js_b2b.model_b2b_export
-msgid "b2b.export"
-msgstr "b2b.export"
-
-#. module: js_b2b
-#: model:ir.model,name:js_b2b.model_b2b_settings
-msgid "b2b.settings"
-msgstr "b2b.settings"
-
-#. module: js_b2b
-#: model:ir.model,name:js_b2b.model_base
-msgid "base"
-msgstr "base"
-
-#. module: js_b2b
 #: code:addons/js_b2b/models/product.py:65
 #: code:addons/js_b2b/models/product.py:155
 #, python-format
@@ -701,32 +710,6 @@ msgstr "no tiene etiquetas."
 #, python-format
 msgid "does not have web categories."
 msgstr "no tiene categorías web."
-
-#. module: js_b2b
-#: model:ir.ui.view,arch_db:js_b2b.js_b2b_items_in_tree
-#: model:ir.ui.view,arch_db:js_b2b.js_b2b_items_out_tree
-msgid "parameters"
-msgstr "Parámetros"
-
-#. module: js_b2b
-#: model:ir.model,name:js_b2b.model_product_attribute_line
-msgid "product.attribute.line"
-msgstr "product.attribute.line"
-
-#. module: js_b2b
-#: model:ir.model,name:js_b2b.model_product_attribute_value
-msgid "product.attribute.value"
-msgstr "product.attribute.value"
-
-#. module: js_b2b
-#: model:ir.model,name:js_b2b.model_product_brand
-msgid "product.brand"
-msgstr "product.brand"
-
-#. module: js_b2b
-#: model:ir.model,name:js_b2b.model_product_image
-msgid "product.image"
-msgstr "product.image"
 
 #. module: js_b2b
 #: sql_constraint:b2b.export:0

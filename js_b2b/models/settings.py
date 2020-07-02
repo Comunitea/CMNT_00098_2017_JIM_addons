@@ -21,7 +21,7 @@ PARAMS = {
 
 class B2BSettings(models.TransientModel):
 	_name = 'b2b.settings'
-	_inherit = 'base.config.settings'
+	_inherit = 'res.config.settings'
 
 	url = fields.Char('JSync URL', required=True, translate=False, help="Set the server URL (http://ip:port/)")
 	conexion_error = fields.Boolean('Conexion errors', help="Disturb user with conexion errors and do not execute the action")
@@ -73,6 +73,7 @@ class B2BSettings(models.TransientModel):
 			self.env['ir.config_parameter'].set_param(key_name, repr(value or default_val))
 			#self.get_param.clear_cache(self.filtered(lambda r: r.key == 'param'))
 			self.clear_caches()
+		return True
 
 	@api.multi
 	def set_params(self):
@@ -84,6 +85,7 @@ class B2BSettings(models.TransientModel):
 			self.env['ir.config_parameter'].set_param(key_name, value)
 			#self.get_default_params.clear_cache(self.filtered(lambda r: r.key == 'fields'))
 			self.clear_caches()
+		return True
 
 	@api.model
 	@ormcache('fields')

@@ -75,9 +75,8 @@ class B2bItemsIn(models.Model):
 
 		# Data check
 		if data and type(data) is dict:
-
 			# Process item based on config
-			item = self.search([('name', 'like', object_name), ('active', '=', True)], limit=1)
+			item = self.search([('name', '=', object_name), ('active', '=', True)], limit=1)
 			if item and type(item.code) is unicode:
 				# Configuration eval
 				b2b = item.evaluate(mode, data)
@@ -91,7 +90,7 @@ class B2bItemsIn(models.Model):
 					# superuser_id = self.env['b2b.settings'].get_param('superuser')
 					# incoming_user = self.env['res.users'].browse(superuser_id)
 					# item_model = self.env[item.model].sudo(incoming_user)
-					item_action = getattr(item_model, mode, None)
+					item_action = getattr(self.env[item.model], mode, None)
 					item_action_ok = b2b['crud_mode'] in ('create', 'update', 'cancel')
 					if item_data and item_data_ok and callable(item_action) and item_action_ok:
 						item_action(item_data)
