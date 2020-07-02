@@ -141,7 +141,7 @@ class B2bItemsOut(models.Model):
 					search_query = [('date_order', '>=', docs_min_date), ('partner_id', 'in', client_ids)]
 
 				# Get code model records
-				records_ids = self.env[model].search(search_query, order='id ASC', limit=100).ids
+				records_ids = self.env[model].search(search_query, order='id ASC').ids
 				total_records =  len(records_ids)
 				create_records = 0
 				delete_records = 0
