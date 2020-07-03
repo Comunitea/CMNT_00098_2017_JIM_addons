@@ -57,7 +57,7 @@
 								<b>pre_data</b>(self, action)
 								<span class="help-block">
 									<p>Realiza acciones antes de obtener los datos (get_data)</p>
-									<p>Se ejecuta de forma asíncrona y es opcional</p>
+									<p>Se ejecuta de forma síncrona y es opcional</p>
 									<b style="color:#E30059">return</b> void
 								</span>
 							</p>
@@ -86,7 +86,7 @@
 								<b>pos_data</b>(self, action)
 								<span class="help-block">
 									<p>Realiza acciones después de obtener los datos (get_data)</p>
-									<p>Se ejecuta de forma asíncrona y es opcional</p>
+									<p>Se ejecuta de forma <b>asíncrona</b> en un nuevo hilo y es opcional</p>
 									<b style="color:#E30059">return</b> void
 								</span>
 							</p>

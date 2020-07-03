@@ -9,20 +9,29 @@ from unidecode import unidecode
 from timeit import default_timer
 from time import sleep
 from odoo import api
-import threading
+from odoo.modules import registry
+from concurrent.futures import ThreadPoolExecutor
 import logging
 
 _logger = logging.getLogger('B2B-OUTGOING')
-_thread_semaphore = threading.BoundedSemaphore(20)
+_pool = ThreadPoolExecutor(max_workers=10)
+_running = dict()
 
-class Thread(threading.Thread):
+class Subprocess(object):
 
-	def run(self):
-		_thread_semaphore.acquire()
-		try:
-			self.background_run(*self._Thread__args)
-		finally:
-			_thread_semaphore.release()
+	__slots__ = ['_target', 'name']
+
+	def __init__(self, target): 
+		self._target = target
+
+	def add(self, *args):
+		self.name = '%s-%s' % (self._target._name, self._target.id)
+		# If we are processing this record on other thread cancel
+		# it first, if it's running can not be cancelled
+		if self.name in _running:
+			_running[self.name].cancel()
+		# Schedule task
+		_running[self.name] = _pool.submit(self.background_run, *args)
 
 	def background_run(self, method, record, mode):
 		"""
@@ -32,13 +41,13 @@ class Thread(threading.Thread):
 		:param record: Object, record to notify
 		:param mode: Str, CRUD mode
 		"""
-		while not self._Thread__target.env.cr.closed:
+		while not self._target.env.cr.closed:
 			# Wait while parent process ends
-			sleep(2)
+			sleep(1)
 
 		# Now create a new cursor
 		with api.Environment.manage():
-			with self._Thread__target.pool.cursor() as new_cr:
+			with self._target.pool.cursor() as new_cr:
 				# Autocommit ON
 				new_cr.autocommit(True)
 				# Issolated record
@@ -150,6 +159,17 @@ class JSync(object):
 		# Send the record?
 		record_send = (not export_record or self.mode != 'create')
 
+		# Is related record notifiable?
+		if record_send and self.related:
+			# Check with new cursor
+			with api.Environment.manage():
+				with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
+					env = api.Environment(new_cr, self.env.uid, self.env.context)
+					record_model, record_id = self.related.split(',')
+					notifiable_configs = env[record_model].browse(int(record_id)).is_notifiable_check()
+					# Do not send the record if the related item is no longer notifiable
+					record_send = True if notifiable_configs else False
+
 		if self.name and self.data and self.mode and record_send:
 
 			jsync_post = None
@@ -193,7 +213,7 @@ class JSync(object):
 			# Si la respuesta es OK
 			if jsync_post and jsync_post.status_code is 200:
 
-				# _logger.info(debug_msg.format(jsync_post.text, self.name, self.mode, debug_data, self.part))
+				print(debug_msg.format(jsync_post.text, self.name, self.mode, debug_data, self.part))
 
 				# En los paquetes múltiples no se establecen estos parámetros
 				# por lo que no se notifican al usuario ni se registran en el sistema
@@ -204,12 +224,18 @@ class JSync(object):
 						self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
 
 					# Guardar el estado en Odoo
-					if self.mode == 'create':
-						self.env['b2b.export'].create({ 'name': self.name, 'res_id': res_id, 'rel_id': self.related })
-					elif self.mode == 'update':
-						export_record.write({ 'name': self.name, 'res_id': res_id, 'rel_id': self.related })
-					elif self.mode == 'delete':
-						export_record.unlink()
+					# con un nuevo cursor para que se 
+					# haga un commit de forma inmediata
+					with api.Environment.manage():
+						with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
+							env = api.Environment(new_cr, self.env.uid, self.env.context)
+							env.cr.autocommit(True)
+							if self.mode == 'create':
+								env['b2b.export'].create({ 'name': self.name, 'res_id': res_id, 'rel_id': self.related })
+							elif self.mode == 'update':
+								env['b2b.export'].browse(export_record.id).write({ 'name': self.name, 'res_id': res_id, 'rel_id': self.related })
+							elif self.mode == 'delete':
+								env['b2b.export'].browse(export_record.id).unlink()
 
 				try:
 					return json_load(jsync_post.text)

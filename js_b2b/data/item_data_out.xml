@@ -460,7 +460,7 @@ def pos_data(self, action):
         # Creamos las facturas
         # for invoice in self.invoice_ids: Esto no sirve ya que tenemos que coger el campo "Facturar a"
         for invoice in self.env['account.invoice'].search([('commercial_partner_id', '=', self.id)]):
-            invoice.b2b_record('create')
+            invoice.b2b_record('create', user_notify=False)
         # Creamos los albaranes
         for picking in self.env['stock.picking'].search([('partner_id', '=', self.id)]):
             picking.b2b_record('create', user_notify=False)</field>

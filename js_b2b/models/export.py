@@ -249,3 +249,14 @@ class B2BExport(models.Model):
 			mode = 'replace' if all_products else 'update'
 			self.send_multi('product_stock', stock, mode)
 			print(str(stock), 'product_stock', "w+")
+
+	# ------------------------------------ OVERRIDES ------------------------------------
+
+	@api.multi
+	def unlink(self):
+		for record in self:
+			resource_id = record.res_id
+			if super(B2BExport, record).unlink():
+				# Delete related records also
+				self.search([('rel_id', '=', resource_id)]).unlink()
+		return True

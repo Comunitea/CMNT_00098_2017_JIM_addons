@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from odoo import api, models, tools
-from .helper import Thread, JSync
+from .helper import Subprocess, JSync
 from base64 import b64encode
-		
+
 # Module base class
 class BaseB2B(models.AbstractModel):
 
@@ -78,6 +78,13 @@ class BaseB2B(models.AbstractModel):
 		return result
 
 	@api.multi
+	def on_jsync(self):
+		self.ensure_one()
+		res_id = '%s,%s' % (self._name, self.id)
+		export_found = self.env['b2b.export'].search([('res_id', '=', res_id)], limit=1)
+		return True if export_found else False
+
+	@api.multi
 	def is_notifiable_check(self, mode='create', vals=None):
 		"""
 		Notifiable config items
@@ -127,11 +134,6 @@ class BaseB2B(models.AbstractModel):
 		jsync_conf = self.env['b2b.settings'].get_default_params()
 		b2b_config = self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)])
 
-		def _launch_on_thread(method, record, mode):
-			new_thread = Thread(target=self, args=(method, record, mode))
-			new_thread.daemon = True
-			new_thread.start()
-
 		for record in self:
 			for item in b2b_config:
 				b2b = item.evaluate(mode, jsync_conf)
@@ -164,7 +166,7 @@ class BaseB2B(models.AbstractModel):
 
 				# Ejecutamos la función pre_data si existe
 				if 'pre_data' in b2b and callable(b2b['pre_data']):
-					_launch_on_thread(b2b['pre_data'], record, mode)
+					b2b['pre_data'](record, mode)
 
 				# Obtenemos los datos
 				packet.data = b2b['get_data'](record, mode)
@@ -177,7 +179,7 @@ class BaseB2B(models.AbstractModel):
 
 				# Ejecutamos la función pos_data si existe
 				if 'pos_data' in b2b and callable(b2b['pos_data']):
-					_launch_on_thread(b2b['pos_data'], record, mode)
+					Subprocess(self).add(b2b['pos_data'], record, mode)
 
 		# Paquetes a enviar
 		return packets
@@ -194,11 +196,10 @@ class BaseB2B(models.AbstractModel):
 		metadata = super(BaseB2B, self).get_metadata()
 		for i,v in enumerate(metadata):
 			record = self.browse(v['id'])
-			res_id = '%s,%s' % (self._name, record.id)
+			record_on_jsync = record.on_jsync()
 			record_notifiable = record.is_notifiable_check()
-			record_in_jsync = self.env['b2b.export'].search([('res_id', '=', res_id)], limit=1)
 			metadata[i]['b2b_notifiable'] = ', '.join(record_notifiable) if record_notifiable else 'false'
-			metadata[i]['b2b_record_on_jsync'] = 'true' if record_in_jsync else 'false'
+			metadata[i]['b2b_record_on_jsync'] = 'true' if record_on_jsync else 'false'
 		return metadata
 
 	@api.model
