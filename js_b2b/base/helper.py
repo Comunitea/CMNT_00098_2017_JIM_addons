@@ -141,6 +141,37 @@ class JSync(object):
 
 		return self.data
 
+	def can_send(self):
+		"""
+		Sends data to JSync server and prints on screen
+
+		:return [bool (Send flag), str (Record model and ID string), object ()]
+		"""
+
+		RECORD_SEND = False
+		RES_ID = '%s,%s' % (self.model, self.id)
+
+		if self.name and self.data and self.mode:
+			# Check with new cursor
+			with api.Environment.manage():
+				with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
+					env = api.Environment(new_cr, self.env.uid, self.env.context)
+
+					# Check if record is synced with JSync
+					EXPORT_RECORD = self.env['b2b.export'].search([('res_id', '=', RES_ID)], limit=1)
+
+					# Send the record?
+					RECORD_SEND = (not EXPORT_RECORD or self.mode != 'create')
+
+					# Is related record notifiable?
+					if RECORD_SEND and self.related:
+						record_model, record_id = self.related.split(',')
+						# Do not send the record if the related item is no longer notifiable
+						if env[record_model].browse(int(record_id)).is_notifiable_check():
+							RECORD_SEND = True
+
+		return RECORD_SEND, RES_ID, EXPORT_RECORD
+
 	def send(self, timeout_sec=10, notify=True, **kwargs):
 		"""
 		Sends data to JSync server and prints on screen
@@ -150,27 +181,10 @@ class JSync(object):
 
 		"""
 
-		# Odoo resource name
-		res_id = '%s,%s' % (self.model, self.id)
+		# Check record and get required params
+		_RECORD_SEND, _RES_ID, _EXPORT_RECORD = self.can_send()
 
-		# Check if record is synced with JSync
-		export_record = self.env['b2b.export'].search([('res_id', '=', res_id)], limit=1)
-
-		# Send the record?
-		record_send = (not export_record or self.mode != 'create')
-
-		# Is related record notifiable?
-		if record_send and self.related:
-			# Check with new cursor
-			with api.Environment.manage():
-				with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
-					env = api.Environment(new_cr, self.env.uid, self.env.context)
-					record_model, record_id = self.related.split(',')
-					notifiable_configs = env[record_model].browse(int(record_id)).is_notifiable_check()
-					# Do not send the record if the related item is no longer notifiable
-					record_send = True if notifiable_configs else False
-
-		if self.name and self.data and self.mode and record_send:
+		if _RECORD_SEND:
 
 			jsync_post = None
 
@@ -231,11 +245,11 @@ class JSync(object):
 							env = api.Environment(new_cr, self.env.uid, self.env.context)
 							env.cr.autocommit(True)
 							if self.mode == 'create':
-								env['b2b.export'].create({ 'name': self.name, 'res_id': res_id, 'rel_id': self.related })
-							elif self.mode == 'update':
-								env['b2b.export'].browse(export_record.id).write({ 'name': self.name, 'res_id': res_id, 'rel_id': self.related })
-							elif self.mode == 'delete':
-								env['b2b.export'].browse(export_record.id).unlink()
+								env['b2b.export'].create({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
+							elif _EXPORT_RECORD and self.mode == 'update':
+								env['b2b.export'].browse(_EXPORT_RECORD.id).write({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
+							elif _EXPORT_RECORD and self.mode == 'delete':
+								env['b2b.export'].browse(_EXPORT_RECORD.id).unlink()
 
 				try:
 					return json_load(jsync_post.text)
