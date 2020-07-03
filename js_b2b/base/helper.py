@@ -149,6 +149,7 @@ class JSync(object):
 		"""
 
 		RECORD_SEND = False
+		EXPORT_RECORD = None
 		RES_ID = '%s,%s' % (self.model, self.id)
 
 		if self.name and self.data and self.mode:
@@ -158,7 +159,7 @@ class JSync(object):
 					env = api.Environment(new_cr, self.env.uid, self.env.context)
 
 					# Check if record is synced with JSync
-					EXPORT_RECORD = self.env['b2b.export'].search([('res_id', '=', RES_ID)], limit=1)
+					EXPORT_RECORD = env['b2b.export'].search([('res_id', '=', RES_ID)], limit=1)
 
 					# Send the record?
 					RECORD_SEND = (not EXPORT_RECORD or self.mode != 'create')
