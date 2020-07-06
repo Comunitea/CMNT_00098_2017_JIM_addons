@@ -44,7 +44,9 @@ class PublicImage(models.AbstractModel):
 			return tools.image_resize_image(base64_source, size=self._max_public_file_size)
 
 	@api.model
-	def create(self, vals, resize=True):
+	def create(self, vals):
+		resize = self.env.context.get('resize_img', True)
+
 		try:
 			if vals.get(self._attr_image_model_field):
 				img = self._resize_large_image(vals[self._attr_image_model_field]) if resize else vals[self._attr_image_model_field]
@@ -55,7 +57,8 @@ class PublicImage(models.AbstractModel):
 			return False
 
 	@api.multi
-	def write(self, vals, resize=True):
+	def write(self, vals):
+		resize = self.env.context.get('resize_img', True)
 		new_image_name = None
 
 		try:

@@ -20,7 +20,8 @@
 		'product_brand',
 		'product_tags',
 		'jim_sale',
-		#'js_categorization'
+		#'jim_addons',
+		#'js_categorization',
 		#'prices_export',
 		#'stock_export'
 	],

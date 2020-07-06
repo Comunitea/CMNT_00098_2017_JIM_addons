@@ -41,8 +41,15 @@ class Subprocess(object):
 		:param record: Object, record to notify
 		:param mode: Str, CRUD mode
 		"""
+
+		# TODO: Probar esto ¿es mejor que la forma actual?
+		# The test cursor prevents the use of another environnment while the current
+		# transaction is not finished
+		# from odoo.sql_db import TestCursor
+		# if isinstance(self._target.env.cr, TestCursor):
+
 		while not self._target.env.cr.closed:
-			# Wait while parent process ends
+			# Wait while parent transaction ends
 			sleep(1)
 
 		# Now create a new cursor
@@ -50,7 +57,7 @@ class Subprocess(object):
 			with self._target.pool.cursor() as new_cr:
 				# Autocommit ON
 				new_cr.autocommit(True)
-				# Issolated record
+				# Fresh record
 				record_issolated = record.with_env(record.env(cr=new_cr))
 				# Call the method
 				method(record_issolated, mode)

@@ -16,7 +16,7 @@ def post_init_actions(cr, registry):
 	""" Copiar valores de res_partner_res_company_rel a res_partner_res_company_web_access
 	omitiendo las empresas en las que el cliente no tiene tarifa """
 	cr.execute("INSERT INTO res_partner_res_company_web_access \
-					(SELECT res_partner_id, res_company_id FROM res_partner_res_company_rel \
+					(SELECT res_partner_id, res_company_id FROM res_company_res_partner_rel \
 					LEFT JOIN ir_property ON ir_property.res_id = 'res.partner,' || res_partner_id AND ir_property.company_id = res_company_id AND name LIKE 'property_product_pricelist' \
 					WHERE ir_property.id IS NOT NULL \
 					GROUP BY res_partner_id, res_company_id)")

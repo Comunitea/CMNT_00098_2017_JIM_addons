@@ -8,7 +8,7 @@
         <field name="arch" type="xml">
             <div name="button_box" position="inside">
                 <button class="oe_stat_button" name="website_publish_button" type="object" icon="fa-globe">
-                    <field name="website_published" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Published', 'hover_true': 'Unpublish on website', 'string_false': 'Not published', 'hover_false': 'Publish on website' }}"/>
+                    <field name="website_published" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Publicado', 'hover_true': 'Eliminar de las webs', 'string_false': 'No publicado', 'hover_false': 'Publicar en las webs' }}"/>
                 </button>
             </div>
 

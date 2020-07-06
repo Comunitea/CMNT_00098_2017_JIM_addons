@@ -20,7 +20,7 @@ VERSIONES SOPORTADAS (Probadas)
 REQUISITOS
 ==========
 
-Este módulo requiere las siguientes librerías de python, para instalarlas acceder al sandbox y ejecutar el comando: pip install module/requirements.txt
+Este módulo requiere las siguientes librerías de python, para instalarlas acceder al sandbox y ejecutar el comando: pip install -r module/requirements.txt
 o bien pip install -librería- por cada una de ellas
 
 * urllib3 >= 1.25.3
