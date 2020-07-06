@@ -33,7 +33,7 @@ class ProductTemplate(models.Model):
             print("ERROR en la descarga de la imagen: ", e.reason)
             return(False)
         imageBase64 = base64.b64encode(image)
-        self.write({ 'image_medium':imageBase64 }, resize=False)
+        self.with_context(resize_img=False).write({ 'image_medium':imageBase64 })
 
         print("################ DESCARGANDO IMAGENES (VARIANTES)")
         # Eliminar imágenes antiguas
@@ -50,27 +50,8 @@ class ProductTemplate(models.Model):
                 imageBase64 = base64.b64encode(image)
             except urllib.URLError as e:
                     return(True)
-            new_image = self.env['product.image'].create({'product_tmpl_id': self.id, 'name': self.name, 'image': imageBase64}, resize=False)
+            new_image = self.env['product.image'].with_context(resize_img=False).create({'product_tmpl_id': self.id, 'name': self.name, 'image': imageBase64})
             i += 1
-
-    @api.model
-    def batch_update(self, test_limit=None):
-        print('[js_fill_product] ****** Inicio del proceso de descarga de imágenes ******')
-
-        product_list = self.search([('sale_ok', '=', True),
-                                        ('default_code', '!=', False),
-                                        ('type', '=', 'product')],
-                                        order='id', limit=test_limit)
-
-        debug_total = str(len(product_list))
-        
-        print('[js_fill_product] Se recorrerán {} productos'.format(debug_total))
-
-        for product in product_list:
-            if product.js_download_images():
-                print('[js_fill_product] Descargadas las imágenes de {}'.format(product.default_code))
-
-        print('[js_fill_product] ****** Fin del proceso de descarga de imágenes ******')
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
