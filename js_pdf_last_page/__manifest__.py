@@ -13,7 +13,6 @@
     ],
     "data": [
         "security/ir.model.access.csv",
-        "views/report.xml",
         "views/last_page.xml",
         "views/res_company.xml",
     ],
