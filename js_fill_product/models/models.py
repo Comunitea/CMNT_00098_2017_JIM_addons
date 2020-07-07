@@ -13,45 +13,52 @@ class ProductTemplate(models.Model):
     @api.one
     def js_download_images(self):
 
-        # Comprobamos que el producto tenga asignado código
-        if self.default_code == False or self.default_code == None or self.default_code == '':
-            return(False)
+        with api.Environment.manage():
+            with self.pool.cursor() as new_cr:
+                # Autocommit ON
+                new_cr.autocommit(True)
+                # Fresh record
+                record_issolated = self.with_env(self.env(cr=new_cr))
 
-        # URL de las imágenes
-        URL = "http://resources.jimsports.website/Intranet/images/"
-        # Eliminamos espacios de inicio y final de la referencia y cogemos la primera parte si tiene puntos
-        product_reference = self.default_code.strip().rsplit('.')[0]
-        # Nombre del fichero
-        image_name = product_reference + ".jpg"
+                # Comprobamos que el producto tenga asignado código
+                if record_issolated.default_code == False or record_issolated.default_code == None or record_issolated.default_code == '':
+                    return(False)
 
-        print("################ DESCARGANDO IMAGEN (PRINCIPAL)")
-        # Carga la imagen principal
-        try:
-            print(URL + image_name)
-            image = urllib.urlopen(URL + image_name).read()
-        except urllib.URLError as e:
-            print("ERROR en la descarga de la imagen: ", e.reason)
-            return(False)
-        imageBase64 = base64.b64encode(image)
-        self.with_context(resize_img=False).write({ 'image_medium':imageBase64 })
+                # URL de las imágenes
+                URL = "http://resources.jimsports.website/Intranet/images/"
+                # Eliminamos espacios de inicio y final de la referencia y cogemos la primera parte si tiene puntos
+                product_reference = record_issolated.default_code.strip().rsplit('.')[0]
+                # Nombre del fichero
+                image_name = product_reference + ".jpg"
 
-        print("################ DESCARGANDO IMAGENES (VARIANTES)")
-        # Eliminar imágenes antiguas
-        self.product_image_ids.unlink()
-
-        # Carga las imágenes secundarias
-        i = 1
-        # Bucle para generar las combinaciones de nombres
-        while True:
-            image_name = self.default_code + '-' + str(i)
-            try:
-                print(URL + image_name)
-                image = urllib.urlopen(URL + image_name + ".jpg").read()
+                print("################ DESCARGANDO IMAGEN (PRINCIPAL)")
+                # Carga la imagen principal
+                try:
+                    print(URL + image_name)
+                    image = urllib.urlopen(URL + image_name).read()
+                except urllib.URLError as e:
+                    print("ERROR en la descarga de la imagen: ", e.reason)
+                    return(False)
                 imageBase64 = base64.b64encode(image)
-            except urllib.URLError as e:
-                    return(True)
-            new_image = self.env['product.image'].with_context(resize_img=False).create({'product_tmpl_id': self.id, 'name': self.name, 'image': imageBase64})
-            i += 1
+                record_issolated.with_context(resize_img=False).write({ 'image_medium':imageBase64 })
+
+                print("################ DESCARGANDO IMAGENES (VARIANTES)")
+                # Eliminar imágenes antiguas
+                record_issolated.product_image_ids.unlink()
+
+                # Carga las imágenes secundarias
+                i = 1
+                # Bucle para generar las combinaciones de nombres
+                while True:
+                    image_name = record_issolated.default_code + '-' + str(i)
+                    try:
+                        print(URL + image_name)
+                        image = urllib.urlopen(URL + image_name + ".jpg").read()
+                        imageBase64 = base64.b64encode(image)
+                    except urllib.URLError as e:
+                            return(True)
+                    new_image = record_issolated.env['product.image'].with_context(resize_img=False).create({'product_tmpl_id': self.id, 'name': self.name, 'image': imageBase64})
+                    i += 1
 
 class ProductProduct(models.Model):
     _inherit = 'product.product'
