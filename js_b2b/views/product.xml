@@ -91,6 +91,20 @@
         </field>
     </record>
 
+    <record id="product_iamges_action_b2b" model="ir.actions.act_window">
+        <field name="name">Website Product Images</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.image</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" eval="False"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to create a new product image.
+            </p>
+        </field>
+    </record>
+
     <!-- Product Categories -->
     <record id="product_category_tree_view_b2b" model="ir.ui.view">
         <field name="name">product.tag.tree.b2b</field>
@@ -166,5 +180,6 @@
         </field>
     </record>
 
+    <menuitem id="menu_product_iamges" name="Product Images" parent="stock.menu_product_in_config_stock" action="product_iamges_action_b2b" sequence="80" />
     <menuitem id="menu_public_categories" name="Web Categories" parent="stock.menu_product_in_config_stock" action="product_public_category_action_b2b" sequence="80" />
 </odoo>

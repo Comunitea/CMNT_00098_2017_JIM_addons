@@ -437,6 +437,7 @@ msgstr "Producto"
 #. module: js_b2b
 #: model:ir.ui.view,arch_db:js_b2b.product_template_form_view_b2b
 #: model:ir.ui.view,arch_db:js_b2b.view_product_image_form_b2b
+#: model:ir.ui.view,arch_db:js_b2b.view_product_image_form_b2b
 msgid "Product Images"
 msgstr "Imágenes del producto"
 
