@@ -3,3 +3,4 @@
 
 import last_page
 import res_company
+import res_users

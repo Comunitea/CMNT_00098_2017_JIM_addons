@@ -7,6 +7,20 @@ from odoo.tools import config
 from functools import partial
 import lxml.html
 
+from odoo.tools.misc import find_in_path
+from odoo.http import request
+from contextlib import closing
+import logging
+import tempfile
+import subprocess
+import base64
+import os
+
+_logger = logging.getLogger(__name__)
+
+def _get_wkhtmltopdf_bin():
+	return find_in_path('wkhtmltopdf')
+
 class LastReportsPage(models.Model):
 	_name = 'reports.last_page'
 	_description = 'Documents Last Page'
@@ -74,21 +88,27 @@ class Report(models.Model):
 		if isinstance(self.env.cr, TestCursor):
 			return html
 
+		user = self.env['res.users'].browse(self.env.uid)  # Rebrowse to avoid sudo user from self.env.user
 		html = html.decode('utf-8')  # Ensure the current document is utf-8 encoded.
 
 		# Get the ir.actions.report.xml record we are working on.
 		report = self._get_report_from_name(report_name)
+
 		# Check if we have to save the report or if we have to get one from the db.
-		save_in_attachment = self._check_attachment_use(docids, report)
+		# NO queremos guardar los PDF sin las condiciones legales, si el usuario no las quiere se generan al vuelo
+		if user.print_pdf_last_page:
+			save_in_attachment = self._check_attachment_use(docids, report)
+		else:
+			save_in_attachment = dict()
 		# Get the paperformat associated to the report, otherwise fallback on the company one.
 		if not report.paperformat_id:
-			user = self.env['res.users'].browse(self.env.uid)  # Rebrowse to avoid sudo user from self.env.user
 			paperformat = user.company_id.paperformat_id
 		else:
 			paperformat = report.paperformat_id
 
 		# Preparing the minimal html pages
-		page_number = 0
+		pagenumber = 0
+		fullpages = dict()
 		headerhtml = []
 		contenthtml = []
 		footerhtml = []
@@ -123,8 +143,6 @@ class Report(models.Model):
 				if docids and len(docids) == 1:
 					reportid = docids[0]
 				else:
-					# DON'T SAVE COMPOSED DOCUMENTS
-					save_in_attachment = {}
 					oemodelnode = node.find(".//*[@data-oe-model='%s']" % report.model)
 					if oemodelnode is not None:
 						reportid = oemodelnode.get('data-oe-id')
@@ -137,25 +155,28 @@ class Report(models.Model):
 				body = lxml.html.tostring(node)
 				reportcontent = render_minimal(dict(subst=False, body=body, base_url=base_url))
 				contenthtml.append(tuple([reportid, reportcontent]))
+				pages_group = [pagenumber,]
 
-				if reportid:
+				if reportid and not save_in_attachment or not ('loaded_documents' in save_in_attachment and save_in_attachment['loaded_documents'].get(reportid)):
 					# Add PDF Last Page
 					if not 'user' in locals():
 						user = self.env['res.users'].browse(self.env.uid)
-					report_record = self.env[report.model].browse(reportid)
-					company_id = report_record.company_id if report_record and hasattr(report_record, 'company_id') else user.company_id
+					# Check user preferences
+					if user.print_pdf_last_page:
+						report_record = self.env[report.model].browse(reportid)
+						company_id = report_record.company_id if report_record and hasattr(report_record, 'company_id') else user.company_id
+						for page in company_id.pdf_last_pages.filtered(lambda p: report_name in p.report_ids.mapped('report_name')):
+							pagenumber += 1
+							head = '<div style="padding-top: 20px">%s</div>' % page.body
+							header = render_minimal(dict(subst=True, body=head, base_url=base_url))
+							headerhtml.insert(pagenumber, header)
+							# Si pasamos el ID a False no se crea el adjunto
+							contenthtml.insert(pagenumber, tuple([False, '']))
+							footerhtml.insert(pagenumber, '')
+							pages_group.append(pagenumber)
 
-					# import pdb; pdb.set_trace()
-					for page in company_id.pdf_last_pages.filtered(lambda p: report_name in p.report_ids.mapped('report_name')):
-						page_number += 1
-						head = '<div style="padding-top: 20px">%s</div>' % page.body
-						header = render_minimal(dict(subst=True, body=head, base_url=base_url))
-						headerhtml.insert(page_number, header)
-						# Si pasamos el ID a False no se crea el adjunto
-						# por eso la hay que meter aquí
-						contenthtml.insert(page_number, tuple([False, '']))
-						footerhtml.insert(page_number, '')
-				page_number += 1
+				fullpages.update({ reportid: pages_group })
+				pagenumber += 1
 
 		except lxml.etree.XMLSyntaxError:
 			contenthtml = []
@@ -178,47 +199,173 @@ class Report(models.Model):
 			paperformat, 
 			specific_paperformat_args, 
 			save_in_attachment, 
-			context.get('set_viewport_size')
+			context.get('set_viewport_size'),
+			fullpages
 		]
 
 	@api.model
 	def get_pdf(self, docids, report_name, html=None, data=None):
-		""" 
-		Debido a la mala estructuración del módulo no encontramos como hacer esto sin sobreescribir toda la función 
-		antes se había probado con este XML pero generaba 2 adjuntos por documento (uno con el documento y otro con la última página)
-
-		<template id="js_pdf_last_page_content" inherit_id="report.html_container" name="Last Reports Page">
-			<xpath expr="." position="inside">
-				<!-- Multicompañía -->
-				<t t-if="not o and doc" t-set="o" t-value="doc"/>
-				<t t-if="o and 'company_id' in o" t-set="company" t-value="o.company_id"/>
-				<t t-else="">
-					<!-- Por alguna razón aquí llega docs a veces con sólo un documento -->
-					<t t-if="docs and (len(docs) == 1 and 'company_id' in docs[0])" t-set="company" t-value="docs[0].company_id"/>
-					<t t-else="" t-set="company" t-value="res_company"/>
-				</t>
-
-				<!-- Última página -->
-				<t t-foreach="company.pdf_last_pages" t-as="last_page">
-					<t t-if="xmlid in last_page.report_ids.mapped('report_name')">
-						<div class="page js_last_page">
-							<!-- Se mete en el header para que no quede un espacio en la parte superior -->
-							<div class="header">
-								<div style="padding-top: 20px">
-									<t t-raw="last_page.body" />
-								</div>
-							</div>
-							<!-- Fake Divs -->
-							<div class="invisible">Fake</div>
-							<div class="footer"></div>
-						</div>
-					</t>
-				</t>
-			</xpath>
-		</template>
-		"""
-
 		wkhtmltopdf_args = self._get_pdf(docids, report_name, html, data)
-
 		# Run wkhtmltopdf process
 		return self._run_wkhtmltopdf(*wkhtmltopdf_args)
+
+	@api.model
+	def _run_wkhtmltopdf(self, headers, footers, bodies, landscape, paperformat, spec_paperformat_args=None, save_in_attachment=None, set_viewport_size=False, full_pages=None):
+		"""Execute wkhtmltopdf as a subprocess in order to convert html given in input into a pdf
+		document.
+
+		:param header: list of string containing the headers
+		:param footer: list of string containing the footers
+		:param bodies: list of string containing the reports
+		:param landscape: boolean to force the pdf to be rendered under a landscape format
+		:param paperformat: ir.actions.report.paperformat to generate the wkhtmltopf arguments
+		:param specific_paperformat_args: dict of prioritized paperformat arguments
+		:param save_in_attachment: dict of reports to save/load in/from the db
+		:returns: Content of the pdf as a string
+		"""
+		if not save_in_attachment:
+			save_in_attachment = {}
+
+		command_args = []
+		if set_viewport_size:
+			command_args.extend(['--viewport-size', landscape and '1024x1280' or '1280x1024'])
+
+		# Passing the cookie to wkhtmltopdf in order to resolve internal links.
+		try:
+			if request:
+				command_args.extend(['--cookie', 'session_id', request.session.sid])
+		except AttributeError:
+			pass
+
+		# Wkhtmltopdf arguments
+		command_args.extend(['--quiet'])  # Less verbose error messages
+		if paperformat:
+			# Convert the paperformat record into arguments
+			command_args.extend(self._build_wkhtmltopdf_args(paperformat, spec_paperformat_args))
+
+		# Force the landscape orientation if necessary
+		if landscape and '--orientation' in command_args:
+			command_args_copy = list(command_args)
+			for index, elem in enumerate(command_args_copy):
+				if elem == '--orientation':
+					del command_args[index]
+					del command_args[index]
+					command_args.extend(['--orientation', 'landscape'])
+		elif landscape and '--orientation' not in command_args:
+			command_args.extend(['--orientation', 'landscape'])
+
+		# Execute WKhtmltopdf
+		pdfdocuments = []
+		temporary_files = []
+
+		for index, reporthtml in enumerate(bodies):
+			local_command_args = []
+			pdfreport_fd, pdfreport_path = tempfile.mkstemp(suffix='.pdf', prefix='report.tmp.')
+			temporary_files.append(pdfreport_path)
+
+			# Directly load the document if we already have it
+			if save_in_attachment and save_in_attachment['loaded_documents'].get(reporthtml[0]):
+				with closing(os.fdopen(pdfreport_fd, 'w')) as pdfreport:
+					pdfreport.write(save_in_attachment['loaded_documents'][reporthtml[0]])
+				pdfdocuments.append(pdfreport_path)
+				continue
+			else:
+				os.close(pdfreport_fd)
+
+			# Wkhtmltopdf handles header/footer as separate pages. Create them if necessary.
+			if headers:
+				head_file_fd, head_file_path = tempfile.mkstemp(suffix='.html', prefix='report.header.tmp.')
+				temporary_files.append(head_file_path)
+				with closing(os.fdopen(head_file_fd, 'w')) as head_file:
+					head_file.write(headers[index])
+				local_command_args.extend(['--header-html', head_file_path])
+			if footers:
+				foot_file_fd, foot_file_path = tempfile.mkstemp(suffix='.html', prefix='report.footer.tmp.')
+				temporary_files.append(foot_file_path)
+				with closing(os.fdopen(foot_file_fd, 'w')) as foot_file:
+					foot_file.write(footers[index])
+				local_command_args.extend(['--footer-html', foot_file_path])
+
+			# Body stuff
+			content_file_fd, content_file_path = tempfile.mkstemp(suffix='.html', prefix='report.body.tmp.')
+			temporary_files.append(content_file_path)
+			with closing(os.fdopen(content_file_fd, 'w')) as content_file:
+				content_file.write(reporthtml[1])
+
+			try:
+				wkhtmltopdf = [_get_wkhtmltopdf_bin()] + command_args + local_command_args
+				wkhtmltopdf += [content_file_path] + [pdfreport_path]
+				process = subprocess.Popen(wkhtmltopdf, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+				out, err = process.communicate()
+
+				if process.returncode not in [0, 1]:
+					if process.returncode == -11:
+						message = _('Wkhtmltopdf failed (error code: %s). Memory limit too low or maximum file number of subprocess reached. Message : %s')
+					else:
+						message = _('Wkhtmltopdf failed (error code: %s). Message: %s')
+					raise UserError(message  % (str(process.returncode), err[-1000:]))
+
+				# Save the pdf in attachment if marked
+				if not full_pages and reporthtml[0] is not False and save_in_attachment.get(reporthtml[0]):
+					with open(pdfreport_path, 'rb') as pdfreport:
+						attachment_name = save_in_attachment.get(reporthtml[0])
+
+						try:
+							self.env['ir.attachment'].create({
+								'name': attachment_name,
+								'datas': base64.encodestring(pdfreport.read()),
+								'datas_fname': save_in_attachment.get(reporthtml[0]),
+								'res_model': save_in_attachment.get('model'),
+								'res_id': reporthtml[0]
+							})
+						except AccessError:
+							_logger.info("Cannot save PDF report %r as attachment", attachment_name)
+						else:
+							_logger.info('The PDF document %s is now saved in the database', attachment_name)
+
+				pdfdocuments.append(pdfreport_path)
+			except:
+				raise
+
+		# Create full pages attachments (PDF Last Pages)
+		if full_pages and type(full_pages) is dict:
+			for docid, group in full_pages.items():
+				if save_in_attachment.get(docid):
+
+					full_doc_path = self._merge_pdf([pdfdocuments[d] for d in group])
+					temporary_files.append(full_doc_path)
+
+					with open(full_doc_path, 'rb') as pdfreport:
+						attachment_name = save_in_attachment.get(docid)
+
+						try:
+							self.env['ir.attachment'].create({
+								'name': attachment_name,
+								'datas': base64.encodestring(pdfreport.read()),
+								'datas_fname': save_in_attachment.get(docid),
+								'res_model': save_in_attachment.get('model'),
+								'res_id': docid
+							})
+						except AccessError:
+							_logger.info("Cannot save merged PDF report %r as attachment", attachment_name)
+						else:
+							_logger.info('The merged PDF document %s is now saved in the database', attachment_name)
+
+		# Return the entire document
+		if len(pdfdocuments) == 1:
+			entire_report_path = pdfdocuments[0]
+		else:
+			entire_report_path = self._merge_pdf(pdfdocuments)
+			temporary_files.append(entire_report_path)
+
+		with open(entire_report_path, 'rb') as pdfdocument:
+			content = pdfdocument.read()
+
+		# Manual cleanup of the temporary files
+		for temporary_file in temporary_files:
+			try:
+				os.unlink(temporary_file)
+			except (OSError, IOError):
+				_logger.error('Error when trying to remove file %s' % temporary_file)
+
+		return content

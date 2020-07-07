@@ -15,6 +15,7 @@
         "security/ir.model.access.csv",
         "views/last_page.xml",
         "views/res_company.xml",
+        "views/res_users_view.xml"
     ],
     "installable": True
 }
