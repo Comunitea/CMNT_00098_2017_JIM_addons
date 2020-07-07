@@ -30,8 +30,10 @@ def post_init_actions(cr, registry):
 	# Default Web Category
 	default_public_cat = env.ref('js_b2b.web_category_1')
 	
-	# All products
-	product_ids = env['product.template'].with_context(active_test=False).search([('type', 'like', 'product'), ('tag_ids', '!=', False), ('sale_ok', '=', True)]).ids
+	# All published products but not with tag 50 (J0008-IMPORTACIÓN)
+	product_ids = env['product.template'].with_context(active_test=False)\
+	.search([('type', 'like', 'product'), ('tag_ids', '!=', False), ('sale_ok', '=', True)])\
+	.filtered(lambda p: 50 not in p.tag_ids.ids).ids
 
 	# Log info
 	product_number = 0.0
