@@ -252,5 +252,5 @@ class BaseB2B(models.AbstractModel):
 			packets = self.b2b_record('delete', False, conf_items_before=items_to_send, auto_send=False)
 		if super(BaseB2B, self).unlink() and b2b_evaluate:
 			for packet in packets:
-				packet.send()
+				packet.send(notify=False)
 		return True
