@@ -321,14 +321,13 @@ class DeletedObject(models.Model):
     @api.model
     def compute_product_ids_xmlrpc(self, values={}):
         all = values.get('all', False)
-        table = values.get('table', True)
         days = values.get('days', 1)
         from_time = values.get('from_time', "2020-01-01 10:00:00")
         to_time = values.get('to_time',  False)
         field_id = values.get('field_id', 'id')
         stock_field = values.get('stock_field', 'web_global_stock')
         inc = values.get('inc', 80)
-        return self.compute_product_ids(all, table, from_time, to_time, field_id, stock_field, days, inc)
+        return self.compute_product_ids(all, from_time, to_time, field_id, stock_field, days, inc)
 
     def test_compute_product_ids_bucle_check_performance(self):
         mid_time = time.time()
@@ -342,7 +341,7 @@ class DeletedObject(models.Model):
 
 
 
-    def compute_product_ids(self, all=False, table=True, from_time=False, to_time=False, field_id='id', stock_field='web_global_stock', days=0, inc=80, limit=False):
+    def compute_product_ids(self, all=False, from_time=False, to_time=False, field_id='id', stock_field='web_global_stock', days=0, inc=80, limit=False):
         ### Para que no haya errores pongo el parámetro table siempre a True
         table = True
 
