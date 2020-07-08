@@ -14,8 +14,5 @@
     'category': 'Administration',
     'version': '0.1',
     'depends': ['product'],
-    'data': [
-        'data/ir_cron.xml',
-        'views/views.xml'
-    ],
+    'data': ['views/views.xml',],
 }
