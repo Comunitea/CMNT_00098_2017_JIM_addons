@@ -322,7 +322,7 @@ class DeletedObject(models.Model):
     def compute_product_ids_xmlrpc(self, values={}):
         all = values.get('all', False)
         days = values.get('days', 1)
-        from_time = values.get('from_time', "2020-01-01 10:00:00")
+        from_time = values.get('from_time', False)
         to_time = values.get('to_time',  False)
         field_id = values.get('field_id', 'id')
         stock_field = values.get('stock_field', 'web_global_stock')
