@@ -7,9 +7,9 @@ from datetime import datetime
 import logging
 _logger = logging.getLogger('--EXPORTACIÓN PRECIOS--')
 
-class ProductPricelist(models.Model):
+class ProductPricelistItem(models.Model):
 
-    _inherit = 'product.pricelist'
+    _inherit = 'product.pricelist.item'
 
     def button_edit_items(self):
         self.ensure_one()
