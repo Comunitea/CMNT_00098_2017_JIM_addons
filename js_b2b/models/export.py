@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
-from odoo.addons.queue_job.job import job
 from ..base.helper import JSync
 from os import path, pardir
 from datetime import datetime
@@ -95,7 +94,6 @@ class B2BExport(models.Model):
 			packet.part = [i + 1, num_packets]
 			packet.send(notify=False, timeout_sec=300)
 
-	@job
 	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, pricelists_filter=None, variant=None, operation=None):
 		print('[b2b_pricelists_prices] Starts!')
 		# Out prices
@@ -194,7 +192,6 @@ class B2BExport(models.Model):
 			self.send_multi('pricelist_item', prices, mode)
 			print(str(prices), 'pricelist_item', "w+")
 
-	@job
 	def b2b_customers_prices(self, lines_filter=None, operation=None):
 		print('[b2b_customers_prices] Starts!')
 		# Out prices
@@ -238,7 +235,6 @@ class B2BExport(models.Model):
 			self.send_multi('customer_price', prices, mode)
 			print(str(prices), 'customer_price', "w+")
 
-	@job
 	def b2b_products_stock(self, test_limit=None, from_date=None, export_all=None):
 		# If actual time is between 00:30 & 00:45 set "all" to True
 		all_products = export_all or B2BExport.is_time_between('00:30:00', '00:45:00')
