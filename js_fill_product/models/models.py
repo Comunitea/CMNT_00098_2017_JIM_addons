@@ -15,61 +15,81 @@ class ProductTemplate(models.Model):
 
 	@api.multi
 	def js_download_images(self, images_url=URL, resize=False):
+		img = None
 		self.ensure_one()
-		with api.Environment.manage():
-			with self.pool.cursor() as new_cr:
-				irecord = self.with_env(self.env(cr=new_cr))
-				has_image = bool(irecord.image_medium)
+		base_url = self.env['b2b.settings'].get_param('base_url')
+		filename = getattr(self, self._attr_public_file_name)
 
-				# Comprobamos que el producto tenga asignado código
-				if irecord.default_code == False or irecord.default_code == None or irecord.default_code == '':
-					return False
+		print("# IMÁGEN...")
 
-				product_reference = irecord.default_code.strip().rsplit('.')[0]
-				print("# DESCARGANDO IMAGEN (PRODUCTO)", product_reference)
+		if filename:
+			img = urllib.urlopen('%s%s' % (base_url, filename))
 
-				# Nombre del fichero
-				image_path = '%s%s.jpg' % (URL, product_reference)
+		if not img or img.code != 200:
 
-				try:
-					image = urllib.urlopen(image_path).read()
-					imageBase64 = base64.b64encode(image)
-					irecord.with_context(resize_img=resize).write({ 'image':imageBase64 })
-				except urllib.URLError as e:
-					print("ERROR [%s]" % image_path, e.reason)
-					return False
+			if img:
+				print("# IMÁGEN ANTIGUA NO ENCONTRADA!", filename)
+			else:
+				print("# PRODUCTO SIN IMÁGEN!")
 
-				print("# DESCARGANDO IMAGENES (VARIANTE)", irecord.default_code)
+			with api.Environment.manage():
+				with self.pool.cursor() as new_cr:
+					irecord = self.with_env(self.env(cr=new_cr))
+					
+					# Comprobamos que el producto tenga asignado código
+					if irecord.default_code == False or irecord.default_code == None or irecord.default_code == '':
+						return False
 
-				# Eliminar imágenes antiguas
-				irecord.product_image_ids.unlink()
+					product_reference = irecord.default_code.strip().rsplit('.')[0]
+					print("# DESCARGANDO IMAGEN (PRODUCTO)", product_reference)
 
-				# Carga las imágenes secundarias
-				i = 1
-				
-				while True:
-					image_name = '%s-%s' % (product_reference, i)
-					image_path = '%s%s.jpg' % (URL, image_name)
+					# Nombre del fichero
+					image_path = '%s%s.jpg' % (URL, product_reference)
 
 					try:
 						image = urllib.urlopen(image_path).read()
 						imageBase64 = base64.b64encode(image)
-						new_image = irecord.env['product.image'].with_context(resize_img=resize).create({ 
-							'product_tmpl_id': irecord.id, 
-							'name': irecord.name, 
-							'image': imageBase64 
-						})
+						irecord.with_context(resize_img=resize).write({ 'image':imageBase64 })
 					except urllib.URLError as e:
 						print("ERROR [%s]" % image_path, e.reason)
-						return True
-					finally:
-						i += 1
+						return False
 
-				try:
-					new_cr.commit()
-				except:
-					new_cr.rollback()
-		sleep(2) # Prevent blocks
+					print("# DESCARGANDO IMAGENES (VARIANTE)", irecord.default_code)
+
+					# Eliminar imágenes antiguas
+					irecord.product_image_ids.unlink()
+
+					# Carga las imágenes secundarias
+					i = 1
+					
+					while True:
+						image_name = '%s-%s' % (product_reference, i)
+						image_path = '%s%s.jpg' % (URL, image_name)
+
+						try:
+							image = urllib.urlopen(image_path).read()
+							imageBase64 = base64.b64encode(image)
+							new_image = irecord.env['product.image'].with_context(resize_img=resize).create({ 
+								'product_tmpl_id': irecord.id, 
+								'name': irecord.name, 
+								'image': imageBase64 
+							})
+						except urllib.URLError as e:
+							print("ERROR [%s]" % image_path, e.reason)
+							return True
+						finally:
+							i += 1
+
+					try:
+						new_cr.commit()
+					except:
+						new_cr.rollback()
+					finally:
+						sleep(2)
+
+		else:
+			print("# IMÁGEN OK!!!")
+
 		return True
 
 class ProductProduct(models.Model):

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo.http import request
-from ftplib import FTP_TLS
+from ftplib import FTP_TLS, all_errors
 import logging
 import base64
 import uuid
@@ -24,7 +24,7 @@ def _ftp_connect():
 	"""
 	settings = request.env['b2b.settings'].get_default_params(fields=['server', 'user', 'password'])
 	ftps = FTP_TLS(settings['server'], settings['user'], settings['password'])
-	# Set debug
+	# Set debug (if debug mode is ON)
 	if request.debug:
 		ftps.set_debuglevel(_debug_level)
 	# Secure connection
@@ -32,12 +32,18 @@ def _ftp_connect():
 	return ftps
 
 def _img_extension(bytestream):
+	"""
+	Get base64 bytestream extension
+	:param bytestream: List of bytes
+	:return string: File extension 
+	"""
 	return imghdr.what(None, h=bytestream).replace('jpeg', 'jpg')
 
 def save_file(filename):
 	"""
 	Save local file on FTP server
 	:param filename: String, file name
+	:return bool: File saved
 	"""
 	if filename:
 		try:
@@ -48,7 +54,7 @@ def save_file(filename):
 			ftps.quit()
 			_logger.info('File [%s] saved!' % filename)
 			return True
-		except Exception as e:
+		except all_errors as e:
 			_logger.error('File Error: %s' % e)
 	return False
 
@@ -57,6 +63,7 @@ def save_base64(base64_str):
 	Save decoded base64 on FTP server
 	:param filename_without_ext: String, file name
 	:param base64_str: String, base64 string
+	:return str|bool: File name or False
 	"""
 	bytestream = base64.b64decode(base64_str)
 	filename = '%s.%s' % (uuid.uuid4(), _img_extension(bytestream))
@@ -70,7 +77,7 @@ def save_base64(base64_str):
 			ftps.quit()
 			_logger.info('File stream [%s] saved!' % filename)
 			return filename
-		except Exception as e:
+		except all_errors as e:
 			_logger.error('Bytes Error: %s' % e)
 	return False
 
@@ -78,6 +85,7 @@ def delete_file(filename):
 	"""
 	Delete file from FTP server
 	:param filename: String, file name
+	:return bool: File deleted
 	"""
 	if filename:
 		try:
@@ -86,6 +94,6 @@ def delete_file(filename):
 			ftps.quit()
 			_logger.info('File [%s] deleted!' % filename)
 			return True
-		except Exception as e:
+		except all_errors as e:
 			_logger.error('Delete Error: %s' % e)
 	return False
