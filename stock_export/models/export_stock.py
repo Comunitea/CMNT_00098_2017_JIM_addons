@@ -359,12 +359,16 @@ class DeletedObject(models.Model):
         ### Fecha fin de filtro para moivmientos no debería de enviarse nunca
         ### Si envío days y no to_time, to_time = from_time + days
         start_time = time.time()
+        time_now = fields.datetime.now()
+        time_now_str = fields.Datetime.to_string(time_now)
+
         if all:
+
             domain = [('type', '=', 'product'), '|', ('active', '=', True), ('active', '=', False)]
             product_ids = self.env['product.product'].search(domain)
+
         else:
-            time_now = fields.datetime.now()
-            time_now_str = fields.Datetime.to_string(time_now)
+
             if not from_time:
                 sql_ir_config = "select value from ir_config_parameter where key = 'last_call_export_xmlstock'"
                 self._cr.execute(sql_ir_config)
@@ -375,6 +379,7 @@ class DeletedObject(models.Model):
                     last_call = time_now_str
 
                 from_time = last_call
+
             if not to_time and days > 0:
                 ##No debería entrar aquí nuca
                 from_time_str = fields.Datetime.from_string(from_time)
@@ -412,11 +417,13 @@ class DeletedObject(models.Model):
             product_ids |= self.env['product.product'].search([('id', 'in', product_bom_ids.ids)])
             print ("---- {} productos de listas de materiales en {}".format(len(product_bom_ids),time.time() - mid_time))
             mid_time = time.time()
+
         print ("-- Total: {} productos a evaluar en {}".format(len(product_ids), time.time() - mid_time))
         mid_time = time.time()
         total = len(product_ids)
         res= []
         cont=0
+        
         while cont < total:
             if limit and cont>limit:
                 print ("limite {} alacanczo de prodictos".format(limit))
