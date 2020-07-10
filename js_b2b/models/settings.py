@@ -16,7 +16,7 @@ PARAMS = {
 	'base_url': ('b2b.public_base_url', 'https://jimsports.website/b2b_images/'),
 	'user': ('b2b.ftp_user', False),
 	'password': ('b2b.ftp_password', False),
-	'docs_after': ('b2b.docs_min_date', '2019-01-01')
+	'docs_after': ('b2b.docs_min_date', '2020-01-01')
 }
 
 class B2BSettings(models.TransientModel):

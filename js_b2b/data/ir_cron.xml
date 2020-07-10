@@ -21,8 +21,8 @@
             <field name="numbercall">-1</field>
             <field name="active">True</field>
             <field name="model">b2b.export</field>
-            <field name="function">b2b_customers_prices</field>
-            <field name="args">(None, None)</field>
+            <field name="function">b2b_pricelists_prices</field>
+            <field name="args">(None, None, None, None, None)</field>
         </record>
 
         <record model="ir.cron" id="b2b_customer_prices">
