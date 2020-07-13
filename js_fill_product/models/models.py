@@ -17,20 +17,21 @@ class ProductTemplate(models.Model):
 	def js_download_images(self, images_url=URL, resize=False):
 		img = None
 		self.ensure_one()
-		base_url = self.env['b2b.settings'].get_param('base_url')
+		base_url = 'https://b2b.grupojimsports.com/images/' # self.env['b2b.settings'].get_param('base_url')
 		filename = getattr(self, self._attr_public_file_name)
 
-		print("# IMÁGEN...")
-
 		if filename:
-			img = urllib.urlopen('%s%s' % (base_url, filename))
+			try:
+				fileuri = base_url + filename
+				print("# BUSCANDO IMAGEN %s" % fileuri)
+				img = urllib.urlopen(fileuri)
+			except:
+				print("# IMAGEN ANTIGUA NO ENCONTRADA!", filename)
+				img = None
+		else:
+			print("# SIN IMAGEN GUARDADA!")
 
 		if not img or img.code != 200:
-
-			if img:
-				print("# IMÁGEN ANTIGUA NO ENCONTRADA!", filename)
-			else:
-				print("# PRODUCTO SIN IMÁGEN!")
 
 			with api.Environment.manage():
 				with self.pool.cursor() as new_cr:
@@ -88,7 +89,7 @@ class ProductTemplate(models.Model):
 						sleep(2)
 
 		else:
-			print("# IMÁGEN OK!!!")
+			print("# IMAGEN OK!!!")
 
 		return True
 
