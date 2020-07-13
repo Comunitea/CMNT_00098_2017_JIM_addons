@@ -136,9 +136,9 @@ class B2bItemsOut(models.Model):
 				elif model == 'account.invoice':
 					search_query = [('date_invoice', '>=', docs_min_date), ('commercial_partner_id', 'in', client_ids)]
 				elif model == 'stock.picking':
-					search_query = [('date_done', '>=', docs_min_date), ('partner_id', 'in', client_ids)]
+					search_query = [('date_done', '>=', docs_min_date), ('partner_id.commercial_partner_id', 'in', client_ids)]
 				elif model == 'sale.order':
-					search_query = [('date_order', '>=', docs_min_date), ('partner_id', 'in', client_ids)]
+					search_query = [('date_order', '>=', docs_min_date), ('partner_id.commercial_partner_id', 'in', client_ids)]
 
 				# Get code model records
 				records_ids = self.env[model].search(search_query, order='id ASC').ids
