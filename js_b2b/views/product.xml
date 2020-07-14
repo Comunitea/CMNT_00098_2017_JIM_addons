@@ -80,10 +80,13 @@
                         
                         <div class="oe_title">
                             <field name="id" invisible="1"/>
-                            <field name="product_tmpl_id" invisible="1"/>
+                            <div invisible="context.get('default_product_tmpl_id', False)">
+                                <label class="oe_edit_only" for="product_tmpl_id" string="Product Template"/>
+                                <div><field name="product_tmpl_id"/></div>
+                                <hr/>
+                            </div>
                             <label class="oe_edit_only" for="name" string="Image Description (alt text)"/>
                             <h1><field name="name" placeholder="alt image text" required="1"/></h1>
-                            <hr/>
                             <label class="oe_edit_only" for="product_attributes" string="Attributes Applied"/>
                             <div><field name="product_attributes_values" widget="many2many_tags" options="{ 'no_create_edit':True, 'no_quick_create': True }" attrs="{'readonly': [('id', '!=', False)]}"/></div>
                         </div>
