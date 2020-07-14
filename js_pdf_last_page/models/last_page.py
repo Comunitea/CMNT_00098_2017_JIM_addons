@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
 
-from odoo.exceptions import UserError
+from odoo.exceptions import AccessError, UserError
 from odoo.sql_db import TestCursor
 from odoo.tools import config
 from functools import partial

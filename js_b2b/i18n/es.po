@@ -682,6 +682,11 @@ msgid "Website Public Categories"
 msgstr "Categorías Web Públicas"
 
 #. module: js_b2b
+#: model:ir.actions.act_window,name:js_b2b.product_iamges_action_b2b
+msgid "Website Product Images"
+msgstr "Imágenes de Productos"
+
+#. module: js_b2b
 #: model:ir.model.fields,help:js_b2b.field_b2b_item_in_code
 #: model:ir.model.fields,help:js_b2b.field_b2b_item_out_code
 msgid "Write the item code"
