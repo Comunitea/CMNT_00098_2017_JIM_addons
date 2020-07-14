@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from odoo import api, fields, models
+from odoo import api, fields, models, _
 
 from odoo.exceptions import AccessError, UserError
 from odoo.sql_db import TestCursor
