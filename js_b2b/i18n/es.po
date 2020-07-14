@@ -460,6 +460,7 @@ msgstr "Etiquetas de Producto"
 
 #. module: js_b2b
 #: model:ir.model,name:js_b2b.model_product_template
+#: model:ir.ui.view,arch_db:js_b2b.view_product_image_form_b2b
 msgid "Product Template"
 msgstr "Plantilla"
 
