@@ -26,12 +26,13 @@ class ResPartner(models.Model):
 	@api.multi
 	def has_valid_emails(self):
 		self.ensure_one()
-
+		
 		# Resultados
 		results = list()
 
 		# Expresión de validación
-		regex = '^[a-z0-9]+[\\._-]?[a-z0-9]+[@]\\w+[.]\\w{2,3}$'
+		# regex = '^[a-z0-9]+[\\._-]?[a-z0-9]+[@]\\w+[.]\\w{2,3}$' No es válida, no acepta guiones depués de la @
+		regex = '^\\w+([-+.\' ]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$'
 
 		# Si tiene un valor
 		if self.email:
@@ -67,17 +68,13 @@ class ResPartner(models.Model):
 
 		return self.email
 
-	@api.multi
 	@api.constrains('email')
 	def _check_email_address(self):
 		for record in self:
 			if record.email and not record.has_valid_emails():
 				email_separators_str = ' '.join(['%s' % s for s in _partner_email_separators])
 				raise ValidationError(_('Partner email is not valid, check it!\nValid separators: %s') % email_separators_str)
-			elif record.email:
-				record.email = record.email.strip()	
 
-	@api.multi
 	@api.constrains('vip_web_access')
 	def __check_vip_web_access_companies_pricelists(self):
 		# Comprobar tarifa por compañía web
