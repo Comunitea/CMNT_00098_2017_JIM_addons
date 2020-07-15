@@ -71,7 +71,7 @@ def get_data(self, data):
         if shippping_address:
             data.update({
                 'partner_shipping_id': shippping_address.id,
-                'documento_neutro': True
+                'neutral_document': True
             })
     # Devolvemos los datos para crear el pedido
     return b2b['prepare_order_fields'](self, data)</field>

@@ -24,84 +24,85 @@
 					<group>
 						<field name="model"/>
 						<field name="description"/>
-						<field name="code" widget="js_code"/>
 					</group>
+					<notebook>
+						<page string="Código" autofocus="autofocus">
+							<field name="code" widget="js_code"/>
+						</page>
+						<page string="Ayuda">
+							<div id="form-data-out-help" class="panel-body">
+								<p>
+									<b>fields_to_watch</b> [None|list|tuple]
+									<span class="help-block">Campos a vigilar para el modelo</span>
+								</p>
 
-					<div class="panel panel-default">
-						<a class="panel-heading collapsed" data-toggle="collapse" href="#form-data-out-help" style="display:block;background:white">
-							<i class="fa fa-info-circle"></i> Ayuda para el código
-						</a>
-						<div id="form-data-out-help" class="panel-body collapse">
-							<p>
-								<b>fields_to_watch</b> [None|list|tuple]
-								<span class="help-block">Campos a vigilar para el modelo</span>
-							</p>
+								<p>
+									<b>is_notifiable</b>(self, action, vals)
+									<span class="help-block">
+										Indica si el registro se debe notificar<br/>
+										<b style="color:#E30059">return</b> bool (True|False)
+									</span>
+								</p>
 
-							<p>
-								<b>is_notifiable</b>(self, action, vals)
-								<span class="help-block">
-									Indica si el registro se debe notificar<br/>
-									<b style="color:#E30059">return</b> bool (True|False)
-								</span>
-							</p>
+								<p>
+									<b>related_to</b>(self, action)
+									<span class="help-block">
+										Devuelve un string compuesto por el modelo e ID relacionado. Opcional<br/>
+										<b style="color:#E30059">return</b> str|None
+									</span>
+								</p>
 
-							<p>
-								<b>related_to</b>(self, action)
-								<span class="help-block">
-									Devuelve un string compuesto por el modelo e ID relacionado. Opcional<br/>
-									<b style="color:#E30059">return</b> str|None
-								</span>
-							</p>
+								<p>
+									<b>pre_data</b>(self, action)
+									<span class="help-block">
+										<p>Realiza acciones antes de obtener los datos (get_data)</p>
+										<p>Se ejecuta de forma síncrona y es opcional</p>
+										<b style="color:#E30059">return</b> void
+									</span>
+								</p>
 
-							<p>
-								<b>pre_data</b>(self, action)
-								<span class="help-block">
-									<p>Realiza acciones antes de obtener los datos (get_data)</p>
-									<p>Se ejecuta de forma síncrona y es opcional</p>
-									<b style="color:#E30059">return</b> void
-								</span>
-							</p>
+								<p>
+									<b>get_data</b>(self, action)
+									<span class="help-block">
+										Obtiene los datos necesarios del registro<br/>
+										Se permiten los siguientes modificadores en las llaves:
+									</span>
+									<ul class="help-block">
+										<li><b>fixed:xxx</b> El campo siempre se envía con el nombre xxx (aunque no cambie)</li>
+										<li><b>xxx:test</b> El campo test se envía cuando cambia con el nombre xxx</li>
+									</ul>
+									<span class="help-block">Métodos globales disponibles para los registros:</span>
+									<ul class="help-block">
+										<li><b>self.get_field_translations('xxx')</b> Recibe los valores del campo xxx en todos los idiomas</li>
+										<li><b>self.get_base64_report_pdf('xxx')</b> Recibe el documento PDF del registro con el modelo de informe xxx</li>
+									</ul>
+									<span class="help-block">
+										<b style="color:#E30059">return</b> dict
+									</span>
+								</p>
 
-							<p>
-								<b>get_data</b>(self, action)
-								<span class="help-block">
-									Obtiene los datos necesarios del registro<br/>
-									Se permiten los siguientes modificadores en las llaves:
-								</span>
-								<ul class="help-block">
-									<li><b>fixed:xxx</b> El campo siempre se envía con el nombre xxx (aunque no cambie)</li>
-									<li><b>xxx:test</b> El campo test se envía cuando cambia con el nombre xxx</li>
-								</ul>
-								<span class="help-block">Métodos globales disponibles para los registros:</span>
-								<ul class="help-block">
-									<li><b>self.get_field_translations('xxx')</b> Recibe los valores del campo xxx en todos los idiomas</li>
-									<li><b>self.get_base64_report_pdf('xxx')</b> Recibe el documento PDF del registro con el modelo de informe xxx</li>
-								</ul>
-								<span class="help-block">
-									<b style="color:#E30059">return</b> dict
-								</span>
-							</p>
+								<p>
+									<b>pos_data</b>(self, action)
+									<span class="help-block">
+										<p>Realiza acciones después de obtener los datos (get_data)</p>
+										<p>Se ejecuta de forma <b>asíncrona</b> en un nuevo hilo y es opcional</p>
+										<b style="color:#E30059">return</b> void
+									</span>
+								</p>
 
-							<p>
-								<b>pos_data</b>(self, action)
-								<span class="help-block">
-									<p>Realiza acciones después de obtener los datos (get_data)</p>
-									<p>Se ejecuta de forma <b>asíncrona</b> en un nuevo hilo y es opcional</p>
-									<b style="color:#E30059">return</b> void
-								</span>
-							</p>
-
-							<p>
-								<b>Variables Locales</b>
-								<span class="help-block">Los métodos que se definen en este código se pueden llamar localmente sólo mediante la variable b2b, además en ella podremos encontrar los siguientes atributos:</span>
-								<ul class="help-block">
-									<li><b>b2b['crud_mode']</b> El modo con el que se enviará el mensaje ['create'|'update'|'delete']</li>
-									<li><b>b2b['images_base']</b> Ruta base para componer la ruta completa de las imágenes</li>
-									<li><b>b2b['min_docs_date']</b> Fecha mínima para enviar los documentos</li>
-								</ul>
-							</p>
-						</div>
-					</div>
+								<p>
+									<b>Variables Locales</b>
+									<span class="help-block">Los métodos que se definen en este código se pueden llamar localmente sólo mediante la variable b2b, además en ella podremos encontrar los siguientes atributos:</span>
+									<ul class="help-block">
+										<li><b>b2b['crud_mode']</b> El modo con el que se enviará el mensaje ['create'|'update'|'delete']</li>
+										<li><b>b2b['images_base']</b> Ruta base para componer la ruta completa de las imágenes</li>
+										<li><b>b2b['min_docs_date']</b> Fecha mínima para enviar los documentos</li>
+										<li><b>b2b['logger']</b> Permite escribir mensajes en el log con el propósito de realizar una depuración</li>
+									</ul>
+								</p>
+							</div>
+						</page>
+					</notebook>
 				</sheet>
 			</form>
 		</field>

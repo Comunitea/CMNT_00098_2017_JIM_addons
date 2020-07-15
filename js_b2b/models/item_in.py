@@ -2,6 +2,15 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 import re
+import logging
+
+_logger = logging.getLogger('B2B-IN')
+
+# ERRORS #############################
+# 600 Item don't exists or is archived
+# 610 CRUD mode don't exists
+# 620 Item configuration error
+# 630 Item method exception
 
 class B2bItemsIn(models.Model):
 	_name = 'b2b.item.in'
@@ -82,19 +91,36 @@ class B2bItemsIn(models.Model):
 				b2b = item.evaluate(mode, data)
 				b2b['partner_id'] = partner_id
 				b2b['company_id'] = company_id
+				b2b['crud_mode'] = mode
+				b2b['logger'] = _logger
 
 				if b2b['crud_mode']:
+
 					# Comprobaciones de seguridad
 					item_data = b2b['get_data'](self, data)
 					item_data_ok = type(item_data) is dict
 					# superuser_id = self.env['b2b.settings'].get_param('superuser')
 					# incoming_user = self.env['res.users'].browse(superuser_id)
 					# item_model = self.env[item.model].sudo(incoming_user)
-					item_action = getattr(self.env[item.model], mode, None)
+					item_action = getattr(self.env[item.model], b2b['crud_mode'], None)
 					item_action_ok = b2b['crud_mode'] in ('create', 'update', 'cancel')
+
 					if item_data and item_data_ok and callable(item_action) and item_action_ok:
-						item_action(item_data)
-						return True
+						try:
+							item_action(item_data)
+							return True
+						except Exception as e:
+							_logger.error('[630] Item %s method exception: %s' % (object_name, e))
+
+					else:
+						_logger.critical('[620] Item %s configuration or data error!' % object_name)
+
+				else:
+					_logger.error('[610] CRUD mode %s not found for item %s!' % (b2b['crud_mode'], object_name))
+
+			else:
+				_logger.warning('[600] Item %s not found!' % object_name)
+
 		return False
 
 	# ------------------------------------ OVERRIDES ------------------------------------

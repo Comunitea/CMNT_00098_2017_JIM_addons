@@ -2,6 +2,9 @@
 from odoo import api, models, tools
 from .helper import Subprocess, JSync
 from base64 import b64encode
+import logging
+
+_logger = logging.getLogger('B2B-OUT')
 
 # Module base class
 class BaseB2B(models.AbstractModel):
@@ -147,7 +150,8 @@ class BaseB2B(models.AbstractModel):
 			for record in self:
 				for item in b2b_config:
 					b2b = item.evaluate(mode, jsync_conf)
-
+					b2b['logger'] = _logger
+	
 					# No se puede buscar dentro de un None
 					if conf_items_before is None:
 						conf_items_before = list()

@@ -3,8 +3,6 @@ from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 from re import search as validate
 
-from ..base.helper import Chrono
-
 # Separadores de email válidos
 _partner_email_separators = (',', ';')
 
@@ -33,7 +31,7 @@ class ResPartner(models.Model):
 		results = list()
 
 		# Expresión de validación
-		regex = '^[a-z0-9]+[\\._]?[a-z0-9]+[@]\\w+[.]\\w{2,3}$'
+		regex = '^[a-z0-9]+[\\._-]?[a-z0-9]+[@]\\w+[.]\\w{2,3}$'
 
 		# Si tiene un valor
 		if self.email:
@@ -69,22 +67,25 @@ class ResPartner(models.Model):
 
 		return self.email
 
-	@api.onchange('email')
+	@api.multi
+	@api.constrains('email')
 	def _check_email_address(self):
-		if self.email:
-			if not self.has_valid_emails():
+		for record in self:
+			if record.email and not record.has_valid_emails():
 				email_separators_str = ' '.join(['%s' % s for s in _partner_email_separators])
 				raise ValidationError(_('Partner email is not valid, check it!\nValid separators: %s') % email_separators_str)
-			self.email = self.email.strip()
-
-	@api.model
-	def create(self, vals):
-		item = super(ResPartner, self).create(vals)
-		self.__check_vip_web_access_companies_pricelists(vals)
-		return item
+			elif record.email:
+				record.email = record.email.strip()	
 
 	@api.multi
-	def write(self, vals):
-		result = super(ResPartner, self).write(vals)
-		self.__check_vip_web_access_companies_pricelists(vals)
-		return result
+	@api.constrains('vip_web_access')
+	def __check_vip_web_access_companies_pricelists(self):
+		# Comprobar tarifa por compañía web
+		# se usa una consulta porque la operación es más rápida que por el ORM
+		for record in self:
+			if record.vip_web_access:
+				self.env.cr.execute("SELECT company_id FROM ir_property WHERE name LIKE 'property_product_pricelist' and res_id = 'res.partner,%s'", (record.id,))
+				pricelists_company_ids = [r[0] for r in self.env.cr.fetchall()]
+				for company in record.vip_web_access:
+					if company.id not in pricelists_company_ids:
+						raise ValidationError(_('Unable to set web access for %s\nClient don\'t have pricelist on this company!') % company.name)
