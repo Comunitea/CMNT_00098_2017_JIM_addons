@@ -139,6 +139,7 @@ class BaseB2B(models.AbstractModel):
 		:param sub_methods: Call pre_data & pos_data
 		:return: JSync Packets
 		"""
+		self.ensure_one()
 		packets = list()
 		conf_items_after = self.is_notifiable_check(mode, vals)
 
@@ -147,53 +148,53 @@ class BaseB2B(models.AbstractModel):
 			jsync_conf = self.env['b2b.settings'].get_default_params()
 			b2b_config = self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)])
 
-			for record in self:
-				for item in b2b_config:
-					b2b = item.evaluate(mode, jsync_conf)
-					b2b['logger'] = _logger
-	
-					# No se puede buscar dentro de un None
-					if conf_items_before is None:
-						conf_items_before = list()
-					# Si antes era notificable y ahora no lo eliminamos
-					if mode and item.name in conf_items_before and item.name not in conf_items_after:
-						b2b['crud_mode'] = 'delete'
-					# Si antes no era notificable y ahora si lo creamos (ponemos vals a none para que se envíe todo)
-					elif mode and item.name not in conf_items_before and item.name in conf_items_after:
-						b2b['crud_mode'] = 'create'
-						vals = None
+			for item in b2b_config:
+				record = self
+				b2b = item.evaluate(mode, jsync_conf)
+				b2b['logger'] = _logger
 
-					# Creamos un paquete
-					packet = JSync(self.env, settings=jsync_conf)
-					# ID del registro
-					packet.id = record.id
-					# Modelo del registro
-					packet.model = record._name
-					# Obtenemos el nombre
-					packet.name = item.name
-					# Obtenemos la copia del modo
-					packet.mode = b2b['crud_mode']
+				# No se puede buscar dentro de un None
+				if conf_items_before is None:
+					conf_items_before = list()
+				# Si antes era notificable y ahora no lo eliminamos
+				if mode and item.name in conf_items_before and item.name not in conf_items_after:
+					b2b['crud_mode'] = 'delete'
+				# Si antes no era notificable y ahora si lo creamos (ponemos vals a none para que se envíe todo)
+				elif mode and item.name not in conf_items_before and item.name in conf_items_after:
+					b2b['crud_mode'] = 'create'
+					vals = None
 
-					# Obtenemos la relacción (si la tiene)
-					if 'related_to' in b2b and callable(b2b['related_to']):
-						packet.related = b2b['related_to'](record, mode)
+				# Creamos un paquete
+				packet = JSync(self.env, settings=jsync_conf)
+				# ID del registro
+				packet.id = record.id
+				# Modelo del registro
+				packet.model = record._name
+				# Obtenemos el nombre
+				packet.name = item.name
+				# Obtenemos la copia del modo
+				packet.mode = b2b['crud_mode']
 
-					# Ejecutamos la función pre_data si existe y sub_methods es True
-					if sub_methods and 'pre_data' in b2b and callable(b2b['pre_data']):
-						b2b['pre_data'](record, mode)
+				# Obtenemos la relacción (si la tiene)
+				if 'related_to' in b2b and callable(b2b['related_to']):
+					packet.related = b2b['related_to'](self, mode)
 
-					# Obtenemos los datos
-					packet.data = b2b['get_data'](record, mode)
-					# Filtramos los datos
-					packet.filter_data(vals)
-					# Si procede enviamos el paquete
-					if auto_send: packet.send(notify=user_notify)
-					# Guardamos el paquete
-					packets.append(packet)
+				# Ejecutamos la función pre_data si existe y sub_methods es True
+				if sub_methods and 'pre_data' in b2b and callable(b2b['pre_data']):
+					b2b['pre_data'](record, mode)
 
-					# Ejecutamos la función pos_data si existe y sub_methods es True
-					if sub_methods and 'pos_data' in b2b and callable(b2b['pos_data']):
-						Subprocess(self).add(b2b['pos_data'], record, mode)
+				# Obtenemos los datos
+				packet.data = b2b['get_data'](record, mode)
+				# Filtramos los datos
+				packet.filter_data(vals)
+				# Si procede enviamos el paquete
+				if auto_send: packet.send(notify=user_notify)
+				# Guardamos el paquete
+				packets.append(packet)
+
+				# Ejecutamos la función pos_data si existe y sub_methods es True
+				if sub_methods and 'pos_data' in b2b and callable(b2b['pos_data']):
+					Subprocess(self).add(b2b['pos_data'], record, mode)
 
 		# Paquetes a enviar
 		return packets
@@ -236,12 +237,12 @@ class BaseB2B(models.AbstractModel):
 		Set context var b2b_evaluate=False to skip
 		"""
 		b2b_evaluate = self.env.context.get('b2b_evaluate', True)
-		if b2b_evaluate:
-			items_to_send = self.is_notifiable_check('update', vals)
-		items = super(BaseB2B, self).write(vals)
-		if items and b2b_evaluate:
-			self.b2b_record('update', vals, conf_items_before=items_to_send)
-		return items
+		for record in self:
+			if b2b_evaluate:
+				items_to_send = record.is_notifiable_check('update', vals)
+			if super(BaseB2B, record).write(vals) and b2b_evaluate:
+				record.b2b_record('update', vals, conf_items_before=items_to_send)
+		return True
 
 	@api.multi
 	def unlink(self):
@@ -251,10 +252,11 @@ class BaseB2B(models.AbstractModel):
 		Set context var b2b_evaluate=False to skip
 		"""
 		b2b_evaluate = self.env.context.get('b2b_evaluate', True)
-		if b2b_evaluate:
-			items_to_send = self.is_notifiable_check('delete')
-			packets = self.b2b_record('delete', False, conf_items_before=items_to_send, auto_send=False)
-		if super(BaseB2B, self).unlink() and b2b_evaluate:
-			for packet in packets:
-				packet.send(notify=False)
+		for record in self:
+			if b2b_evaluate:
+				items_to_send = self.is_notifiable_check('delete')
+				packets = record.b2b_record('delete', False, conf_items_before=items_to_send, auto_send=False)
+			if super(BaseB2B, self).unlink() and b2b_evaluate:
+				for packet in packets:
+					packet.send(notify=False)
 		return True
