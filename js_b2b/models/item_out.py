@@ -153,9 +153,9 @@ class B2bItemsOut(models.Model):
 				delete_records = 0
 
 				_logger.info("*************** B2B ITEM ***************")
-				_logger.info("@@ ITEM NAME", str(self.name))
-				_logger.info("@@ ITEM MODEL", str(model))
-				_logger.info("@@ TOTAL RECORDS", total_records)
+				_logger.info("@@ ITEM NAME: %s" % str(self.name))
+				_logger.info("@@ ITEM MODEL: %s" % str(model))
+				_logger.info("@@ TOTAL RECORDS: %s" % total_records)
 
 				for id in records_ids:
 					record_number += 1
@@ -169,23 +169,23 @@ class B2bItemsOut(models.Model):
 					if notifiable_items and not record_on_jsync:
 
 						create_records += 1
-						_logger.debug("@@ CREATE %s (%s) WITH ID#%s" % (self.name, model, id), record_percent_str)
+						_logger.debug("@@ CREATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
 						for packet in record.b2b_record('create', conf_items_before=notifiable_items, auto_send=False):
 							packet.send(notify=user_notify) # Don't notify
 
 					elif not notifiable_items and record_on_jsync:
 
 						delete_records += 1
-						_logger.debug("@@ DELETE %s (%s) WITH ID#%s" % (self.name, model, id), record_percent_str)
+						_logger.debug("@@ DELETE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
 						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], auto_send=False):
 							packet.send(notify=user_notify) # Don't notify
 
 					else:
 
-						_logger.debug("@@ %s (%s) ID#%s NOT NOTIFIABLE OR ALREDY IN JSYNC" % (self.name, model, id), record_percent_str)
+						_logger.debug("@@ %s (%s) ID#%s NOT NOTIFIABLE OR ALREDY IN JSYNC | COMPLETED: %s" % (self.name, model, id, record_percent_str))
 						
-				_logger.info("@@ CREATE RECORDS", create_records)
-				_logger.info("@@ DELETE RECORDS", delete_records)
+				_logger.info("@@ CREATE RECORDS: %s" % create_records)
+				_logger.info("@@ DELETE RECORDS: %s" % delete_records)
 				_logger.info("************* FIN B2B ITEM *************")
 
 				# Notify user
