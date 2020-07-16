@@ -159,7 +159,10 @@ class JSync(object):
 		EXPORT_RECORD = None
 		RES_ID = '%s,%s' % (self.model, self.id)
 
-		if self.name and self.data and self.mode:
+		# Comprobamos los datos necesarios
+		# todos los mensajes tienen que tener por lo menos una clave primaria (jim_id)
+		# la única excepción es cuando se elimina un registro que puede llevar sólo la clave
+		if self.name and self.data and self.mode and (self.mode == 'delete' or len(self.data) > 1):
 			# Check with new cursor
 			with api.Environment.manage():
 				with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
@@ -252,7 +255,7 @@ class JSync(object):
 						with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
 							env = api.Environment(new_cr, self.env.uid, self.env.context)
 							env.cr.autocommit(True)
-							if self.mode == 'create':
+							if not _EXPORT_RECORD and self.mode == 'create':
 								env['b2b.export'].create({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
 							elif _EXPORT_RECORD and self.mode == 'update':
 								env['b2b.export'].browse(_EXPORT_RECORD.id).write({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })

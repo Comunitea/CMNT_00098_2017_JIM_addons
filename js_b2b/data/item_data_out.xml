@@ -378,9 +378,8 @@ def get_data(self, action):
     'order_id', 
     'company_id',
     'product_id', 
-    'product_qty', 
-    'qty_received', 
-    'date_expected', 
+    'product_uom_qty', 
+    'date_expected',
     'state'
 )
 

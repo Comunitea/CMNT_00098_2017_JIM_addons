@@ -112,6 +112,7 @@ class B2bItemsOut(models.Model):
 		"""
 		Sync all model records
 		"""
+		only_active = True # Get archived items
 		search_query = [] # Default query
 		record_number = 0.0 # Record counter
 
@@ -139,9 +140,11 @@ class B2bItemsOut(models.Model):
 					search_query = [('date_done', '>=', docs_min_date), ('partner_id.commercial_partner_id', 'in', client_ids)]
 				elif model == 'sale.order':
 					search_query = [('date_order', '>=', docs_min_date), ('partner_id.commercial_partner_id', 'in', client_ids)]
+				elif model in ('product.template', 'product.product'):
+					only_active = False
 
 				# Get code model records
-				records_ids = self.env[model].search(search_query, order='id ASC').ids
+				records_ids = self.env[model].with_context(active_test=only_active).search(search_query, order='id ASC').ids
 				total_records =  len(records_ids)
 				create_records = 0
 				delete_records = 0
