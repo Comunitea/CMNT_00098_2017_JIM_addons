@@ -2,8 +2,11 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 from datetime import datetime
+import logging
 import base64
 import re
+
+_logger = logging.getLogger('B2B-OUT')
 
 class B2bItemsOut(models.Model):
 	_name = 'b2b.item.out'
@@ -149,10 +152,10 @@ class B2bItemsOut(models.Model):
 				create_records = 0
 				delete_records = 0
 
-				print("*************** B2B ITEM ***************")
-				print("@@ ITEM NAME", str(self.name))
-				print("@@ ITEM MODEL", str(model))
-				print("@@ TOTAL RECORDS", total_records)
+				_logger.info("*************** B2B ITEM ***************")
+				_logger.info("@@ ITEM NAME", str(self.name))
+				_logger.info("@@ ITEM MODEL", str(model))
+				_logger.info("@@ TOTAL RECORDS", total_records)
 
 				for id in records_ids:
 					record_number += 1
@@ -166,24 +169,24 @@ class B2bItemsOut(models.Model):
 					if notifiable_items and not record_on_jsync:
 
 						create_records += 1
-						print("@@ CREATE %s (%s) WITH ID#%s" % (self.name, model, id), record_percent_str)
+						_logger.debug("@@ CREATE %s (%s) WITH ID#%s" % (self.name, model, id), record_percent_str)
 						for packet in record.b2b_record('create', conf_items_before=notifiable_items, auto_send=False):
 							packet.send(notify=user_notify) # Don't notify
 
 					elif not notifiable_items and record_on_jsync:
 
 						delete_records += 1
-						print("@@ DELETE %s (%s) WITH ID#%s" % (self.name, model, id), record_percent_str)
+						_logger.debug("@@ DELETE %s (%s) WITH ID#%s" % (self.name, model, id), record_percent_str)
 						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], auto_send=False):
 							packet.send(notify=user_notify) # Don't notify
 
 					else:
 
-						print("@@ %s (%s) ID#%s NOT NOTIFIABLE OR ALREDY IN JSYNC" % (self.name, model, id), record_percent_str)
+						_logger.debug("@@ %s (%s) ID#%s NOT NOTIFIABLE OR ALREDY IN JSYNC" % (self.name, model, id), record_percent_str)
 						
-				print("@@ CREATE RECORDS", create_records)
-				print("@@ DELETE RECORDS", delete_records)
-				print("************* FIN B2B ITEM *************")
+				_logger.info("@@ CREATE RECORDS", create_records)
+				_logger.info("@@ DELETE RECORDS", delete_records)
+				_logger.info("************* FIN B2B ITEM *************")
 
 				# Notify user
 				self.env.user.notify_info(
