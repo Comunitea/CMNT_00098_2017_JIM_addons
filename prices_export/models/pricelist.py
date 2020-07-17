@@ -52,6 +52,9 @@ class ProductPricelistItem(models.Model):
 
     _inherit = 'product.pricelist.item'
 
+    # Lo necesito para asegurarme de que se actualiza el write date
+    last_update = fields.Datetime('Last Update')
+
     @api.multi
     def write(self, vals):
         """
@@ -75,23 +78,19 @@ class ProductPricelistItem(models.Model):
         productos afectados.
         Escribo bajo demanda los borrados de los item_ids, relaccionados
         """
-        # self.create_in_aux_table()
-        delete_items = self
+        related_items_list = self
         for item in self:
-            delete_items |= item
             related_items = self.env['export.prices'].\
                 get_related_items(item.pricelist_id.id)
-            delete_items |= related_items
-        
-        for item in delete_items:
+            related_items_list |= related_items
             vals = {
                 'price': -1,
                 'item_id':item.id,
                 'product_id': False,
                 'pricelist_id': item.pricelist_id.id
-                
             }
             self.env['export.prices'].create(vals)
+        related_items_list.write({'last_update': fields.Datetime.now()})
         return super(ProductPricelistItem, self).unlink()
 
     def get_item_info(self):
@@ -120,22 +119,22 @@ class ProductPricelistItem(models.Model):
             item_info = item.get_item_info()
             self.env['aux.export'].create(item_info)
 
-    def button_edit_items(self):
-        self.ensure_one()
-        view = self.env.ref(
-            'product.product_pricelist_item_form_view'
-        )
-        ctx = self.env.context.copy()
-        ctx.update(default_pricelist_id=self.pricelist_id.id)
-        return {
-            'name': _('Agents'),
-            'type': 'ir.actions.act_window',
-            'view_type': 'form',
-            'view_mode': 'form',
-            'res_model': self._name,
-            'views': [(view.id, 'form')],
-            'view_id': view.id,
-            'target': 'current',
-            'res_id': self.id,
-            'context': ctx,
-        }
+    # def button_edit_items(self):
+    #     self.ensure_one()
+    #     view = self.env.ref(
+    #         'product.product_pricelist_item_form_view'
+    #     )
+    #     ctx = self.env.context.copy()
+    #     ctx.update(default_pricelist_id=self.pricelist_id.id)
+    #     return {
+    #         'name': _('Agents'),
+    #         'type': 'ir.actions.act_window',
+    #         'view_type': 'form',
+    #         'view_mode': 'form',
+    #         'res_model': self._name,
+    #         'views': [(view.id, 'form')],
+    #         'view_id': view.id,
+    #         'target': 'current',
+    #         'res_id': self.id,
+    #         'context': ctx,
+    #     }

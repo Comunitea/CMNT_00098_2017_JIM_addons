@@ -59,7 +59,9 @@ class ExportPrices(models.Model):
         por la regla de precios.
         Devuelvo solo los activos
         """
-        qty = i['min_quantity']
+        # TODO qty, activar cantidades
+        # qty = i['min_quantity']
+        qty = 1
         res = []
         if i['applied_on'] == '0_product_variant':
             if (i['product_id'], qty, i['id']) not in total_res:
@@ -175,6 +177,7 @@ class ExportPrices(models.Model):
     
     @api.model
     def create_updated_prices(self):
+        # import ipdb; ipdb.set_trace()
         start = datetime.now()
         base_date = self.env['ir.config_parameter'].get_param(
             'last_call_export_prices', default='')   
@@ -244,6 +247,7 @@ class ExportPrices(models.Model):
                 pricelist2update[pricelist_id] = []
             
             # Obtengo los productos cantidades asociados a ese item
+            # TODO Cantidades, ahora solo devuelvo 1
             products_qtys = self.get_item_related_product_qtys(i, [])
 
             # Añado los productos,qtys para esta tarifa solo si no están ya.
@@ -260,8 +264,15 @@ class ExportPrices(models.Model):
                     pricelist2update[pl_id] = []
                 # Añado los productos,qtys para esta tarifa solo si no están ya.
                 for t in products_qtys:
-                    if t not in pricelist2update[pl_id]:
-                        pricelist2update[pl_id].append((t[0], t[1], rel_it.id))
+                    # TODO REVISAR PARA CANTIDADES, AHORA JUEGO SOLO CON 1
+                    # qty = max(t[1], rel_it.min_quantity)
+                    qty = 1
+                    t2 = (t[0], qty, rel_it.id)
+                    t2
+                    if t2 not in pricelist2update[pl_id]:
+                        # coger el mas grande de los dos???
+                        pricelist2update[pl_id].append(t2)
+                        # pricelist2update[pl_id].append((t[0], rel_it.min_quantity, rel_it.id))
 
         # Para cada tarifa tenfo sus [(productos, qtys, item_id)...] los paso a la
         # función de la tarifa que me devuelve los precios en formato

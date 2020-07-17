@@ -75,7 +75,7 @@ class ProductProduct(models.Model):
             # Actualizo el write date para que lo encuentre el cron la siguiente
             # vez
             _logger.info('Marcando items para actualizar después')
-            items.write({'active': True})
+            items.write({'last_update': fields.Datetime.now()})
         return
     
     @api.multi
@@ -95,5 +95,5 @@ class ProductProduct(models.Model):
                 # Actualizo el write date para que lo encuentre el cron la siguiente
                 # vez
                 _logger.info('Marcando items para actualizar después')
-                items.write({'active': True})
+                items.write({'last_update': fields.Datetime.now()})
         return
