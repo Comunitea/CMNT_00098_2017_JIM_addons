@@ -481,10 +481,9 @@ def pos_data(self, action):
     'city', 
     'state_id', 
     'country_id',
-    'commercial_partner_id',
-    'type', 
+    'commercial_partner_id', 
     'default', 
-    'active',
+    'active'
 )
 
 def is_notifiable(self, action, vals):
@@ -499,7 +498,7 @@ def related_to(self, action):
 def get_data(self, action):
     return {
         'fixed:jim_id': self.id,
-        'fixed:customer_id': self.commercial_partner_id.id, 
+        'commercial_partner_id:customer_id': self.commercial_partner_id.id, 
         'name': self.name if self.name else self.commercial_partner_id.name, 
         'street': self.street, 
         'street2': self.street2 or None, 

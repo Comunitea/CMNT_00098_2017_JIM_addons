@@ -186,7 +186,6 @@ class B2bItemsOut(models.Model):
 						
 				_logger.info("@@ CREATE RECORDS: %s" % create_records)
 				_logger.info("@@ DELETE RECORDS: %s" % delete_records)
-				_logger.info("************* FIN B2B ITEM *************")
 
 				# Notify user
 				self.env.user.notify_info(
