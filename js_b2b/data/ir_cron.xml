@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record model="ir.cron" id="b2b_stock_cron">
+            <field name='name'>B2B Stock</field>
+            <field name='interval_number'>15</field>
+            <field name='interval_type'>minutes</field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">b2b.export</field>
+            <field name="function">b2b_products_stock</field>
+            <field name="args">(None, None, None)</field>
+        </record>
+
+        <record model="ir.cron" id="b2b_pricelist_prices">
+            <field name='name'>B2B Pricelists Prices</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name='nextcall' eval="datetime.now(pytz.timezone('Europe/Madrid')).strftime('%Y-%m-%d 01:00:00')"></field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">b2b.export</field>
+            <field name="function">b2b_pricelists_prices</field>
+            <field name="args">(None, None, None, None, None)</field>
+        </record>
+
+        <record model="ir.cron" id="b2b_customer_prices">
+            <field name='name'>B2B Customer Prices</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name='nextcall' eval="datetime.now(pytz.timezone('Europe/Madrid')).strftime('%Y-%m-%d 07:00:00')"></field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">b2b.export</field>
+            <field name="function">b2b_customers_prices</field>
+            <field name="args">(None,)</field>
+        </record>
+
+    </data>
+</odoo>

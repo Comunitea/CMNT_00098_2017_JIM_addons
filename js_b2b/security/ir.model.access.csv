@@ -1,0 +1,11 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_js_b2b_item_out,js_b2b.item.out,model_b2b_item_out,base_technical_features.group_technical_features,1,1,1,1
+access_js_b2b_item_in,js_b2b.item.in,model_b2b_item_in,base_technical_features.group_technical_features,1,1,1,1
+access_js_b2b_category,product.public.category,model_product_public_category,stock.group_stock_manager,1,1,1,1
+access_js_b2b_item_out_public,js_b2b.item.out,model_b2b_item_out,,1,0,0,0
+access_js_b2b_item_in_public,js_b2b.item.in,model_b2b_item_in,,1,0,0,0
+access_js_b2b_category_public,product.public.category,model_product_public_category,,1,0,0,0
+access_js_b2b_product_images_users,product.image.users,model_product_image,base.group_user,1,1,1,1
+access_js_b2b_product_images_public,product.image.public,model_product_image,,1,0,0,0
+access_js_b2b_export,js_b2b.export,model_b2b_export,base.group_user,1,1,1,1
+access_js_b2b_export_public,js_b2b.export,model_b2b_export,,1,0,0,0

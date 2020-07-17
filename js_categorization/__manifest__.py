@@ -1,6 +1,6 @@
 {
-    "name": "JS Categorization",
-    "summary": "Añade una pestaña de categorización en los productos/variantes",
+    "name": "JS Parameterization",
+    "summary": "Añade una pestaña de parametrización en los productos/variantes",
     "version": "10.0.2.0",
     "license": "AGPL-3",
     "author": "Jim Sports",

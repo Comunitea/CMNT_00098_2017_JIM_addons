@@ -29,6 +29,7 @@
         'report_wkhtmltopdf_param',
     ],
     "data": [
+        'views/texto_proteccion_datos.xml',
         'views/layout_templates.xml',
         'data/report_paperformat_data.xml',
         'views/sale_order_report.xml',

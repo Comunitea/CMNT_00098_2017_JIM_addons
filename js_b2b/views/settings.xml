@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+	<!-- FORMULARIO -->
+
+	<record id="js_b2b_settings_form" model="ir.ui.view">
+		<field name="name">b2b.settings.form</field>
+		<field name="model">b2b.settings</field>
+		<field name="arch" type="xml">
+			<form string="B2B Configuration" class="oe_form_configuration">
+				<header>
+					<h1><img height="60" class="pull-right mr16" src="/js_b2b/static/description/logo-jim.png"/>B2B Settings</h1>
+
+					<p>
+						<button string="Apply" type="object" name="execute" class="btn-primary mr4"/> 
+						<button string="Cancel" type="object" name="cancel" special="cancel" class="btn-default"/>
+					</p>
+				</header>
+				<div>
+					<group string="General">
+						<field name="packet_size"/>
+						<field name="url"/>
+						<field name="conexion_error"/>
+						<field name="response_error" attrs="{'invisible': [('conexion_error','=',False)]}"/>
+					</group>
+
+					<group string="Documents">
+						<field name="docs_after"/>
+					</group>
+
+					<group string="FTP Server">
+						<field name="base_url"/>
+						<field name="server"/>
+						<field name="user"/>
+						<field name="password" password="True"/>
+					</group>
+				</div>
+			</form>
+		</field>
+	</record>
+
+	<!-- VISTAS -->
+
+    <record id="js_b2b_settings" model="ir.actions.act_window">
+        <field name="name">B2B Settings</field>
+        <field name="res_model">b2b.settings</field>
+        <field name="view_mode">form</field>
+        <field name="target">inline</field>
+    </record>
+
+	<!-- ACCIONES DE MENÚ -->
+
+	<menuitem id="js_b2b_settings_action" name="Settings" parent="js_b2b_menu" sequence="100" action="js_b2b_settings" groups="base_technical_features.group_technical_features"  />
+
+</odoo>

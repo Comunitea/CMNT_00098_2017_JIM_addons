@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Product & Variant -->
+    <record id="product_template_form_view_b2b" model="ir.ui.view">
+        <field name="name">product.template.product.b2b.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button class="oe_stat_button" name="website_publish_button" type="object" icon="fa-globe">
+                    <field name="website_published" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Publicado', 'hover_true': 'Eliminar de las webs', 'string_false': 'No publicado', 'hover_false': 'Publicar en las webs' }}"/>
+                </button>
+            </div>
+
+            <group name="email_template_and_project" position="before">
+                <group name="website" string="Website">
+                    <field name="public_categ_ids" widget="many2many_tags" string="Website Categories"/>
+                </group>
+            </group>
+
+            <xpath expr="//notebook[last()]" position="inside">
+                <page string="Images" groups="product.group_product_variant">
+                    <field name="product_image_ids" mode="kanban" context="{'default_name': name, 'default_product_tmpl_id': active_id}">
+                        <kanban string="Product Images">
+                            <field name="image" />
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_global_click">
+                                        <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                        <div class="o_kanban_image">
+                                            <img t-if="record.image.raw_value" t-att-src="'data:image/png;base64,'+record.image.raw_value"/>
+                                        </div>
+                                        <div class="oe_kanban_details">
+                                            <field name="name" />
+                                            <div class="product_image_tags">
+                                                <field name="product_attributes_values" widget="many2many_tags" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="product_variant_easy_edit_view_b2b" model="ir.ui.view">
+        <field name="name">product.product.view.form.easy.b2b</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+        <field name="arch" type="xml">
+            <field name="image_medium" position="replace">
+                <field name="image_variant" widget="image" class="oe_avatar" readonly="1" options="{ 'no_cache': True  }"/>
+            </field>
+        </field>
+    </record>
+
+    <record id="product_normal_form_view_b2b" model="ir.ui.view">
+        <field name="name">product.product.form.b2b</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <field name="image_medium" position="replace">
+                <field name="image_variant" widget="image" class="oe_avatar" readonly="1" options="{ 'no_cache': True  }"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Product Images -->
+    <record id="view_product_image_form_b2b" model="ir.ui.view">
+        <field name="name">product.image.form</field>
+        <field name="model">product.image</field>
+        <field name="arch" type="xml">
+            <form string="Product Images">
+                <sheet>
+                    <div id="product_img_form">
+                        <field name="image" widget="image" class="oe_avatar" required="1"/>
+                        
+                        <div class="oe_title">
+                            <field name="id" invisible="1"/>
+                            <div invisible="context.get('default_product_tmpl_id', False)">
+                                <label class="oe_edit_only" for="product_tmpl_id" string="Product Template"/>
+                                <div><field name="product_tmpl_id"/></div>
+                                <hr/>
+                            </div>
+                            <label class="oe_edit_only" for="name" string="Image Description (alt text)"/>
+                            <h1><field name="name" placeholder="alt image text" required="1"/></h1>
+                            <label class="oe_edit_only" for="product_attributes" string="Attributes Applied"/>
+                            <div><field name="product_attributes_values" widget="many2many_tags" options="{ 'no_create_edit':True, 'no_quick_create': True }" attrs="{'readonly': [('id', '!=', False)]}"/></div>
+                        </div>
+                        
+                        <div class="clearfix"></div>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="product_iamges_action_b2b" model="ir.actions.act_window">
+        <field name="name">Website Product Images</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.image</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" eval="False"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to create a new product image.
+            </p>
+        </field>
+    </record>
+
+    <!-- Product Categories -->
+    <record id="product_category_tree_view_b2b" model="ir.ui.view">
+        <field name="name">product.tag.tree.b2b</field>
+        <field name="model">product.tag</field>
+        <field name="inherit_id" ref="product_tags.product_tag_tree"/>
+        <field name="arch" type="xml">
+            <field name="display_name" position="before">
+                <field name="sequence" widget="handle"/>
+            </field>
+        </field>
+    </record>
+
+    <!-- Product Attributes -->
+    <record id="variants_tree_view_b2b" model="ir.ui.view">
+        <field name="name">product.attribute.value.tree.b2b</field>
+        <field name="model">product.attribute.value</field>
+        <field name="inherit_id" ref="product.variants_tree_view"/>
+        <field name="arch" type="xml">
+            <tree position="inside">
+                <field name="is_color" invisible="1" />
+                <field name="image_color_filename" invisible="1" />
+                <field name="html_color" widget="js_colorpicker" attrs="{'invisible':[('is_color', '!=', True)]}"/>
+                <field name="image_color" filename="image_color_filename" class="oe_avatar" options="{'size': [62, 62]}" attrs="{'invisible':[('is_color', '!=', True)]}"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Product Public Categories -->
+    <record id="product_public_category_form_view_b2b" model="ir.ui.view">
+        <field name="name">product.public.category.form.b2b</field>
+        <field name="model">product.public.category</field>
+        <field name="arch" type="xml">
+            <form string="Website Public Categories">
+                <sheet>
+                    <field name="image" widget='image' class="oe_avatar"/>
+                    <div class="oe_left">
+                        <group>
+                            <field name="name"/>
+                            <field name="parent_id"/>
+                            <field name="sequence"/>
+                        </group>
+                    </div>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="product_public_category_tree_view_b2b" model="ir.ui.view">
+        <field name="name">product.public.category.tree.b2b</field>
+        <field name="model">product.public.category</field>
+        <field name="field_parent" eval="False"/>
+        <field name="arch" type="xml">
+            <tree string="Product Public Categories">
+                <field name="sequence" widget="handle"/>
+                <field name="display_name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="product_public_category_action_b2b" model="ir.actions.act_window">
+        <field name="name">Website Product Categories</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.public.category</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" eval="False"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Click to define a new category.
+            </p><p>
+                Web categories are used on non VIP clients websites.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_product_iamges" name="Product Images" parent="stock.menu_product_in_config_stock" action="product_iamges_action_b2b" sequence="80" />
+    <menuitem id="menu_public_categories" name="Web Categories" parent="stock.menu_product_in_config_stock" action="product_public_category_action_b2b" sequence="80" />
+</odoo>

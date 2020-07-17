@@ -69,3 +69,128 @@ div.oe_button_box > button.btn.oe_stat_button > * {
         }
     }
 }
+
+/* ################# FIJAR CABECERAS TABLAS (LIST-VIEW) ################# */
+
+div.o_view_manager_content:not(.o_form_field) > div > div.table-responsive table.fixed-table-header{
+    background-color: #f0eeee;
+
+    &.table-striped > tbody > tr:nth-of-type(even) {
+        background-color: white;
+    }
+
+    .o_list_record_selector,
+    th[data-id="sequence"], 
+    td[data-field="sequence"]{
+        width: 36px;
+    }
+
+    tbody {
+        display: block;
+        height: 100vh;
+        max-height: ~"calc(100vh - 172px)"; // 172px for Odoo control panel
+        overflow: auto;
+    }
+
+    thead th, tbody td{
+        padding: 6px 10px;
+        overflow: hidden;
+    }
+
+    // Fix colums width
+    thead, tbody tr {
+        display: table;
+        width: 100vw;
+        table-layout: fixed;
+    }
+
+    tfoot{
+        display: none;
+    }
+}
+
+/* ################# INDICADOR DE SCROLL (PARA TABLAS) ################# */
+
+#fixed-table-scroll-indicator {
+	width: 12px;
+    position: absolute;
+    opacity: 0.8;
+    bottom: 30px;
+    right: 10px;
+	&::before,
+	&::after {
+		content: '';
+		display: block;
+		margin-left: auto;
+		margin-right: auto;
+	}
+	&::before {
+		width: 12px;
+		height: 12px;
+		border-radius: 10px;
+		border: 1px solid #333;
+		animation: dot 3s infinite ease-in-out;
+	}
+	&::after {
+		width: 7px;
+		height: 7px;
+		border-right: 1px solid #333;
+		border-bottom: 1px solid #333;
+		transform: rotate(45deg);
+		animation: arrow 3s infinite ease-in-out;
+		animation-delay: .75s;
+		opacity: .25;
+	}
+	& > div {
+		display: block;
+		&::before,
+		&::after {
+			content: '';
+			display: block;
+			margin: 5px auto;
+			border-radius: 10px;
+			border: 1px solid #333;
+			animation: dot 3s infinite ease-in-out;
+		}
+		&::before {
+			width: 8px;
+			height: 8px;
+			animation-delay: .25s;
+		}
+		&::after {
+			width: 6px;
+			height: 6px;
+			animation-delay: .5s;
+		}
+	}
+}
+
+@keyframes dot {
+	0% {
+		transform: scale(.75);
+		opacity: .25;
+	}
+	25% {
+		transform: scale(1);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(.75);
+		opacity: .25;
+	}
+}
+
+@keyframes arrow {
+	0% {
+		transform: scale(.75) rotate(45deg);
+		opacity: .25;
+	}
+	25% {
+		transform: scale(1) rotate(45deg);
+		opacity: 1;
+	}
+	100% {
+		transform: scale(.75) rotate(45deg);
+		opacity: .25;
+	}
+}
