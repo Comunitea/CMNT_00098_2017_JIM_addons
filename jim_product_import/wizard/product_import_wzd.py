@@ -97,7 +97,6 @@ class ProductImportWzd(models.TransientModel):
         p_ids = []
         row_err = []
         stream = StringIO.StringIO()
-        #import ipdb; ipdb.set_trace()
         workbook = xlwt.Workbook(encoding = 'ascii')
         worksheet = workbook.add_sheet('Lista de filas con error')
         for nline in range(1, sh.nrows):
