@@ -8,11 +8,21 @@ class StockMove(BaseExtClass):
 
     fields_to_watch = ('order_id', 'id', 'product_id', 'product_qty', 'qty_received', 'date_expected', 'state')
 
+    '''
     def is_notifiable(self):
         return (self.state == "assigned" or self.state == "done" or self.state == "cancel") \
             and self.company_id.id == 1 \
             and self.picking_type_id.code == "incoming" \
             and self.purchase_line_id
+    '''
+
+    # Jim Sports id: 1, EME Inversia es id: 5
+    # partner_id: proveedor
+    def is_notifiable(self):
+        return (self.state == "assigned" or self.state == "done" or self.state == "cancel") \
+            and (self.company_id.id == 1 or (self.company_id.id == 5 and self.partner_id != 1)) \
+            and self.picking_type_id.code == "incoming" \
+            and self.purchase_line_id            
 
     def set_props(self, unlink=False):
         posupplyplan = """

@@ -33,7 +33,7 @@ class jsUpdatePrices(http.Controller):
 
             #import web_pdb; web_pdb.set_trace()
 
-            # Realizamos un bucle para descargar las imágenes y guardar los resultados
+            # Realizamos un bucle por los pedidos
             for order in sales:
 
                 print("######################### UPDATING ORDER [" + str(order.name) + "] #########################")

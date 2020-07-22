@@ -285,7 +285,6 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
                                             </td>
                                         </tr>
                                     </t>
-
                                 </tbody>
                                 <tfoot>
                                     <tr>
@@ -301,6 +300,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
                             </table>
                         </div>
                     </div>
+                    
         </div>
     </template>
 

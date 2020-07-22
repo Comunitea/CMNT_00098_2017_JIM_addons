@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_pdf_last_page,js_pdf_last_page.reports.last_page,model_reports_last_page,base_technical_features.group_technical_features,1,1,1,1
+access_pdf_last_page_public,js_pdf_last_page.reports.last_page,model_reports_last_page,,1,0,0,0

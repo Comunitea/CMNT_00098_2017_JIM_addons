@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<templates id="template" xml:space="preserve">
+
+    <t t-extend="WebClient.DebugViewLog">
+        <t t-jquery="table" t-operation="append">
+            <tr>
+                <th>B2B Notifiable</th>
+                <td><t t-esc="perm.b2b_notifiable"/></td>
+            </tr>
+            <tr>
+                <th>Record on Jsync</th>
+                <td><t t-esc="perm.b2b_record_on_jsync"/></td>
+            </tr>
+        </t>
+    </t>
+
+</templates>

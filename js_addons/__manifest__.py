@@ -16,7 +16,6 @@
     ],
     "data": [
         "views/assets.xml",
-        "views/res_partner.xml",
         "views/sale_views.xml",
         "views/product.xml"
     ],

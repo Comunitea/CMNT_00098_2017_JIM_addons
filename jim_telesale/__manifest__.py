@@ -14,6 +14,7 @@
         'chained_discount_commercial_rules',
         'telesale_manage_variants',
         'custom_documents',
+        'partner_custom'
     ],
     'contributors': [
         "Comunitea ",

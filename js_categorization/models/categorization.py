@@ -5,29 +5,23 @@ import lxml.etree as xee
 import copy
 import re
 
-
-class CategorizationType(models.Model):
+class ParameterizationType(models.Model):
     _name = 'js_categorization.type'
-    _description = "Categorization Types"
-    _sql_constraints = [
-        ('categorization_type_unique', 'unique(name)',
-         'Type must be unique in categorization!')]
+    _description = "Parameterization Types"
+    _sql_constraints = [('categorization_type_unique', 'unique(name)', 'Type must be unique in categorization!')]
     _order = 'sequence, id'
     name = fields.Char(required=True, translate=False)
     sequence = fields.Integer(help="Determine the display order", default=10)
 
-
-class CategorizationField(models.Model):
+class ParameterizationField(models.Model):
     _name = 'js_categorization.field'
-    _description = 'Categorization Fields'
+    _description = 'Parameterization Fields'
     _inherit = 'ir.model.fields'
     _order = 'sequence, id'
 
     def _set_mod_filter(self):
         # Get model ids for fields
-        model_ids = self.env['ir.model'].sudo().search(
-            [('model', 'in', ['product.template.categorization',
-              'product.product.categorization'])])
+        model_ids = self.env['ir.model'].sudo().search([('model', 'in', ['product.template.categorization', 'product.product.categorization'])])
         # Set domain to this ids
         return [('id', 'in', model_ids.ids)]
 
@@ -85,13 +79,13 @@ class CategorizationField(models.Model):
                         'message': _("Relation not valid on selected model!")
                     }
                 }
-              
+
     #override
     @api.onchange('name', 'ttype', 'model_id', 'relation')
     def _onchange_ttype(self):
         special_values_model = 'js_categorization.value'
         # Call super overrided method first
-        super(CategorizationField, self)._onchange_ttype()
+        super(ParameterizationField, self)._onchange_ttype()
         # If is relational field set relation to js_categorization.value
         if self.ttype in ('js_many2one', 'js_many2many'):
             self.relation = special_values_model
@@ -137,11 +131,11 @@ class CategorizationField(models.Model):
         pdoc_categorization_section.clear()
         vdoc_categorization_section.clear()
         psea.clear()
-        psea.set('string', _("Product Categorization Fields"))
+        psea.set('string', _("Product Parameterization Fields"))
         psea_field_search = xee.SubElement(psea, 'field')
         psea_field_search.set('name', 'product_id')
         vsea.clear()
-        vsea.set('string', _("Variant Categorization Fields"))
+        vsea.set('string', _("Variant Parameterization Fields"))
         vsea_field_search = xee.SubElement(vsea, 'field')
         vsea_field_search.set('name', 'product_id')
         # Regenerate fields XML for each type
@@ -190,21 +184,16 @@ class CategorizationField(models.Model):
     #private
     @api.model
     def _resetXml(self):
-        for view in (
-                'categorization_product_form_view',
-                'categorization_product_search_by_field',
-                'categorization_variant_form_view',
-                'categorization_variant_search_by_field'):
+        for view in ('categorization_product_form_view', 'categorization_product_search_by_field', 'categorization_variant_form_view', 'categorization_variant_search_by_field'):
             # Get view object
-            categorization_view = self.env.ref(
-                'js_categorization.' + view).sudo()
+            categorization_view = self.env.ref('js_categorization.' + view).sudo()
             # Get and parse view XML
             doc = xee.fromstring(categorization_view.arch_base)
             # In search view clear all
-            if (view in ('categorization_product_search_by_field',
-                         'categorization_variant_search_by_field')):
+            if (view in ('categorization_product_search_by_field', 'categorization_variant_search_by_field')):
                 doc.clear()
-            else:  # On others clear group
+            # On others clear group
+            else: 
                 doc.find('.//div[@id="categorization_fields"]/group').clear()
             # Save to field
             categorization_view.arch_base = xee.tostring(doc)
@@ -223,10 +212,9 @@ class CategorizationField(models.Model):
         try:
             model_values = copy.copy(values)
             # Create base field for the model
-            self.env['ir.model.fields'].sudo().create(
-                self._transformValues(model_values))
+            self.env['ir.model.fields'].sudo().create(self._transformValues(model_values))
             # Create categorization field
-            result = super(CategorizationField, self).create(model_values)
+            result = super(ParameterizationField, self).create(model_values)
             if result:
                 self._createFieldsXml()
         except Exception, exception:
@@ -236,24 +224,26 @@ class CategorizationField(models.Model):
     #override
     @api.multi
     def write(self, values):
+        updating_secuence = (values.get('sequence') and len(values) == 1)
         model_values = copy.copy(values)
         # Reset XML to make changes
-        self._resetXml()
+        if not updating_secuence:
+            self._resetXml()
         # Loop records
         for record in self:
             try:
                 # Write model base field
-                if not (values.get('sequence') and len(values) == 1):
-                    custom_field = self.env['ir.model.fields'].sudo().search(
-                        [('name', '=', record.name), ('state', '=', 'manual')])
-                    custom_field.ensure_one()  # One record expected, if more abort
+                if not updating_secuence:
+                    custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record.name), ('state', '=', 'manual')])
+                    custom_field.ensure_one() # One record expected, if more abort
                     custom_field.write(self._transformValues(model_values))
                 # Write categorization field
-                super(CategorizationField, record).write(model_values)
-            except Exception, exception:
-                raise exception
+                super(ParameterizationField, record).write(model_values)
+            except:
+                pass
         # Write fields to XML
-        self._createFieldsXml()
+        if not updating_secuence:
+            self._createFieldsXml()
         return True
 
     #override
@@ -267,10 +257,9 @@ class CategorizationField(models.Model):
                 # Save name to unlink base field
                 record_name = record.name
                 # Delete categorization field
-                super(CategorizationField, record).unlink()
+                super(ParameterizationField, record).unlink()
                 # Unlink model base field
-                custom_field = self.env['ir.model.fields'].sudo().search(
-                    [('name', '=', record_name), ('state', '=', 'manual')])
+                custom_field = self.env['ir.model.fields'].sudo().search([('name', '=', record_name), ('state', '=', 'manual')])
                 custom_field.ensure_one()  # One record expected, if more abort
                 custom_field.with_context(_force_unlink=True).unlink()
             except Exception, exception:
@@ -279,10 +268,9 @@ class CategorizationField(models.Model):
         self._createFieldsXml()
         return True
 
-
-class CategorizationValue(models.Model):
+class ParameterizationValue(models.Model):
     _name = 'js_categorization.value'
-    _description = "Categorization Values"
+    _description = "Parameterization Values"
     _order = 'name, categorization_type'
     _sql_constraints = [('categorization_value_unique', 'unique(name, categorization_type)', 'Value must be unique in categorization type!')]
 
@@ -304,7 +292,7 @@ class CategorizationValue(models.Model):
     #override
     @api.model
     def create(self, values):
-        result = super(CategorizationValue, self).create(values)
+        result = super(ParameterizationValue, self).create(values)
         if result:
             self.env['js_categorization.field']._createFieldsXml()
             return result
@@ -312,13 +300,13 @@ class CategorizationValue(models.Model):
     #override
     @api.multi
     def write(self, values):
-        super(CategorizationValue, self).write(values)
+        super(ParameterizationValue, self).write(values)
         self.env['js_categorization.field']._createFieldsXml()
         return True
 
     #override
     @api.multi
     def unlink(self):
-        super(CategorizationValue, self).unlink()
+        super(ParameterizationValue, self).unlink()
         self.env['js_categorization.field']._createFieldsXml()
         return True
