@@ -699,6 +699,13 @@ msgid "alt image text"
 msgstr "Texto alt de imágen"
 
 #. module: js_b2b
+#: code:addons/js_b2b/models/product.py:116
+#: code:addons/js_b2b/models/product.py:189
+#, python-format
+msgid "is not stockable."
+msgstr "no es almacenable."
+
+#. module: js_b2b
 #: code:addons/js_b2b/models/product.py:65
 #: code:addons/js_b2b/models/product.py:155
 #, python-format

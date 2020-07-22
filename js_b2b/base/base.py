@@ -256,7 +256,7 @@ class BaseB2B(models.AbstractModel):
 			if b2b_evaluate:
 				items_to_send = self.is_notifiable_check('delete')
 				packets = record.b2b_record('delete', False, conf_items_before=items_to_send, auto_send=False)
-			if super(BaseB2B, self).unlink() and b2b_evaluate:
+			if super(BaseB2B, record).unlink() and b2b_evaluate:
 				for packet in packets:
 					packet.send(notify=False)
 		return True
