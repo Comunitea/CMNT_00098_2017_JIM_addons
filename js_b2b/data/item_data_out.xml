@@ -132,8 +132,9 @@ def get_data(self, action):
     'barcode', 
     'description', 
     'product_brand_id', 
-    'image', 
+    'image',  
     'tag_ids', 
+    'product_brand_id', 
     'public_categ_ids', 
     'type', 
     'company_id',
@@ -152,7 +153,7 @@ def get_data(self, action):
         'barcode:ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
         'tag_ids:category_id': self.tag_ids.ids,
         'public_categ_ids:web_category_id': self.public_categ_ids.ids, 
-        'brand_id': self.product_brand_id.id if self.product_brand_id else None,
+        'product_brand_id:brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
         'weight': self.weight,
         'public_image_name:image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
@@ -490,7 +491,8 @@ def is_notifiable(self, action, vals):
     return (self.active # Está activa
         and self.type in ('invoice', 'delivery') # Y es de tipo 'invoice' o 'delivery'
         and self.name != 'DROPSHIPPING' # Y no es una dirección de dropshipping
-        and self.parent_id.is_notifiable_check()) # Y el cliente es notificable
+        and self.parent_id.is_notifiable_check() # Y el cliente es notificable
+        and self.parent_id.type == 'contact') # Y el cliente es de tipo contacto (a veces crean una dirección de facturación asociada a otra dirección)
 
 def related_to(self, action):
     return 'res.partner,%s' % self.parent_id.id
@@ -624,7 +626,7 @@ def get_data(self, action):
 
 def is_notifiable(self, action, vals):
     return ((action == 'create' or (type(vals) is dict and not vals.get('date_order'))) # Se recibe date_order en vals o se está creando
-        and self.state not in ('draft', 'proforma', 'pending', 'cancel') # Y el estado no es borrador, proforma, pendiente o cancelado
+        and self.state not in ('draft', 'proforma', 'cancel') # Y el estado no es borrador, proforma o cancelado
         and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
         and self.date_order >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
 

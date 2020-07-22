@@ -112,6 +112,8 @@ class ProductTemplate(models.Model):
 					raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
 				if self.barcode and not self.has_valid_barcode():
 					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
+				if self.type != 'product':
+					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
 			toggled_status = bool(not product.website_published)
 			product.website_published = toggled_status
 			product.mapped('product_variant_ids').write({ 'website_published': toggled_status })
@@ -183,6 +185,8 @@ class ProductProduct(models.Model):
 				raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
 			if self.barcode and not self.has_valid_barcode():
 				raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
+			if self.type != 'product':
+				raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
 			variant.website_published = not variant.website_published
 
 	@api.model
