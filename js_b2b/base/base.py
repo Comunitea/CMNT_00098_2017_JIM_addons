@@ -204,7 +204,7 @@ class BaseB2B(models.AbstractModel):
 	@api.multi
 	def get_metadata(self):
 		"""
-		Sets B2B Notifiable row on system metadata debug modal
+		Sets B2B Notifiable data on system metadata debug modal
 
 		:return: list of dicts
 		"""
