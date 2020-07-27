@@ -48,19 +48,25 @@ class Subprocess(object):
 		# from odoo.sql_db import TestCursor
 		# if isinstance(self._target.env.cr, TestCursor):
 
+		_logger.info("Ejecutando subproceso para [%s,%i]" % (record._name, record.id))
+
 		while not self._target.env.cr.closed:
 			# Wait while parent transaction ends
-			sleep(1)
+			_logger.debug("Esperando a que termine la opercaión actual...")
+			sleep(2)
 
 		# Now create a new cursor
 		with api.Environment.manage():
 			with self._target.pool.cursor() as new_cr:
+				_logger.debug("Creado nuevo cursor para el subproceso...")
 				# Autocommit ON
 				new_cr.autocommit(True)
 				# Fresh record
 				record_issolated = record.with_env(record.env(cr=new_cr))
 				# Call the method
 				method(record_issolated, mode)
+				# Process ends
+				_logger.info("Subproceso finalizado!")
 
 class Chrono(object):
 
@@ -73,16 +79,19 @@ class Chrono(object):
 		self.elapsed = None
 
 	def __enter__(self):
+		_logger.debug("Cronómetro: ON")
 		self.start = default_timer()
 		return self
 
 	def __exit__(self,ty,val,tb):
 		self.end = default_timer()
 		self.elapsed = self.end - self.start
+		_logger.debug("Cronómetro: OFF")
 
 	def to_str(self):
 		if self.elapsed:
-			return "%.2fms" % (self.elapsed)
+			_logger.info("Medición: %.2fms" % self.elapsed)
+			return "%.2fms" % self.elapsed
 		return None
 
 class JSync(object):
@@ -125,6 +134,11 @@ class JSync(object):
 			field_xxx_name:xxx -> Sends xxx field if field_xxx_name has changed
 			xxx: -> Sends xxx field if has changed (no modifier)
 		"""
+
+		_logger.debug("--- Normalizando datos ----")
+		_logger.debug("Datos de origen: %s" % self.data)
+		_logger.debug("Comparar con: %s" % vals)
+
 		if self.data and type(self.data) is dict:
 			for field, value in self.data.items():
 				obj_old = obj_new = field
@@ -146,6 +160,7 @@ class JSync(object):
 					# Decode unicode str's to utf-8
 					self.data[obj_new] = value.strip().decode('utf-8', 'replace')
 
+		_logger.debug("Datos normalizados %s" % self.data)
 		return self.data
 
 	def can_send(self):
@@ -159,6 +174,8 @@ class JSync(object):
 		EXPORT_RECORD = None
 		RES_ID = '%s,%s' % (self.model, self.id)
 
+		_logger.debug("¿Enviamos el paquete? Defecto: %s" % RECORD_SEND)
+
 		# Comprobamos los datos necesarios
 		# todos los mensajes tienen que tener por lo menos una clave primaria (jim_id)
 		# la única excepción es cuando se elimina un registro que puede llevar sólo la clave
@@ -167,19 +184,26 @@ class JSync(object):
 			with api.Environment.manage():
 				with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
 					env = api.Environment(new_cr, self.env.uid, self.env.context)
-
 					# Check if record is synced with JSync
 					EXPORT_RECORD = env['b2b.export'].search([('res_id', '=', RES_ID)], limit=1)
 
 					# Send the record?
-					RECORD_SEND = (not EXPORT_RECORD or self.mode != 'create')
+					RECORD_SEND = bool((not EXPORT_RECORD and self.mode == 'create') or (EXPORT_RECORD and self.mode in ('update', 'delete')))
+
+					# Log JSync record status
+					_logger.debug("Registro en JSync: %s" % EXPORT_RECORD)
 
 					# Is related record notifiable?
 					if RECORD_SEND and self.related:
+						_logger.debug("Relaccionado con: %s" % self.related)
 						record_model, record_id = self.related.split(',')
 						# Do not send the record if the related item is no longer notifiable
-						if env[record_model].browse(int(record_id)).is_notifiable_check():
-							RECORD_SEND = True
+						if not env[record_model].browse(int(record_id)).is_notifiable_check():
+							_logger.warning("El registro relaccionado ha invalidado el paquete!")
+							RECORD_SEND = False
+
+		if not RECORD_SEND:
+			_logger.info("El paquete para '%s' no se enviará en modo '%s'" % (self.name, self.mode))
 
 		return RECORD_SEND, RES_ID, EXPORT_RECORD
 
@@ -221,7 +245,7 @@ class JSync(object):
 			debug_data = json_dump(self.data, indent=8, sort_keys=True)
 
 			try:
-				
+			
 				# Send HTTP POST data
 				jsync_post = self.session.post(self.settings['url'], timeout=timeout_sec, headers=header_dict, data=json_data)
 					
@@ -256,11 +280,11 @@ class JSync(object):
 							env = api.Environment(new_cr, self.env.uid, self.env.context)
 							env.cr.autocommit(True)
 							if not _EXPORT_RECORD and self.mode == 'create':
-								env['b2b.export'].create({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
+								env['b2b.export'].with_context(b2b_evaluate=False).create({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
 							elif _EXPORT_RECORD and self.mode == 'update':
-								env['b2b.export'].browse(_EXPORT_RECORD.id).write({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
+								env['b2b.export'].browse(_EXPORT_RECORD.id).with_context(b2b_evaluate=False).write({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
 							elif _EXPORT_RECORD and self.mode == 'delete':
-								env['b2b.export'].browse(_EXPORT_RECORD.id).unlink()
+								env['b2b.export'].browse(_EXPORT_RECORD.id).with_context(b2b_evaluate=False).unlink()
 
 				try:
 					return json_load(jsync_post.text)
