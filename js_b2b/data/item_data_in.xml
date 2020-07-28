@@ -9,6 +9,7 @@
             <field name="model">sale.order</field>
             <field name="description">Presupuesto de venta</field>
             <field name="code">def get_action(action, data):
+    if action == 'create': action = 'create_web'
     return action
     
 def prepare_address_fields(self, address):
@@ -17,12 +18,14 @@ def prepare_address_fields(self, address):
     if not res_zip:
         # Buscar por nombre
         res_zip = self.env['res.better.zip'].search([('city', 'ilike', address.get('state_id'))], limit=1)
+    
     # Si se encontró la relacción
     if res_zip:
         address.update({
             'state_id': res_zip.state_id.id,
             'country_id': res_zip.country_id.id
         })
+    
     # Datos extra
     address.update({
         'name': 'DROPSHIPPING',
@@ -33,10 +36,13 @@ def prepare_address_fields(self, address):
     
 def prepare_order_fields(self, order):
     One2many_order_lines = list()
+    
     # Obtener el cliente
     client = self.env['res.partner'].browse(int(order.get('partner_id')))
+    
     # Obtener id de dirección de facturación (si no es empresa la función address_get da error)
     partner_invoice_id = client.address_get(['contact', 'invoice'])['invoice'] if client.is_company else client.id
+    
     # Modificamos las líneas
     if type(order.get('order_line')) is list:
         for line in order['order_line']:
@@ -49,6 +55,7 @@ def prepare_order_fields(self, order):
                 'product_uom_qty': float(line['quantity']),
                 'price_unit': float(line['price'])
             }]))
+    
     # Actualizar campos + datos extra
     order.update({
         'company_id': b2b.get('company_id', False),
@@ -61,9 +68,11 @@ def prepare_order_fields(self, order):
         'state': 'draft',
         'chanel': 'web'
     })
+
     return order
     
 def get_data(self, data):
+    
     # Si recibimos la dirección de envío como un diccionario primero tenemos que crearla
     if type(data.get('partner_shipping_id')) is dict:
         parsed_address = b2b['prepare_address_fields'](self, data['partner_shipping_id'])
@@ -73,6 +82,7 @@ def get_data(self, data):
                 'partner_shipping_id': shippping_address.id,
                 'neutral_document': True
             })
+    
     # Devolvemos los datos para crear el pedido
     return b2b['prepare_order_fields'](self, data)</field>
         </record>

@@ -2,9 +2,35 @@
 from odoo import api, fields, models, _
 from odoo.exceptions import ValidationError
 from re import search as validate
+import logging
+
+_logger = logging.getLogger('B2B-RES.PARTNER')
 
 # Separadores de email válidos
 _partner_email_separators = (',', ';')
+
+class MergePartner(models.TransientModel):
+	_inherit = 'base.partner.merge.automatic.wizard'
+
+	@api.multi
+	def action_merge(self):
+		packets = list()
+
+		# Partners to unlink
+		for partner in self.partner_ids - self.dst_partner_id:
+			packets += partner.b2b_record('delete', False, auto_send=False)
+		
+		super(MergePartner, self).action_merge()
+
+		# Send delete packets
+		for packet in packets:
+			packet.send(notify=False)
+
+		# Check if new partner is notifiable and trigger actions
+		if self.dst_partner_id.is_notifiable_check():
+			self.dst_partner_id.b2b_record('create')
+		else:
+			self.dst_partner_id.b2b_record('delete')
 
 class ResPartner(models.Model):
 	_inherit = 'res.partner'
