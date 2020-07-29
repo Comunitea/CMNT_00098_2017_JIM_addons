@@ -43,7 +43,8 @@
 		'views/item_out.xml',
 		'views/item_in.xml',
 		'views/export.xml',
-		'views/reports.xml'
+		'views/reports.xml',
+		'views/res_users.xml'
 	],
 	'external_dependencies': {
 		'python' : [

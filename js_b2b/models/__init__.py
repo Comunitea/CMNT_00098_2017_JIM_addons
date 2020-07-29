@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import res_partner
+import res_users
 import product
 import product_pricelist
 import settings

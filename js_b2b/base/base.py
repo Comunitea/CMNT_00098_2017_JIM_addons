@@ -130,7 +130,7 @@ class BaseB2B(models.AbstractModel):
 		return items_list
 
 	@api.multi
-	def b2b_record(self, mode, vals=None, conf_items_before=None, auto_send=True, user_notify=False, sub_methods=True):
+	def b2b_record(self, mode, vals=None, conf_items_before=None, auto_send=True, user_notify=True, sub_methods=True):
 		"""
 		B2B Action Trigger
 

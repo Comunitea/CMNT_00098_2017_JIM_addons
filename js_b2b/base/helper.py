@@ -268,7 +268,7 @@ class JSync(object):
 				if self.name and self.id and self.model:
 
 					# Mostrar notificación no invasiva al usuario en Odoo
-					if notify:
+					if notify and 'show_b2b_notifications' in self.env.user and self.env.user.show_b2b_notifications:
 						self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
 
 					if _RES_ID:
