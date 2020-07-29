@@ -225,7 +225,7 @@ class B2BExport(models.Model):
 							'product_id': template_id,
 							'variant_id': variant_id,
 							'quantity': line_quantity,
-							'price': round(price_line['price'] if operation != 'delete' else None, prices_precision)
+							'price': round(price_line['price'] if operation != 'delete' else 0, prices_precision)
 						})
 		except Exception as e:
 			_logger.critical('[b2b_customers_prices] ERROR EN EL BUCLE! %s' % e)
