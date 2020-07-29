@@ -52,8 +52,7 @@ def prepare_order_fields(self, order):
             One2many_order_lines.append(tuple([0, 0, {
                 'name': product.name,
                 'product_id': product.id if line['variant_id'] else product.product_variant_id.id,
-                'product_uom_qty': float(line['quantity']),
-                'price_unit': float(line['price'])
+                'product_uom_qty': float(line['quantity'])
             }]))
     
     # Actualizar campos + datos extra
@@ -84,7 +83,11 @@ def get_data(self, data):
             })
     
     # Devolvemos los datos para crear el pedido
-    return b2b['prepare_order_fields'](self, data)</field>
+    return b2b['prepare_order_fields'](self, data)
+    
+def pos_data(self, data):
+    # Si no se recalculan los precios alguno será erroneo
+    self.recalculate_prices()</field>
         </record>
         
     </data>

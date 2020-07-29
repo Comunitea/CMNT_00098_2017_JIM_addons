@@ -6,6 +6,9 @@ from datetime import datetime
 from sys import getsizeof
 from math import ceil
 import psycopg2.extras
+import logging
+
+_logger = logging.getLogger('B2B-EXPORT')
 
 class B2BExport(models.Model):
 	_name = "b2b.export"
@@ -82,20 +85,20 @@ class B2BExport(models.Model):
 			data_parts.append(iter(data_list[int(last):int(last + avg)]))
 			last += avg
 
-		self.env.user.notify_info('[B2B PACKET] %s <b>%s</b> (%s)' % (object_name.capitalize(), object_name, data_items_count))
-
 		# Construct & send packets
 		num_packets = len(data_parts)
 		for i, part in enumerate(data_parts):
+			_logger.info('Enviando parte %i de %i para %s' % (i+1, num_packets, object_name))
+			# Make packet
 			packet = JSync(self.env, settings=jsync_conf)
 			packet.name = object_name
 			packet.data = list(part)
 			packet.mode = action_str
 			packet.part = [i + 1, num_packets]
-			packet.send(notify=False, timeout_sec=300)
+			packet.send(notify=False, timeout_sec=600)
 
 	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, pricelists_filter=None, variant=None, operation=None):
-		print('[b2b_pricelists_prices] Starts!')
+		_logger.info('[b2b_pricelists_prices] INICIO!')
 		# Out prices
 		prices = list()
 		# Get decimals number
@@ -124,8 +127,9 @@ class B2BExport(models.Model):
 		total_pricelists = len(pricelists)
 		total_products = len(products_ids)
 		product_number = 0.0
-		print('# LISTAS DE PRECIOS: %s' % total_pricelists)
-		print('# PRODUCTOS: %s' % total_products)
+
+		_logger.info('# LISTAS DE PRECIOS: %s' % total_pricelists)
+		_logger.info('# PRODUCTOS: %s' % total_products)
 
 		try:
 			# For each product
@@ -135,10 +139,10 @@ class B2BExport(models.Model):
 				product = self.env['product.template'].browse(product_id)
 				# Only for web published products
 				if product.website_published:
-					print("--------------------------------------------------------------------")
-					print(":: %s%% [%s] %s" % (percent, product.default_code, product.name))
-					print("--------------------------------------------------------------------")
-					print(":: %10s\t%10s\t%6s\t%8s" % ('PRICELIST', 'VARIANT', 'QTY', 'PRICE'))
+					# print("--------------------------------------------------------------------")
+					# print(":: %s%% [%s] %s" % (percent, product.default_code, product.name))
+					# print("--------------------------------------------------------------------")
+					# print(":: %10s\t%10s\t%6s\t%8s" % ('PRICELIST', 'VARIANT', 'QTY', 'PRICE'))
 					# For each pricelist
 					for pricelist in pricelists:
 						# For each quantity
@@ -155,7 +159,7 @@ class B2BExport(models.Model):
 								# If price is not 0 and not in prices list yet with qty 1
 								product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
 								if not bool(list(product_filter)) and (operation == 'delete' or price):
-									print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
+									# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
 									prices.append({ 
 										'company_id': pricelist[2] or None,
 										'pricelist_id': pricelist[0],
@@ -172,7 +176,7 @@ class B2BExport(models.Model):
 									# If price is not 0 and not in prices list yet with qty 1
 									product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == variant_id and x['quantity'] == 1 and x['price'] == price, prices)
 									if not bool(list(product_filter)) and (operation == 'delete' or price):
-										print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
+										# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
 										prices.append({ 
 											'company_id': pricelist[2] or None,
 											'pricelist_id': pricelist[0],
@@ -182,18 +186,17 @@ class B2BExport(models.Model):
 											'price': price
 										})
 		except Exception as e:
-			print('[b2b_pricelists_prices] ERROR ON LOOP! %s' % e)
+			_logger.critical('[b2b_pricelists_prices] ERROR EN EL BUCLE! %s' % e)
 		finally:
-			print('[b2b_pricelists_prices] Ends!')
+			_logger.info('[b2b_pricelists_prices] FIN!')
 
 		# Send to JSync
 		if prices:
 			mode = 'update' if templates_filter is not None else 'replace'
 			self.send_multi('pricelist_item', prices, mode)
-			print(str(prices), 'pricelist_item', "w+")
 
 	def b2b_customers_prices(self, lines_filter=None, operation=None):
-		print('[b2b_customers_prices] Starts!')
+		_logger.info('[b2b_customers_prices] INICIO!')
 		# Out prices
 		prices = list()
 		# Get decimals number
@@ -225,26 +228,32 @@ class B2BExport(models.Model):
 							'price': round(price_line['price'] if operation != 'delete' else None, prices_precision)
 						})
 		except Exception as e:
-			print('[b2b_customers_prices] ERROR ON LOOP! %s' % e)
+			_logger.critical('[b2b_customers_prices] ERROR EN EL BUCLE! %s' % e)
 		finally:
-			print('[b2b_customers_prices] Ends!')
+			_logger.info('[b2b_customers_prices] FIN!')
 
 		# Send to JSync
 		if prices:
 			mode = 'update' if lines_filter is not None else 'replace'
 			self.send_multi('customer_price', prices, mode)
-			print(str(prices), 'customer_price', "w+")
 
 	def b2b_products_stock(self, test_limit=None, from_date=None, export_all=None):
-		# If actual time is between 00:30 & 00:45 set "all" to True
-		all_products = export_all or B2BExport.is_time_between('00:30:00', '00:45:00')
-		stock = self.env['exportxml.object'].compute_product_ids(all=all_products, from_time=from_date, limit=test_limit, inc=1000)
+		_logger.info('[b2b_products_stock] INICIO!')
 
+		try:
+			# If actual time is between 00:30 & 00:45 set "all" to True
+			all_products = export_all or B2BExport.is_time_between('00:30:00', '00:45:00')
+			_logger.info('¿STOCK DE TODOS? %s' % all_products)
+			stock = self.env['exportxml.object'].compute_product_ids(all=all_products, from_time=from_date, limit=test_limit, inc=1000)
+		except Exception as e:
+			_logger.critical('[b2b_products_stock] ERROR EN EL BUCLE! %s' % e)
+		finally:
+			_logger.info('[b2b_products_stock] FIN!')
+		
 		# Send to JSync
 		if stock:
 			mode = 'replace' if all_products else 'update'
 			self.send_multi('product_stock', stock, mode)
-			print(str(stock), 'product_stock', "w+")
 
 	# ------------------------------------ OVERRIDES ------------------------------------
 

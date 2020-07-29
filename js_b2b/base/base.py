@@ -186,7 +186,7 @@ class BaseB2B(models.AbstractModel):
 				# Obtenemos la copia del modo
 				packet.mode = b2b['crud_mode']
 
-				_logger.info("Paquete para [%s,%i] end modo [%s]" % (packet.model, packet.id, b2b['crud_mode']))
+				_logger.info("Paquete para [%s,%i] en modo [%s]" % (packet.model, packet.id, b2b['crud_mode']))
 
 				# Obtenemos la relacción (si la tiene)
 				if 'related_to' in b2b and callable(b2b['related_to']):
