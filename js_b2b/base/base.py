@@ -48,7 +48,12 @@ class BaseB2B(models.AbstractModel):
 		:param model_name: Report model name string
 		:return: base64
 		"""
-		docfile = self.env['report'].sudo().get_pdf([self.id], model_name)
+		ctx = self.env.context.copy()
+		ctx.pop('default_type', False)
+		# Necesitamos quitar la variable default_type del contexto
+		# de las facturas para que no de error el tipo en ir.attachment
+		# https://github.com/odoo/odoo/issues/15279
+		docfile = self.env['report'].with_context(ctx).get_pdf([self.id], model_name)
 		return b64encode(docfile)
 
 	@api.model

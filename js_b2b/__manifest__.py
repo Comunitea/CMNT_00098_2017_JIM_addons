@@ -22,6 +22,7 @@
 		'jim_sale',
 		#'jim_addons',
 		#'js_categorization',
+		#'product_code_generator'
 		#'prices_export',
 		#'stock_export'
 	],
