@@ -7,7 +7,7 @@
         <field name="name">js_categorization.type.form</field>
         <field name="model">js_categorization.type</field>
         <field name="arch" type="xml">
-            <form string="Categorization Type">
+            <form string="Parameterization Type">
                 <sheet>
                     <group>
                         <field name="name"/>
@@ -29,7 +29,7 @@
     </record>
 
     <record id="js_categorization_types" model="ir.actions.act_window">
-        <field name="name">Categorization Types</field>
+        <field name="name">Parameterization Types</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">js_categorization.type</field>
         <field name="view_type">form</field>
@@ -49,13 +49,13 @@
         <field name="name">js_categorization.field.form</field>
         <field name="model">js_categorization.field</field>
         <field name="arch" type="xml">
-            <form string="Categorization Field" duplicate="0">
+            <form string="Parameterization Field" duplicate="0">
                 <sheet>
                     <group>
                         <group string="Field Info">
                             <field name="id" invisible="1"/>
                             <field name="model_id" invisible="1"/>
-                            <field name="categorization_type" help="Categorization Template Type"/>
+                            <field name="categorization_type" help="Parameterization Template Type"/>
                             <field name="field_description" string="Field Label" help="Field display name" default_focus="1"/>
                             <field name="name" help="Field database name" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                             <field name="model_id" help="Create field for this model" options="{ 'no_open': True, 'no_create': True }" invisible="context.get('default_model_id', False)" attrs="{ 'readonly': [('id', '!=', False)] }"/>
@@ -100,7 +100,7 @@
         <field name="name">js_categorization.field.search</field>
         <field name="model">js_categorization.field</field>
         <field name="arch" type="xml">
-            <search string="Categorization Field">
+            <search string="Parameterization Field">
                 <field name="name" string="Name" />
                 <field name="field_description" string="Label" />
                 <filter string="Product" name="product_filter" domain="[('model_id.model','=','product.template.categorization')]"/>
@@ -110,7 +110,7 @@
     </record>
 
     <record id="js_categorization_fields" model="ir.actions.act_window">
-        <field name="name">Categorization Fields</field>
+        <field name="name">Parameterization Fields</field>
         <field name="res_model">js_categorization.field</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
@@ -118,7 +118,7 @@
           <p class="oe_view_nocontent_create">
             Push here to create a new field
           </p><p>
-            Also can be created from product sheet, on "Categorization" tab
+            Also can be created from product sheet, on "Parameterization" button
           </p>
         </field>
     </record>
@@ -129,7 +129,7 @@
         <field name="name">js_categorization.value.form</field>
         <field name="model">js_categorization.value</field>
         <field name="arch" type="xml">
-            <form string="Categorization Value">
+            <form string="Parameterization Value">
                 <sheet>
                     <group>
                         <field name="name"/>
@@ -154,7 +154,7 @@
     </record>
 
     <record id="js_categorization_values" model="ir.actions.act_window">
-        <field name="name">Categorization Values</field>
+        <field name="name">Parameterization Values</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">js_categorization.value</field>
         <field name="view_type">form</field>
@@ -170,7 +170,7 @@
 
     <!-- ACCIONES DE MENÚ -->
 
-    <menuitem id="menu_js_categorization" name="Categorization" parent="stock.menu_product_in_config_stock" sequence="90" />
+    <menuitem id="menu_js_categorization" name="Parameterization" parent="stock.menu_product_in_config_stock" sequence="90" />
     <menuitem id="menu_js_categorization_fields_tree" name="Fields" parent="menu_js_categorization" action="js_categorization_fields" sequence="1" groups="js_categorization.group_manage_categorization" />
     <menuitem id="menu_js_categorization_types" name="Types" parent="menu_js_categorization" action="js_categorization_types" sequence="2" groups="js_categorization.group_manage_categorization" />
     <menuitem id="menu_js_categorization_values" name="Values" parent="menu_js_categorization" action="js_categorization_values" sequence="3" groups="js_categorization.group_manage_categorization" />

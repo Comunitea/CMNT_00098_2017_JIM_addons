@@ -19,8 +19,8 @@ msgstr ""
 
 #. module: js_categorization
 #: model:ir.actions.act_window,help:js_categorization.js_categorization_fields
-msgid "Also can be created from product sheet, on \"Categorization\" tab"
-msgstr "También se pueden crear desde la ficha del producto, en la pestaña \"Categorización\""
+msgid "Also can be created from product sheet, on \"Parameterization\" tab"
+msgstr "También se pueden crear desde la ficha del producto, en la pestaña \"Parametrización\""
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.categorization_product_form_view
@@ -33,54 +33,54 @@ msgstr "Cancelar"
 #: model:ir.ui.menu,name:js_categorization.menu_js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.categorization_product_form_view
 #: model:ir.ui.view,arch_db:js_categorization.categorization_variant_form_view
-msgid "Categorization"
-msgstr "Categorización"
+msgid "Parameterization"
+msgstr "Parametrización"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_search
-msgid "Categorization Field"
-msgstr "Campo de Categorización"
+msgid "Parameterization Field"
+msgstr "Campo de Parametrización"
 
 #. module: js_categorization
 #: model:ir.actions.act_window,name:js_categorization.js_categorization_fields
 #: model:ir.model,name:js_categorization.model_js_categorization_field
-msgid "Categorization Fields"
-msgstr "Campos de Categorización"
+msgid "Parameterization Fields"
+msgstr "Campos de Parametrización"
 
 #. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_delivery_carrier_categorization_percent_filled
 #: model:ir.model.fields,field_description:js_categorization.field_product_product_categorization_percent_filled
 #: model:ir.model.fields,field_description:js_categorization.field_product_template_categorization_percent_filled
-msgid "Categorization Percent Completed"
-msgstr "Porcentaje Completado de Categorización"
+msgid "Parameterization Percent Completed"
+msgstr "Porcentaje Completado de Parametrización"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
-msgid "Categorization Template Type"
-msgstr "Plantilla de Categorización"
+msgid "Parameterization Template Type"
+msgstr "Plantilla de Parametrización"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_types_form
-msgid "Categorization Type"
-msgstr "Plantilla de Categorización"
+msgid "Parameterization Type"
+msgstr "Plantilla de Parametrización"
 
 #. module: js_categorization
 #: model:ir.actions.act_window,name:js_categorization.js_categorization_types
 #: model:ir.model,name:js_categorization.model_js_categorization_type
-msgid "Categorization Types"
+msgid "Parameterization Types"
 msgstr "Plantillas"
 
 #. module: js_categorization
 #: model:ir.actions.act_window,name:js_categorization.js_categorization_values
 #: model:ir.model,name:js_categorization.model_js_categorization_value
-msgid "Categorization Values"
-msgstr "Valores de Categorización"
+msgid "Parameterization Values"
+msgstr "Valores de Parametrización"
 
 #. module: js_categorization
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_field_categorization_type
 #: model:ir.model.fields,field_description:js_categorization.field_js_categorization_value_categorization_type
-msgid "Categorization type"
+msgid "Parameterization type"
 msgstr "Plantilla"
 
 #. module: js_categorization
@@ -352,14 +352,14 @@ msgstr "Producto"
 #: model:ir.model,name:js_categorization.model_js_categorization_product
 #: model:ir.model,name:js_categorization.model_product_categorization
 #: model:ir.model,name:js_categorization.model_product_template_categorization
-msgid "Product Categorization"
-msgstr "Categorización de Producto"
+msgid "Product Parameterization"
+msgstr "Parametrización de Producto"
 
 #. module: js_categorization
 #: code:addons/js_categorization/models/categorization.py:126
 #, python-format
-msgid "Product Categorization Fields"
-msgstr "Campos de Categorización (Producto)"
+msgid "Product Parameterization Fields"
+msgstr "Campos de Parametrización (Producto)"
 
 #. module: js_categorization
 #: model:ir.model,name:js_categorization.model_product_template
@@ -385,7 +385,7 @@ msgstr "Productos"
 #. module: js_categorization
 #: model:ir.actions.act_window,name:js_categorization.categorization_products
 msgid "Products Categorizated"
-msgstr "Productos Categorizados"
+msgstr "Productos Parametrizados"
 
 #. module: js_categorization
 #: model:ir.actions.act_window,help:js_categorization.js_categorization_fields
@@ -404,8 +404,8 @@ msgstr "Pulsa aquí para crear un nuevo valor"
 
 #. module: js_categorization
 #: model:ir.actions.server,name:js_categorization.categorization_recalculate
-msgid "Re-calculate Categorization Percent"
-msgstr "Re-calcular Porcentaje Categorización"
+msgid "Re-calculate Parameterization Percent"
+msgstr "Re-calcular Porcentaje Parametrización"
 
 #. module: js_categorization
 #: model:ir.ui.view,arch_db:js_categorization.js_categorization_fields_form
@@ -557,14 +557,14 @@ msgstr "Variante"
 
 #. module: js_categorization
 #: model:ir.model,name:js_categorization.model_product_product_categorization
-msgid "Variant Categorization"
-msgstr "Categorización de Variante"
+msgid "Variant Parameterization"
+msgstr "Parametrización de Variante"
 
 #. module: js_categorization
 #: code:addons/js_categorization/models/categorization.py:130
 #, python-format
-msgid "Variant Categorization Fields"
-msgstr "Campos de Categorización (Variante)"
+msgid "Variant Parameterization Fields"
+msgstr "Campos de Parametrización (Variante)"
 
 #. module: js_categorization
 #: sql_constraint:product.product.categorization:0

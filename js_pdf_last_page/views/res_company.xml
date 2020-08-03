@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+
+    <record id="res_company_documents_last_page" model="ir.ui.view">
+        <field name="name">res.company.form.last_page</field>
+        <field name="model">res.company</field>
+        <field name="inherit_id" ref="base.view_company_form"/>
+        <field name="arch" type="xml">
+            <field name="qweb_invoice_footer" position="after">
+                <separator string="PDF Reports Last Pages"/>
+                <field name="pdf_last_pages" context="{ 'default_company_id' : active_id }"/>
+            </field>
+        </field>
+    </record>
+
+</odoo>

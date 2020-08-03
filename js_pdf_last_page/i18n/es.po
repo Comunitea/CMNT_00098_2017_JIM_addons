@@ -1,0 +1,103 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* js_pdf_last_page
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 10.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2020-04-21 00:15+0200\n"
+"PO-Revision-Date: 2020-04-21 00:22+0200\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 2.0.1\n"
+"Last-Translator: \n"
+"Language: es_ES\n"
+
+#. module: js_pdf_last_page
+#: model:ir.ui.view,arch_db:js_pdf_last_page.js_pdf_last_page_content
+msgid "<b>LAST PAGE DEBUG INFO</b> (you have debug mode active)"
+msgstr "<b>DEBUG DE ÚLTIMA PÁGINA</b> (tienes el modo de desarrollador activo)"
+
+#. module: js_pdf_last_page
+#: model:ir.ui.view,arch_db:js_pdf_last_page.js_pdf_last_page_content
+msgid "ACTUAL COMPANY:"
+msgstr "COMPAÑÍA ACTUAL:"
+
+#. module: js_pdf_last_page
+#: model:ir.ui.view,arch_db:js_pdf_last_page.js_pdf_last_page_content
+msgid "ACTUAL REPORT XML NAME:"
+msgstr "NOMBRE DEL INFORME ACTUAL:"
+
+#. module: js_pdf_last_page
+#: model:ir.model.fields,field_description:js_pdf_last_page.field_reports_last_page_report_ids
+msgid "Associated reports"
+msgstr "Informes asociados"
+
+#. module: js_pdf_last_page
+#: model:ir.model.fields,field_description:js_pdf_last_page.field_reports_last_page_body
+msgid "Body"
+msgstr "HTML"
+
+#. module: js_pdf_last_page
+#: model:ir.model,name:js_pdf_last_page.model_res_company
+msgid "Companies"
+msgstr "Compañías"
+
+#. module: js_pdf_last_page
+#: model:ir.model.fields,field_description:js_pdf_last_page.field_reports_last_page_company_id
+msgid "Company"
+msgstr "Compañía"
+
+#. module: js_pdf_last_page
+#: model:ir.model,name:js_pdf_last_page.model_reports_last_page
+msgid "Documents Last Page"
+msgstr "Última Página en PDF"
+
+#. module: js_pdf_last_page
+#: model:ir.actions.act_window,name:js_pdf_last_page.js_pdf_last_page_view
+msgid "Last Documents Page"
+msgstr "Última Página en PDF"
+
+#. module: js_pdf_last_page
+#: model:ir.model.fields,field_description:js_pdf_last_page.field_res_company_pdf_last_pages
+msgid "Last Pages"
+msgstr "Últimas Páginas"
+
+#. module: js_pdf_last_page
+#: model:ir.ui.view,arch_db:js_pdf_last_page.js_pdf_last_page_content
+msgid "ON COMPANY CONFIG:"
+msgstr "EN LA CONFIGURACIÓN DE LA COMPAÑÍA"
+
+#. module: js_pdf_last_page
+#: model:ir.ui.menu,name:js_pdf_last_page.js_pdf_last_page_action
+msgid "PDF Last Pages"
+msgstr "Última Página en PDF’s"
+
+#. module: js_pdf_last_page
+#: model:ir.ui.view,arch_db:js_pdf_last_page.res_company_documents_last_page
+msgid "PDF Reports Last Pages"
+msgstr "Última Página de Informes en PDF"
+
+#. module: js_pdf_last_page
+#: model:ir.actions.act_window,help:js_pdf_last_page.js_pdf_last_page_view
+msgid "Push here to create a new page"
+msgstr "Click aquí para crear una nueva página asociada a una compañía"
+
+#. module: js_pdf_last_page
+#: model:ir.model.fields,help:js_pdf_last_page.field_reports_last_page_company_id
+msgid "Select company to apply"
+msgstr "Compañía a la que se aplica"
+
+#. module: js_pdf_last_page
+#: model:ir.model.fields,help:js_pdf_last_page.field_reports_last_page_report_ids
+msgid "Select reports"
+msgstr "Informes a los que se aplica"
+
+#. module: js_pdf_last_page
+#: model:ir.model.fields,help:js_pdf_last_page.field_reports_last_page_body
+msgid "Set last page body"
+msgstr "Cuerpo de la página en HTML"

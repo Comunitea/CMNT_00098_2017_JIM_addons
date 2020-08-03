@@ -1,3 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_js_product_images_public,product.image.public,model_product_image,,1,0,0,0
-access_js_product_images_users,product.image.users,model_product_image,base.group_user,1,1,1,1

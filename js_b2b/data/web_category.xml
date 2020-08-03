@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="web_category_1" model="product.public.category">
+            <field name="name">Without category</field>
+            <field name="sequence">1</field>
+        </record>
+
+    </data>
+</odoo>
