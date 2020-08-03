@@ -93,7 +93,7 @@ class MrpBomLine(models.Model):
 
     @api.multi
     def insert_product_ids(self):
-        self.env['exportxml.object'].insert_product_ids(self.mapped('product_ids', self._name, bom=False))
+        self.env['exportxml.object'].insert_product_ids(self.mapped('product_id'), self._name, bom=False)
 
     @api.model
     def create(self, vals):
@@ -475,7 +475,6 @@ class ProductProduct(models.Model):
 
     @api.multi
     def insert_product_ids(self):
-        product_ids = self
-        if product_ids:
-            self.env['exportxml.object'].insert_product_ids(product_ids.ids, self._name, bom=False)
-        return product_ids
+        if self:
+            self.env['exportxml.object'].insert_product_ids(self, self._name, bom=False)
+        return self
