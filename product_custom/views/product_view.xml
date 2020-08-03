@@ -56,6 +56,9 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_form_view"/>
             <field name="arch" type="xml">
+                <field name="list_price" position="attributes">
+        <attribute name="invisible">1</attribute>
+    </field>
                 <group name="description" position="inside">
                     <separator string="Technical description" colspan="4"/>
                     <field name="description" nolabel="1" colspan="4"/>
@@ -114,6 +117,27 @@
                 <field name="tag_ids" position="attributes">
                     <attribute name="attrs">{'required': [('type', '!=', 'service')]}</attribute>
                 </field>
+            </field>
+        </record>
+
+        <record model="ir.ui.view" id="product_template_kanban_hide_price">
+            <field name="name">Product Template Hide Price</field>
+            <field name="model">product.template</field>
+            <field name="inherit_id" ref="product.product_template_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//ul/li/field[@name='list_price']/.." position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+        <record model="ir.ui.view" id="product_product_kanban_hide_price">
+            <field name="name">Product product Hide Price</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product.product_kanban_view"/>
+            <field name="arch" type="xml">
+                <xpath expr="//ul/li/field[@name='lst_price']/.." position="attributes">
+                    <attribute name="invisible">1</attribute>
+                </xpath>
             </field>
         </record>
 
