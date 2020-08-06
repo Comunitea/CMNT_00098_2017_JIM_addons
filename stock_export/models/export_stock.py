@@ -359,12 +359,12 @@ class DeletedObject(models.Model):
         ### Fecha fin de filtro para moivmientos no debería de enviarse nunca
         ### Si envío days y no to_time, to_time = from_time + days
         start_time = time.time()
+        time_now = fields.datetime.now()
+        time_now_str = fields.Datetime.to_string(time_now)
         if all:
             domain = [('type', '=', 'product'), '|', ('active', '=', True), ('active', '=', False)]
             product_ids = self.env['product.product'].search(domain)
         else:
-            time_now = fields.datetime.now()
-            time_now_str = fields.Datetime.to_string(time_now)
             if not from_time:
                 sql_ir_config = "select value from ir_config_parameter where key = 'last_call_export_xmlstock'"
                 self._cr.execute(sql_ir_config)
