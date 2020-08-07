@@ -26,9 +26,9 @@ def prepare_address_fields(self, address):
             'country_id': res_zip.country_id.id
         })
     
-    # Datos extra
+    # Datos extra, ponemos en type 'other' para que no se pase a la web
     address.update({
-        'name': 'DROPSHIPPING',
+        'comment': 'DROPSHIPPING-WEB',
         'type': 'delivery',
         'active': False
     })
@@ -50,7 +50,6 @@ def prepare_order_fields(self, order):
             product = self.env['product.product'].browse(int(line['variant_id'])) if line['variant_id'] else self.env['product.template'].browse(int(line['product_id']))
             # Formamos la línea con la sintaxis del One2many
             One2many_order_lines.append(tuple([0, 0, {
-                'name': product.name,
                 'product_id': product.id if line['variant_id'] else product.product_variant_id.id,
                 'product_uom_qty': float(line['quantity'])
             }]))
@@ -86,8 +85,8 @@ def get_data(self, data):
     return b2b['prepare_order_fields'](self, data)
     
 def pos_data(self, data):
-    # Si no se recalculan los precios alguno será erroneo
-    self.recalculate_prices()</field>
+    if self and 'recalculate_prices' in self:
+        self.recalculate_prices()</field>
         </record>
         
     </data>

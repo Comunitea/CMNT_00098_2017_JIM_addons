@@ -50,11 +50,11 @@ class B2bController(http.Controller):
 			else:
 
 				# ERROR
-				_logger.error(debug_str)
+				_logger.critical(debug_str)
 				return 'ERROR 500'
 
 		except ValueError:
 
 			# Invalid JSON
-			_logger.warning("Invalid JSON received: %s" % message.data)
+			_logger.error("Invalid JSON received")
 			return 'ERROR 400'

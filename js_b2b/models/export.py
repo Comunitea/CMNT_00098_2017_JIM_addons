@@ -99,6 +99,8 @@ class B2BExport(models.Model):
 
 	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, pricelists_filter=None, variant=None, operation=None):
 		_logger.info('[b2b_pricelists_prices] INICIO!')
+		prices = list()
+		
 		# Out prices
 		prices = list()
 		# Get decimals number
@@ -197,6 +199,8 @@ class B2BExport(models.Model):
 
 	def b2b_customers_prices(self, lines_filter=None, operation=None):
 		_logger.info('[b2b_customers_prices] INICIO!')
+		prices = list()
+
 		# Out prices
 		prices = list()
 		# Get decimals number
@@ -239,6 +243,7 @@ class B2BExport(models.Model):
 
 	def b2b_products_stock(self, test_limit=None, from_date=None, export_all=None):
 		_logger.info('[b2b_products_stock] INICIO!')
+		stock = list()
 
 		try:
 			# If actual time is between 00:30 & 00:45 set "all" to True

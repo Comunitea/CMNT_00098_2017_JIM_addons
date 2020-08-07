@@ -491,7 +491,7 @@ def pos_data(self, action):
 def is_notifiable(self, action, vals):
     return (self.active # Está activa
         and self.type in ('invoice', 'delivery') # Y es de tipo 'invoice' o 'delivery'
-        and self.name != 'DROPSHIPPING' # Y no es una dirección de dropshipping
+        and self.name != 'DROPSHIPPING' and self.comment != 'DROPSHIPPING-WEB' # Y no es una dirección de dropshipping
         and self.parent_id.is_notifiable_check() # Y el cliente es notificable
         and self.parent_id.type == 'contact') # Y el cliente es de tipo contacto (a veces crean una dirección de facturación asociada a otra dirección)
 
