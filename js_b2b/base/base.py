@@ -4,6 +4,9 @@ from .helper import Subprocess, JSync
 from base64 import b64encode
 import logging
 
+# Este es el vigilante que lanza las comprobaciones sobre los registros que se están modificando
+# podemos utilizar with_context(b2b_evaluate=False) para que no se ejecuten las funciones de este modelo
+
 _logger = logging.getLogger('B2B-OUT')
 
 # Module base class
@@ -141,28 +144,36 @@ class BaseB2B(models.AbstractModel):
 		"""
 		self.ensure_one()
 		packets = list()
+
 		conf_items_after = self.is_notifiable_check(mode, vals)
+
+		_logger.debug("Comprobando registro [%s,%i] en modo [%s]" % (self._name, self.id, mode))
 
 		if conf_items_before or conf_items_after:
 
 			jsync_conf = self.env['b2b.settings'].get_default_params()
 			b2b_config = self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)])
 
+			_logger.info("Configuración aplicable: %s" % b2b_config)
+
 			for item in b2b_config:
 				record = self
 				b2b = item.evaluate(mode, jsync_conf)
 				b2b['logger'] = _logger
 
-				# No se puede buscar dentro de un None
-				if conf_items_before is None:
-					conf_items_before = list()
-				# Si antes era notificable y ahora no lo eliminamos
-				if mode and item.name in conf_items_before and item.name not in conf_items_after:
-					b2b['crud_mode'] = 'delete'
-				# Si antes no era notificable y ahora si lo creamos (ponemos vals a none para que se envíe todo)
-				elif mode and item.name not in conf_items_before and item.name in conf_items_after:
-					b2b['crud_mode'] = 'create'
-					vals = None
+				# Determinamos el modo correcto en actualizaciones
+				if mode == 'update':
+					# No se puede buscar dentro de un None
+					if conf_items_before is None:
+						conf_items_before = list()
+					# Si antes era notificable y ahora no lo eliminamos (ponemos vals a false para enviar solo campos fixed)
+					if item.name in conf_items_before and item.name not in conf_items_after:
+						b2b['crud_mode'] = 'delete'
+						vals = False
+					# Si antes no era notificable y ahora si o lo creamos (ponemos vals a none para que se envíe todo)
+					elif (item.name not in conf_items_before and item.name in conf_items_after) or not record.on_jsync():
+						b2b['crud_mode'] = 'create'
+						vals = None
 
 				# Creamos un paquete
 				packet = JSync(self.env, settings=jsync_conf)
@@ -174,6 +185,8 @@ class BaseB2B(models.AbstractModel):
 				packet.name = item.name
 				# Obtenemos la copia del modo
 				packet.mode = b2b['crud_mode']
+
+				_logger.info("Paquete para [%s,%i] end modo [%s]" % (packet.model, packet.id, b2b['crud_mode']))
 
 				# Obtenemos la relacción (si la tiene)
 				if 'related_to' in b2b and callable(b2b['related_to']):
@@ -204,7 +217,7 @@ class BaseB2B(models.AbstractModel):
 	@api.multi
 	def get_metadata(self):
 		"""
-		Sets B2B Notifiable row on system metadata debug modal
+		Sets B2B Notifiable data on system metadata debug modal
 
 		:return: list of dicts
 		"""
@@ -254,9 +267,8 @@ class BaseB2B(models.AbstractModel):
 		b2b_evaluate = self.env.context.get('b2b_evaluate', True)
 		for record in self:
 			if b2b_evaluate:
-				items_to_send = self.is_notifiable_check('delete')
-				packets = record.b2b_record('delete', False, conf_items_before=items_to_send, auto_send=False)
-			if super(BaseB2B, self).unlink() and b2b_evaluate:
+				packets = record.b2b_record('delete', False, auto_send=False)
+			if super(BaseB2B, record).unlink() and b2b_evaluate:
 				for packet in packets:
 					packet.send(notify=False)
 		return True

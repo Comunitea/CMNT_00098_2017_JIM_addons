@@ -65,14 +65,12 @@ class B2bItemsIn(models.Model):
 				raise UserError(_('Code Error!\n %s must be a function' % (method)))
 
 	@api.model
-	def evaluate(self, mode='create', data=dict()):
+	def evaluate(self):
 		b2b = dict()
 		# Librerías permitidas en el código
 		from datetime import datetime
 		# Ejecutamos el código con exec(item.code)
 		exec(self.code, locals(), b2b)
-		# Obtener la acción a realizar con los datos
-		b2b['crud_mode'] = b2b['get_action'](mode, data)
 		# Devolvemos la variable b2b
 		return b2b
 
@@ -87,25 +85,22 @@ class B2bItemsIn(models.Model):
 			# Process item based on config
 			item = self.search([('name', '=', object_name), ('active', '=', True)], limit=1)
 			if item and type(item.code) is unicode:
+
 				# Configuration eval
-				b2b = item.evaluate(mode, data)
+				b2b = item.evaluate()
 				b2b['partner_id'] = partner_id
 				b2b['company_id'] = company_id
-				b2b['crud_mode'] = mode
 				b2b['logger'] = _logger
 
-				if b2b['crud_mode']:
+				if mode in ('create', 'update', 'cancel'):
 
-					# Comprobaciones de seguridad
 					item_data = b2b['get_data'](self, data)
+					item_action = b2b['get_action'](mode, data)
+					# Comprobaciones de seguridad
 					item_data_ok = type(item_data) is dict
-					# superuser_id = self.env['b2b.settings'].get_param('superuser')
-					# incoming_user = self.env['res.users'].browse(superuser_id)
-					# item_model = self.env[item.model].sudo(incoming_user)
-					item_action = getattr(self.env[item.model], b2b['crud_mode'], None)
-					item_action_ok = b2b['crud_mode'] in ('create', 'update', 'cancel')
+					item_action = getattr(self.env[item.model], item_action, None)
 
-					if item_data and item_data_ok and callable(item_action) and item_action_ok:
+					if item_data and item_data_ok and callable(item_action):
 						try:
 							item_action(item_data)
 							return True
@@ -116,7 +111,7 @@ class B2bItemsIn(models.Model):
 						_logger.critical('[620] Item %s configuration or data error!' % object_name)
 
 				else:
-					_logger.error('[610] CRUD mode %s not found for item %s!' % (b2b['crud_mode'], object_name))
+					_logger.error('[610] CRUD mode %s not found for item %s!' % (item_action, object_name))
 
 			else:
 				_logger.warning('[600] Item %s not found!' % object_name)

@@ -132,8 +132,9 @@ def get_data(self, action):
     'barcode', 
     'description', 
     'product_brand_id', 
-    'image', 
+    'image',  
     'tag_ids', 
+    'product_brand_id', 
     'public_categ_ids', 
     'type', 
     'company_id',
@@ -152,7 +153,7 @@ def get_data(self, action):
         'barcode:ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
         'tag_ids:category_id': self.tag_ids.ids,
         'public_categ_ids:web_category_id': self.public_categ_ids.ids, 
-        'brand_id': self.product_brand_id.id if self.product_brand_id else None,
+        'product_brand_id:brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
         'weight': self.weight,
         'public_image_name:image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
@@ -421,9 +422,10 @@ def get_data(self, action):
     'vat', 
     'email', 
     'type', 
+    'customer',
     'parent_id', 
+    'is_company',
     'property_product_pricelist',
-    'commercial_partner_id', 
     'vip_web_access', 
     'active'
 )
@@ -433,8 +435,8 @@ def is_notifiable(self, action, vals):
         and self.is_company # Y es empresa
         and self.vip_web_access # Y tiene asignada por lo menos una empresa para la web
         and self.customer # Y es cliente
+        and self.property_product_pricelist and self.property_product_pricelist.id != 1 # Tiene tarifa y no es la publica
         and self.email and self.has_valid_emails() # Y tiene un email válido
-        and self.commercial_partner_id.id == self.id # Y es el contacto principal
         and self.type == 'contact') # Y es un contacto
 
 def get_data(self, action):
@@ -490,7 +492,8 @@ def is_notifiable(self, action, vals):
     return (self.active # Está activa
         and self.type in ('invoice', 'delivery') # Y es de tipo 'invoice' o 'delivery'
         and self.name != 'DROPSHIPPING' # Y no es una dirección de dropshipping
-        and self.parent_id.is_notifiable_check()) # Y el cliente es notificable
+        and self.parent_id.is_notifiable_check() # Y el cliente es notificable
+        and self.parent_id.type == 'contact') # Y el cliente es de tipo contacto (a veces crean una dirección de facturación asociada a otra dirección)
 
 def related_to(self, action):
     return 'res.partner,%s' % self.parent_id.id
@@ -528,9 +531,9 @@ def get_data(self, action):
 
 def is_notifiable(self, action, vals):
     return (self.number # Tiene un número asignado
+        and self.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
         and self.type in ('out_invoice', 'out_refund') # Y es de tipo out_invoice o out_refund
         and self.state in ('open', 'paid') # Y el estado es abierta o pagada
-        and self.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
         and self.date_invoice >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
 
 def related_to(self, action):
@@ -540,24 +543,16 @@ def get_data(self, action):
     # Obtenemos la moneda y posición
     currency = self.currency_id.symbol
     position = self.currency_id.position
-    
-    # Todos los campos son fixed, ya que hasta que se valida no se notifica
-    # de forma que los campos que no se modifican al validar no se enviarían
-    doc_data = { 'fixed:jim_id': self.id }
-    
-    # If not a delete mode
-    if b2b['crud_mode'] != 'delete':
-        # Actualizamos los datos
-        doc_data.update({ 
-            'fixed:customer_id': self.commercial_partner_id.id,
-            'fixed:company_id': self.company_id.id,
-            'fixed:name': self.number, 
-            'fixed:date': self.date_invoice, 
-            'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-            'fixed:pdf': self.get_base64_report_pdf('account.report_invoice')
-        })
-        
-    return doc_data</field>
+
+    return { 
+        'fixed:jim_id': self.id,
+        'commercial_partner_id:customer_id': self.commercial_partner_id.id,
+        'company_id': self.company_id.id,
+        'number:name': self.number, 
+        'date_invoice:date': self.date_invoice, 
+        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
+        'amount_total:pdf': self.get_base64_report_pdf('account.report_invoice')
+    }</field>
         </record>
 
         <record id="b2b_item_out_16" model="b2b.item.out">
@@ -568,43 +563,41 @@ def get_data(self, action):
             <field name="description">Albarán de venta</field>
             <field name="code">fields_to_watch = (
     'recompute_pack_op',
+    'orig_sale_id',
+    'partner_id',
+    'company_id',
     'date_done',
+    'name',
     'state'
 )
 
 def is_notifiable(self, action, vals):
     is_out_delivery = (self.picking_type_code == 'outgoing' or self.picking_type_id.name == 'Dropship')
     is_done = self.orig_sale_id and self.date_done and self.state == 'done'
-    return (is_out_delivery # Es un albarán de salida o dropshipping
-        and is_done # Y stá asociado a una venta y tiene fecha de validación y está validado
+    notifiable = (is_out_delivery # Es un albarán de salida o dropshipping
+        and is_done # Y está asociado a una venta y tiene fecha de validación y está validado
+        and self.orig_sale_id.is_notifiable_check() # Y el pedido asociado es notificable
         and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
         and self.date_done >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
+    return notifiable
 
 def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
 
 def get_data(self, action):
-    # Todos los campos son fixed, ya que hasta que se valida no se notifica
-    # de forma que los campos que no se modifican al validar no se enviarían
-    doc_data = { 'fixed:jim_id': self.id }
+    # Obtenemos la moneda y posición
+    currency = self.orig_sale_id.pricelist_id.currency_id.symbol
+    position = self.orig_sale_id.pricelist_id.currency_id.position
     
-    # If not a delete mode
-    if b2b['crud_mode'] != 'delete':
-        # Obtenemos la moneda y posición
-        currency = self.orig_sale_id.pricelist_id.currency_id.symbol
-        position = self.orig_sale_id.pricelist_id.currency_id.position
-        
-        # Actualizamos los datos
-        doc_data.update({ 
-            'fixed:customer_id': self.partner_id.commercial_partner_id.id,
-            'fixed:company_id': self.company_id.id,
-            'fixed:name': self.name,
-            'fixed:date': self.date_done, 
-            'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-            'fixed:pdf': self.get_base64_report_pdf('stock.report_deliveryslip')
-        })
-        
-    return doc_data</field>
+    return { 
+        'fixed:jim_id': self.id,
+        'partner_id:customer_id': self.partner_id.commercial_partner_id.id,
+        'company_id': self.company_id.id,
+        'name': self.name,
+        'date_done:date': self.date_done, 
+        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
+        'amount_total:pdf': self.get_base64_report_pdf('stock.report_deliveryslip')
+    }</field>
         </record>
 
         <record id="b2b_item_out_17" model="b2b.item.out">
@@ -623,8 +616,8 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    return ((action == 'create' or (type(vals) is dict and not vals.get('date_order'))) # Se recibe date_order en vals o se está creando
-        and self.state not in ('draft', 'proforma', 'pending', 'cancel') # Y el estado no es borrador, proforma, pendiente o cancelado
+    return ((action == 'create' or (type(vals) is dict and not vals.get('date_order'))) # No se recibe date_order en vals o se está creando
+        and self.state not in ('draft', 'proforma', 'cancel') # Y el estado no es borrador, proforma o cancelado
         and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
         and self.date_order >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
 
@@ -636,23 +629,21 @@ def get_data(self, action):
     currency = self.pricelist_id.currency_id.symbol
     position = self.pricelist_id.currency_id.position
     
-    # Todos los campos son fixed, ya que hasta que se valida no se notifica
-    # de forma que los campos que no se modifican al validar no se enviarían
-    doc_data = { 'fixed:jim_id': self.id }
+    return { 
+        'fixed:jim_id': self.id,
+        'partner_id:customer_id': self.partner_id.commercial_partner_id.id,
+        'company_id': self.company_id.id,
+        'name': self.name, 
+        'date_order:date': self.date_order, 
+        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
+        'amount_total:pdf': self.get_base64_report_pdf('sale.report_saleorder')
+    }
     
-    # If not a delete mode
-    if b2b['crud_mode'] != 'delete':
-        # Actualizamos los datos
-        doc_data.update({ 
-            'fixed:customer_id': self.partner_id.commercial_partner_id.id,
-            'fixed:company_id': self.company_id.id,
-            'fixed:name': self.name, 
-            'fixed:date': self.date_order, 
-            'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
-            'fixed:pdf': self.get_base64_report_pdf('sale.report_saleorder')
-        })
-        
-    return doc_data</field>
+def pos_data(self, action):
+    if b2b['crud_mode'] == 'delete':
+        # Eliminamos los albaranes asociados
+        for picking in self.picking_ids:
+            picking.b2b_record('delete', False, conf_items_before=['delivery_note'], user_notify=False)</field>
         </record>
 
         <record id="b2b_item_out_18" model="b2b.item.out">

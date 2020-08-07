@@ -93,7 +93,7 @@ class MrpBomLine(models.Model):
 
     @api.multi
     def insert_product_ids(self):
-        self.env['exportxml.object'].insert_product_ids(self.mapped('product_ids', self._name, bom=False))
+        self.env['exportxml.object'].insert_product_ids(self.mapped('product_id'), self._name, bom=False)
 
     @api.model
     def create(self, vals):
@@ -359,12 +359,12 @@ class DeletedObject(models.Model):
         ### Fecha fin de filtro para moivmientos no debería de enviarse nunca
         ### Si envío days y no to_time, to_time = from_time + days
         start_time = time.time()
+        time_now = fields.datetime.now()
+        time_now_str = fields.Datetime.to_string(time_now)
         if all:
             domain = [('type', '=', 'product'), '|', ('active', '=', True), ('active', '=', False)]
             product_ids = self.env['product.product'].search(domain)
         else:
-            time_now = fields.datetime.now()
-            time_now_str = fields.Datetime.to_string(time_now)
             if not from_time:
                 sql_ir_config = "select value from ir_config_parameter where key = 'last_call_export_xmlstock'"
                 self._cr.execute(sql_ir_config)
@@ -475,7 +475,6 @@ class ProductProduct(models.Model):
 
     @api.multi
     def insert_product_ids(self):
-        product_ids = self
-        if product_ids:
-            self.env['exportxml.object'].insert_product_ids(product_ids.ids, self._name, bom=False)
-        return product_ids
+        if self:
+            self.env['exportxml.object'].insert_product_ids(self, self._name, bom=False)
+        return self
