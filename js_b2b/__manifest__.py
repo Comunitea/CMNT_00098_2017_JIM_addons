@@ -59,7 +59,6 @@
 	'contributors': [
 		"Pablo Luaces <pablo@jimsports.com>",
 	],
-	'post_init_hook': 'post_init_actions',
 	'application': True,
 	'installable': True
 }

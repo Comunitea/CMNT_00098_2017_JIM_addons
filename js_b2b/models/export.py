@@ -76,7 +76,7 @@ class B2BExport(models.Model):
 		# Divide packet if needed
 		# large datasets have to be divided in multiple parts
 		# determined by packet_size on settings
-		packet_size_mb = jsync_conf.get('packet_size', 10)
+		packet_size_mb = float(jsync_conf.get('packet_size', 10.0))
 		data_size = getsizeof(data_list)/1048576
 		num_packets_total = ceil(data_size / packet_size_mb) or 1
 		data_items_count = len(data_list)
@@ -194,6 +194,7 @@ class B2BExport(models.Model):
 
 		# Send to JSync
 		if prices:
+			_logger.debug('PRICELIST PRICES', prices)
 			mode = 'update' if templates_filter is not None else 'replace'
 			self.send_multi('pricelist_item', prices, mode)
 
@@ -238,6 +239,7 @@ class B2BExport(models.Model):
 
 		# Send to JSync
 		if prices:
+			_logger.debug('CUSTOMER PRICES', prices)
 			mode = 'update' if lines_filter is not None else 'replace'
 			self.send_multi('customer_price', prices, mode)
 
@@ -257,6 +259,7 @@ class B2BExport(models.Model):
 		
 		# Send to JSync
 		if stock:
+			_logger.debug('STOCK', stock)
 			mode = 'replace' if all_products else 'update'
 			self.send_multi('product_stock', stock, mode)
 

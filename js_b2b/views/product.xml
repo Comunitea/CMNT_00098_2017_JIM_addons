@@ -113,6 +113,25 @@
     </record>
 
     <!-- Product Categories -->
+    <record id="view_product_tag_form_b2b" model="ir.ui.view">
+        <field name="name">product.tag.view.form.b2b</field>
+        <field name="model">product.tag</field>
+        <field name="inherit_id" ref="product_tags.product_tag_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="./group[2]" position="after">
+                <group>
+                    <field name="child_ids" widget="one2many_list">
+                        <tree>
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="web"/>
+                        </tree>
+                    </field>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
     <record id="product_category_tree_view_b2b" model="ir.ui.view">
         <field name="name">product.tag.tree.b2b</field>
         <field name="model">product.tag</field>
@@ -122,6 +141,10 @@
                 <field name="sequence" widget="handle"/>
             </field>
         </field>
+    </record>
+
+    <record id="product_tags.product_tag_action_form" model="ir.actions.act_window">
+        <field name="domain">[('parent_id', '=', False)]</field>
     </record>
 
     <!-- Product Attributes -->

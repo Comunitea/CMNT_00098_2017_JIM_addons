@@ -162,6 +162,9 @@ def get_data(self, action):
 def pos_data(self, action):
     # Creamos los datos relaccionados
     if b2b['crud_mode'] == 'create':
+        # Crear las variantes
+        for variant in self.product_variant_ids:
+            variant.b2b_record('create', user_notify=False)
         # Crear las imágenes del producto
         for image in self.product_image_ids:
             image.b2b_record('create', user_notify=False)
