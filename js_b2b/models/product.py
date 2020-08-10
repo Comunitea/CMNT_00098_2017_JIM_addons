@@ -144,11 +144,11 @@ class ProductTemplate(models.Model):
 
 		updated = super(ProductTemplate, self).write(vals)
 
-		for product in self:
-			# Publish variants
-			product.mapped('product_variant_ids').write({ 'website_published': product.website_published })
-
-		return updated
+		# Update website_published on variants
+		if 'website_published' in vals:
+			for product in self:
+				# Publish variants
+				product.mapped('product_variant_ids').write({ 'website_published': product.website_published })
 
 	@api.multi
 	def unlink(self):
