@@ -40,10 +40,28 @@
 								</p>
 
 								<p>
+									<b>pre_data</b>(self, action)
+									<span class="help-block">
+										<p>Realiza acciones antes de obtener los datos (get_data)</p>
+										<p>Se ejecuta de forma síncrona y es opcional</p>
+										<b style="color:#E30059">return</b> void
+									</span>
+								</p>
+
+								<p>
 									<b>get_data</b>(self, action)
 									<span class="help-block">
 										Obtiene los datos necesarios para crear o actualizar registro<br/>
 										<b style="color:#E30059">return</b> dict
+									</span>
+								</p>
+
+								<p>
+									<b>pos_data</b>(self, action)
+									<span class="help-block">
+										<p>Realiza acciones después de realizar la operación con los datos (get_data)</p>
+										<p>Se ejecuta de forma síncrona y es opcional</p>
+										<b style="color:#E30059">return</b> void
 									</span>
 								</p>
 

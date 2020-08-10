@@ -94,6 +94,10 @@ class B2bItemsIn(models.Model):
 
 				if mode in ('create', 'update', 'cancel'):
 
+					# Ejecutamos la función pre_data si existe
+					if 'pre_data' in b2b and callable(b2b['pre_data']):
+						b2b['pre_data'](self, mode)
+
 					item_data = b2b['get_data'](self, data)
 					item_action = b2b['get_action'](mode, data)
 					# Comprobaciones de seguridad
@@ -102,8 +106,15 @@ class B2bItemsIn(models.Model):
 
 					if item_data and item_data_ok and callable(item_action):
 						try:
-							item_action(item_data)
+
+							record = item_action(item_data)
+
+							# Ejecutamos la función pos_data si existe
+							if 'pos_data' in b2b and callable(b2b['pos_data']):
+								b2b['pos_data'](record, mode)
+
 							return True
+
 						except Exception as e:
 							_logger.error('[630] Item %s method exception: %s' % (object_name, e))
 
