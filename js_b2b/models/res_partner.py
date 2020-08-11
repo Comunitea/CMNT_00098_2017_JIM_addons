@@ -56,9 +56,8 @@ class ResPartner(models.Model):
 		# Resultados
 		results = list()
 
-		# Expresión de validación
-		# regex = '^[a-z0-9]+[\\._-]?[a-z0-9]+[@]\\w+[.]\\w{2,3}$' No es válida, no acepta guiones depués de la @
-		regex = '^[\\s]?\\w+([-+.\' ]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*[\\s]?$'
+		# Expresión PCRE simplificada para validación de email siguiendo la norma RFC822 https://regexr.com/2rhq7
+		regex = r"[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
 
 		# Si tiene un valor
 		if self.email:

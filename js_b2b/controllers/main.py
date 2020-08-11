@@ -102,6 +102,10 @@ class B2bController(http.Controller):
 						# En Jesie está publicada
 						variant_published = False
 						variants_to_unpublish += 1
+					elif product_published and variant_published and not variant_must_be_published:
+						# En Jesie no está publicada pero en Jsync si
+						variant_published = False
+						variants_to_unpublish += 1
 					elif product_published and not variant_published and variant.active and not variant.attribute_names:
 						# La variante única siempre se publica
 						variant_published = True
