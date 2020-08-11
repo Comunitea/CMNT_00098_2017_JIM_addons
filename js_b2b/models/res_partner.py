@@ -58,7 +58,7 @@ class ResPartner(models.Model):
 
 		# Expresión de validación
 		# regex = '^[a-z0-9]+[\\._-]?[a-z0-9]+[@]\\w+[.]\\w{2,3}$' No es válida, no acepta guiones depués de la @
-		regex = '^\\w+([-+.\' ]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$'
+		regex = '^[\\s]?\\w+([-+.\' ]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*[\\s]?$'
 
 		# Si tiene un valor
 		if self.email:
