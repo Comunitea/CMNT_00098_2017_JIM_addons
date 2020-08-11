@@ -255,6 +255,7 @@ class ProductTag(models.Model):
 	_attr_image_model_field = 'image'
 	_max_public_file_size = (1280, None)
 
+	child_ids = fields.One2many(domain=['|', ('active', '=', True), ('active', '=', False)])
 	sequence = fields.Integer(help="Gives the sequence order for tags")
 	public_image_name = fields.Char('Tag Public File Name')
 

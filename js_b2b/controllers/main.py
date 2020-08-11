@@ -61,8 +61,8 @@ class B2bController(http.Controller):
 
 	@http.route([
 		'/jesie_to_b2b_sync'
-	], type='http', auth='user')
-	def run(self, execute=0, **kw):
+	], type='http', auth='user', methods=['GET',])
+	def products_published_to_b2b(self, execute=0, **kw):
 
 		if http.request.env.user.has_group('base.group_system'):
 
@@ -90,7 +90,12 @@ class B2bController(http.Controller):
 				if execute and product_published != product.website_published:
 					# No lo evaluamos para que sea más rápido por lo que si hay cambios deberemos
 					# hacer una sincronización de productos a posterior
-					product.with_context(b2b_evaluate=False).website_published = product_published
+					try:
+						product.with_context(b2b_evaluate=False).website_published = product_published
+					except:
+						if product_published: 
+							product_published = False
+							products_to_publish -= 1
 
 				for variant in product.product_variant_ids:
 
@@ -118,7 +123,10 @@ class B2bController(http.Controller):
 					if execute and variant_published != variant.website_published:
 						# No lo evaluamos para que sea más rápido por lo que si hay cambios deberemos
 						# hacer una sincronización de variantes a posterior
-						variant.with_context(b2b_evaluate=False).website_published = variant_published
+						try:
+							variant.with_context(b2b_evaluate=False).website_published = variant_published
+						except:
+							variants_to_publish -= 1
 
 			message = 'Para hacer efectivos los cambios lanzar con execute=1' if not execute else '¡Realizado! Si hay cambios tendrás que hacer una sincronización'
 
@@ -140,8 +148,8 @@ class B2bController(http.Controller):
 
 	@http.route([
 		'/js_addons_web_companies_to_b2b'
-	], type='http', auth='user')
-	def run(self, execute=0, **kw):
+	], type='http', auth='user', methods=['GET',])
+	def client_companies_to_b2b(self, execute=0, **kw):
 
 		if http.request.env.user.has_group('base.group_system'):
 

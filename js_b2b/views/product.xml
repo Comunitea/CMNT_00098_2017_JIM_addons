@@ -120,10 +120,11 @@
         <field name="arch" type="xml">
             <xpath expr="./group[2]" position="after">
                 <group>
-                    <field name="child_ids" widget="one2many_list">
-                        <tree>
+                    <field name="child_ids" widget="one2many_list" mode="tree">
+                        <tree decoration-success="active == True and web == True">
                             <field name="sequence" widget="handle"/>
                             <field name="name"/>
+                            <field name="active"/>
                             <field name="web"/>
                         </tree>
                     </field>
