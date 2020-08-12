@@ -6,6 +6,7 @@ import logging
 
 _logger = logging.getLogger('B2B-RES.PARTNER')
 
+# Email PCRE regex validation RFC2822 - https://regexr.com/2rhq7
 _email_rfc822_validation = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
 
 class MergePartner(models.TransientModel):

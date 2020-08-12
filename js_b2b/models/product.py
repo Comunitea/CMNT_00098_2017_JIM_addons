@@ -150,6 +150,8 @@ class ProductTemplate(models.Model):
 				# Publish variants
 				product.mapped('product_variant_ids').write({ 'website_published': product.website_published })
 
+		return updated
+
 	@api.multi
 	def unlink(self):
 		for record in self:
@@ -249,7 +251,7 @@ class ProductBrand(models.Model):
 class ProductTag(models.Model):
 	_name = "product.tag"
 	_inherit = ["product.tag", "b2b.image"]
-	_order = "parent_left, sequence"
+	_order = "sequence, parent_left"
 
 	# PublicImage params
 	_attr_image_model_field = 'image'
