@@ -90,9 +90,6 @@ class ProductTemplate(models.Model):
 				except:
 					new_cr.rollback()
 
-		else:
-			print("# IMAGEN OK!!!")
-
 		return True
 
 class ProductProduct(models.Model):
