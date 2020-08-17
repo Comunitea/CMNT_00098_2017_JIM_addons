@@ -81,7 +81,13 @@ class B2BExport(models.Model):
 		num_packets_total = ceil(data_size / packet_size_mb) or 1
 		data_items_count = len(data_list)
 		avg = data_items_count / float(num_packets_total)
+
+		_logger.info("[send_multi] Tamaño de paquete máximo: %s", packet_size_mb)
+		_logger.info("[send_multi] Tamaño de paquete actual: %s", data_size)
+		_logger.info("[send_multi] Número de partes a enviar: %s", num_packets_total)
+
 		while last < data_items_count:
+			_logger.info("Construyendo parte %i del %i al %i", len(data_parts) + 1, last, last + avg)
 			data_parts.append(iter(data_list[int(last):int(last + avg)]))
 			last += avg
 

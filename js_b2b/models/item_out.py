@@ -98,11 +98,14 @@ class B2bItemsOut(models.Model):
 				raise UserError(_('Code Error!\n %s must be a function' % (method)))
 
 	@api.model
-	def evaluate(self, mode='create', config=dict()):
+	def evaluate(self, mode='create', config=dict(), **kwargs):
 		b2b = dict()
+		b2b['logger'] = _logger
 		b2b['crud_mode'] = mode
 		b2b['images_base'] = config.get('base_url')
 		b2b['min_docs_date'] = config.get('docs_after')
+		# Actualizamos con kwargs
+		if kwargs: b2b.update(kwargs)
 		# Librerías permitidas en el código
 		from datetime import datetime
 		# Ejecutamos el código con exec(item.code)

@@ -65,8 +65,12 @@ class B2bItemsIn(models.Model):
 				raise UserError(_('Code Error!\n %s must be a function' % (method)))
 
 	@api.model
-	def evaluate(self):
+	def evaluate(self, **kwargs):
 		b2b = dict()
+		# Introducimos el logger
+		b2b['logger'] = _logger
+		# Actualizamos con kwargs
+		if kwargs: b2b.update(kwargs)
 		# Librerías permitidas en el código
 		from datetime import datetime
 		# Ejecutamos el código con exec(item.code)
@@ -87,10 +91,7 @@ class B2bItemsIn(models.Model):
 			if item and type(item.code) is unicode:
 
 				# Configuration eval
-				b2b = item.evaluate()
-				b2b['partner_id'] = partner_id
-				b2b['company_id'] = company_id
-				b2b['logger'] = _logger
+				b2b = item.evaluate(partner_id=partner_id, company_id=company_id)
 
 				if mode in ('create', 'update', 'cancel'):
 

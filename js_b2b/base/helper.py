@@ -204,7 +204,7 @@ class JSync(object):
 
 		return RECORD_SEND, RES_ID, EXPORT_RECORD
 
-	def send(self, timeout_sec=10, notify=True, **kwargs):
+	def send(self, timeout_sec=30, notify=True, **kwargs):
 		"""
 		Sends data to JSync server and prints on screen
 
