@@ -143,7 +143,9 @@ class B2bItemsOut(models.Model):
 				elif model == 'account.invoice':
 					search_query = [('date_invoice', '>=', docs_min_date), ('commercial_partner_id', 'in', client_ids)]
 				elif model == 'stock.picking':
-					search_query = [('date_done', '>=', docs_min_date), ('partner_id.commercial_partner_id', 'in', client_ids)]
+					# Los albarares no se filtran por el cliente, ya que
+					# puede ser de DROPSIPPING y no ser notificable
+					search_query = [('date_done', '>=', docs_min_date)]
 				elif model == 'sale.order':
 					search_query = [('date_order', '>=', docs_min_date), ('partner_id.commercial_partner_id', 'in', client_ids)]
 				elif model in ('product.template', 'product.product'):
