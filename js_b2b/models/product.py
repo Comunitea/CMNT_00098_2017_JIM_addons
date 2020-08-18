@@ -144,9 +144,11 @@ class ProductTemplate(models.Model):
 
 		updated = super(ProductTemplate, self).write(vals)
 
-		for product in self:
-			# Publish variants
-			product.mapped('product_variant_ids').write({ 'website_published': product.website_published })
+		# Update website_published on variants
+		if 'website_published' in vals:
+			for product in self:
+				# Publish variants
+				product.mapped('product_variant_ids').write({ 'website_published': product.website_published })
 
 		return updated
 
@@ -249,12 +251,13 @@ class ProductBrand(models.Model):
 class ProductTag(models.Model):
 	_name = "product.tag"
 	_inherit = ["product.tag", "b2b.image"]
-	_order = "parent_left, sequence"
+	_order = "sequence, parent_left"
 
 	# PublicImage params
 	_attr_image_model_field = 'image'
 	_max_public_file_size = (1280, None)
 
+	child_ids = fields.One2many(domain=['|', ('active', '=', True), ('active', '=', False)])
 	sequence = fields.Integer(help="Gives the sequence order for tags")
 	public_image_name = fields.Char('Tag Public File Name')
 

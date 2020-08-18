@@ -65,8 +65,12 @@ class B2bItemsIn(models.Model):
 				raise UserError(_('Code Error!\n %s must be a function' % (method)))
 
 	@api.model
-	def evaluate(self):
+	def evaluate(self, **kwargs):
 		b2b = dict()
+		# Introducimos el logger
+		b2b['logger'] = _logger
+		# Actualizamos con kwargs
+		if kwargs: b2b.update(kwargs)
 		# Librerías permitidas en el código
 		from datetime import datetime
 		# Ejecutamos el código con exec(item.code)
@@ -87,10 +91,7 @@ class B2bItemsIn(models.Model):
 			if item and type(item.code) is unicode:
 
 				# Configuration eval
-				b2b = item.evaluate()
-				b2b['partner_id'] = partner_id
-				b2b['company_id'] = company_id
-				b2b['logger'] = _logger
+				b2b = item.evaluate(partner_id=partner_id, company_id=company_id)
 
 				if mode in ('create', 'update', 'cancel'):
 
@@ -105,18 +106,17 @@ class B2bItemsIn(models.Model):
 					item_action = getattr(self.env[item.model], item_action, None)
 
 					if item_data and item_data_ok and callable(item_action):
-						try:
 
-							record = item_action(item_data)
+							# Ejecutamos la acción del mensaje
+							record_id = item_action(item_data)
 
 							# Ejecutamos la función pos_data si existe
-							if 'pos_data' in b2b and callable(b2b['pos_data']):
+							if record_id and 'pos_data' in b2b and callable(b2b['pos_data']):
+								record = self.env[item.model].browse(record_id)
 								b2b['pos_data'](record, mode)
-
-							return True
-
-						except Exception as e:
-							_logger.error('[630] Item %s method exception: %s' % (object_name, e))
+							
+							if record_id:
+								return True
 
 					else:
 						_logger.critical('[620] Item %s configuration or data error!' % object_name)

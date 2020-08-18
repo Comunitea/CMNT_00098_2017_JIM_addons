@@ -35,63 +35,60 @@ class ProductTemplate(models.Model):
 		self.ensure_one()
 		filename = getattr(self, self._attr_public_file_name)
 
-		if filename:
-			try:
-				fileuri = 'https://b2b.grupojimsports.com/images/' + filename
-				img = self.__get_image(fileuri, only_check=True)
-			except:
-				img = None
+		with api.Environment.manage():
+			with self.pool.cursor() as new_cr:
+				irecord = self.with_env(self.env(cr=new_cr))
+				
+				# Comprobamos que el producto tenga asignado código
+				if irecord.default_code == False or irecord.default_code == None or irecord.default_code == '':
+					return False
 
-		if not img:
+				product_reference = irecord.default_code.strip().rsplit('.')[0]
 
-			with api.Environment.manage():
-				with self.pool.cursor() as new_cr:
-					irecord = self.with_env(self.env(cr=new_cr))
-					
-					# Comprobamos que el producto tenga asignado código
-					if irecord.default_code == False or irecord.default_code == None or irecord.default_code == '':
-						return False
+				# Nombre del fichero
+				image_path = '%s%s.jpg' % (URL, product_reference)
+				imageBase64 = self.__get_image(image_path)
 
-					product_reference = irecord.default_code.strip().rsplit('.')[0]
+				if imageBase64:
+					irecord.with_context(resize_img=resize).write({ 'image':imageBase64 })
 
-					# Nombre del fichero
-					image_path = '%s%s.jpg' % (URL, product_reference)
+				# Eliminar imágenes antiguas
+				irecord.product_image_ids.unlink()
+
+				# Tiene variantes
+				if irecord.product_variant_ids > 1:
+					# Metemos de nuevo la imágen principal en la pestaña de imágenes
+					# para poder asignarle un atributo para la web
+					if imageBase64:
+						new_image = irecord.env['product.image'].with_context(resize_img=resize).create({ 
+							'product_tmpl_id': irecord.id, 
+							'name': irecord.name, 
+							'image': imageBase64 
+						})
+
+				# Carga las imágenes secundarias
+				i = 1
+				
+				while True:
+					image_name = '%s-%s' % (product_reference, i)
+					image_path = '%s%s.jpg' % (URL, image_name)
 					imageBase64 = self.__get_image(image_path)
 
 					if imageBase64:
-						irecord.with_context(resize_img=resize).write({ 'image':imageBase64 })
+						new_image = irecord.env['product.image'].with_context(resize_img=resize).create({ 
+							'product_tmpl_id': irecord.id, 
+							'name': irecord.name, 
+							'image': imageBase64 
+						})
+					else:
+						return True
 
-					# Eliminar imágenes antiguas
-					irecord.product_image_ids.unlink()
+					i += 1
 
-					# Carga las imágenes secundarias
-					i = 1
-					
-					while True:
-						image_name = '%s-%s' % (product_reference, i)
-						image_path = '%s%s.jpg' % (URL, image_name)
-						imageBase64 = self.__get_image(image_path)
-
-						if imageBase64:
-							new_image = irecord.env['product.image'].with_context(resize_img=resize).create({ 
-								'product_tmpl_id': irecord.id, 
-								'name': irecord.name, 
-								'image': imageBase64 
-							})
-						else:
-							return True
-
-						i += 1
-
-					try:
-						new_cr.commit()
-					except:
-						new_cr.rollback()
-					finally:
-						sleep(2)
-
-		else:
-			print("# IMAGEN OK!!!")
+				try:
+					new_cr.commit()
+				except:
+					new_cr.rollback()
 
 		return True
 

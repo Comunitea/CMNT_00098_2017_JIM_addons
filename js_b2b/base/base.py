@@ -7,7 +7,7 @@ import logging
 # Este es el vigilante que lanza las comprobaciones sobre los registros que se están modificando
 # podemos utilizar with_context(b2b_evaluate=False) para que no se ejecuten las funciones de este modelo
 
-_logger = logging.getLogger('B2B-OUT')
+_logger = logging.getLogger('B2B-BASE')
 
 # Module base class
 class BaseB2B(models.AbstractModel):
@@ -163,8 +163,9 @@ class BaseB2B(models.AbstractModel):
 
 			for item in b2b_config:
 				record = self
+
+				# Configuration eval
 				b2b = item.evaluate(mode, jsync_conf)
-				b2b['logger'] = _logger
 
 				# Determinamos el modo correcto en actualizaciones
 				if mode == 'update':
