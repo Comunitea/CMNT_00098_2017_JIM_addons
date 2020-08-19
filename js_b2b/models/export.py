@@ -77,7 +77,7 @@ class B2BExport(models.Model):
 		# large datasets have to be divided in multiple parts
 		# determined by packet_size on settings
 		packet_size_mb = float(jsync_conf.get('packet_size', 10.0))
-		data_size = getsizeof(data_list)/1048576
+		data_size = getsizeof(data_list)/float(1048576)
 		num_packets_total = ceil(data_size / packet_size_mb) or 1
 		data_items_count = len(data_list)
 		avg = data_items_count / float(num_packets_total)
