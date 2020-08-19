@@ -584,16 +584,16 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    is_out_delivery = (self.picking_type_code == 'outgoing' or self.picking_type_id.name == 'Dropship')
+    is_out_delivery = (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship')
     is_done = self.orig_sale_id and self.date_done and self.state == 'done'
     notifiable = (is_out_delivery # Es un albarán de salida o dropshipping
         and is_done # Y está asociado a una venta y tiene fecha de validación y está validado
-        and self.sale_id.is_notifiable_check() # Y el pedido asociado es notificable
+        and self.sale_id and self.sale_id.is_notifiable_check() # Y el pedido asociado es notificable
         and self.date_done >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
     return notifiable
 
 def related_to(self, action):
-    return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
+    return 'res.partner,%s' % self.sale_id.partner_id.commercial_partner_id.id
 
 def get_data(self, action):
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
