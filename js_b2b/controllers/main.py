@@ -26,8 +26,6 @@ class B2bController(http.Controller):
 		try:
 			# Process message
 			data_obj = http.request.params
-			item_user = data_obj.get('user_id', 0)
-			item_company = data_obj.get('company_id', 0)
 			item_name = data_obj.get('object')
 			item_action = data_obj.get('action', 'create')
 			item_data = data_obj.get('data')
@@ -35,13 +33,11 @@ class B2bController(http.Controller):
 			# Debug data
 			debug_str = "Message: " \
 					"\n    - name: {}" \
-					"\n    - user: {}" \
-					"\n    - company: {}" \
 					"\n    - operation: {}" \
-					"\n    - data: {}".format(item_name, item_user, item_company, item_action, item_data)
+					"\n    - data: {}".format(item_name, item_action, item_data)
 
 			# Process item
-			if http.request.env['b2b.item.in'].must_process(item_name, item_user, item_company, item_data, item_action):
+			if http.request.env['b2b.item.in'].must_process(item_name, item_data, item_action):
 
 				# OK
 				_logger.info(debug_str)
