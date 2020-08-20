@@ -135,7 +135,7 @@ class B2bItemsOut(models.Model):
 			if model not in excluded_models:
 				# Model specific queries
 				if model == 'stock.move':
-					search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
+					search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False)]
 				elif model == 'res.partner':
 					search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
 				elif model == 'product.tag':
