@@ -86,8 +86,18 @@ class B2bItemsIn(models.Model):
 
 		# Data check
 		if data and type(data) is dict:
+
+			company_id = data.get('company', 1)
+
+			# Change current company (mandatory)
+			if company_id in self.env.user.company_ids.ids:
+				self.env.user.company_id = company_id
+			else:
+				raise ValueError('B2B User can not have access to company %i' % company_id)
+				
 			# Process item based on config
 			item = self.search([('name', '=', object_name), ('active', '=', True)], limit=1)
+
 			if item and type(item.code) is unicode:
 
 				# Configuration eval
@@ -108,17 +118,19 @@ class B2bItemsIn(models.Model):
 					if item_data and item_data_ok and callable(item_action):
 
 						# Ejecutamos la acción del mensaje
-						record_id = item_action(item_data)
+						try:
+							record_id = item_action(item_data)
 
-						# Ejecutamos la función pos_data si existe
-						if record_id and 'pos_data' in b2b and callable(b2b['pos_data']):
-							record = self.env[item.model].browse(record_id)
-							b2b['pos_data'](record, mode)
-							
-						if record_id:
-							return True
-						else:
-							_logger.info('[630] Data error, can not create record!')
+							# Ejecutamos la función pos_data si existe
+							if record_id and 'pos_data' in b2b and callable(b2b['pos_data']):
+								record = self.env[item.model].browse(record_id)
+								b2b['pos_data'](record, mode)
+
+							if record_id:
+								return True
+
+						except Exception as e:
+							_logger.critical('[630] Can not create the record! %s' % e)
 
 					else:
 						_logger.critical('[620] Item %s configuration or data error!' % object_name)

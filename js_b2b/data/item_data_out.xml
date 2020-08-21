@@ -396,7 +396,7 @@ def is_notifiable(self, action, vals):
         and self.state == 'assigned' # Y el estado es 'assigned'
         and self.picking_type_id.code == 'incoming' # Y es un INT
         and self.purchase_line_id # Y hace referencia a una línea de compra
-        and datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now() or action == 'delete') # Y la fecha es superior a la actual
+        and (action == 'delete' or datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now())) # Y la fecha es superior a la actual o es un borrado
 
 def related_to(self, action):
     return 'product.template,%s' % self.product_id.product_tmpl_id.id

@@ -49,10 +49,10 @@ class B2bController(http.Controller):
 				_logger.critical(debug_str)
 				return 'ERROR 500'
 
-		except ValueError:
+		except ValueError as e:
 
 			# Invalid JSON
-			_logger.error("Invalid JSON received")
+			_logger.error("Invalid JSON? %s" % e)
 			return 'ERROR 400'
 
 	@http.route([
