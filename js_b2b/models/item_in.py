@@ -87,7 +87,7 @@ class B2bItemsIn(models.Model):
 		# Data check
 		if data and type(data) is dict:
 
-			company_id = data.get('company', 1)
+			company_id = data.get('company_id', 1)
 
 			# Change current company (mandatory)
 			if company_id in self.env.user.company_ids.ids:

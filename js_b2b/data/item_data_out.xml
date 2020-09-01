@@ -36,7 +36,7 @@ def get_data(self, action):
     'name', 
     'sequence',
     'html_color',
-    'image_color'
+    'public_image_name'
 )
 
 def is_notifiable(self, action, vals):

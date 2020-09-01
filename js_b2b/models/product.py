@@ -268,7 +268,7 @@ class ProductAttributeValue(models.Model):
 
 	# PublicImage params
 	_attr_image_model_field = 'image_color'
-	_max_public_file_size = (62, 62)
+	_max_public_file_size = (None, 62)
 
 	is_color = fields.Boolean(related='attribute_id.is_color', store=False)
 	html_color = fields.Char(string='HTML Color', oldname='color', help="Here you can set a specific HTML color index (e.g. #ff0000) to display the color on the website if the attibute type is 'Color'.")
