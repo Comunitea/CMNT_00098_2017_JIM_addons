@@ -126,13 +126,14 @@ class JSync(object):
 		"""
 		Filter and normalizes item data (data)
 
-		:param vals: Item data to update (from model)
+		:param vals: Item data to update (from model) * DEPRECATED
 		:return: dict
 
-		data key modifiers:
-			fixed:xxx -> Sends xxx always
-			field_xxx_name:xxx -> Sends xxx field if field_xxx_name has changed
-			xxx: -> Sends xxx field if has changed (no modifier)
+		* DEPRECATED
+		* data key modifiers:
+		* 	fixed:xxx -> Sends xxx always
+		* 	field_xxx_name:xxx -> Sends xxx field if field_xxx_name has changed
+		* 	xxx: -> Sends xxx field if has changed (no modifier)
 		"""
 
 		_logger.debug("--- Normalizando datos ----")
@@ -141,24 +142,24 @@ class JSync(object):
 
 		if self.data and type(self.data) is dict:
 			for field, value in self.data.items():
-				obj_old = obj_new = field
+				# obj_old = obj_new = field
 				# If field have :
-				if ':' in field:
-					# Before :
-					obj_old = field[:field.index(':')]
-					# After :
-					obj_new = field[field.index(':') + 1:]
-					# Replace key
-					self.data[obj_new] = self.data.pop(field)
-				if obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
-					# Remove field because is not found in vals
-					del self.data[obj_new]
-				elif type(value) is list:
+				# if ':' in field:
+				#	# Before :
+				#	obj_old = field[:field.index(':')]
+				#	# After :
+				#	obj_new = field[field.index(':') + 1:]
+				#	# Replace key
+				#	self.data[obj_new] = self.data.pop(field)
+				# if obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
+				#	# Remove field because is not found in vals
+				#	del self.data[obj_new]
+				if type(value) is list:
 					# Convert lits to tuples
-					self.data[obj_new] = tuple(value)
+					self.data[field] = tuple(value)
 				elif type(value) is unicode:
 					# Decode unicode str's to utf-8
-					self.data[obj_new] = value.strip().decode('utf-8', 'replace')
+					self.data[field] = value.strip().decode('utf-8', 'replace')
 
 		_logger.debug("Datos normalizados %s" % self.data)
 		return self.data

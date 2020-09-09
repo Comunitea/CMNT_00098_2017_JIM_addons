@@ -18,7 +18,7 @@ class MergePartner(models.TransientModel):
 
 		# Partners to unlink
 		for partner in self.partner_ids - self.dst_partner_id:
-			packets += partner.b2b_record('delete', False, auto_send=False)
+			packets += partner.b2b_record('delete', auto_send=False)
 		
 		super(MergePartner, self).action_merge()
 
