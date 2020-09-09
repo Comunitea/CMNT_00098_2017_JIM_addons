@@ -135,7 +135,7 @@ class BaseB2B(models.AbstractModel):
 		return items_list
 
 	@api.multi
-	def b2b_record(self, mode, conf_items_before=None, auto_send=True, user_notify=True, sub_methods=True):
+	def b2b_record(self, mode, vals=None, conf_items_before=None, auto_send=True, user_notify=True, sub_methods=True):
 		"""
 		B2B Action Trigger
 
@@ -260,7 +260,7 @@ class BaseB2B(models.AbstractModel):
 			if b2b_evaluate:
 				items_to_send = record.is_notifiable_check('update', vals)
 			if super(BaseB2B, record).write(vals) and b2b_evaluate:
-				record.b2b_record('update', conf_items_before=items_to_send)
+				record.b2b_record('update', vals, conf_items_before=items_to_send)
 		return True
 
 	@api.multi
