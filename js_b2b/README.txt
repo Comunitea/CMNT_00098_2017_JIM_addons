@@ -87,3 +87,7 @@ Code:
 		...
 
 		Devolverá un único diccionario de datos, que se pasará al modelo para crear el registro
+
+-- CAMBIOS EN LA BASE DE ODOO --
+
+En Odoo 10 el tamaño de las imágenes grandes está hardcodeado en el fichero odoo/tools/image.py línea 140 y se ha cambiado a 1920 para que se puedan pasar con más resolución

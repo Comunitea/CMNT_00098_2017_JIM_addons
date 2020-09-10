@@ -89,9 +89,6 @@ class ProductTemplate(models.Model):
 	_name = "product.template"
 	_inherit = ["product.template", "b2b.image"]
 
-	# PublicImage params
-	# _attr_image_model_field = 'image_medium'
-
 	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
 	public_categ_ids = fields.Many2many('product.public.category', string='Website Product Category', help="Categories for stores that sells to end customer")
 	product_image_ids = fields.One2many('product.image', 'product_tmpl_id', string='Images')
