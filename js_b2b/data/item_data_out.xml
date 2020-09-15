@@ -392,11 +392,11 @@ def is_notifiable(self, action, vals):
     variant_published = self.product_id.website_published if self.product_id.product_tmpl_id.product_variant_count > 1 else product_published
     return (product_published # El producto relaccionado está publicado
         and variant_published # La variante relaccionada está publicada
-        and self.picking_type_id.id == 13 # Y el tipo de picking es 'Recepciones (MECALUX)'
+        and self.picking_id.picking_type_id.id == 13 # Y el tipo de picking es 'Recepciones (MECALUX)'
         and self.state == 'assigned' # Y el estado es 'assigned'
-        and self.picking_type_id.code == 'incoming' # Y es un INT
-        and self.purchase_line_id # Y hace referencia a una línea de compra
-        and (action == 'delete' or datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now())) # Y la fecha es superior a la actual o es un borrado
+        and self.picking_id.picking_type_id.code == 'incoming' # Y es un INT
+        and self.group_id # Y tiene un grupo de abastecimiento
+        and (datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now() or action == 'delete')) # Y la fecha es superior a la actual o es un borrado
 
 def related_to(self, action):
     return 'product.template,%s' % self.product_id.product_tmpl_id.id

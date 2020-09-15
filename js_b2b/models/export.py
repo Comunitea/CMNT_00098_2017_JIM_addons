@@ -12,12 +12,21 @@ _logger = logging.getLogger('B2B-EXPORT')
 
 class B2BExport(models.Model):
 	_name = "b2b.export"
-	_log_filename = 'b2b.export.log'
 	_sql_constraints = [('res_id_unique', 'unique(res_id)', 'Export res_id needs to be unique!')]
-
 	name = fields.Char(required=True, translate=False, help="Conf item name") 
 	res_id = fields.Char(required=True, translate=False, help="Record and model [model_name,record_id]")
 	rel_id = fields.Char(required=False, translate=False, help="Related to [model_name,record_id]")
+
+	# ------------------------------------ CUSTOM LOG FILES ------------------------------------
+
+	@api.model
+	def write_to_log(self, txt, file, mode="aw+"):
+		module_dir = path.abspath(path.join(path.dirname(path.realpath(__file__)), pardir))
+		log_file = path.join(module_dir, 'static', 'log', file + '.log')
+		with open(log_file, mode) as file:
+			date = fields.Datetime.now()
+			file.write("%s %s\n" % (date, txt))
+			print("%s %s" % (date, txt))
 
 	# ------------------------------------ CUSTOM QUERIES ------------------------------------
 
@@ -200,7 +209,7 @@ class B2BExport(models.Model):
 
 		# Send to JSync
 		if prices:
-			_logger.debug('PRICELIST PRICES', prices)
+			self.write_to_log(str(prices), 'pricelist_item', "a+")
 			mode = 'update' if templates_filter is not None else 'replace'
 			self.send_multi('pricelist_item', prices, mode)
 
@@ -245,7 +254,7 @@ class B2BExport(models.Model):
 
 		# Send to JSync
 		if prices:
-			_logger.debug('CUSTOMER PRICES', prices)
+			self.write_to_log(str(prices), 'customer_price', "a+")
 			mode = 'update' if lines_filter is not None else 'replace'
 			self.send_multi('customer_price', prices, mode)
 
@@ -265,7 +274,7 @@ class B2BExport(models.Model):
 		
 		# Send to JSync
 		if stock:
-			_logger.debug('STOCK', stock)
+			self.write_to_log(str(stock), 'product_stock', "a+")
 			mode = 'replace' if all_products else 'update'
 			self.send_multi('product_stock', stock, mode)
 
