@@ -47,13 +47,13 @@ class B2bController(http.Controller):
 
 				# ERROR
 				_logger.critical(debug_str)
-				return 'ERROR 500'
+				return 'ERROR 500: Unauthorized!'
 
 		except ValueError as e:
 
-			# Invalid JSON
-			_logger.error("Invalid JSON? %s" % e)
-			return 'ERROR 400'
+			# Invalid JSON or data
+			_logger.error(e)
+			return e
 
 	@http.route([
 		'/jesie_to_b2b_sync'

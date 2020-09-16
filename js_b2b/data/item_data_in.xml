@@ -13,11 +13,15 @@
     return action
     
 def prepare_address_fields(self, address):
-    # Buscar provincia por CP y país
-    res_zip = self.env['res.better.zip'].search([('name', 'ilike', address.get('zip')), ('display_name', 'ilike', address.get('country_id'))], limit=1)
+    # Buscar provincia por ciudad, CP y país
+    res_zip = self.env['res.better.zip'].search([('city', 'ilike', address.get('state_id')), ('name', 'ilike', address.get('zip')), ('display_name', 'ilike', address.get('country_id'))], limit=1)
     
     if not res_zip:
-        # Buscar por nombre y país
+        # Buscar por CP y país (menos restrictiva)
+        res_zip = self.env['res.better.zip'].search([('name', 'ilike', address.get('zip')), ('display_name', 'ilike', address.get('country_id'))], limit=1)
+    
+    if not res_zip:
+        # Buscar por ciudad y país (puede dar un CP erróneo ya que hay ciudades con muchos códigos postales)
         res_zip = self.env['res.better.zip'].search([('city', 'ilike', address.get('state_id')), ('display_name', 'ilike', address.get('country_id'))], limit=1)
     
     # Si no se encontró la relacción

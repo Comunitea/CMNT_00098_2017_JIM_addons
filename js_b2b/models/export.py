@@ -131,13 +131,13 @@ class B2BExport(models.Model):
 		# All pricelists or filtered
 		pfilter = [('id', 'in', pricelists_filter)] if pricelists_filter else []
 		pricelists = tuple(self.env['product.pricelist'].search([('web', '=', True), ('active', '=', True)] + pfilter).mapped(lambda p: (p.id, p.name, p.company_id.id)))
-		# Search params
+		# Search params, only published products by default
 		product_search_params = [('website_published', '=', True)]
 		# Limit search to this products
 		product_ids = templates_filter or self.__products_in_pricelists()
 		product_search_params.append(('id', 'in', product_ids))
-		# All products
-		products_ids = tuple(self.env['product.template'].search(product_search_params, limit=test_limit).ids)
+		# All filtered products ids
+		products_ids = tuple(self.env['product.template'].with_context(active_test=False).search(product_search_params, limit=test_limit).ids)
 		# All quantities
 		quantities = self.__pricelists_unique_quantities()
 		# Log info
@@ -154,54 +154,52 @@ class B2BExport(models.Model):
 				product_number += 1
 				percent = round((product_number / total_products) * 100, 1)
 				product = self.env['product.template'].browse(product_id)
-				# Only for web published products
-				if product.website_published:
-					# print("--------------------------------------------------------------------")
-					# print(":: %s%% [%s] %s" % (percent, product.default_code, product.name))
-					# print("--------------------------------------------------------------------")
-					# print(":: %10s\t%10s\t%6s\t%8s" % ('PRICELIST', 'VARIANT', 'QTY', 'PRICE'))
-					# For each pricelist
-					for pricelist in pricelists:
-						# For each quantity
-						for min_qty in _search_pricelist_quantities(quantities, pricelist[0]):
-							# Product in pricelist & qty context
-							# pricelist_id = self.env['product.pricelist'].browse(pricelist[0])
-							# self.get_product_price(product, min_qty, False, False)
-							product_in_ctx = product.with_context({ 'pricelist': pricelist[0], 'quantity': min_qty })
-							# Get all variant prices
-							variants_prices = tuple(product_in_ctx.product_variant_ids.mapped('price'))
-							# Same price in all variants
-							if all(x==variants_prices[0] for x in variants_prices if variants_prices[0]):
-								price = None if operation == 'delete' and not variant else round(variants_prices[0], prices_precision)
+				# print("--------------------------------------------------------------------")
+				# print(":: %s%% [%s] %s" % (percent, product.default_code, product.name))
+				# print("--------------------------------------------------------------------")
+				# print(":: %10s\t%10s\t%6s\t%8s" % ('PRICELIST', 'VARIANT', 'QTY', 'PRICE'))
+				# For each pricelist
+				for pricelist in pricelists:
+					# For each quantity
+					for min_qty in _search_pricelist_quantities(quantities, pricelist[0]):
+						# Product in pricelist & qty context
+						# pricelist_id = self.env['product.pricelist'].browse(pricelist[0])
+						# self.get_product_price(product, min_qty, False, False)
+						product_in_ctx = product.with_context({ 'pricelist': pricelist[0], 'quantity': min_qty })
+						# Get all variant prices
+						variants_prices = tuple(product_in_ctx.product_variant_ids.mapped('price'))
+						# Same price in all variants
+						if all(x==variants_prices[0] for x in variants_prices if variants_prices[0]):
+							price = None if operation == 'delete' and not variant else round(variants_prices[0], prices_precision)
+							# If price is not 0 and not in prices list yet with qty 1
+							product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
+							if not bool(list(product_filter)) and (operation == 'delete' or price):
+								# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
+								prices.append({ 
+									'company_id': pricelist[2] or None,
+									'pricelist_id': pricelist[0],
+									'product_id': product_id,
+									'variant_id': None,
+									'quantity': min_qty,
+									'price': price
+								})
+						else:
+							# For each variant
+							for v in range(len(variants_prices)):
+								variant_id = product_in_ctx.product_variant_ids.ids[v]
+								price = None if operation == 'delete' and variant_id == variant else round(variants_prices[v], prices_precision)
 								# If price is not 0 and not in prices list yet with qty 1
-								product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
+								product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == variant_id and x['quantity'] == 1 and x['price'] == price, prices)
 								if not bool(list(product_filter)) and (operation == 'delete' or price):
-									# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
+									# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
 									prices.append({ 
 										'company_id': pricelist[2] or None,
 										'pricelist_id': pricelist[0],
 										'product_id': product_id,
-										'variant_id': None,
+										'variant_id': variant_id,
 										'quantity': min_qty,
 										'price': price
 									})
-							else:
-								# For each variant
-								for v in range(len(variants_prices)):
-									variant_id = product_in_ctx.product_variant_ids.ids[v]
-									price = None if operation == 'delete' and variant_id == variant else round(variants_prices[v], prices_precision)
-									# If price is not 0 and not in prices list yet with qty 1
-									product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == variant_id and x['quantity'] == 1 and x['price'] == price, prices)
-									if not bool(list(product_filter)) and (operation == 'delete' or price):
-										# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
-										prices.append({ 
-											'company_id': pricelist[2] or None,
-											'pricelist_id': pricelist[0],
-											'product_id': product_id,
-											'variant_id': variant_id,
-											'quantity': min_qty,
-											'price': price
-										})
 		except Exception as e:
 			_logger.critical('[b2b_pricelists_prices] ERROR EN EL BUCLE! %s' % e)
 		finally:
