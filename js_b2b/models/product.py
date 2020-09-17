@@ -97,7 +97,9 @@ class ProductTemplate(models.Model):
 	@api.multi
 	def has_valid_barcode(self, code_type='ean13'):
 		self.ensure_one()
-		return barcodenumber.check_code(code_type, self.barcode)
+		if self.barcode:
+			return barcodenumber.check_code(code_type, self.barcode)
+		return False
 
 	@api.multi
 	def website_publish_button(self):
@@ -126,26 +128,27 @@ class ProductTemplate(models.Model):
 	@api.multi
 	def write(self, vals):
 
-		# Check if can be published
-		if 'website_published' in vals:
-			for product in self:
-				if not product.website_published and vals['website_published']:
-					if not product.tag_ids:
-						raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
-					if not product.public_categ_ids:
-						raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
-					if product.barcode and not product.has_valid_barcode():
-						raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
-					if product.type != 'product':
-						raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
+		for product in self:
+			# Check if product can be published
+			if not product.website_published and vals.get('website_published'):
+				if not product.tag_ids:
+					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
+				if not product.public_categ_ids:
+					raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
+				if not product.barcode or not product.has_valid_barcode():
+					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
+				if product.type != 'product':
+					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
+			# Check if product can stay published
+			elif product.website_published and (not product.tag_ids or not product.public_categ_ids or not product.barcode or not product.has_valid_barcode() or product.type != 'product'):
+				vals.update({ 'website_published': False })
 
 		updated = super(ProductTemplate, self).write(vals)
 
-		# Update website_published on variants
 		if 'website_published' in vals:
 			for product in self:
-				# Publish variants
-				product.mapped('product_variant_ids').write({ 'website_published': product.website_published })
+				# Publish/unpublish variants
+				product.mapped('product_variant_ids').write({ 'website_published': vals['website_published'] })
 
 		return updated
 
@@ -188,7 +191,9 @@ class ProductProduct(models.Model):
 	@api.multi
 	def has_valid_barcode(self, code_type='ean13'):
 		self.ensure_one()
-		return barcodenumber.check_code(code_type, self.barcode)
+		if self.barcode:
+			return barcodenumber.check_code(code_type, self.barcode)
+		return False
 
 	@api.multi
 	def website_publish_button(self):
@@ -208,18 +213,20 @@ class ProductProduct(models.Model):
 	@api.multi
 	def write(self, vals):
 
-		# Check if can be published
-		if 'website_published' in vals:
-			for variant in self:
-				if not variant.website_published and vals['website_published']:
-					if not variant.product_tmpl_id.website_published:
-						raise ValidationError(_(base_product_publish_error) + _('template is unpublished.'))
-					if not variant.tag_ids:
-						raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
-					if variant.barcode and not variant.has_valid_barcode():
-						raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
-					if variant.type != 'product':
-						raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
+		# Check if variant can be published
+		for variant in self:
+			if not variant.website_published and vals.get('website_published'):
+				if not variant.product_tmpl_id.website_published:
+					raise ValidationError(_(base_product_publish_error) + _('template is unpublished.'))
+				if not variant.tag_ids:
+					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
+				if not variant.barcode and not variant.has_valid_barcode():
+					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
+				if variant.type != 'product':
+					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
+			# Check if variant can stay published
+			elif not variant.product_tmpl_id.website_published or not variant.tag_ids or not variant.barcode and not variant.has_valid_barcode() or variant.type != 'product':
+				vals.update({ 'website_published': False })
 
 		return super(ProductProduct, self).write(vals)
 
@@ -256,6 +263,14 @@ class ProductTag(models.Model):
 	child_ids = fields.One2many(domain=['|', ('active', '=', True), ('active', '=', False)])
 	sequence = fields.Integer(help="Gives the sequence order for tags")
 	public_image_name = fields.Char('Tag Public File Name')
+
+	@api.one
+	def unlink(self):
+		if not self.child_ids:
+			super(ProductTag, self).unlink()
+		else:
+			raise ValidationError(_("Delete child tags first!"))
+		return True
 
 ####################### ATRIBUTOS #######################
 
@@ -296,11 +311,12 @@ class ProductPublicCategory(models.Model):
 
 	name = fields.Char(required=True, translate=True)
 	parent_id = fields.Many2one('product.public.category', string='Parent Category', index=True)
-	child_id = fields.One2many('product.public.category', 'parent_id', string='Children Categories')
+	child_ids = fields.One2many('product.public.category', 'parent_id', string='Children Categories')
 	sequence = fields.Integer(help="Gives the sequence order when displaying a list of product categories.")
 	image = fields.Binary(attachment=True, help="This field holds the image used as image for the category, limited to 1280px.")
 	public_image_name = fields.Char('Category Public File Name')
 
+	@api.one
 	@api.constrains('parent_id')
 	def check_parent_id(self):
 		if not self._check_recursion():
@@ -317,6 +333,14 @@ class ProductPublicCategory(models.Model):
 				parent_category = parent_category.parent_id
 			res.append((category.id, ' / '.join(reversed(names))))
 		return res
+
+	@api.one
+	def unlink(self):
+		if not self.child_ids:
+			super(ProductPublicCategory, self).unlink()
+		else:
+			raise ValidationError(_("Delete child categories first!"))
+		return True
 
 ####################### IMÁGENES DE PRODUCTO #######################
 

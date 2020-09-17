@@ -86,9 +86,12 @@ def get_data(self, action):
             <field name="code">fields_to_watch = ('id', 'name', 'parent_id', 'public_image_name', 'sequence', 'active', 'web')
 
 def is_notifiable(self, action, vals):
-    return True
-
+    return action != 'update' or bool(vals)
+    
 def get_data(self, action):
+    if b2b['crud_mode'] == 'delete':
+        b2b['affected_products_ids'] = self.env['product.template'].search([('tag_ids', '=', self.id)]).ids
+        
     return {
         'jim_id': self.id,
         'name': self.get_field_translations('name'),
@@ -97,7 +100,12 @@ def get_data(self, action):
         'sequence': self.sequence,
         # Está activa y activa para la web (y la categoría padre también)
         'active': bool(self.active and self.web and (not self.parent_id or (self.parent_id and self.parent_id.web)))
-    }</field>
+    }
+    
+def pos_data(self, action):
+    if 'affected_products_ids' in b2b and b2b['crud_mode'] == 'delete' and not self.exists():
+        for product in self.env['product.template'].browse(b2b['affected_products_ids']):
+            product.tag_ids = product.tag_ids.ids</field>
         </record>
 
         <record id="b2b_item_out_5" model="b2b.item.out">
@@ -112,13 +120,21 @@ def is_notifiable(self, action, vals):
     return True
 
 def get_data(self, action):
+    if b2b['crud_mode'] == 'delete':
+        b2b['affected_products_ids'] = self.env['product.template'].search([('tag_ids', '=', self.id)]).ids
+    
     return {
         'jim_id': self.id,
         'name': self.get_field_translations('name'),
         'parent_id': self.parent_id.id if self.parent_id else None,
         'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None,
         'sequence': self.sequence
-    }</field>
+    }
+    
+def pos_data(self, action):
+    if 'affected_products_ids' in b2b and b2b['crud_mode'] == 'delete' and not self.exists():
+        for product in self.env['product.template'].browse(b2b['affected_products_ids']):
+            product.public_categ_ids = product.public_categ_ids.ids</field>
         </record>
 
         <record id="b2b_item_out_6" model="b2b.item.out">
@@ -546,7 +562,7 @@ def related_to(self, action):
 def get_data(self, action):
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
     # de forma que los campos que no se modifican al validar no se enviarían
-    doc_data = { 'fixed:jim_id': self.id }
+    doc_data = { 'jim_id': self.id }
     
     # If not a delete mode
     if b2b['crud_mode'] != 'delete':
@@ -598,7 +614,7 @@ def related_to(self, action):
 def get_data(self, action):
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
     # de forma que los campos que no se modifican al validar no se enviarían
-    doc_data = { 'fixed:jim_id': self.id }
+    doc_data = { 'jim_id': self.id }
     
     # If not a delete mode
     if b2b['crud_mode'] != 'delete':
@@ -646,7 +662,7 @@ def related_to(self, action):
 def get_data(self, action):
     # Todos los campos son fixed, ya que hasta que se valida no se notifica
     # de forma que los campos que no se modifican al validar no se enviarían
-    doc_data = { 'fixed:jim_id': self.id }
+    doc_data = { 'jim_id': self.id }
     
     # If not a delete mode
     if b2b['crud_mode'] != 'delete':

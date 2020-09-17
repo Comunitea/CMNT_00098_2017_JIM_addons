@@ -61,12 +61,16 @@ class Subprocess(object):
 				_logger.debug("Creado nuevo cursor para el subproceso...")
 				# Autocommit ON
 				new_cr.autocommit(True)
-				# Fresh record
-				record_issolated = record.with_env(record.env(cr=new_cr))
-				# Call the method
-				method(record_issolated, mode)
-				# Process ends
-				_logger.info("Subproceso finalizado!")
+
+				try:
+					# Fresh record
+					record_issolated = record.with_env(record.env(cr=new_cr))
+					# Call the method
+					method(record_issolated, mode)
+				except Exception as e:
+					_logger.error(e)
+				finally:
+					_logger.info("Subproceso finalizado!")
 
 class Chrono(object):
 
@@ -135,10 +139,6 @@ class JSync(object):
 		* 	field_xxx_name:xxx -> Sends xxx field if field_xxx_name has changed
 		* 	xxx: -> Sends xxx field if has changed (no modifier)
 		"""
-
-		_logger.debug("--- Normalizando datos ----")
-		_logger.debug("Datos de origen: %s" % self.data)
-		_logger.debug("Comparar con: %s" % vals)
 
 		if self.data and type(self.data) is dict:
 			for field, value in self.data.items():
