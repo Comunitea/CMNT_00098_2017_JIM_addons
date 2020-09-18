@@ -95,10 +95,10 @@ class ProductTemplate(models.Model):
 	public_image_name = fields.Char('Product Public Image Name')
 
 	@api.multi
-	def has_valid_barcode(self, code_type='ean13'):
+	def has_valid_barcode(self, code_type='ean13', barcode=None):
 		self.ensure_one()
-		if self.barcode:
-			return barcodenumber.check_code(code_type, self.barcode)
+		if barcode or self.barcode:
+			return barcodenumber.check_code(code_type, barcode or self.barcode)
 		return False
 
 	@api.multi
@@ -129,18 +129,22 @@ class ProductTemplate(models.Model):
 	def write(self, vals):
 
 		for product in self:
+			tag_ids = vals.get('tags_ids', product.tag_ids)
+			barcode = vals.get('barcode', product.barcode)
+			ptype = vals.get('type', product.type)
+
 			# Check if product can be published
 			if not product.website_published and vals.get('website_published'):
-				if not product.tag_ids:
+				if not tag_ids:
 					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
-				if not product.public_categ_ids:
-					raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
-				if not product.barcode or not product.has_valid_barcode():
+				# if not product.public_categ_ids:
+				# 	raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
+				if not barcode or self.has_valid_barcode(barcode=barcode):
 					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
-				if product.type != 'product':
+				if ptype != 'product':
 					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
 			# Check if product can stay published
-			elif product.website_published and (not product.tag_ids or not product.public_categ_ids or not product.barcode or not product.has_valid_barcode() or product.type != 'product'):
+			elif product.website_published and (not tag_ids or (barcode and not self.has_valid_barcode(barcode=barcode)) or ptype != 'product'):
 				vals.update({ 'website_published': False })
 
 		updated = super(ProductTemplate, self).write(vals)
@@ -215,17 +219,21 @@ class ProductProduct(models.Model):
 
 		# Check if variant can be published
 		for variant in self:
+			tag_ids = vals.get('tags_ids', variant.tag_ids)
+			barcode = vals.get('barcode', variant.barcode)
+			ptype = vals.get('type', variant.type)
+
 			if not variant.website_published and vals.get('website_published'):
 				if not variant.product_tmpl_id.website_published:
 					raise ValidationError(_(base_product_publish_error) + _('template is unpublished.'))
-				if not variant.tag_ids:
+				if not tag_ids:
 					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
-				if not variant.barcode and not variant.has_valid_barcode():
+				if not barcode or self.has_valid_barcode(barcode=barcode):
 					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
-				if variant.type != 'product':
+				if ptype != 'product':
 					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
 			# Check if variant can stay published
-			elif not variant.product_tmpl_id.website_published or not variant.tag_ids or not variant.barcode and not variant.has_valid_barcode() or variant.type != 'product':
+			elif variant.product_tmpl_id.website_published and (not tag_ids or (barcode and not self.has_valid_barcode(barcode=barcode)) or ptype != 'product'):
 				vals.update({ 'website_published': False })
 
 		return super(ProductProduct, self).write(vals)
@@ -347,16 +355,23 @@ class ProductPublicCategory(models.Model):
 class ProductImage(models.Model):
 	_name = "product.image"
 	_inherit = ["b2b.image"]
-	
+
+	def _default_attributes_domain(self):
+		tmpl_id = self.env.context.get('default_product_tmpl_id', 0)
+		tmpl_obj = self.env['product.template'].browse(tmpl_id)
+		domdict = self._onchange_product_attributes_values(tmpl_obj)
+		return domdict['domain']['product_attributes_values']
+
 	name = fields.Char('Name')
 	image = fields.Binary('Image', attachment=True, required=True)
 	public_image_name = fields.Char('Variant Image Public File Name')
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', copy=True)
-	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel')
+	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel', domain=_default_attributes_domain)
 
 	@api.onchange('product_tmpl_id', 'product_attributes_values')
-	def _onchange_product_attributes_values(self):
-		product_attributes_values_ids = set(self.product_tmpl_id.attribute_line_ids.mapped('value_ids').ids)
+	def _onchange_product_attributes_values(self, product_template=None):
+		if not product_template: product_template = self.product_tmpl_id
+		product_attributes_values_ids = set(product_template.attribute_line_ids.mapped('value_ids').ids)
 		exclude_attributes_ids = set(self.product_attributes_values.mapped('attribute_id.value_ids').ids)
 		attributes_values_ids = list(product_attributes_values_ids - exclude_attributes_ids)
 		return { 
