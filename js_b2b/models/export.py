@@ -114,8 +114,7 @@ class B2BExport(models.Model):
 
 	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, pricelists_filter=None, variant=None, operation=None):
 		_logger.info('[b2b_pricelists_prices] INICIO!')
-		prices = list()
-		
+
 		# Out prices
 		prices = list()
 		# Get decimals number
@@ -168,6 +167,12 @@ class B2BExport(models.Model):
 						product_in_ctx = product.with_context({ 'pricelist': pricelist[0], 'quantity': min_qty })
 						# Get all variant prices
 						variants_prices = tuple(product_in_ctx.product_variant_ids.mapped('price'))
+
+						# A 18/19/20 variant_prices no siempre tiene un precio 
+						# si se da ese caso metemos 0
+						if not variants_prices:
+							variants_prices = tuple([round(0, prices_precision),])
+
 						# Same price in all variants
 						if all(x==variants_prices[0] for x in variants_prices if variants_prices[0]):
 							price = None if operation == 'delete' and not variant else round(variants_prices[0], prices_precision)
