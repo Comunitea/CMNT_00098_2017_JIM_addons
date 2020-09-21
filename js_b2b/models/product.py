@@ -139,12 +139,12 @@ class ProductTemplate(models.Model):
 					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
 				# if not product.public_categ_ids:
 				# 	raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
-				if not barcode or self.has_valid_barcode(barcode=barcode):
+				if barcode and not self.has_valid_barcode(barcode=barcode):
 					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
 				if ptype != 'product':
 					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
 			# Check if product can stay published
-			elif product.website_published and (not tag_ids or (barcode and not self.has_valid_barcode(barcode=barcode)) or ptype != 'product'):
+			elif product.website_published and not all([bool(tag_ids), not barcode or self.has_valid_barcode(barcode=barcode), ptype == 'product']):
 				vals.update({ 'website_published': False })
 
 		updated = super(ProductTemplate, self).write(vals)
@@ -193,10 +193,10 @@ class ProductProduct(models.Model):
 	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
 
 	@api.multi
-	def has_valid_barcode(self, code_type='ean13'):
+	def has_valid_barcode(self, code_type='ean13', barcode=None):
 		self.ensure_one()
-		if self.barcode:
-			return barcodenumber.check_code(code_type, self.barcode)
+		if barcode or self.barcode:
+			return barcodenumber.check_code(code_type, barcode or self.barcode)
 		return False
 
 	@api.multi
@@ -228,12 +228,12 @@ class ProductProduct(models.Model):
 					raise ValidationError(_(base_product_publish_error) + _('template is unpublished.'))
 				if not tag_ids:
 					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
-				if not barcode or self.has_valid_barcode(barcode=barcode):
+				if barcode and not self.has_valid_barcode(barcode=barcode):
 					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
 				if ptype != 'product':
 					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
 			# Check if variant can stay published
-			elif variant.product_tmpl_id.website_published and (not tag_ids or (barcode and not self.has_valid_barcode(barcode=barcode)) or ptype != 'product'):
+			elif variant.product_tmpl_id.website_published and not all([bool(tag_ids), not barcode or self.has_valid_barcode(barcode=barcode), ptype == 'product']):
 				vals.update({ 'website_published': False })
 
 		return super(ProductProduct, self).write(vals)
