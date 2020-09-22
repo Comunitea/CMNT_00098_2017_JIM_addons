@@ -343,7 +343,8 @@ def get_data(self, action):
         'product_id': self.product_tmpl_id.id, 
         'name': self.get_field_translations('name'), 
         'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None, 
-        'attributes': self.product_attributes_values.ids
+        'attributes': self.product_attributes_values.ids,
+        'sequence': self.sequence
     }</field>
         </record>
 
@@ -577,7 +578,7 @@ def get_data(self, action):
             'name': self.number, 
             'date': self.date_invoice, 
             'total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-            'pdf': self.get_base64_report_pdf('account.report_invoice')
+            'pdf': self.get_base64_report_pdf('custom_documents.report_picking_grouped_invoice')
         })
         
     return doc_data</field>

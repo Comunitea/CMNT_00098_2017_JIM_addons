@@ -1,5 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Images Tab -->
+    <template id="images_tab" name="Imágenes de producto">
+        <kanban string="Product Images" default_order="sequence">
+            <field name="image" />
+            <templates>
+                <t t-name="kanban-box">
+                    <div class="oe_kanban_global_click">
+                        <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                        <div class="o_kanban_image">
+                            <img t-if="record.image.raw_value" t-att-src="'data:image/png;base64,'+record.image.raw_value"/>
+                        </div>
+                        <div class="oe_kanban_details">
+                            <field name="name" />
+                            <div class="product_image_tags">
+                                <field name="product_attributes_values" widget="many2many_tags" />
+                            </div>
+                        </div>
+                    </div>
+                </t>
+            </templates>
+        </kanban>
+    </template>
+
+    <!-- Product -->
+    <record id="product_template_form_view_b2b" model="ir.ui.view">
+        <field name="name">product.template.product.b2b.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook[last()]" position="inside">
+                <page string="Images" groups="product.group_product_variant">
+                    <field name="product_image_ids" mode="kanban" context="{'default_name': name, 'default_product_tmpl_id': id}">
+                        <t t-call="js_b2b.images_tab" />
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Variant -->
+    <record id="product_variant_form_view_b2b" model="ir.ui.view">
+        <field name="name">product.product.b2b.form</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook[last()]" position="inside">
+                <page string="Images" groups="product.group_product_variant">
+                    <field name="product_image_ids" mode="kanban" context="{'default_name': name, 'default_product_tmpl_id': product_tmpl_id}">
+                        <t t-call="js_b2b.images_tab" />
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
     <!-- Product & Variant -->
     <record id="product_template_form_view_b2b" model="ir.ui.view">
         <field name="name">product.template.product.b2b.form</field>
@@ -13,36 +68,11 @@
             </div>
 
             <group name="email_template_and_project" position="before">
-                <group name="website" string="Website">
+                <!--Oculto temporalmente por inidcaciones de Marta -->
+                <group name="website" string="Website" invisible="1">
                     <field name="public_categ_ids" widget="many2many_tags" string="Website Categories"/>
                 </group>
             </group>
-
-            <xpath expr="//notebook[last()]" position="inside">
-                <page string="Images" groups="product.group_product_variant">
-                    <field name="product_image_ids" mode="kanban" context="{'default_name': name, 'default_product_tmpl_id': active_id}">
-                        <kanban string="Product Images">
-                            <field name="image" />
-                            <templates>
-                                <t t-name="kanban-box">
-                                    <div class="oe_kanban_global_click">
-                                        <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
-                                        <div class="o_kanban_image">
-                                            <img t-if="record.image.raw_value" t-att-src="'data:image/png;base64,'+record.image.raw_value"/>
-                                        </div>
-                                        <div class="oe_kanban_details">
-                                            <field name="name" />
-                                            <div class="product_image_tags">
-                                                <field name="product_attributes_values" widget="many2many_tags" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </t>
-                            </templates>
-                        </kanban>
-                    </field>
-                </page>
-            </xpath>
         </field>
     </record>
 
@@ -87,7 +117,9 @@
                             </div>
                             <label class="oe_edit_only" for="name" string="Image Description (alt text)"/>
                             <h1><field name="name" placeholder="alt image text" required="1"/></h1>
-                            <label class="oe_edit_only" for="product_attributes" string="Attributes Applied"/>
+                            <label for="sequence" string="Manual order"/>
+                            <field name="sequence"/>
+                            <label class="oe_edit_only" for="product_attributes_values" string="Attributes Applied"/>
                             <div><field name="product_attributes_values" widget="many2many_tags" options="{ 'no_create_edit':True, 'no_quick_create': True }" readonly="not context.get('default_product_tmpl_id', False)"/></div>
                         </div>
                         

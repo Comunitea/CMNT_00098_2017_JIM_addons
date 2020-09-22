@@ -95,10 +95,17 @@ class ProductTemplate(models.Model):
 	public_image_name = fields.Char('Product Public Image Name')
 
 	@api.multi
-	def has_valid_barcode(self, code_type='ean13', barcode=None):
+	def has_valid_barcode(self, code_type=None, barcode=None):
 		self.ensure_one()
-		if barcode or self.barcode:
-			return barcodenumber.check_code(code_type, barcode or self.barcode)
+		barcode_to_check = barcode or self.barcode
+		barcode_len = len(str(barcode_to_check)) if barcode_to_check else 0
+
+		if barcode_to_check:
+			if not code_type and barcode_len == 12:
+				code_type = 'ean12'
+			elif not code_type:
+				code_type = 'ean13'
+			return barcodenumber.check_code(code_type, barcode_to_check)
 		return False
 
 	@api.multi
@@ -145,7 +152,7 @@ class ProductTemplate(models.Model):
 					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
 			# Check if product can stay published
 			elif product.website_published and not all([bool(tag_ids), not barcode or self.has_valid_barcode(barcode=barcode), ptype == 'product']):
-				vals.update({ 'website_published': False })
+				product.website_published = False
 
 		updated = super(ProductTemplate, self).write(vals)
 
@@ -193,10 +200,16 @@ class ProductProduct(models.Model):
 	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
 
 	@api.multi
-	def has_valid_barcode(self, code_type='ean13', barcode=None):
-		self.ensure_one()
-		if barcode or self.barcode:
-			return barcodenumber.check_code(code_type, barcode or self.barcode)
+	def has_valid_barcode(self, code_type=None, barcode=None):
+		barcode_to_check = barcode or self.barcode
+		barcode_len = len(str(barcode_to_check)) if barcode_to_check else 0
+
+		if barcode_to_check:
+			if not code_type and barcode_len == 12:
+				code_type = 'ean12'
+			elif not code_type:
+				code_type = 'ean13'
+			return barcodenumber.check_code(code_type, barcode_to_check)
 		return False
 
 	@api.multi
@@ -228,13 +241,13 @@ class ProductProduct(models.Model):
 					raise ValidationError(_(base_product_publish_error) + _('template is unpublished.'))
 				if not tag_ids:
 					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
-				if barcode and not self.has_valid_barcode(barcode=barcode):
+				if barcode and not variant.has_valid_barcode(barcode=barcode):
 					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
 				if ptype != 'product':
 					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
 			# Check if variant can stay published
-			elif variant.product_tmpl_id.website_published and not all([bool(tag_ids), not barcode or self.has_valid_barcode(barcode=barcode), ptype == 'product']):
-				vals.update({ 'website_published': False })
+			elif variant.product_tmpl_id.website_published and not all([bool(tag_ids), not barcode or variant.has_valid_barcode(barcode=barcode), ptype == 'product']):
+				variant.website_published = False
 
 		return super(ProductProduct, self).write(vals)
 
@@ -355,10 +368,11 @@ class ProductPublicCategory(models.Model):
 class ProductImage(models.Model):
 	_name = "product.image"
 	_inherit = ["b2b.image"]
+	_order = "sequence, id"
 
 	def _default_attributes_domain(self):
-		tmpl_id = self.env.context.get('default_product_tmpl_id', 0)
-		tmpl_obj = self.env['product.template'].browse(tmpl_id)
+		tmpl_id = self.env.context.get('default_product_tmpl_id')
+		tmpl_obj = self.env['product.template'].search([('id', '=', tmpl_id)], limit=1)
 		domdict = self._onchange_product_attributes_values(tmpl_obj)
 		return domdict['domain']['product_attributes_values']
 
@@ -367,6 +381,7 @@ class ProductImage(models.Model):
 	public_image_name = fields.Char('Variant Image Public File Name')
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', copy=True)
 	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel', domain=_default_attributes_domain)
+	sequence = fields.Integer(default=0, help="Gives the sequence order for images")
 
 	@api.onchange('product_tmpl_id', 'product_attributes_values')
 	def _onchange_product_attributes_values(self, product_template=None):

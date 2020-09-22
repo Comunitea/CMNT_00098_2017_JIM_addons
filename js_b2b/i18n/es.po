@@ -291,6 +291,11 @@ msgid "Image Description (alt text)"
 msgstr "Descripción de imagen (texto alt)"
 
 #. module: js_b2b
+#: model:ir.ui.view,arch_db:js_b2b.view_product_image_form_b2b
+msgid "Manual order"
+msgstr "Ordenamiento manual"
+
+#. module: js_b2b
 #: model:ir.model.fields,field_description:js_b2b.field_product_attribute_value_image_color
 msgid "Image color"
 msgstr "Imagen del color"
