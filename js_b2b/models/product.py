@@ -372,7 +372,7 @@ class ProductImage(models.Model):
 
 	def _default_attributes_domain(self):
 		tmpl_id = self.env.context.get('default_product_tmpl_id')
-		tmpl_obj = self.env['product.template'].search([('id', '=', tmpl_id)], limit=1)
+		tmpl_obj = self.env['product.template'].browse(tmpl_id)
 		domdict = self._onchange_product_attributes_values(tmpl_obj)
 		return domdict['domain']['product_attributes_values']
 
