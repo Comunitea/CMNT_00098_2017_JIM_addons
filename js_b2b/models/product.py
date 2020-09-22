@@ -6,8 +6,8 @@ from odoo.exceptions import ValidationError
 from ..base import ftp
 # lib copied from odoo 11
 from ..base import pycompat
-# barcode validation
-import barcodenumber
+# barcode validation https://github.com/charithe/gtin-validator
+from gtin import validator as gtinv
 
 base_product_publish_error = _('Error! You can not publish this product because ')
 image_without_file_error = _('Error! Can not save an image without media file!')
@@ -97,15 +97,8 @@ class ProductTemplate(models.Model):
 	@api.multi
 	def has_valid_barcode(self, code_type=None, barcode=None):
 		self.ensure_one()
-		barcode_to_check = barcode or self.barcode
-		barcode_len = len(str(barcode_to_check)) if barcode_to_check else 0
-
-		if barcode_to_check:
-			if not code_type and barcode_len == 12:
-				code_type = 'ean12'
-			elif not code_type:
-				code_type = 'ean13'
-			return barcodenumber.check_code(code_type, barcode_to_check)
+		if barcode or self.barcode:
+			return gtinv.is_valid_GTIN(barcode or self.barcode)
 		return False
 
 	@api.multi
@@ -201,15 +194,9 @@ class ProductProduct(models.Model):
 
 	@api.multi
 	def has_valid_barcode(self, code_type=None, barcode=None):
-		barcode_to_check = barcode or self.barcode
-		barcode_len = len(str(barcode_to_check)) if barcode_to_check else 0
-
-		if barcode_to_check:
-			if not code_type and barcode_len == 12:
-				code_type = 'ean12'
-			elif not code_type:
-				code_type = 'ean13'
-			return barcodenumber.check_code(code_type, barcode_to_check)
+		self.ensure_one()
+		if barcode or self.barcode:
+			return gtinv.is_valid_GTIN(barcode or self.barcode)
 		return False
 
 	@api.multi
