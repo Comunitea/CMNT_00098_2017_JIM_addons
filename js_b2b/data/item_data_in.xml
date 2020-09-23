@@ -13,24 +13,24 @@
     return action
     
 def prepare_address_fields(self, address):
-    # Buscar provincia por CP
-    res_zip = self.env['res.better.zip'].search([('name', 'ilike', address.get('zip'))], limit=1)
+    # Buscar provincia por CP y país
+    res_zip = self.env['res.better.zip'].search([('name', 'ilike', address.get('zip')), ('display_name', 'ilike', address.get('country_id'))], limit=1)
+    
     if not res_zip:
-        # Buscar por nombre
-        res_zip = self.env['res.better.zip'].search([('city', 'ilike', address.get('state_id'))], limit=1)
+        # Buscar por nombre y país
+        res_zip = self.env['res.better.zip'].search([('city', 'ilike', address.get('state_id')), ('display_name', 'ilike', address.get('country_id'))], limit=1)
     
-    # Si se encontró la relacción
-    if res_zip:
-        address.update({
-            'state_id': res_zip.state_id.id,
-            'country_id': res_zip.country_id.id
-        })
+    # Si no se encontró la relacción
+    if not res_zip:
+        raise ValueError('ERROR SO01: Country or state not found!')
     
-    # Datos extra
+    # Datos extra, ponemos en type 'other' para que no se pase a la web
     address.update({
-        'name': 'DROPSHIPPING',
+        'comment': 'DROPSHIPPING-WEB',
         'type': 'delivery',
-        'active': False
+        'active': False,
+        'state_id': res_zip.state_id.id,
+        'country_id': res_zip.country_id.id
     })
     return address
     
@@ -50,15 +50,13 @@ def prepare_order_fields(self, order):
             product = self.env['product.product'].browse(int(line['variant_id'])) if line['variant_id'] else self.env['product.template'].browse(int(line['product_id']))
             # Formamos la línea con la sintaxis del One2many
             One2many_order_lines.append(tuple([0, 0, {
-                'name': product.name,
                 'product_id': product.id if line['variant_id'] else product.product_variant_id.id,
-                'product_uom_qty': float(line['quantity']),
-                'price_unit': float(line['price'])
+                'product_uom_qty': float(line['quantity'])
             }]))
     
     # Actualizar campos + datos extra
     order.update({
-        'company_id': b2b.get('company_id', False),
+        'company_id': b2b.get('company_id', 1),
         'order_line': One2many_order_lines,
         'partner_id': int(order.get('partner_id', client.id)),
         'partner_invoice_id': partner_invoice_id,
@@ -84,7 +82,11 @@ def get_data(self, data):
             })
     
     # Devolvemos los datos para crear el pedido
-    return b2b['prepare_order_fields'](self, data)</field>
+    return b2b['prepare_order_fields'](self, data)
+    
+def pos_data(self, data):
+    if self and 'recalculate_prices' in self:
+        self.recalculate_prices()</field>
         </record>
         
     </data>

@@ -22,6 +22,7 @@
 		'jim_sale',
 		#'jim_addons',
 		#'js_categorization',
+		#'product_code_generator'
 		#'prices_export',
 		#'stock_export'
 	],
@@ -43,7 +44,8 @@
 		'views/item_out.xml',
 		'views/item_in.xml',
 		'views/export.xml',
-		'views/reports.xml'
+		'views/reports.xml',
+		'views/res_users.xml'
 	],
 	'external_dependencies': {
 		'python' : [
@@ -57,7 +59,6 @@
 	'contributors': [
 		"Pablo Luaces <pablo@jimsports.com>",
 	],
-	'post_init_hook': 'post_init_actions',
 	'application': True,
 	'installable': True
 }

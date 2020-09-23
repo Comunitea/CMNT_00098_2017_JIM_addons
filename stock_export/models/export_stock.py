@@ -359,12 +359,13 @@ class DeletedObject(models.Model):
         ### Fecha fin de filtro para moivmientos no debería de enviarse nunca
         ### Si envío days y no to_time, to_time = from_time + days
         start_time = time.time()
+        time_now = fields.datetime.now()
+        time_now_str = fields.Datetime.to_string(time_now)
+        
         if all:
-            domain = [('type', '=', 'product'), '|', ('active', '=', True), ('active', '=', False)]
+            domain = [('type', '=', 'product'), '|', ('active', '=', True), ('active', '=', False), ('website_published', '=', True)]
             product_ids = self.env['product.product'].search(domain)
         else:
-            time_now = fields.datetime.now()
-            time_now_str = fields.Datetime.to_string(time_now)
             if not from_time:
                 sql_ir_config = "select value from ir_config_parameter where key = 'last_call_export_xmlstock'"
                 self._cr.execute(sql_ir_config)
@@ -425,7 +426,7 @@ class DeletedObject(models.Model):
             print ("-- Evaluando de {} a {}".format(cont-inc, cont)); mid_time = time.time()
             res += [{'variant_id': x[field_id] if x.attribute_names else None,
                      'product_id': x['product_tmpl_id']['id'],
-                     'stock': x[stock_field] if x['active'] else 0} for x in product_ids[cont-inc: cont] if x[stock_field] >= 0]
+                     'stock': x[stock_field] if x[stock_field] > 0 else 0} for x in product_ids[cont-inc: cont] if x['website_published'] == True]
             print ("-- Evaluado. Tiempo: {} ".format(time.time() - mid_time))
             mid_time = time.time()
 

@@ -408,9 +408,8 @@ msgstr "Contacto"
 #: code:addons/js_b2b/models/res_partner.py:63
 #, python-format
 msgid ""
-"Partner email is not valid, check it!\n"
-"Valid separators: %s"
-msgstr "¡El email del contacto no es correcto! Separadores válidos: %s"
+"Partner email is not valid, check it!"
+msgstr "¡El email del contacto no es correcto!"
 
 #. module: js_b2b
 #: code:addons/js_b2b/models/res_partner.py:76

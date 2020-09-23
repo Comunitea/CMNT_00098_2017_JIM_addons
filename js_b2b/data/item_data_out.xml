@@ -162,6 +162,9 @@ def get_data(self, action):
 def pos_data(self, action):
     # Creamos los datos relaccionados
     if b2b['crud_mode'] == 'create':
+        # Crear las variantes
+        for variant in self.product_variant_ids:
+            variant.b2b_record('create', user_notify=False)
         # Crear las imágenes del producto
         for image in self.product_image_ids:
             image.b2b_record('create', user_notify=False)
@@ -433,6 +436,7 @@ def get_data(self, action):
 def is_notifiable(self, action, vals):
     return (self.active # Está activo
         and self.is_company # Y es empresa
+        and self.ref # Y tiene una referencia
         and self.vip_web_access # Y tiene asignada por lo menos una empresa para la web
         and self.customer # Y es cliente
         and self.property_product_pricelist and self.property_product_pricelist.id != 1 # Tiene tarifa y no es la publica
@@ -491,7 +495,7 @@ def pos_data(self, action):
 def is_notifiable(self, action, vals):
     return (self.active # Está activa
         and self.type in ('invoice', 'delivery') # Y es de tipo 'invoice' o 'delivery'
-        and self.name != 'DROPSHIPPING' # Y no es una dirección de dropshipping
+        and self.name != 'DROPSHIPPING' and self.comment != 'DROPSHIPPING-WEB' # Y no es una dirección de dropshipping
         and self.parent_id.is_notifiable_check() # Y el cliente es notificable
         and self.parent_id.type == 'contact') # Y el cliente es de tipo contacto (a veces crean una dirección de facturación asociada a otra dirección)
 
@@ -540,19 +544,27 @@ def related_to(self, action):
     return 'res.partner,%s' % self.commercial_partner_id.id
 
 def get_data(self, action):
-    # Obtenemos la moneda y posición
-    currency = self.currency_id.symbol
-    position = self.currency_id.position
-
-    return { 
-        'fixed:jim_id': self.id,
-        'commercial_partner_id:customer_id': self.commercial_partner_id.id,
-        'company_id': self.company_id.id,
-        'number:name': self.number, 
-        'date_invoice:date': self.date_invoice, 
-        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-        'amount_total:pdf': self.get_base64_report_pdf('account.report_invoice')
-    }</field>
+    # Todos los campos son fixed, ya que hasta que se valida no se notifica
+    # de forma que los campos que no se modifican al validar no se enviarían
+    doc_data = { 'fixed:jim_id': self.id }
+    
+    # If not a delete mode
+    if b2b['crud_mode'] != 'delete':
+        # Obtenemos la moneda y posición
+        currency = self.currency_id.symbol
+        position = self.currency_id.position
+        
+        # Actualizamos los datos
+        doc_data.update({ 
+            'fixed:customer_id': self.commercial_partner_id.id,
+            'fixed:company_id': self.company_id.id,
+            'fixed:name': self.number, 
+            'fixed:date': self.date_invoice, 
+            'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
+            'fixed:pdf': self.get_base64_report_pdf('account.report_invoice')
+        })
+        
+    return doc_data</field>
         </record>
 
         <record id="b2b_item_out_16" model="b2b.item.out">
@@ -576,8 +588,7 @@ def is_notifiable(self, action, vals):
     is_done = self.orig_sale_id and self.date_done and self.state == 'done'
     notifiable = (is_out_delivery # Es un albarán de salida o dropshipping
         and is_done # Y está asociado a una venta y tiene fecha de validación y está validado
-        and self.orig_sale_id.is_notifiable_check() # Y el pedido asociado es notificable
-        and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
+        and self.sale_id.is_notifiable_check() # Y el pedido asociado es notificable
         and self.date_done >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
     return notifiable
 
@@ -585,19 +596,27 @@ def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
 
 def get_data(self, action):
-    # Obtenemos la moneda y posición
-    currency = self.orig_sale_id.pricelist_id.currency_id.symbol
-    position = self.orig_sale_id.pricelist_id.currency_id.position
+    # Todos los campos son fixed, ya que hasta que se valida no se notifica
+    # de forma que los campos que no se modifican al validar no se enviarían
+    doc_data = { 'fixed:jim_id': self.id }
     
-    return { 
-        'fixed:jim_id': self.id,
-        'partner_id:customer_id': self.partner_id.commercial_partner_id.id,
-        'company_id': self.company_id.id,
-        'name': self.name,
-        'date_done:date': self.date_done, 
-        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-        'amount_total:pdf': self.get_base64_report_pdf('stock.report_deliveryslip')
-    }</field>
+    # If not a delete mode
+    if b2b['crud_mode'] != 'delete':
+        # Obtenemos la moneda y posición
+        currency = self.orig_sale_id.pricelist_id.currency_id.symbol
+        position = self.orig_sale_id.pricelist_id.currency_id.position
+        
+        # Actualizamos los datos
+        doc_data.update({ 
+            'fixed:customer_id': self.sale_id.partner_id.commercial_partner_id.id,
+            'fixed:company_id': self.company_id.id,
+            'fixed:name': self.name,
+            'fixed:date': self.date_done, 
+            'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
+            'fixed:pdf': self.get_base64_report_pdf('stock.report_deliveryslip')
+        })
+        
+    return doc_data</field>
         </record>
 
         <record id="b2b_item_out_17" model="b2b.item.out">
@@ -625,19 +644,27 @@ def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
 
 def get_data(self, action):
-    # Obtenemos la moneda y posición
-    currency = self.pricelist_id.currency_id.symbol
-    position = self.pricelist_id.currency_id.position
+    # Todos los campos son fixed, ya que hasta que se valida no se notifica
+    # de forma que los campos que no se modifican al validar no se enviarían
+    doc_data = { 'fixed:jim_id': self.id }
     
-    return { 
-        'fixed:jim_id': self.id,
-        'partner_id:customer_id': self.partner_id.commercial_partner_id.id,
-        'company_id': self.company_id.id,
-        'name': self.name, 
-        'date_order:date': self.date_order, 
-        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
-        'amount_total:pdf': self.get_base64_report_pdf('sale.report_saleorder')
-    }
+    # If not a delete mode
+    if b2b['crud_mode'] != 'delete':
+        # Obtenemos la moneda y posición
+        currency = self.pricelist_id.currency_id.symbol
+        position = self.pricelist_id.currency_id.position
+        
+        # Actualizamos los datos
+        doc_data.update({ 
+            'fixed:customer_id': self.partner_id.commercial_partner_id.id,
+            'fixed:company_id': self.company_id.id,
+            'fixed:name': self.name, 
+            'fixed:date': self.date_order, 
+            'fixed:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
+            'fixed:pdf': self.get_base64_report_pdf('sale.report_saleorder')
+        })
+        
+    return doc_data
     
 def pos_data(self, action):
     if b2b['crud_mode'] == 'delete':
