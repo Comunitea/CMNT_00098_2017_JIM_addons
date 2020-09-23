@@ -177,18 +177,16 @@ class B2bItemsOut(models.Model):
 					if notifiable_items and not record_on_jsync:
 
 						create_records += 1
-						print("@@ CREATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						#_logger.debug("@@ CREATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						#for packet in record.b2b_record('create', conf_items_before=notifiable_items, auto_send=False):
-						#	packet.send(notify=user_notify) # Don't notify
+						_logger.debug("@@ CREATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
+						for packet in record.b2b_record('create', conf_items_before=notifiable_items, auto_send=False):
+							packet.send(notify=user_notify) # Don't notify
 
 					elif not notifiable_items and record_on_jsync:
 
 						delete_records += 1
-						print("@@ DELETE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						#_logger.debug("@@ DELETE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						#for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], auto_send=False):
-						#	packet.send(notify=user_notify) # Don't notify
+						_logger.debug("@@ DELETE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
+						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], auto_send=False):
+							packet.send(notify=user_notify) # Don't notify
 
 					else:
 
