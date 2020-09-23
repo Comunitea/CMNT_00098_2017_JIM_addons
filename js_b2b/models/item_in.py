@@ -40,17 +40,21 @@ class B2bItemsIn(models.Model):
 
 	@api.model
 	def __check_model(self):
+
 		"""
 		Check if is a valid model
 		"""
+
 		if not self.model in self.env:
 			raise UserError(_('Model %s not found!') % model_name)
 
 	@api.model
 	def __check_code(self):
+
 		"""
 		Check if is a valid code
 		"""
+
 		try:
 			exec(self.code, locals())
 		except Exception as e:
@@ -65,7 +69,26 @@ class B2bItemsIn(models.Model):
 				raise UserError(_('Code Error!\n %s must be a function' % (method)))
 
 	@api.model
+	def __change_active_company(self, company_id):
+
+		"""
+		Change company
+		"""
+
+		if company_id not in self.env.user.company_ids.ids:
+			_logger.info('[400] User not authorized on company %s' % company_id)
+			return False
+		# Change current company (mandatory)
+		self.env.user.company_id = company_id
+		return True
+
+	@api.model
 	def evaluate(self, **kwargs):
+
+		"""
+		Evaluate config code
+		"""
+
 		b2b = dict()
 		# Introducimos el logger
 		b2b['logger'] = _logger
@@ -80,6 +103,7 @@ class B2bItemsIn(models.Model):
 
 	@api.model
 	def must_process(self, object_name, data, mode='create'):
+
 		"""
 		Check if item record is configured and do operation
 		"""
@@ -87,13 +111,10 @@ class B2bItemsIn(models.Model):
 		# Data check
 		if data and type(data) is dict:
 
-			company_id = data.get('company_id', 1)
-
 			# Change current company (mandatory)
-			if company_id in self.env.user.company_ids.ids:
-				self.env.user.company_id = company_id
-			else:
-				raise ValueError('B2B User can not have access to company %i' % company_id)
+			company_id = data.get('company_id', 1)
+			if not self.__change_active_company(company_id):
+				return False
 				
 			# Process item based on config
 			item = self.search([('name', '=', object_name), ('active', '=', True)], limit=1)
@@ -147,9 +168,11 @@ class B2bItemsIn(models.Model):
 
 	@api.model
 	def create(self, vals):
+
 		"""
 		Check model on create
 		"""
+
 		item = super(B2bItemsIn, self).create(vals)
 		item.__check_model()
 		item.__check_code()
@@ -157,9 +180,11 @@ class B2bItemsIn(models.Model):
 
 	@api.multi
 	def write(self, vals):
+
 		"""
 		Check model on write
 		"""
+
 		super(B2bItemsIn, self).write(vals)
 		for item in self:
 			item.__check_model()

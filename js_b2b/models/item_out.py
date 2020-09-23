@@ -224,7 +224,7 @@ class B2bItemsOut(models.Model):
 		"""
 		res = super(B2bItemsOut, self).write(vals)
 		for item in self:
-			if vals.get('model') or vals.get('active', item.active) == True:
+			if vals.get('model') or vals.get('active') == True:
 				item.__check_model()
 			if vals.get('code'):
 				item.__check_code()
