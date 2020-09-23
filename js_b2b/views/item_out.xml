@@ -132,7 +132,7 @@
         <field name="state">code</field>
         <field name="code">
 			for record in records:
-				record.sync_item('create')
+				record.sync_item()
         </field>
     </record>
 
