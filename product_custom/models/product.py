@@ -22,6 +22,7 @@ class ProductTemplate(models.Model):
     description_purchase = fields.Text(translate=False)
     tag_names = fields.Char('Tags', compute='_compute_tag_names', store=True)
     web = fields.Boolean('Web', compute="_compute_web_state", store=True)
+    list_price = fields.Float(default=0.0)
 
     @api.depends('tag_ids', 'tag_ids.web')
     def _compute_web_state(self):
