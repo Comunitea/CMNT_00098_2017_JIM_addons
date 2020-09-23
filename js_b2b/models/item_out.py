@@ -213,7 +213,7 @@ class B2bItemsOut(models.Model):
 		Check model & code on create
 		"""
 		item = super(B2bItemsOut, self).create(vals)
-		# item.__check_model()
+		item.__check_model()
 		item.__check_code()
 		return item
 
