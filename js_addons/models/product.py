@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
-import volumes
+from volumes import calcCubeVolume
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
@@ -11,11 +11,16 @@ class ProductTemplate(models.Model):
     product_size_depth = fields.Float('Depth', help="Product max depth in cm")
     volume = fields.Float(compute='_compute_volume', inverse=False, digits=(3,6), store=False, help="Computed volume of the product (cube formula) in m³")
 
+    # Sobreescribir product_custom por indicaciones de Comunitea
+    name = fields.Char(translate=True)
+    # description = fields.Text(translate=True)
+    list_price = fields.Float(default=0.0)
+
     #override
     @api.depends('product_size_depth', 'product_size_width', 'product_size_height')
     def _compute_volume(self):
         for record in self:
-            volumeInCm = volumes.calcCubeVolume(record.product_size_width, record.product_size_height, record.product_size_depth)
+            volumeInCm = calcCubeVolume(record.product_size_width, record.product_size_height, record.product_size_depth)
             record.volume = volumeInCm / 1000000
 
     def _set_variant_discontinued(self, values):
@@ -77,5 +82,5 @@ class ProductProduct(models.Model):
     @api.depends('product_size_depth', 'product_size_width', 'product_size_height')
     def _compute_volume(self):
         for record in self:
-            volumeInCm = volumes.calcCubeVolume(record.product_size_width, record.product_size_height, record.product_size_depth)
+            volumeInCm = calcCubeVolume(record.product_size_width, record.product_size_height, record.product_size_depth)
             record.volume = volumeInCm / 1000000

@@ -141,28 +141,3 @@ class B2bController(http.Controller):
 		else:
 
 			return 'No está autorizado para acceder a esta página'
-
-	@http.route([
-		'/js_addons_web_companies_to_b2b'
-	], type='http', auth='user', methods=['GET',])
-	def client_companies_to_b2b(self, execute=0, **kw):
-
-		if http.request.env.user.has_group('base.group_system'):
-
-			if execute:
-				# Eliminar datos de la tabla res_partner_res_company_web_access (vip_web_access)
-				http.request.env.cr.execute("TRUNCATE res_partner_res_company_web_access RESTART IDENTITY")
-
-				""" Copiar valores de res_partner_res_company_rel (group_companies_ids) a res_partner_res_company_web_access (vip_web_access)
-				omitiendo las empresas en las que el cliente no tiene tarifa """
-				http.request.env.cr.execute("INSERT INTO res_partner_res_company_web_access \
-					(SELECT res_partner_id, res_company_id FROM res_company_res_partner_rel \
-					LEFT JOIN ir_property ON ir_property.res_id = 'res.partner,' || res_partner_id AND ir_property.company_id = res_company_id AND name LIKE 'property_product_pricelist' \
-					WHERE ir_property.id IS NOT NULL \
-					GROUP BY res_partner_id, res_company_id)")
-
-			return '¡LISTO!' if execute else 'EMM... ¡FALTA ALGO!'
-
-		else:
-
-			return 'No está autorizado para acceder a esta página'
