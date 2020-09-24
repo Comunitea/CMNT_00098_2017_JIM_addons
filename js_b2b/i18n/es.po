@@ -639,7 +639,7 @@ msgstr "Usuario"
 #: model:ir.model.fields,field_description:js_b2b.field_res_partner_vip_web_access
 #: model:ir.model.fields,field_description:js_b2b.field_res_users_vip_web_access
 msgid "VIP Webs Access"
-msgstr "Acceso Web VIP"
+msgstr "Acceso Web"
 
 #. module: js_b2b
 #: model:ir.model.fields,field_description:js_b2b.field_product_image_public_file_name
