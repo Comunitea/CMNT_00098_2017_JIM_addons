@@ -239,7 +239,7 @@ msgstr "¡Error! No es posible guardar la imagen sin un fichero"
 #: code:addons/js_b2b/models/product.py:12
 #, python-format
 msgid "Error! You can not publish this product because "
-msgstr "¡Error! No puedes publicar este producto porque"
+msgstr "¡Error! No puedes publicar este producto porque "
 
 #. module: js_b2b
 #: code:addons/js_b2b/models/product.py:327
@@ -289,6 +289,11 @@ msgstr "Imágen"
 #: model:ir.ui.view,arch_db:js_b2b.view_product_image_form_b2b
 msgid "Image Description (alt text)"
 msgstr "Descripción de imagen (texto alt)"
+
+#. module: js_b2b
+#: model:ir.ui.view,arch_db:js_b2b.view_product_image_form_b2b
+msgid "Manual order"
+msgstr "Ordenamiento manual"
 
 #. module: js_b2b
 #: model:ir.model.fields,field_description:js_b2b.field_product_attribute_value_image_color
@@ -634,7 +639,7 @@ msgstr "Usuario"
 #: model:ir.model.fields,field_description:js_b2b.field_res_partner_vip_web_access
 #: model:ir.model.fields,field_description:js_b2b.field_res_users_vip_web_access
 msgid "VIP Webs Access"
-msgstr "Acceso Web VIP"
+msgstr "Acceso Web"
 
 #. module: js_b2b
 #: model:ir.model.fields,field_description:js_b2b.field_product_image_public_file_name

@@ -17,7 +17,7 @@ class BaseB2B(models.AbstractModel):
 	@api.model
 	def get_field_translations(self, field='name'):
 		"""
-		Get field translations dict for all models
+		Get field translations dict for active langs on all models
 
 		:param field: Field name string
 		:return: dict (ISO 639-1 + '-' + ISO 3166-1 Alpha-2)
@@ -36,14 +36,14 @@ class BaseB2B(models.AbstractModel):
 		# Query to get translations
 		self._cr.execute("SELECT lang, value FROM ir_translation WHERE type='model' AND name=%s AND res_id=%s", (field_name, self.id))
 		# Update translations dict
-		translations.update({ lang_code.replace('_', '-'):field_translation for lang_code, field_translation in self._cr.fetchall() })
+		translations.update({ lang_code.replace('_', '-'):field_translation for lang_code, field_translation in self._cr.fetchall() if lang_code.replace('_', '-') in translations })
 		# Return lang -> str dict
 		return translations
 
 	@api.model
 	def get_base64_report_pdf(self, model_name):
 		"""
-		Get base64 PDF document
+		Get PDF document as base64 string
 
 		:param model_name: Report model name string
 		:return: base64
@@ -205,7 +205,7 @@ class BaseB2B(models.AbstractModel):
 				# Obtenemos los datos
 				packet.data = b2b['get_data'](record, mode)
 				# Filtramos los datos
-				packet.filter_data(vals)
+				packet.filter_data()
 				# Si procede enviamos el paquete
 				if auto_send: packet.send(notify=user_notify)
 				# Guardamos el paquete
@@ -276,5 +276,5 @@ class BaseB2B(models.AbstractModel):
 				packets = record.b2b_record('delete', False, auto_send=False)
 			if super(BaseB2B, record).unlink() and b2b_evaluate:
 				for packet in packets:
-					packet.send(notify=False)
+					packet.send(notify=True)
 		return True

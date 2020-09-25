@@ -19,7 +19,8 @@ odoo.define('js_b2b.form_widgets', function (require) {
                 if (!this.$code_edit_button) this.$code_edit_button = this.$('button');
                 this.$code_edit_button.click(function(ev) {
                     ev.preventDefault();
-                    self.$input.attr('type', 'text');
+                    if (self.$input.attr('type') === 'color') self.$input.attr('type', 'text');
+                    else self.$input.attr('type', 'color');
                 });
             }
         },

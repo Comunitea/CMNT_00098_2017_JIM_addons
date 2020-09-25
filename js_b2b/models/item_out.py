@@ -114,7 +114,7 @@ class B2bItemsOut(models.Model):
 		return b2b
 
 	@api.one
-	def sync_item(self, mode='create', user_notify=False):
+	def sync_item(self, user_notify=False):
 		"""
 		Sync all model records
 		"""
@@ -135,20 +135,23 @@ class B2bItemsOut(models.Model):
 			if model not in excluded_models:
 				# Model specific queries
 				if model == 'stock.move':
-					search_query = ['&', '&', '&', ('state', 'in', ['assigned', 'done', 'cancel']), ('company_id', '=', 1), ('purchase_line_id', '!=', False), ('date_expected', '>=', str(datetime.now().date()))]
+					# Movimientos de stock de Jim y EME que tienen un alabarán de origen (group_id) y la fecha es igual o superior a la actual y el estado es asignado
+					search_query = [('company_id', 'in', [1, 11]), ('group_id', '!=', False), ('date_expected', '>=', str(datetime.now()))]
 				elif model == 'res.partner':
+					# Direcciones o clientes empresa
 					search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
-				elif model == 'product.tag':
-					search_query = ['|', ('active', '=', True), ('active', '=', False)]
 				elif model == 'account.invoice':
+					# Facturas de clientes que se exportaron
 					search_query = [('date_invoice', '>=', docs_min_date), ('commercial_partner_id', 'in', client_ids)]
 				elif model == 'stock.picking':
 					# Los albarares no se filtran por el cliente, ya que
-					# puede ser de DROPSIPPING y no ser notificable
+					# pueden ser de DROPSIPPING y no ser notificables
 					search_query = [('date_done', '>=', docs_min_date)]
 				elif model == 'sale.order':
+					# Pedidos de venta con fecha igual o superior a la establecida de clientes que se exportaron
 					search_query = [('date_order', '>=', docs_min_date), ('partner_id.commercial_partner_id', 'in', client_ids)]
-				elif model in ('product.template', 'product.product'):
+				elif model in ('product.template', 'product.product', 'product.tag'):
+					# Todos los registros (activos e inactivos)
 					only_active = False
 
 				# Get code model records
@@ -210,7 +213,7 @@ class B2bItemsOut(models.Model):
 		Check model & code on create
 		"""
 		item = super(B2bItemsOut, self).create(vals)
-		# item.__check_model()
+		item.__check_model()
 		item.__check_code()
 		return item
 
@@ -221,7 +224,7 @@ class B2bItemsOut(models.Model):
 		"""
 		res = super(B2bItemsOut, self).write(vals)
 		for item in self:
-			if vals.get('model') or vals.get('active', item.active) == True:
+			if vals.get('model') or vals.get('active') == True:
 				item.__check_model()
 			if vals.get('code'):
 				item.__check_code()

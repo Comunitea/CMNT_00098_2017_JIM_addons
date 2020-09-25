@@ -6,7 +6,7 @@ class Partner(BaseExtClass):
     _inherit = "res.partner"
 
     fields_to_watch = ('id', 'name', 'vat', 'email', 'web_password', 'property_product_pricelist', 'active', 'type',
-                       'parent_id', 'street', 'zip', 'city', 'country_id', 'company_id', 'group_companies_ids')
+                       'parent_id', 'street', 'zip', 'city', 'country_id', 'company_id', 'vip_web_access')
 
     def is_notifiable(self):
         # En res.partner se almacenan tanto las empresas, como empresas "hijas" (del mismo grupo), como contactos y
@@ -18,7 +18,7 @@ class Partner(BaseExtClass):
         #       * sea empresa (is_company == True)
         #       * sea cliente (customer == True)
         #       * tenga correo y contraseña
-        #   - En el campo 'group_companies_ids' se indique que el cliente tiene acceso web para alguna empresa del grupo
+        #   - En el campo 'vip_web_access' se indique que el cliente tiene acceso web para alguna empresa del grupo
         #
         # Si cumple los requisitos, notificamos si commercial_partner_id == id, es decir, se trata de un registro de
         # tipo "empresa padre"; en caso contrario, puede ser un contacto, una dirección de envío, una dirección de
@@ -30,7 +30,7 @@ class Partner(BaseExtClass):
 
             if self.commercial_partner_id.id == self.id:
                 self.fields_to_watch = ('id', 'name', 'vat', 'email', 'web_password', 'property_product_pricelist',
-                                        'active', 'type', 'parent_id', 'company_id', 'group_companies_ids')
+                                        'active', 'type', 'parent_id', 'company_id', 'vip_web_access')
                 return True
             else:
                 self.fields_to_watch = ('name', 'active', 'type', 'parent_id', 'street', 'zip', 'city', 'country_id',
@@ -71,9 +71,9 @@ class Partner(BaseExtClass):
         if self.commercial_partner_id.id == self.id: # Se trata de un IC
             pricelist_list = []
             valid = 'Y'
-            if self.group_companies_ids: # Si está asignado a alguna empresa del grupo
+            if self.vip_web_access: # Si está asignado a alguna empresa del grupo
                 # Recorremos la lista de compañías a las que puede tener acceso el IC para averiguar sus tarifas
-                for company in self.group_companies_ids:
+                for company in self.vip_web_access:
                     if self.env.user.company_id.id == company.id:
                         pricelist = self.property_product_pricelist
                     else:

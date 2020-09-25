@@ -26,8 +26,6 @@ class B2bController(http.Controller):
 		try:
 			# Process message
 			data_obj = http.request.params
-			item_user = data_obj.get('user_id', 0)
-			item_company = data_obj.get('company_id', 0)
 			item_name = data_obj.get('object')
 			item_action = data_obj.get('action', 'create')
 			item_data = data_obj.get('data')
@@ -35,13 +33,11 @@ class B2bController(http.Controller):
 			# Debug data
 			debug_str = "Message: " \
 					"\n    - name: {}" \
-					"\n    - user: {}" \
-					"\n    - company: {}" \
 					"\n    - operation: {}" \
-					"\n    - data: {}".format(item_name, item_user, item_company, item_action, item_data)
+					"\n    - data: {}".format(item_name, item_action, item_data)
 
 			# Process item
-			if http.request.env['b2b.item.in'].must_process(item_name, item_user, item_company, item_data, item_action):
+			if http.request.env['b2b.item.in'].must_process(item_name, item_data, item_action):
 
 				# OK
 				_logger.info(debug_str)
@@ -51,13 +47,13 @@ class B2bController(http.Controller):
 
 				# ERROR
 				_logger.critical(debug_str)
-				return 'ERROR 500'
+				return 'ERROR 500: Unauthorized!'
 
-		except ValueError:
+		except ValueError as e:
 
-			# Invalid JSON
-			_logger.error("Invalid JSON received")
-			return 'ERROR 400'
+			# Invalid JSON or data
+			_logger.error(e)
+			return e
 
 	@http.route([
 		'/jesie_to_b2b_sync'
@@ -141,31 +137,6 @@ class B2bController(http.Controller):
 				<p>ELIMINAR: %s</p>
 				<pre>%s</pre>
 			''' % (products_to_publish, products_to_unpublish, variants_to_publish, variants_to_unpublish, message)
-
-		else:
-
-			return 'No está autorizado para acceder a esta página'
-
-	@http.route([
-		'/js_addons_web_companies_to_b2b'
-	], type='http', auth='user', methods=['GET',])
-	def client_companies_to_b2b(self, execute=0, **kw):
-
-		if http.request.env.user.has_group('base.group_system'):
-
-			if execute:
-				# Eliminar datos de la tabla res_partner_res_company_web_access (vip_web_access)
-				http.request.env.cr.execute("TRUNCATE res_partner_res_company_web_access RESTART IDENTITY")
-
-				""" Copiar valores de res_partner_res_company_rel (group_companies_ids) a res_partner_res_company_web_access (vip_web_access)
-				omitiendo las empresas en las que el cliente no tiene tarifa """
-				http.request.env.cr.execute("INSERT INTO res_partner_res_company_web_access \
-					(SELECT res_partner_id, res_company_id FROM res_company_res_partner_rel \
-					LEFT JOIN ir_property ON ir_property.res_id = 'res.partner,' || res_partner_id AND ir_property.company_id = res_company_id AND name LIKE 'property_product_pricelist' \
-					WHERE ir_property.id IS NOT NULL \
-					GROUP BY res_partner_id, res_company_id)")
-
-			return '¡LISTO!' if execute else 'EMM... ¡FALTA ALGO!'
 
 		else:
 

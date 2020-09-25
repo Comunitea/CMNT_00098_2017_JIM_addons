@@ -56,7 +56,7 @@ class ProductTemplate(models.Model):
 				irecord.product_image_ids.unlink()
 
 				# Tiene variantes
-				if irecord.product_variant_ids > 1:
+				if len(irecord.product_variant_ids) > 1:
 					# Metemos de nuevo la imágen principal en la pestaña de imágenes
 					# para poder asignarle un atributo para la web
 					if imageBase64:
