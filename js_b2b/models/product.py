@@ -139,12 +139,12 @@ class ProductTemplate(models.Model):
 					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
 				# if not product.public_categ_ids:
 				# 	raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
-				if barcode and not self.has_valid_barcode(barcode=barcode):
+				if barcode and not product.has_valid_barcode(barcode=barcode):
 					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
 				if ptype != 'product':
 					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
 			# Check if product can stay published otherwise unpublish
-			elif product.website_published and not all([bool(tag_ids), not barcode or self.has_valid_barcode(barcode=barcode), ptype == 'product']):
+			elif product.website_published and not all([bool(tag_ids), not barcode or product.has_valid_barcode(barcode=barcode), ptype == 'product']):
 				super(ProductTemplate, product).write({ 'website_published': False })
 
 			updated = super(ProductTemplate, product).write(vals)
