@@ -134,7 +134,7 @@ class ProductTemplate(models.Model):
 			ptype = vals.get('type', product.type)
 
 			# Check if product can be published
-			if not product.website_published and vals.get('website_published'):
+			if not product.website_published and vals.get('website_published') == True:
 				if not tag_ids:
 					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
 				# if not product.public_categ_ids:
@@ -206,7 +206,12 @@ class ProductProduct(models.Model):
 		if not self.id:
 			raise ValidationError(_('Can not publish a variant before saving it!'))
 
-		self.website_published = not self.website_published
+		if self.attribute_names:
+			# Change variant published status
+			self.website_published = not self.website_published
+		else:
+			# Unique variant! Link tmpl published status
+			self.product_tmpl_id.website_published = not self.website_published
 
 	@api.model
 	def create(self, vals):
@@ -223,7 +228,7 @@ class ProductProduct(models.Model):
 			barcode = vals.get('barcode', variant.barcode)
 			ptype = vals.get('type', variant.type)
 
-			if not variant.website_published and vals.get('website_published'):
+			if not variant.website_published and vals.get('website_published') == True:
 				if not variant.product_tmpl_id.website_published:
 					raise ValidationError(_(base_product_publish_error) + _('template is unpublished.'))
 				if not tag_ids:
