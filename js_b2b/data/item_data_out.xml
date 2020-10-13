@@ -191,7 +191,11 @@ def pos_data(self, action):
                 p.b2b_record('create', user_notify=False)
         # Previsión de abastecimiento
         for stock_move in self.product_variant_id.stock_move_ids:
-            stock_move.b2b_record('create', user_notify=False)</field>
+            stock_move.b2b_record('create', user_notify=False)
+        # Enviar precios y stock (plantilla y variantes)
+        self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[self.id,])
+        self.env['b2b.export'].b2b_customers_prices(templates_filter=[self.id,])
+        self.env['b2b.export'].b2b_products_stock(export_all=[self.id,])</field>
         </record>
 
         <record id="b2b_item_out_7" model="b2b.item.out">
@@ -243,7 +247,11 @@ def pos_data(self, action):
                 p.b2b_record('create', user_notify=False)
         # Previsión de abastecimiento
         for stock_move in self.stock_move_ids:
-            stock_move.b2b_record('create', user_notify=False)</field>
+            stock_move.b2b_record('create', user_notify=False)
+        # Enviar precios y stock (plantilla y variantes)
+        self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[self.product_tmpl_id.id,])
+        self.env['b2b.export'].b2b_customers_prices(templates_filter=[self.product_tmpl_id.id,])
+        self.env['b2b.export'].b2b_products_stock(export_all=[self.product_tmpl_id.id,])</field>
         </record>
 
         <record id="b2b_item_out_8" model="b2b.item.out">

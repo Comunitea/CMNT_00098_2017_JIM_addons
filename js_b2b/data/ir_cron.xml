@@ -34,7 +34,7 @@
             <field name="active">True</field>
             <field name="model">b2b.export</field>
             <field name="function">b2b_customers_prices</field>
-            <field name="args">(None,)</field>
+            <field name="args">(None, None, None)</field>
         </record>
 
     </data>
