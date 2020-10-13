@@ -6,8 +6,8 @@ import logging
 
 _logger = logging.getLogger('B2B-RES.PARTNER')
 
-# Separadores de email válidos
-_partner_email_separators = (',', ';')
+# Email PCRE regex validation RFC2822 - https://regexr.com/2rhq7
+_email_rfc822_validation = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?"
 
 class MergePartner(models.TransientModel):
 	_inherit = 'base.partner.merge.automatic.wizard'
@@ -18,7 +18,7 @@ class MergePartner(models.TransientModel):
 
 		# Partners to unlink
 		for partner in self.partner_ids - self.dst_partner_id:
-			packets += partner.b2b_record('delete', False, auto_send=False)
+			packets += partner.b2b_record('delete', auto_send=False)
 		
 		super(MergePartner, self).action_merge()
 
@@ -53,53 +53,34 @@ class ResPartner(models.Model):
 	def has_valid_emails(self):
 		self.ensure_one()
 		
-		# Resultados
-		results = list()
+		# Test email/s
+		email_valid = validate(_email_rfc822_validation, self.email) if self.email else None
 
-		# Expresión de validación
-		# regex = '^[a-z0-9]+[\\._-]?[a-z0-9]+[@]\\w+[.]\\w{2,3}$' No es válida, no acepta guiones depués de la @
-		regex = '^\\w+([-+.\' ]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*$'
+		# Si el/los emails son válidos
+		if self.email and email_valid:
+			return True
 
-		# Si tiene un valor
-		if self.email:
-			# Por cada separador admitido
-			for separator in _partner_email_separators:
-				# Si se encuentra el separador
-				if separator in self.email:
-					emails = self.email.split(separator)
-					for one_email in emails:
-						email_valid = validate(regex, one_email.strip())
-						results.append(email_valid)
-
-		# Si no se encontraron separadores
-		if not results and self.email:
-			email_valid = validate(regex, self.email)
-			results.append(email_valid)
-
-		# Comprobamos si todos los resultados son válidos
-		# si no hay resultados significa que no tiene email
-		return all(results) if results else False
+		return False
 
 	@api.multi
 	def primary_email(self):
 		self.ensure_one()
-		
-		# Si tiene un valor
-		if self.email:
-			# Por cada separador admitido
-			for separator in _partner_email_separators:
-				# Si se encuentra el separador
-				if separator in self.email:
-					return self.email.split(separator)[0].strip()
 
-		return self.email
+		# Test email/s
+		email_valid = validate(_email_rfc822_validation, self.email) if self.email else None
+
+		# Si el/los emails son válidos
+		if self.email and email_valid:
+			# Devolver el primer email
+			return email_valid.group()
+
+		return False
 
 	@api.constrains('email')
 	def _check_email_address(self):
 		for record in self:
 			if record.email and not record.has_valid_emails():
-				email_separators_str = ' '.join(['%s' % s for s in _partner_email_separators])
-				raise ValidationError(_('Partner email is not valid, check it!\nValid separators: %s') % email_separators_str)
+				raise ValidationError(_('Partner email is not valid, check it!'))
 
 	@api.constrains('vip_web_access')
 	def __check_vip_web_access_companies_pricelists(self):

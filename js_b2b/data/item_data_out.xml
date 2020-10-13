@@ -19,9 +19,9 @@ def is_notifiable(self, action, vals):
 
 def get_data(self, action):
     return {
-        'fixed:jim_id': self.id,
+        'jim_id': self.id,
         'name': self.get_field_translations('name'),
-        'is_color:type': 'color' if self.is_color else 'select',
+        'type': 'color' if self.is_color else 'select',
         'sequence': self.sequence
     }</field>
         </record>
@@ -36,7 +36,7 @@ def get_data(self, action):
     'name', 
     'sequence',
     'html_color',
-    'image_color'
+    'public_image_name'
 )
 
 def is_notifiable(self, action, vals):
@@ -44,12 +44,12 @@ def is_notifiable(self, action, vals):
 
 def get_data(self, action):
     return {
-        'fixed:jim_id': self.id,
+        'jim_id': self.id,
         'attribute_id': self.attribute_id.id,
         'name': self.get_field_translations('name'),
         'sequence': self.sequence,
         'html_color': self.html_color,
-        'public_image_name:image_color': b2b['images_base'] + self.public_image_name if self.public_image_name else None
+        'image_color': b2b['images_base'] + self.public_image_name if self.public_image_name else None
     }</field>
         </record>
 
@@ -70,10 +70,10 @@ def is_notifiable(self, action, vals):
 
 def get_data(self, action):
     return {
-        'fixed:jim_id': self.id,
+        'jim_id': self.id,
         'name': self.name,
         'description': self.get_field_translations('description'),
-        'logo:image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
+        'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
     }</field>
         </record>
 
@@ -86,18 +86,26 @@ def get_data(self, action):
             <field name="code">fields_to_watch = ('id', 'name', 'parent_id', 'public_image_name', 'sequence', 'active', 'web')
 
 def is_notifiable(self, action, vals):
-    return True
-
+    return action != 'update' or bool(vals)
+    
 def get_data(self, action):
+    if b2b['crud_mode'] == 'delete':
+        b2b['affected_products_ids'] = self.env['product.template'].search([('tag_ids', '=', self.id)]).ids
+        
     return {
-        'fixed:jim_id': self.id,
+        'jim_id': self.id,
         'name': self.get_field_translations('name'),
         'parent_id': self.parent_id.id if self.parent_id else None,
         'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None,
         'sequence': self.sequence,
         # Está activa y activa para la web (y la categoría padre también)
-        'fixed:active': bool(self.active and self.web and (not self.parent_id or (self.parent_id and self.parent_id.web)))
-    }</field>
+        'active': bool(self.active and self.web and (not self.parent_id or (self.parent_id and self.parent_id.web)))
+    }
+    
+def pos_data(self, action):
+    if 'affected_products_ids' in b2b and b2b['crud_mode'] == 'delete' and not self.exists():
+        for product in self.env['product.template'].browse(b2b['affected_products_ids']):
+            product.tag_ids = product.tag_ids.ids</field>
         </record>
 
         <record id="b2b_item_out_5" model="b2b.item.out">
@@ -112,13 +120,21 @@ def is_notifiable(self, action, vals):
     return True
 
 def get_data(self, action):
+    if b2b['crud_mode'] == 'delete':
+        b2b['affected_products_ids'] = self.env['product.template'].search([('tag_ids', '=', self.id)]).ids
+    
     return {
-        'fixed:jim_id': self.id,
+        'jim_id': self.id,
         'name': self.get_field_translations('name'),
         'parent_id': self.parent_id.id if self.parent_id else None,
         'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None,
         'sequence': self.sequence
-    }</field>
+    }
+    
+def pos_data(self, action):
+    if 'affected_products_ids' in b2b and b2b['crud_mode'] == 'delete' and not self.exists():
+        for product in self.env['product.template'].browse(b2b['affected_products_ids']):
+            product.public_categ_ids = product.public_categ_ids.ids</field>
         </record>
 
         <record id="b2b_item_out_6" model="b2b.item.out">
@@ -147,21 +163,24 @@ def is_notifiable(self, action, vals):
 
 def get_data(self, action):
     return {
-        'fixed:jim_id': self.id,
+        'jim_id': self.id,
         'name': self.get_field_translations('name'),
-        'default_code:reference': self.template_code or self.default_code,
-        'barcode:ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
-        'tag_ids:category_id': self.tag_ids.ids,
-        'public_categ_ids:web_category_id': self.public_categ_ids.ids, 
-        'product_brand_id:brand_id': self.product_brand_id.id if self.product_brand_id else None,
+        'reference': self.template_code or self.default_code,
+        'ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
+        'category_id': self.tag_ids.ids,
+        'web_category_id': self.public_categ_ids.ids, 
+        'brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
         'weight': self.weight,
-        'public_image_name:image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
+        'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
     }
 
 def pos_data(self, action):
     # Creamos los datos relaccionados
     if b2b['crud_mode'] == 'create':
+        # Crear las variantes
+        for variant in self.product_variant_ids:
+            variant.b2b_record('create', user_notify=False)
         # Crear las imágenes del producto
         for image in self.product_image_ids:
             image.b2b_record('create', user_notify=False)
@@ -206,11 +225,11 @@ def related_to(self, action):
 
 def get_data(self, action):
     return {
-        'fixed:jim_id': self.id,
-        'fixed:product_id': self.product_tmpl_id.id,
-        'default_code:reference': self.default_code,
-        'attribute_value_ids:attribute_value': self.attribute_value_ids.ids,
-        'barcode:ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
+        'jim_id': self.id,
+        'product_id': self.product_tmpl_id.id,
+        'reference': self.default_code,
+        'attribute_value': self.attribute_value_ids.ids,
+        'ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
         'weight': self.weight,
         'default': False
     }
@@ -296,10 +315,10 @@ def get_data(self, action):
     
     # Return data
     return {
-        'fixed:jim_id': self.id,
-        'fixed:product_id': self._product_id,
-        'fixed:variant_id': self._variant_id,
-        'fixed:parameters': parameterization
+        'jim_id': self.id,
+        'product_id': self._product_id,
+        'variant_id': self._variant_id,
+        'parameters': parameterization
     } if parameterization else dict()</field>
         </record>
 
@@ -320,11 +339,12 @@ def related_to(self, action):
 
 def get_data(self, action):
     return {
-        'fixed:jim_id': self.id,
-        'fixed:product_id': self.product_tmpl_id.id, 
+        'jim_id': self.id,
+        'product_id': self.product_tmpl_id.id, 
         'name': self.get_field_translations('name'), 
-        'public_image_name:image': b2b['images_base'] + self.public_image_name if self.public_image_name else None, 
-        'fixed:attributes': self.product_attributes_values.ids
+        'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None, 
+        'attributes': self.product_attributes_values.ids,
+        'sequence': self.sequence
     }</field>
         </record>
 
@@ -341,8 +361,8 @@ def is_notifiable(self, action, vals):
 
 def get_data(self, action):
     return {
-        'fixed:jim_id': self.id,
-        'lname:name': self.lname or self.name,
+        'jim_id': self.id,
+        'name': self.lname or self.name,
         'code': self.name,
         'symbol': self.symbol,
         'rate': self.rate
@@ -363,9 +383,9 @@ def is_notifiable(self, action, vals):
 
 def get_data(self, action):
     return {
-        'fixed:jim_id': self.id,
-        'fixed:name': self.name,
-        'fixed:currency_id': self.currency_id.id
+        'jim_id': self.id,
+        'name': self.name,
+        'currency_id': self.currency_id.id
     }</field>
         </record>
 
@@ -389,24 +409,25 @@ def is_notifiable(self, action, vals):
     variant_published = self.product_id.website_published if self.product_id.product_tmpl_id.product_variant_count > 1 else product_published
     return (product_published # El producto relaccionado está publicado
         and variant_published # La variante relaccionada está publicada
-        and self.picking_type_id.id == 13 # Y el tipo de picking es 'Recepciones (MECALUX)'
+        and self.company_id.id in (1, 5) # La compañía es Jim Sports o Eme Inversia
+        and self.picking_id.picking_type_id.id in (13, 97) # Y el tipo de picking es 'Recepciones (MECALUX) o Recepciones EME'
         and self.state == 'assigned' # Y el estado es 'assigned'
-        and self.picking_type_id.code == 'incoming' # Y es un INT
-        and self.purchase_line_id # Y hace referencia a una línea de compra
-        and datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now()) # Y la fecha es superior a la actual
+        and self.picking_id.picking_type_id.code == 'incoming' # Y es un INT
+        and self.group_id # Y tiene un grupo de abastecimiento
+        and (datetime.strptime(self.date_expected, "%Y-%m-%d %H:%M:%S") >= datetime.now() or action == 'delete')) # Y la fecha es superior a la actual o es un borrado
 
 def related_to(self, action):
     return 'product.template,%s' % self.product_id.product_tmpl_id.id
 
 def get_data(self, action):
     return {
-        'fixed:jim_id': self.id,
+        'jim_id': self.id,
         'company_id': self.company_id.id,
-        'purchase_line_id:order_id': self.purchase_line_id.order_id.id,
+        'order_id': self.purchase_line_id.order_id.id,
         'product_id': self.product_id.product_tmpl_id.id,
-        'product_id:variant_id': self.product_id.id if self.product_id.product_tmpl_id.product_variant_count > 1 else None,
-        'product_uom_qty:quantity': self.product_uom_qty if self.state == 'assigned' else 0,
-        'date_expected:shipping_date': self.date_expected
+        'variant_id': self.product_id.id if self.product_id.product_tmpl_id.product_variant_count > 1 else None,
+        'quantity': self.product_uom_qty if self.state == 'assigned' else 0,
+        'shipping_date': self.date_expected
     }</field>
         </record>
 
@@ -433,6 +454,7 @@ def get_data(self, action):
 def is_notifiable(self, action, vals):
     return (self.active # Está activo
         and self.is_company # Y es empresa
+        and self.ref # Y tiene una referencia
         and self.vip_web_access # Y tiene asignada por lo menos una empresa para la web
         and self.customer # Y es cliente
         and self.property_product_pricelist and self.property_product_pricelist.id != 1 # Tiene tarifa y no es la publica
@@ -441,13 +463,13 @@ def is_notifiable(self, action, vals):
 
 def get_data(self, action):
     return {
-        'fixed:jim_id': self.id,
+        'jim_id': self.id,
         'name': self.name,
         'vat': self.vat or None,
         'email': self.primary_email(),
-        'ref:reference': self.ref or None,
-        'property_product_pricelist:customer_pricelists': [tuple([x[0].id, x[1]]) for x in self.get_field_multicompany('property_product_pricelist')],
-        'fixed:companies': self.vip_web_access.ids
+        'reference': self.ref or None,
+        'customer_pricelists': [tuple([x[0].id, x[1]]) for x in self.get_field_multicompany('property_product_pricelist')],
+        'companies': self.vip_web_access.ids
     }
 
 def pos_data(self, action):
@@ -491,7 +513,7 @@ def pos_data(self, action):
 def is_notifiable(self, action, vals):
     return (self.active # Está activa
         and self.type in ('invoice', 'delivery') # Y es de tipo 'invoice' o 'delivery'
-        and self.name != 'DROPSHIPPING' # Y no es una dirección de dropshipping
+        and self.name != 'DROPSHIPPING' and self.comment != 'DROPSHIPPING-WEB' # Y no es una dirección de dropshipping
         and self.parent_id.is_notifiable_check() # Y el cliente es notificable
         and self.parent_id.type == 'contact') # Y el cliente es de tipo contacto (a veces crean una dirección de facturación asociada a otra dirección)
 
@@ -500,15 +522,15 @@ def related_to(self, action):
 
 def get_data(self, action):
     return {
-        'fixed:jim_id': self.id,
-        'commercial_partner_id:customer_id': self.commercial_partner_id.id, 
+        'jim_id': self.id,
+        'customer_id': self.commercial_partner_id.id, 
         'name': self.name if self.name else self.commercial_partner_id.name, 
         'street': self.street, 
         'street2': self.street2 or None, 
         'zip': self.zip, 
         'city': self.city, 
-        'state_id:state': self.state_id.name if self.state_id else None, 
-        'country_id:country': self.country_id.code if self.country_id else 'ES', 
+        'state': self.state_id.name if self.state_id else None, 
+        'country': self.country_id.code if self.country_id else 'ES', 
         'type': self.type, 
         'default': self.default_partner_by_type
     }</field>
@@ -540,19 +562,27 @@ def related_to(self, action):
     return 'res.partner,%s' % self.commercial_partner_id.id
 
 def get_data(self, action):
-    # Obtenemos la moneda y posición
-    currency = self.currency_id.symbol
-    position = self.currency_id.position
-
-    return { 
-        'fixed:jim_id': self.id,
-        'commercial_partner_id:customer_id': self.commercial_partner_id.id,
-        'company_id': self.company_id.id,
-        'number:name': self.number, 
-        'date_invoice:date': self.date_invoice, 
-        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-        'amount_total:pdf': self.get_base64_report_pdf('account.report_invoice')
-    }</field>
+    # Todos los campos son fixed, ya que hasta que se valida no se notifica
+    # de forma que los campos que no se modifican al validar no se enviarían
+    doc_data = { 'jim_id': self.id }
+    
+    # If not a delete mode
+    if b2b['crud_mode'] != 'delete':
+        # Obtenemos la moneda y posición
+        currency = self.currency_id.symbol
+        position = self.currency_id.position
+        
+        # Actualizamos los datos
+        doc_data.update({ 
+            'customer_id': self.commercial_partner_id.id,
+            'company_id': self.company_id.id,
+            'name': self.number, 
+            'date': self.date_invoice, 
+            'total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
+            'pdf': self.get_base64_report_pdf('custom_documents.report_picking_grouped_invoice')
+        })
+        
+    return doc_data</field>
         </record>
 
         <record id="b2b_item_out_16" model="b2b.item.out">
@@ -572,32 +602,39 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    is_out_delivery = (self.picking_type_code == 'outgoing' or self.picking_type_id.name == 'Dropship')
+    is_out_delivery = (self.picking_type_id.code == 'outgoing' or self.picking_type_id.name == 'Dropship')
     is_done = self.orig_sale_id and self.date_done and self.state == 'done'
     notifiable = (is_out_delivery # Es un albarán de salida o dropshipping
         and is_done # Y está asociado a una venta y tiene fecha de validación y está validado
-        and self.orig_sale_id.is_notifiable_check() # Y el pedido asociado es notificable
-        and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
+        and self.sale_id and self.sale_id.is_notifiable_check() # Y el pedido asociado es notificable
         and self.date_done >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
     return notifiable
 
 def related_to(self, action):
-    return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
+    return 'res.partner,%s' % self.sale_id.partner_id.commercial_partner_id.id
 
 def get_data(self, action):
-    # Obtenemos la moneda y posición
-    currency = self.orig_sale_id.pricelist_id.currency_id.symbol
-    position = self.orig_sale_id.pricelist_id.currency_id.position
+    # Todos los campos son fixed, ya que hasta que se valida no se notifica
+    # de forma que los campos que no se modifican al validar no se enviarían
+    doc_data = { 'jim_id': self.id }
     
-    return { 
-        'fixed:jim_id': self.id,
-        'partner_id:customer_id': self.partner_id.commercial_partner_id.id,
-        'company_id': self.company_id.id,
-        'name': self.name,
-        'date_done:date': self.date_done, 
-        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
-        'amount_total:pdf': self.get_base64_report_pdf('stock.report_deliveryslip')
-    }</field>
+    # If not a delete mode
+    if b2b['crud_mode'] != 'delete':
+        # Obtenemos la moneda y posición
+        currency = self.orig_sale_id.pricelist_id.currency_id.symbol
+        position = self.orig_sale_id.pricelist_id.currency_id.position
+        
+        # Actualizamos los datos
+        doc_data.update({ 
+            'customer_id': self.sale_id.partner_id.commercial_partner_id.id,
+            'company_id': self.company_id.id,
+            'name': self.name,
+            'date': self.date_done, 
+            'total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
+            'pdf': self.get_base64_report_pdf('stock.report_deliveryslip')
+        })
+        
+    return doc_data</field>
         </record>
 
         <record id="b2b_item_out_17" model="b2b.item.out">
@@ -625,25 +662,33 @@ def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
 
 def get_data(self, action):
-    # Obtenemos la moneda y posición
-    currency = self.pricelist_id.currency_id.symbol
-    position = self.pricelist_id.currency_id.position
+    # Todos los campos son fixed, ya que hasta que se valida no se notifica
+    # de forma que los campos que no se modifican al validar no se enviarían
+    doc_data = { 'jim_id': self.id }
     
-    return { 
-        'fixed:jim_id': self.id,
-        'partner_id:customer_id': self.partner_id.commercial_partner_id.id,
-        'company_id': self.company_id.id,
-        'name': self.name, 
-        'date_order:date': self.date_order, 
-        'amount_total:total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
-        'amount_total:pdf': self.get_base64_report_pdf('sale.report_saleorder')
-    }
+    # If not a delete mode
+    if b2b['crud_mode'] != 'delete':
+        # Obtenemos la moneda y posición
+        currency = self.pricelist_id.currency_id.symbol
+        position = self.pricelist_id.currency_id.position
+        
+        # Actualizamos los datos
+        doc_data.update({ 
+            'customer_id': self.partner_id.commercial_partner_id.id,
+            'company_id': self.company_id.id,
+            'name': self.name, 
+            'date': self.date_order, 
+            'total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
+            'pdf': self.get_base64_report_pdf('sale.report_saleorder')
+        })
+        
+    return doc_data
     
 def pos_data(self, action):
     if b2b['crud_mode'] == 'delete':
         # Eliminamos los albaranes asociados
         for picking in self.picking_ids:
-            picking.b2b_record('delete', False, conf_items_before=['delivery_note'], user_notify=False)</field>
+            picking.b2b_record('delete', conf_items_before=['delivery_note'], user_notify=False)</field>
         </record>
 
         <record id="b2b_item_out_18" model="b2b.item.out">

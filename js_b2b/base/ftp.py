@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from odoo.http import request
 from ftplib import FTP_TLS, all_errors
+import requests
 import logging
 import base64
 import uuid
@@ -39,6 +40,18 @@ def _img_extension(bytestream):
 	"""
 	return imghdr.what(None, h=bytestream).replace('jpeg', 'jpg')
 
+def _redundant_check(filename):
+	"""
+	Redundant file check
+	:param filename: Image complete name
+	:return bool: File exists
+	"""
+	base_url = request.env['b2b.settings'].get_param('base_url')
+	response = requests.get(base_url + filename, stream=True)
+	if response.status_code == 200:
+		return True
+	return False
+
 def save_file(filename):
 	"""
 	Save local file on FTP server
@@ -52,8 +65,11 @@ def save_file(filename):
 			ftps.storbinary('STOR ' + filename, file)
 			file.close() # Free file memory
 			ftps.quit()
-			_logger.info('File [%s] saved!' % filename)
-			return True
+			# Check if file exits
+			# This should not be needed but sometimes wrong images are saved
+			if _redundant_check(filename):
+				_logger.info('File [%s] saved!' % filename)
+				return True
 		except all_errors as e:
 			_logger.error('File Error: %s' % e)
 	return False
@@ -75,8 +91,11 @@ def save_base64(base64_str):
 			ftps.storbinary('STOR ' + filename, file)
 			file.close() # Free file memory
 			ftps.quit()
-			_logger.info('File stream [%s] saved!' % filename)
-			return filename
+			# Check if file exits
+			# This should not be needed but sometimes wrong images are saved
+			if _redundant_check(filename):
+				_logger.info('File stream [%s] saved!' % filename)
+				return filename
 		except all_errors as e:
 			_logger.error('Bytes Error: %s' % e)
 	return False

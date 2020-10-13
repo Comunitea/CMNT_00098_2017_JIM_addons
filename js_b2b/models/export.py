@@ -6,15 +6,27 @@ from datetime import datetime
 from sys import getsizeof
 from math import ceil
 import psycopg2.extras
+import logging
+
+_logger = logging.getLogger('B2B-EXPORT')
 
 class B2BExport(models.Model):
 	_name = "b2b.export"
-	_log_filename = 'b2b.export.log'
 	_sql_constraints = [('res_id_unique', 'unique(res_id)', 'Export res_id needs to be unique!')]
-
 	name = fields.Char(required=True, translate=False, help="Conf item name") 
 	res_id = fields.Char(required=True, translate=False, help="Record and model [model_name,record_id]")
 	rel_id = fields.Char(required=False, translate=False, help="Related to [model_name,record_id]")
+
+	# ------------------------------------ CUSTOM LOG FILES ------------------------------------
+
+	@api.model
+	def write_to_log(self, txt, file, mode="aw+"):
+		module_dir = path.abspath(path.join(path.dirname(path.realpath(__file__)), pardir))
+		log_file = path.join(module_dir, 'static', 'log', file + '.log')
+		with open(log_file, mode) as file:
+			date = fields.Datetime.now()
+			file.write("%s %s\n" % (date, txt))
+			print("%s %s" % (date, txt))
 
 	# ------------------------------------ CUSTOM QUERIES ------------------------------------
 
@@ -73,29 +85,36 @@ class B2BExport(models.Model):
 		# Divide packet if needed
 		# large datasets have to be divided in multiple parts
 		# determined by packet_size on settings
-		packet_size_mb = jsync_conf.get('packet_size', 10)
-		data_size = getsizeof(data_list)/1048576
+		packet_size_mb = float(jsync_conf.get('packet_size', 10.0))
+		data_size = getsizeof(data_list)/float(1048576)
 		num_packets_total = ceil(data_size / packet_size_mb) or 1
 		data_items_count = len(data_list)
 		avg = data_items_count / float(num_packets_total)
+
+		_logger.info("[send_multi] Tamaño de paquete máximo: %s", packet_size_mb)
+		_logger.info("[send_multi] Tamaño de paquete actual: %s", data_size)
+		_logger.info("[send_multi] Número de partes a enviar: %s", num_packets_total)
+
 		while last < data_items_count:
+			_logger.info("Construyendo parte %i del %i al %i", len(data_parts) + 1, last, last + avg)
 			data_parts.append(iter(data_list[int(last):int(last + avg)]))
 			last += avg
-
-		self.env.user.notify_info('[B2B PACKET] %s <b>%s</b> (%s)' % (object_name.capitalize(), object_name, data_items_count))
 
 		# Construct & send packets
 		num_packets = len(data_parts)
 		for i, part in enumerate(data_parts):
+			_logger.info('Enviando parte %i de %i para %s' % (i+1, num_packets, object_name))
+			# Make packet
 			packet = JSync(self.env, settings=jsync_conf)
 			packet.name = object_name
 			packet.data = list(part)
 			packet.mode = action_str
 			packet.part = [i + 1, num_packets]
-			packet.send(notify=False, timeout_sec=300)
+			packet.send(notify=False, timeout_sec=600)
 
 	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, pricelists_filter=None, variant=None, operation=None):
-		print('[b2b_pricelists_prices] Starts!')
+		_logger.info('[b2b_pricelists_prices] INICIO!')
+
 		# Out prices
 		prices = list()
 		# Get decimals number
@@ -111,21 +130,22 @@ class B2BExport(models.Model):
 		# All pricelists or filtered
 		pfilter = [('id', 'in', pricelists_filter)] if pricelists_filter else []
 		pricelists = tuple(self.env['product.pricelist'].search([('web', '=', True), ('active', '=', True)] + pfilter).mapped(lambda p: (p.id, p.name, p.company_id.id)))
-		# Search params
+		# Search params, only published products by default
 		product_search_params = [('website_published', '=', True)]
 		# Limit search to this products
 		product_ids = templates_filter or self.__products_in_pricelists()
 		product_search_params.append(('id', 'in', product_ids))
-		# All products
-		products_ids = tuple(self.env['product.template'].search(product_search_params, limit=test_limit).ids)
+		# All filtered products ids
+		products_ids = tuple(self.env['product.template'].with_context(active_test=False).search(product_search_params, limit=test_limit).ids)
 		# All quantities
 		quantities = self.__pricelists_unique_quantities()
 		# Log info
 		total_pricelists = len(pricelists)
 		total_products = len(products_ids)
 		product_number = 0.0
-		print('# LISTAS DE PRECIOS: %s' % total_pricelists)
-		print('# PRODUCTOS: %s' % total_products)
+
+		_logger.info('# LISTAS DE PRECIOS: %s' % total_pricelists)
+		_logger.info('# PRODUCTOS: %s' % total_products)
 
 		try:
 			# For each product
@@ -133,67 +153,73 @@ class B2BExport(models.Model):
 				product_number += 1
 				percent = round((product_number / total_products) * 100, 1)
 				product = self.env['product.template'].browse(product_id)
-				# Only for web published products
-				if product.website_published:
-					print("--------------------------------------------------------------------")
-					print(":: %s%% [%s] %s" % (percent, product.default_code, product.name))
-					print("--------------------------------------------------------------------")
-					print(":: %10s\t%10s\t%6s\t%8s" % ('PRICELIST', 'VARIANT', 'QTY', 'PRICE'))
-					# For each pricelist
-					for pricelist in pricelists:
-						# For each quantity
-						for min_qty in _search_pricelist_quantities(quantities, pricelist[0]):
-							# Product in pricelist & qty context
-							# pricelist_id = self.env['product.pricelist'].browse(pricelist[0])
-							# self.get_product_price(product, min_qty, False, False)
-							product_in_ctx = product.with_context({ 'pricelist': pricelist[0], 'quantity': min_qty })
-							# Get all variant prices
-							variants_prices = tuple(product_in_ctx.product_variant_ids.mapped('price'))
-							# Same price in all variants
-							if all(x==variants_prices[0] for x in variants_prices if variants_prices[0]):
-								price = None if operation == 'delete' and not variant else round(variants_prices[0], prices_precision)
+				# print("--------------------------------------------------------------------")
+				# print(":: %s%% [%s] %s" % (percent, product.default_code, product.name))
+				# print("--------------------------------------------------------------------")
+				# print(":: %10s\t%10s\t%6s\t%8s" % ('PRICELIST', 'VARIANT', 'QTY', 'PRICE'))
+				# For each pricelist
+				for pricelist in pricelists:
+					# For each quantity
+					for min_qty in _search_pricelist_quantities(quantities, pricelist[0]):
+						# Product in pricelist & qty context
+						# pricelist_id = self.env['product.pricelist'].browse(pricelist[0])
+						# self.get_product_price(product, min_qty, False, False)
+						product_in_ctx = product.with_context({ 'pricelist': pricelist[0], 'quantity': min_qty })
+						# Get all variant prices
+						variants_prices = tuple(product_in_ctx.product_variant_ids.mapped('price'))
+
+						# A 18/19/20 variant_prices no siempre tiene un precio 
+						# si se da ese caso metemos 0
+						if not variants_prices:
+							variants_prices = tuple([round(0, prices_precision),])
+
+						# Same price in all variants
+						if all(x==variants_prices[0] for x in variants_prices if variants_prices[0]):
+							price = None if operation == 'delete' and not variant else round(variants_prices[0], prices_precision)
+							# If price is not 0 and not in prices list yet with qty 1
+							product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
+							if not bool(list(product_filter)) and (operation == 'delete' or price):
+								# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
+								prices.append({ 
+									'company_id': pricelist[2] or None,
+									'pricelist_id': pricelist[0],
+									'product_id': product_id,
+									'variant_id': None,
+									'quantity': min_qty,
+									'price': price
+								})
+						else:
+							# For each variant
+							for v in range(len(variants_prices)):
+								variant_id = product_in_ctx.product_variant_ids.ids[v]
+								price = None if operation == 'delete' and variant_id == variant else round(variants_prices[v], prices_precision)
 								# If price is not 0 and not in prices list yet with qty 1
-								product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
+								product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == variant_id and x['quantity'] == 1 and x['price'] == price, prices)
 								if not bool(list(product_filter)) and (operation == 'delete' or price):
-									print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
+									# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
 									prices.append({ 
 										'company_id': pricelist[2] or None,
 										'pricelist_id': pricelist[0],
 										'product_id': product_id,
-										'variant_id': None,
+										'variant_id': variant_id,
 										'quantity': min_qty,
 										'price': price
 									})
-							else:
-								# For each variant
-								for v in range(len(variants_prices)):
-									variant_id = product_in_ctx.product_variant_ids.ids[v]
-									price = None if operation == 'delete' and variant_id == variant else round(variants_prices[v], prices_precision)
-									# If price is not 0 and not in prices list yet with qty 1
-									product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == variant_id and x['quantity'] == 1 and x['price'] == price, prices)
-									if not bool(list(product_filter)) and (operation == 'delete' or price):
-										print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
-										prices.append({ 
-											'company_id': pricelist[2] or None,
-											'pricelist_id': pricelist[0],
-											'product_id': product_id,
-											'variant_id': variant_id,
-											'quantity': min_qty,
-											'price': price
-										})
 		except Exception as e:
-			print('[b2b_pricelists_prices] ERROR ON LOOP! %s' % e)
+			_logger.critical('[b2b_pricelists_prices] ERROR EN EL BUCLE! %s' % e)
 		finally:
-			print('[b2b_pricelists_prices] Ends!')
+			_logger.info('[b2b_pricelists_prices] FIN!')
 
 		# Send to JSync
 		if prices:
+			self.write_to_log(str(prices), 'pricelist_item', "a+")
 			mode = 'update' if templates_filter is not None else 'replace'
 			self.send_multi('pricelist_item', prices, mode)
-			print(str(prices), 'pricelist_item', "w+")
 
 	def b2b_customers_prices(self, lines_filter=None, operation=None):
-		print('[b2b_customers_prices] Starts!')
+		_logger.info('[b2b_customers_prices] INICIO!')
+		prices = list()
+
 		# Out prices
 		prices = list()
 		# Get decimals number
@@ -222,29 +248,38 @@ class B2BExport(models.Model):
 							'product_id': template_id,
 							'variant_id': variant_id,
 							'quantity': line_quantity,
-							'price': round(price_line['price'] if operation != 'delete' else None, prices_precision)
+							'price': round(price_line['price'] if operation != 'delete' else 0, prices_precision)
 						})
 		except Exception as e:
-			print('[b2b_customers_prices] ERROR ON LOOP! %s' % e)
+			_logger.critical('[b2b_customers_prices] ERROR EN EL BUCLE! %s' % e)
 		finally:
-			print('[b2b_customers_prices] Ends!')
+			_logger.info('[b2b_customers_prices] FIN!')
 
 		# Send to JSync
 		if prices:
+			self.write_to_log(str(prices), 'customer_price', "a+")
 			mode = 'update' if lines_filter is not None else 'replace'
 			self.send_multi('customer_price', prices, mode)
-			print(str(prices), 'customer_price', "w+")
 
 	def b2b_products_stock(self, test_limit=None, from_date=None, export_all=None):
-		# If actual time is between 00:30 & 00:45 set "all" to True
-		all_products = export_all or B2BExport.is_time_between('00:30:00', '00:45:00')
-		stock = self.env['exportxml.object'].compute_product_ids(all=all_products, from_time=from_date, limit=test_limit, inc=1000)
+		_logger.info('[b2b_products_stock] INICIO!')
+		stock = list()
 
+		try:
+			# If actual time is between 00:30 & 00:45 set "all" to True
+			all_products = export_all or B2BExport.is_time_between('00:30:00', '00:45:00')
+			_logger.info('¿STOCK DE TODOS? %s' % all_products)
+			stock = self.env['exportxml.object'].compute_product_ids(all=all_products, from_time=from_date, limit=test_limit, inc=1000)
+		except Exception as e:
+			_logger.critical('[b2b_products_stock] ERROR EN EL BUCLE! %s' % e)
+		finally:
+			_logger.info('[b2b_products_stock] FIN!')
+		
 		# Send to JSync
 		if stock:
+			self.write_to_log(str(stock), 'product_stock', "a+")
 			mode = 'replace' if all_products else 'update'
 			self.send_multi('product_stock', stock, mode)
-			print(str(stock), 'product_stock', "w+")
 
 	# ------------------------------------ OVERRIDES ------------------------------------
 

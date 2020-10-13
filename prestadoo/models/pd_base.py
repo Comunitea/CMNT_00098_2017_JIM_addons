@@ -31,60 +31,60 @@ class BaseExtClass(models.Model):
     def sanitize_xml(self):
         self.xml = self.xml.replace('&', '\u0026')
 
-    @api.model
-    def create(self, vals):
-        res = super(BaseExtClass, self).create(vals)
+    #@api.model
+    #def create(self, vals):
+    #    res = super(BaseExtClass, self).create(vals)
+    #
+    #    if res.must_notify(vals):
+    #        res.set_props()
+    #        res.sanitize_xml()
+    #
+    #        Jesie.write('A', res.obj_type, res.id, res.xml)
+    #
+    #        OutputHelper.print_text("- oper_type: {}"
+    #                                "\n\t- obj_type: {}"
+    #                                "\n\t- obj_key: {}"
+    #                                "\n\t- xml: {}"
+    #                                .format('A', res.obj_type, res.id, res.xml), MsgTypes.OK)
+    #    return res
 
-        if res.must_notify(vals):
-            res.set_props()
-            res.sanitize_xml()
+    #@api.multi
+    #def write(self, vals):
+    #    res = super(BaseExtClass, self).write(vals)
+    #    for item in self:
+    #        if item.must_notify(vals):
+    #            item.set_props()
+    #            item.sanitize_xml()
+    #
+    #            Jesie.write('U', item.obj_type, item.id, item.xml)
+    #
+    #            OutputHelper.print_text("- oper_type: {}"
+    #                                    "\n\t- obj_type: {}"
+    #                                    "\n\t- obj_key: {}"
+    #                                    "\n\t- xml: {}"
+    #                                    .format('U', item.obj_type, item.id, item.xml), MsgTypes.OK)
+    #
+    #            post_write = getattr(item, "post_write", None)
+    #            if callable(post_write):
+    #                post_write()
+    #
+    #    return res
 
-            Jesie.write('A', res.obj_type, res.id, res.xml)
-
-            OutputHelper.print_text("- oper_type: {}"
-                                    "\n\t- obj_type: {}"
-                                    "\n\t- obj_key: {}"
-                                    "\n\t- xml: {}"
-                                    .format('A', res.obj_type, res.id, res.xml), MsgTypes.OK)
-        return res
-
-    @api.multi
-    def write(self, vals):
-        res = super(BaseExtClass, self).write(vals)
-        for item in self:
-            if item.must_notify(vals):
-                item.set_props()
-                item.sanitize_xml()
-
-                Jesie.write('U', item.obj_type, item.id, item.xml)
-
-                OutputHelper.print_text("- oper_type: {}"
-                                        "\n\t- obj_type: {}"
-                                        "\n\t- obj_key: {}"
-                                        "\n\t- xml: {}"
-                                        .format('U', item.obj_type, item.id, item.xml), MsgTypes.OK)
-
-                post_write = getattr(item, "post_write", None)
-                if callable(post_write):
-                    post_write()
-
-        return res
-
-    @api.multi
-    def unlink(self):
-        for item in self:
-            if item.must_notify(None):
-                item.set_props(unlink=True)
-                item.sanitize_xml()
-
-                Jesie.write('D', item.obj_type, item.id, item.xml)
-
-                OutputHelper.print_text("- oper_type: {}"
-                                        "\n\t- obj_type: {}"
-                                        "\n\t- obj_key: {}"
-                                        "\n\t- xml: {}"
-                                        .format('D', item.obj_type, item.id, item.xml), MsgTypes.OK)
-
-        res = super(BaseExtClass, self).unlink()
-
-        return res
+    #@api.multi
+    #def unlink(self):
+    #    for item in self:
+    #        if item.must_notify(None):
+    #            item.set_props(unlink=True)
+    #            item.sanitize_xml()
+    #
+    #            Jesie.write('D', item.obj_type, item.id, item.xml)
+    #
+    #            OutputHelper.print_text("- oper_type: {}"
+    #                                    "\n\t- obj_type: {}"
+    #                                    "\n\t- obj_key: {}"
+    #                                    "\n\t- xml: {}"
+    #                                    .format('D', item.obj_type, item.id, item.xml), MsgTypes.OK)
+    #
+    #    res = super(BaseExtClass, self).unlink()
+    #
+    #    return res

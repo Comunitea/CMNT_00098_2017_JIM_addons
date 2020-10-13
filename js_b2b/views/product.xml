@@ -1,27 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Product & Variant -->
+    <!-- Product -->
     <record id="product_template_form_view_b2b" model="ir.ui.view">
         <field name="name">product.template.product.b2b.form</field>
         <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
-            <div name="button_box" position="inside">
-                <button class="oe_stat_button" name="website_publish_button" type="object" icon="fa-globe">
-                    <field name="website_published" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Publicado', 'hover_true': 'Eliminar de las webs', 'string_false': 'No publicado', 'hover_false': 'Publicar en las webs' }}"/>
-                </button>
-            </div>
-
-            <group name="email_template_and_project" position="before">
-                <group name="website" string="Website">
-                    <field name="public_categ_ids" widget="many2many_tags" string="Website Categories"/>
-                </group>
-            </group>
-
             <xpath expr="//notebook[last()]" position="inside">
                 <page string="Images" groups="product.group_product_variant">
-                    <field name="product_image_ids" mode="kanban" context="{'default_name': name, 'default_product_tmpl_id': active_id}">
-                        <kanban string="Product Images">
+                    <field name="product_image_ids" mode="kanban" context="{'default_name': name, 'default_product_tmpl_id': id}">
+                        <kanban string="Product Images" default_order="sequence">
                             <field name="image" />
                             <templates>
                                 <t t-name="kanban-box">
@@ -43,6 +31,61 @@
                     </field>
                 </page>
             </xpath>
+        </field>
+    </record>
+
+    <!-- Variant -->
+    <record id="product_variant_form_view_b2b" model="ir.ui.view">
+        <field name="name">product.product.b2b.form</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//notebook[last()]" position="inside">
+                <page string="Images" groups="product.group_product_variant">
+                    <field name="product_image_ids" mode="kanban" context="{'default_name': name, 'default_product_tmpl_id': product_tmpl_id}">
+                        <kanban string="Product Images" default_order="sequence">
+                            <field name="image" />
+                            <templates>
+                                <t t-name="kanban-box">
+                                    <div class="oe_kanban_global_click">
+                                        <a t-if="!read_only_mode" type="delete" class="fa fa-times pull-right"/>
+                                        <div class="o_kanban_image">
+                                            <img t-if="record.image.raw_value" t-att-src="'data:image/png;base64,'+record.image.raw_value"/>
+                                        </div>
+                                        <div class="oe_kanban_details">
+                                            <field name="name" />
+                                            <div class="product_image_tags">
+                                                <field name="product_attributes_values" widget="many2many_tags" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </t>
+                            </templates>
+                        </kanban>
+                    </field>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Product & Variant -->
+    <record id="product_form_view_b2b" model="ir.ui.view">
+        <field name="name">product.template.product.b2b.form</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <div name="button_box" position="inside">
+                <button class="oe_stat_button" name="website_publish_button" type="object" icon="fa-globe">
+                    <field name="website_published" widget="boolean_button" options="{ 'terminology': { 'string_true': 'Publicado', 'hover_true': 'Eliminar de las webs', 'string_false': 'No publicado', 'hover_false': 'Publicar en las webs' }}" />
+                </button>
+            </div>
+
+            <group name="email_template_and_project" position="before">
+                <!--Oculto temporalmente por inidcaciones de Marta -->
+                <group name="website" string="Website" invisible="1">
+                    <field name="public_categ_ids" widget="many2many_tags" string="Website Categories"/>
+                </group>
+            </group>
         </field>
     </record>
 
@@ -87,8 +130,10 @@
                             </div>
                             <label class="oe_edit_only" for="name" string="Image Description (alt text)"/>
                             <h1><field name="name" placeholder="alt image text" required="1"/></h1>
-                            <label class="oe_edit_only" for="product_attributes" string="Attributes Applied"/>
-                            <div><field name="product_attributes_values" widget="many2many_tags" options="{ 'no_create_edit':True, 'no_quick_create': True }" attrs="{'readonly': [('id', '!=', False)]}"/></div>
+                            <label for="sequence" string="Manual order"/>
+                            <field name="sequence"/>
+                            <label class="oe_edit_only" for="product_attributes_values" string="Attributes Applied"/>
+                            <div><field name="product_attributes_values" widget="many2many_tags" options="{ 'no_create_edit':True, 'no_quick_create': True }" readonly="not context.get('default_product_tmpl_id', False)"/></div>
                         </div>
                         
                         <div class="clearfix"></div>
@@ -113,6 +158,28 @@
     </record>
 
     <!-- Product Categories -->
+    <record id="view_product_tag_form_b2b" model="ir.ui.view">
+        <field name="name">product.tag.view.form.b2b</field>
+        <field name="model">product.tag</field>
+        <field name="inherit_id" ref="product_tags.product_tag_form"/>
+        <field name="arch" type="xml">
+            <field name="parent_id" position="replace"/>
+            
+            <xpath expr="./group[2]" position="after">
+                <group>
+                    <field name="child_ids" widget="one2many_list" mode="tree">
+                        <tree decoration-success="active == True and web == True">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="active"/>
+                            <field name="web"/>
+                        </tree>
+                    </field>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
     <record id="product_category_tree_view_b2b" model="ir.ui.view">
         <field name="name">product.tag.tree.b2b</field>
         <field name="model">product.tag</field>
@@ -122,6 +189,10 @@
                 <field name="sequence" widget="handle"/>
             </field>
         </field>
+    </record>
+
+    <record id="product_tags.product_tag_action_form" model="ir.actions.act_window">
+        <field name="domain">[('parent_id', '=', False)]</field>
     </record>
 
     <!-- Product Attributes -->
@@ -147,13 +218,19 @@
             <form string="Website Public Categories">
                 <sheet>
                     <field name="image" widget='image' class="oe_avatar"/>
-                    <div class="oe_left">
-                        <group>
-                            <field name="name"/>
-                            <field name="parent_id"/>
-                            <field name="sequence"/>
-                        </group>
+
+                    <div class="oe_title">
+                        <field name="name"/>
                     </div>
+
+                    <group>
+                        <field name="child_ids" widget="one2many_list" mode="tree">
+                            <tree>
+                                <field name="sequence" widget="handle"/>
+                                <field name="name"/>
+                            </tree>
+                        </field>
+                    </group>
                 </sheet>
             </form>
         </field>
@@ -177,6 +254,7 @@
         <field name="res_model">product.public.category</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="domain">[('parent_id', '=', False)]</field>
         <field name="view_id" eval="False"/>
         <field name="help" type="html">
             <p class="oe_view_nocontent_create">

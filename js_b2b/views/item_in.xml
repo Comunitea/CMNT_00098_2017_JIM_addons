@@ -40,6 +40,15 @@
 								</p>
 
 								<p>
+									<b>pre_data</b>(self, action)
+									<span class="help-block">
+										<p>Realiza acciones antes de obtener los datos (get_data)</p>
+										<p>Se ejecuta de forma síncrona y es opcional</p>
+										<b style="color:#E30059">return</b> void
+									</span>
+								</p>
+
+								<p>
 									<b>get_data</b>(self, action)
 									<span class="help-block">
 										Obtiene los datos necesarios para crear o actualizar registro<br/>
@@ -48,11 +57,18 @@
 								</p>
 
 								<p>
+									<b>pos_data</b>(self, action)
+									<span class="help-block">
+										<p>Realiza acciones después de realizar la operación con los datos (get_data)</p>
+										<p>Se ejecuta de forma síncrona y es opcional</p>
+										<b style="color:#E30059">return</b> void
+									</span>
+								</p>
+
+								<p>
 									<b>Variables Locales</b>
 									<span class="help-block">Los métodos que se definen en este código se pueden llamar localmente sólo mediante la variable b2b.</span>
 									<ul class="help-block">
-										<li><b>b2b['partner_id']</b> ID del cliente que envía el dato</li>
-										<li><b>b2b['company_id']</b> ID de la compañia VIP que corresponde al cliente (si la tiene)</li>
 										<li><b>b2b['logger']</b> Permite escribir mensajes en el log con el propósito de realizar una depuración</li>
 									</ul>
 								</p>

@@ -61,12 +61,16 @@ class Subprocess(object):
 				_logger.debug("Creado nuevo cursor para el subproceso...")
 				# Autocommit ON
 				new_cr.autocommit(True)
-				# Fresh record
-				record_issolated = record.with_env(record.env(cr=new_cr))
-				# Call the method
-				method(record_issolated, mode)
-				# Process ends
-				_logger.info("Subproceso finalizado!")
+
+				try:
+					# Fresh record
+					record_issolated = record.with_env(record.env(cr=new_cr))
+					# Call the method
+					method(record_issolated, mode)
+				except Exception as e:
+					_logger.error(e)
+				finally:
+					_logger.info("Subproceso finalizado!")
 
 class Chrono(object):
 
@@ -126,39 +130,36 @@ class JSync(object):
 		"""
 		Filter and normalizes item data (data)
 
-		:param vals: Item data to update (from model)
+		:param vals: Item data to update (from model) * DEPRECATED
 		:return: dict
 
-		data key modifiers:
-			fixed:xxx -> Sends xxx always
-			field_xxx_name:xxx -> Sends xxx field if field_xxx_name has changed
-			xxx: -> Sends xxx field if has changed (no modifier)
+		* DEPRECATED
+		* data key modifiers:
+		* 	fixed:xxx -> Sends xxx always
+		* 	field_xxx_name:xxx -> Sends xxx field if field_xxx_name has changed
+		* 	xxx: -> Sends xxx field if has changed (no modifier)
 		"""
-
-		_logger.debug("--- Normalizando datos ----")
-		_logger.debug("Datos de origen: %s" % self.data)
-		_logger.debug("Comparar con: %s" % vals)
 
 		if self.data and type(self.data) is dict:
 			for field, value in self.data.items():
-				obj_old = obj_new = field
+				# obj_old = obj_new = field
 				# If field have :
-				if ':' in field:
-					# Before :
-					obj_old = field[:field.index(':')]
-					# After :
-					obj_new = field[field.index(':') + 1:]
-					# Replace key
-					self.data[obj_new] = self.data.pop(field)
-				if obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
-					# Remove field because is not found in vals
-					del self.data[obj_new]
-				elif type(value) is list:
+				# if ':' in field:
+				#	# Before :
+				#	obj_old = field[:field.index(':')]
+				#	# After :
+				#	obj_new = field[field.index(':') + 1:]
+				#	# Replace key
+				#	self.data[obj_new] = self.data.pop(field)
+				# if obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
+				#	# Remove field because is not found in vals
+				#	del self.data[obj_new]
+				if type(value) is list:
 					# Convert lits to tuples
-					self.data[obj_new] = tuple(value)
+					self.data[field] = tuple(value)
 				elif type(value) is unicode:
 					# Decode unicode str's to utf-8
-					self.data[obj_new] = value.strip().decode('utf-8', 'replace')
+					self.data[field] = value.strip().decode('utf-8', 'replace')
 
 		_logger.debug("Datos normalizados %s" % self.data)
 		return self.data
@@ -173,13 +174,13 @@ class JSync(object):
 		RECORD_SEND = False
 		EXPORT_RECORD = None
 		RES_ID = '%s,%s' % (self.model, self.id)
-
+		
 		_logger.debug("¿Enviamos el paquete? Defecto: %s" % RECORD_SEND)
 
 		# Comprobamos los datos necesarios
 		# todos los mensajes tienen que tener por lo menos una clave primaria (jim_id)
 		# la única excepción es cuando se elimina un registro que puede llevar sólo la clave
-		if self.name and self.data and self.mode and (self.mode == 'delete' or len(self.data) > 1):
+		if self.name and self.mode and (self.mode == 'delete' or len(self.data) > 1):
 			# Check with new cursor
 			with api.Environment.manage():
 				with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
@@ -187,7 +188,7 @@ class JSync(object):
 					# Check if record is synced with JSync
 					EXPORT_RECORD = env['b2b.export'].search([('res_id', '=', RES_ID)], limit=1)
 
-					# Send the record?
+					# Send the record comparing internal table reference?
 					RECORD_SEND = bool((not EXPORT_RECORD and self.mode == 'create') or (EXPORT_RECORD and self.mode in ('update', 'delete')))
 
 					# Log JSync record status
@@ -202,12 +203,9 @@ class JSync(object):
 							_logger.warning("El registro relaccionado ha invalidado el paquete!")
 							RECORD_SEND = False
 
-		if not RECORD_SEND:
-			_logger.info("El paquete para '%s' no se enviará en modo '%s'" % (self.name, self.mode))
-
 		return RECORD_SEND, RES_ID, EXPORT_RECORD
 
-	def send(self, timeout_sec=10, notify=True, **kwargs):
+	def send(self, timeout_sec=30, notify=True, **kwargs):
 		"""
 		Sends data to JSync server and prints on screen
 
@@ -216,10 +214,17 @@ class JSync(object):
 
 		"""
 
-		# Check record and get required params
-		_RECORD_SEND, _RES_ID, _EXPORT_RECORD = self.can_send()
+		_RECORD_SEND = True
+		_RES_ID = False
 
-		if _RECORD_SEND:
+		# Estos paquetes se envían de forma agrupada y no se controlan
+		if self.name not in ('customer_price', 'pricelist_item', 'product_stock'):
+			# Check record and get required params
+			_RECORD_SEND, _RES_ID, _EXPORT_RECORD = self.can_send()
+
+		if _RECORD_SEND and self.data:
+
+			_logger.info("Enviando datos a JSync...")
 
 			jsync_post = None
 
@@ -238,21 +243,16 @@ class JSync(object):
 			debug_msg = "JSync Response: {}" \
 						"\n    - object: {}" \
 						"\n    - operation: {}" \
-						"\n    - data: {}" \
+						"\n    - data: DATASET" \
 						"\n    - part: {}"
 
-			# Data indented (pretified)
-			debug_data = json_dump(self.data, indent=8, sort_keys=True)
-
 			try:
-			
+
 				# Send HTTP POST data
 				jsync_post = self.session.post(self.settings['url'], timeout=timeout_sec, headers=header_dict, data=json_data)
-					
+
 			except Exception as e:
 
-				_logger.error(debug_msg.format('CONNECTION ERROR!', self.name, self.mode, debug_data, self.part))
-				
 				if self.settings['conexion_error']:
 					if type(e) is not ValidationError:
 						raise ValidationError("JSync Server Connection Error\n%s" % (e))
@@ -262,40 +262,44 @@ class JSync(object):
 			# Si la respuesta es OK
 			if jsync_post and jsync_post.status_code is 200:
 
-				print(debug_msg.format(jsync_post.text, self.name, self.mode, debug_data, self.part))
+				_logger.info(debug_msg.format(jsync_post.text, self.name, self.mode, self.part))
 
 				# En los paquetes múltiples no se establecen estos parámetros
 				# por lo que no se notifican al usuario ni se registran en el sistema
 				if self.name and self.id and self.model:
 
 					# Mostrar notificación no invasiva al usuario en Odoo
-					if notify:
+					if notify and 'show_b2b_notifications' in self.env.user and self.env.user.show_b2b_notifications:
 						self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
 
-					# Guardar el estado en Odoo
-					# con un nuevo cursor para que se 
-					# haga un commit de forma inmediata
-					with api.Environment.manage():
-						with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
-							env = api.Environment(new_cr, self.env.uid, self.env.context)
-							env.cr.autocommit(True)
-							if not _EXPORT_RECORD and self.mode == 'create':
-								env['b2b.export'].with_context(b2b_evaluate=False).create({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
-							elif _EXPORT_RECORD and self.mode == 'update':
-								env['b2b.export'].browse(_EXPORT_RECORD.id).with_context(b2b_evaluate=False).write({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
-							elif _EXPORT_RECORD and self.mode == 'delete':
-								env['b2b.export'].browse(_EXPORT_RECORD.id).with_context(b2b_evaluate=False).unlink()
+					if _RES_ID:
+						# Guardar el estado en Odoo
+						# con un nuevo cursor para que se 
+						# haga un commit de forma inmediata
+						with api.Environment.manage():
+							with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
+								env = api.Environment(new_cr, self.env.uid, self.env.context)
+								env.cr.autocommit(True)
+								if not _EXPORT_RECORD and self.mode == 'create':
+									env['b2b.export'].with_context(b2b_evaluate=False).create({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
+								elif _EXPORT_RECORD and self.mode == 'update':
+									env['b2b.export'].browse(_EXPORT_RECORD.id).with_context(b2b_evaluate=False).write({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
+								elif _EXPORT_RECORD and self.mode == 'delete':
+									env['b2b.export'].browse(_EXPORT_RECORD.id).with_context(b2b_evaluate=False).unlink()
 
 				try:
 					return json_load(jsync_post.text)
 				except:
 					return jsync_post.text
 
-			elif jsync_post:
-
-				_logger.error(debug_msg.format('RESPONSE ERROR!', self.name, self.mode, debug_data, self.part))
+			else:
+				_logger.error("JSYNC RESPONSE ERROR: %s" % jsync_post.text)
+				_logger.info(debug_msg.format(jsync_post.text, self.name, self.mode, self.part))
 				
-				if self.settings['conexion_error'] and self.settings['response_error']:
+				if jsync_post and self.settings['conexion_error'] and self.settings['response_error']:
 					raise ValidationError("JSync Server Response Error\n%s" % (jsync_post.text.encode('latin1').capitalize()))
+
+		else:
+			_logger.warning("El paquete para '%s' no se envió en modo '%s' ya que no cumple las condiciones!" % (self.name, self.mode))
 
 		return False

@@ -6,8 +6,8 @@ from odoo.exceptions import ValidationError
 from ..base import ftp
 # lib copied from odoo 11
 from ..base import pycompat
-# barcode validation
-import barcodenumber
+# barcode validation https://github.com/charithe/gtin-validator
+from gtin import validator as gtinv
 
 base_product_publish_error = _('Error! You can not publish this product because ')
 image_without_file_error = _('Error! Can not save an image without media file!')
@@ -89,34 +89,26 @@ class ProductTemplate(models.Model):
 	_name = "product.template"
 	_inherit = ["product.template", "b2b.image"]
 
-	# PublicImage params
-	# _attr_image_model_field = 'image_medium'
-
 	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
 	public_categ_ids = fields.Many2many('product.public.category', string='Website Product Category', help="Categories for stores that sells to end customer")
 	product_image_ids = fields.One2many('product.image', 'product_tmpl_id', string='Images')
 	public_image_name = fields.Char('Product Public Image Name')
 
 	@api.multi
-	def has_valid_barcode(self, code_type='ean13'):
+	def has_valid_barcode(self, code_type=None, barcode=None):
 		self.ensure_one()
-		return barcodenumber.check_code(code_type, self.barcode)
+		if barcode or self.barcode:
+			return gtinv.is_valid_GTIN(barcode or self.barcode)
+		return False
 
 	@api.multi
 	def website_publish_button(self):
-		for product in self:
-			if not product.website_published:
-				if not self.tag_ids:
-					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
-				if not self.public_categ_ids:
-					raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
-				if self.barcode and not self.has_valid_barcode():
-					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
-				if self.type != 'product':
-					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
-			toggled_status = bool(not product.website_published)
-			product.website_published = toggled_status
-			product.mapped('product_variant_ids').write({ 'website_published': toggled_status })
+		self.ensure_one()
+
+		if not self.id:
+			raise ValidationError(_('Can not publish a product before saving it!'))
+
+		self.website_published = not self.website_published
 
 	@api.multi
 	def create_variant_ids(self):
@@ -134,6 +126,37 @@ class ProductTemplate(models.Model):
 		return res
 
 	@api.multi
+	def write(self, vals):
+
+		for product in self:
+			tag_ids = vals.get('tags_ids', product.tag_ids)
+			barcode = vals.get('barcode', product.barcode)
+			ptype = vals.get('type', product.type)
+
+			# Check if product can be published
+			if not product.website_published and vals.get('website_published'):
+				if not tag_ids:
+					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
+				# if not product.public_categ_ids:
+				# 	raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
+				if barcode and not self.has_valid_barcode(barcode=barcode):
+					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
+				if ptype != 'product':
+					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
+			# Check if product can stay published otherwise unpublish
+			elif product.website_published and not all([bool(tag_ids), not barcode or self.has_valid_barcode(barcode=barcode), ptype == 'product']):
+				super(ProductTemplate, product).write({ 'website_published': False })
+
+			updated = super(ProductTemplate, product).write(vals)
+
+		if 'website_published' in vals:
+			for product in self:
+				# Publish/unpublish variants
+				product.mapped('product_variant_ids').write({ 'website_published': vals['website_published'] })
+
+		return updated
+
+	@api.multi
 	def unlink(self):
 		for record in self:
 			default_image = record.public_image_name
@@ -148,52 +171,72 @@ class ProductProduct(models.Model):
 
 	@api.one
 	def _filter_variant_images(self):
-		product_attrs = [attr.id for attr in self.attribute_value_ids]
+		product_attrs = self.attribute_value_ids._ids
 
 		self.product_image_ids = self.env['product.image'].search([
 			('product_tmpl_id', '=', self.product_tmpl_id.id)
-		]).filtered(lambda image: all(map(lambda x: x in product_attrs, image.product_attributes_values._ids)))
-		# To exclude images without all attribute of variant use this line instead
-		# filtered(lambda image: all(map(lambda x,y: x in product_attrs and y in image.product_attributes_values._ids, image.product_attributes_values._ids, product_attrs)))
-
+		# Filter images that contains at least one attribute of variant, not order dependent
+		]).filtered(lambda image: len(tuple(set(product_attrs) & set(image.product_attributes_values._ids))) > 0)
 
 	@api.one
 	@api.depends('product_image_ids')
-	def _compute_variant_images(self):
+	def _compute_variant_cover(self):
 		if self.product_image_ids:
 			self.image_variant = self.product_image_ids[0].image
-		elif self.product_tmpl_id.image_medium:
-			self.image_variant = self.product_tmpl_id.image_medium
+		elif self.product_tmpl_id.image_small:
+			self.image_variant = self.product_tmpl_id.image_small
 		else:
 			self.image_variant = False
 
-	image_variant = fields.Binary(compute='_compute_variant_images', store=False)
 	product_image_ids = fields.One2many('product.image', string='Images', compute='_filter_variant_images')
+	image_variant = fields.Binary(compute='_compute_variant_cover', store=False)
 	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
 
 	@api.multi
-	def has_valid_barcode(self, code_type='ean13'):
+	def has_valid_barcode(self, code_type=None, barcode=None):
 		self.ensure_one()
-		return barcodenumber.check_code(code_type, self.barcode)
+		if barcode or self.barcode:
+			return gtinv.is_valid_GTIN(barcode or self.barcode)
+		return False
 
 	@api.multi
 	def website_publish_button(self):
-		for variant in self:
-			if not variant.product_tmpl_id.website_published:
-				raise ValidationError(_(base_product_publish_error) + _('template is unpublished.'))
-			if not self.tag_ids:
-				raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
-			if self.barcode and not self.has_valid_barcode():
-				raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
-			if self.type != 'product':
-				raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
-			variant.website_published = not variant.website_published
+		self.ensure_one()
+
+		if not self.id:
+			raise ValidationError(_('Can not publish a variant before saving it!'))
+
+		self.website_published = not self.website_published
 
 	@api.model
 	def create(self, vals):
 		template = self.env['product.template'].browse(vals.get('product_tmpl_id', 0))
 		vals.update({ 'website_published': template.website_published })
 		return super(ProductProduct, self).create(vals)
+
+	@api.multi
+	def write(self, vals):
+
+		# Check if variant can be published
+		for variant in self:
+			tag_ids = vals.get('tags_ids', variant.tag_ids)
+			barcode = vals.get('barcode', variant.barcode)
+			ptype = vals.get('type', variant.type)
+
+			if not variant.website_published and vals.get('website_published'):
+				if not variant.product_tmpl_id.website_published:
+					raise ValidationError(_(base_product_publish_error) + _('template is unpublished.'))
+				if not tag_ids:
+					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
+				if barcode and not variant.has_valid_barcode(barcode=barcode):
+					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
+				if ptype != 'product':
+					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
+			# Check if variant can stay published otherwise unpublish
+			elif variant.product_tmpl_id.website_published and not all([bool(tag_ids), not barcode or variant.has_valid_barcode(barcode=barcode), ptype == 'product']):
+				super(ProductProduct, variant).write({ 'website_published': False })
+
+		return super(ProductProduct, self).write(vals)
 
 	@api.multi
 	def unlink(self):
@@ -219,14 +262,23 @@ class ProductBrand(models.Model):
 class ProductTag(models.Model):
 	_name = "product.tag"
 	_inherit = ["product.tag", "b2b.image"]
-	_order = "sequence, parent_id"
+	_order = "sequence, parent_left"
 
 	# PublicImage params
 	_attr_image_model_field = 'image'
 	_max_public_file_size = (1280, None)
 
+	child_ids = fields.One2many(domain=['|', ('active', '=', True), ('active', '=', False)])
 	sequence = fields.Integer(help="Gives the sequence order for tags")
 	public_image_name = fields.Char('Tag Public File Name')
+
+	@api.one
+	def unlink(self):
+		if not self.child_ids:
+			super(ProductTag, self).unlink()
+		else:
+			raise ValidationError(_("Delete child tags first!"))
+		return True
 
 ####################### ATRIBUTOS #######################
 
@@ -236,7 +288,7 @@ class ProductAttributeValue(models.Model):
 
 	# PublicImage params
 	_attr_image_model_field = 'image_color'
-	_max_public_file_size = (62, 62)
+	_max_public_file_size = (None, 62)
 
 	is_color = fields.Boolean(related='attribute_id.is_color', store=False)
 	html_color = fields.Char(string='HTML Color', oldname='color', help="Here you can set a specific HTML color index (e.g. #ff0000) to display the color on the website if the attibute type is 'Color'.")
@@ -267,11 +319,12 @@ class ProductPublicCategory(models.Model):
 
 	name = fields.Char(required=True, translate=True)
 	parent_id = fields.Many2one('product.public.category', string='Parent Category', index=True)
-	child_id = fields.One2many('product.public.category', 'parent_id', string='Children Categories')
+	child_ids = fields.One2many('product.public.category', 'parent_id', string='Children Categories')
 	sequence = fields.Integer(help="Gives the sequence order when displaying a list of product categories.")
 	image = fields.Binary(attachment=True, help="This field holds the image used as image for the category, limited to 1280px.")
 	public_image_name = fields.Char('Category Public File Name')
 
+	@api.one
 	@api.constrains('parent_id')
 	def check_parent_id(self):
 		if not self._check_recursion():
@@ -289,21 +342,38 @@ class ProductPublicCategory(models.Model):
 			res.append((category.id, ' / '.join(reversed(names))))
 		return res
 
+	@api.one
+	def unlink(self):
+		if not self.child_ids:
+			super(ProductPublicCategory, self).unlink()
+		else:
+			raise ValidationError(_("Delete child categories first!"))
+		return True
+
 ####################### IMÁGENES DE PRODUCTO #######################
 
 class ProductImage(models.Model):
 	_name = "product.image"
 	_inherit = ["b2b.image"]
-	
+	_order = "sequence, id"
+
+	def _default_attributes_domain(self):
+		tmpl_id = self.env.context.get('default_product_tmpl_id')
+		tmpl_obj = self.env['product.template'].browse(tmpl_id)
+		domdict = self._onchange_product_attributes_values(tmpl_obj)
+		return domdict['domain']['product_attributes_values']
+
 	name = fields.Char('Name')
 	image = fields.Binary('Image', attachment=True, required=True)
 	public_image_name = fields.Char('Variant Image Public File Name')
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', copy=True)
-	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel')
+	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel', domain=_default_attributes_domain)
+	sequence = fields.Integer(default=0, help="Gives the sequence order for images")
 
 	@api.onchange('product_tmpl_id', 'product_attributes_values')
-	def _onchange_product_attributes_values(self):
-		product_attributes_values_ids = set(self.product_tmpl_id.attribute_line_ids.mapped('value_ids').ids)
+	def _onchange_product_attributes_values(self, product_template=None):
+		if not product_template: product_template = self.product_tmpl_id
+		product_attributes_values_ids = set(product_template.attribute_line_ids.mapped('value_ids').ids)
 		exclude_attributes_ids = set(self.product_attributes_values.mapped('attribute_id.value_ids').ids)
 		attributes_values_ids = list(product_attributes_values_ids - exclude_attributes_ids)
 		return { 

@@ -20,8 +20,7 @@ class ProductAttributeValue(models.Model):
     code = fields.Char("Code", help="Code number for this variant",
                        required=True)
     legacy_code = fields.Char("Legacy Code")
-    is_color = fields.Boolean("Represents a color",
-                              related="attribute_id.is_color")
+    is_color = fields.Boolean("Represents a color", related="attribute_id.is_color", readonly=True)
     sequence = fields.Integer('Sequence', help="Determine the display order", readonly=True, default = 0)
 
     _sql_constraints = [
