@@ -74,43 +74,14 @@ class B2BExport(models.Model):
 	# ------------------------------------ PUBLIC METHODS ------------------------------------
 
 	@api.model
-	def send_multi(self, object_name, data_list, action_str='replace'):
-		"""
-		Splits data list in multiple parts if needed and sends it
-		"""
-		jsync_conf = self.env['b2b.settings'].get_default_params()
-		data_parts = list()
-		last = 0.0
-
-		# Divide packet if needed
-		# large datasets have to be divided in multiple parts
-		# determined by packet_size on settings
-		packet_size_mb = float(jsync_conf.get('packet_size', 10.0))
-		data_size = getsizeof(data_list)/float(1048576)
-		num_packets_total = ceil(data_size / packet_size_mb) or 1
-		data_items_count = len(data_list)
-		avg = data_items_count / float(num_packets_total)
-
-		_logger.info("[send_multi] Tamaño de paquete máximo: %s", packet_size_mb)
-		_logger.info("[send_multi] Tamaño de paquete actual: %s", data_size)
-		_logger.info("[send_multi] Número de partes a enviar: %s", num_packets_total)
-
-		while last < data_items_count:
-			_logger.info("Construyendo parte %i del %i al %i", len(data_parts) + 1, last, last + avg)
-			data_parts.append(iter(data_list[int(last):int(last + avg)]))
-			last += avg
-
-		# Construct & send packets
-		num_packets = len(data_parts)
-		for i, part in enumerate(data_parts):
-			_logger.info('Enviando parte %i de %i para %s' % (i+1, num_packets, object_name))
-			# Make packet
+	def send_packet(self, object_name, data_list, action_str='replace'):
+		if data_list and type(data_list) is list:
+			jsync_conf = self.env['b2b.settings'].get_default_params()
 			packet = JSync(self.env, settings=jsync_conf)
 			packet.name = object_name
-			packet.data = list(part)
+			packet.data = data_list
 			packet.mode = action_str
-			packet.part = [i + 1, num_packets]
-			packet.send(notify=False, timeout_sec=600)
+			packet.send(timeout_sec=600)
 
 	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, pricelists_filter=None, variant=None, operation=None):
 		_logger.info('[b2b_pricelists_prices] INICIO!')
@@ -232,7 +203,7 @@ class B2BExport(models.Model):
 		if prices:
 			self.write_to_log(str(prices), 'pricelist_item', "a+")
 			mode = 'update' if (templates_filter or pricelists_filter) else 'replace'
-			self.send_multi('pricelist_item', prices, mode)
+			self.send_packet('pricelist_item', prices, mode)
 
 	def b2b_customers_prices(self, lines_filter=None, operation=None, templates_filter=None):
 		_logger.info('[b2b_customers_prices] INICIO!')
@@ -284,7 +255,7 @@ class B2BExport(models.Model):
 		if prices:
 			self.write_to_log(str(prices), 'customer_price', "a+")
 			mode = 'update' if (lines_filter or templates_filter) else 'replace'
-			self.send_multi('customer_price', prices, mode)
+			self.send_packet('customer_price', prices, mode)
 
 	def b2b_products_stock(self, test_limit=None, from_date=None, export_all=None):
 		_logger.info('[b2b_products_stock] INICIO!')
@@ -304,7 +275,7 @@ class B2BExport(models.Model):
 		if stock:
 			self.write_to_log(str(stock), 'product_stock', "a+")
 			mode = 'replace' if all_products == True else 'update'
-			self.send_multi('product_stock', stock, mode)
+			self.send_packet('product_stock', stock, mode)
 
 	# ------------------------------------ OVERRIDES ------------------------------------
 
