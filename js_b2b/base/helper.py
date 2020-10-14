@@ -126,35 +126,20 @@ class JSync(object):
 			'packet_size'
 		])
 
-	def filter_data(self, vals=None):
+	def filter_data(self, crudMode=None):
 		"""
 		Filter and normalizes item data (data)
 
-		:param vals: Item data to update (from model) * DEPRECATED
+		:param crudMode: Operation mode
 		:return: dict
-
-		* DEPRECATED
-		* data key modifiers:
-		* 	fixed:xxx -> Sends xxx always
-		* 	field_xxx_name:xxx -> Sends xxx field if field_xxx_name has changed
-		* 	xxx: -> Sends xxx field if has changed (no modifier)
 		"""
 
 		if self.data and type(self.data) is dict:
 			for field, value in self.data.items():
-				# obj_old = obj_new = field
-				# If field have :
-				# if ':' in field:
-				#	# Before :
-				#	obj_old = field[:field.index(':')]
-				#	# After :
-				#	obj_new = field[field.index(':') + 1:]
-				#	# Replace key
-				#	self.data[obj_new] = self.data.pop(field)
-				# if obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
-				#	# Remove field because is not found in vals
-				#	del self.data[obj_new]
-				if type(value) is list:
+				if crudMode == 'delete' and field != 'jim_id':
+					# Delete all except jim_id on delete
+					del self.data[field]
+				elif type(value) is list:
 					# Convert lits to tuples
 					self.data[field] = tuple(value)
 				elif type(value) is unicode:

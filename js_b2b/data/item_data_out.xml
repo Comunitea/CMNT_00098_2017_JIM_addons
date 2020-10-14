@@ -191,7 +191,11 @@ def pos_data(self, action):
                 p.b2b_record('create', user_notify=False)
         # Previsión de abastecimiento
         for stock_move in self.product_variant_id.stock_move_ids:
-            stock_move.b2b_record('create', user_notify=False)</field>
+            stock_move.b2b_record('create', user_notify=False)
+        # Enviar precios y stock (plantilla y variantes)
+        self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[self.id,])
+        self.env['b2b.export'].b2b_customers_prices(templates_filter=[self.id,])
+        self.env['b2b.export'].b2b_products_stock(export_all=[self.id,])</field>
         </record>
 
         <record id="b2b_item_out_7" model="b2b.item.out">
@@ -243,7 +247,11 @@ def pos_data(self, action):
                 p.b2b_record('create', user_notify=False)
         # Previsión de abastecimiento
         for stock_move in self.stock_move_ids:
-            stock_move.b2b_record('create', user_notify=False)</field>
+            stock_move.b2b_record('create', user_notify=False)
+        # Enviar precios y stock (plantilla y variantes)
+        self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[self.product_tmpl_id.id,])
+        self.env['b2b.export'].b2b_customers_prices(templates_filter=[self.product_tmpl_id.id,])
+        self.env['b2b.export'].b2b_products_stock(export_all=[self.product_tmpl_id.id,])</field>
         </record>
 
         <record id="b2b_item_out_8" model="b2b.item.out">
@@ -409,6 +417,7 @@ def is_notifiable(self, action, vals):
     variant_published = self.product_id.website_published if self.product_id.product_tmpl_id.product_variant_count > 1 else product_published
     return (product_published # El producto relaccionado está publicado
         and variant_published # La variante relaccionada está publicada
+        and self.purchase_line_id # Viene de una línea de un pedido de compra
         and self.company_id.id in (1, 5) # La compañía es Jim Sports o Eme Inversia
         and self.picking_id.picking_type_id.id in (13, 97) # Y el tipo de picking es 'Recepciones (MECALUX) o Recepciones EME'
         and self.state == 'assigned' # Y el estado es 'assigned'
