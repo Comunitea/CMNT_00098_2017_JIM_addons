@@ -249,8 +249,8 @@ def pos_data(self, action):
         for stock_move in self.stock_move_ids:
             stock_move.b2b_record('create', user_notify=False)
         # Enviar precios y stock (plantilla y variantes)
-        self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[self.product_tmpl_id.id,])
-        self.env['b2b.export'].b2b_customers_prices(templates_filter=[self.product_tmpl_id.id,])
+        self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[self.product_tmpl_id.id,], variant=self.id)
+        self.env['b2b.export'].b2b_customers_prices(templates_filter=[self.product_tmpl_id.id,], variant=self.id)
         self.env['b2b.export'].b2b_products_stock(export_all=[self.product_tmpl_id.id,])</field>
         </record>
 
