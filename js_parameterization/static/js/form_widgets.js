@@ -1,4 +1,4 @@
-odoo.define('js_categorization.form_widgets', function (require) {
+odoo.define('js_parameterization.form_widgets', function (require) {
     "use strict";
 
     var core = require('web.core');

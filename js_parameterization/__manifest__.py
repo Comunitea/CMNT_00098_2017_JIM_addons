@@ -9,7 +9,7 @@
     "data": [
         "security/res.groups.xml",
         "security/ir.model.access.csv",
-        "views/categorization.xml",
+        "views/parameterization.xml",
         "views/product.xml",
         "views/assets.xml",
         "wizards/select_variant_wizard_view.xml"

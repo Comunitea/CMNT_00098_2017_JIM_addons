@@ -16,4 +16,4 @@ class GoToProductWizard(models.TransientModel):
 
     @api.multi
     def go_to_variant(self):
-        return self.product_variant.categorization_modal()
+        return self.product_variant.parameterization_modal()

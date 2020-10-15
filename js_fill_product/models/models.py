@@ -47,24 +47,13 @@ class ProductTemplate(models.Model):
 
 				# Nombre del fichero
 				image_path = '%s%s.jpg' % (URL, product_reference)
-				imageBase64 = self.__get_image(image_path)
+				imageBase64tmpl = self.__get_image(image_path)
 
-				if imageBase64:
-					irecord.with_context(resize_img=resize).write({ 'image':imageBase64 })
+				if imageBase64tmpl:
+					irecord.with_context(resize_img=resize).write({ 'image':imageBase64tmpl })
 
 				# Eliminar imágenes antiguas
 				irecord.product_image_ids.unlink()
-
-				# Tiene variantes
-				if len(irecord.product_variant_ids) > 1:
-					# Metemos de nuevo la imágen principal en la pestaña de imágenes
-					# para poder asignarle un atributo para la web
-					if imageBase64:
-						new_image = irecord.env['product.image'].with_context(resize_img=resize).create({ 
-							'product_tmpl_id': irecord.id, 
-							'name': irecord.name, 
-							'image': imageBase64 
-						})
 
 				# Carga las imágenes secundarias
 				i = 1
@@ -75,6 +64,16 @@ class ProductTemplate(models.Model):
 					imageBase64 = self.__get_image(image_path)
 
 					if imageBase64:
+
+						if i == 1 and imageBase64tmpl:
+							# Metemos de nuevo la imágen principal en la pestaña de imágenes si tiene más de una
+							new_image = irecord.env['product.image'].with_context(resize_img=resize).create({ 
+								'product_tmpl_id': irecord.id, 
+								'name': irecord.name, 
+								'image': imageBase64tmpl 
+							})
+
+
 						new_image = irecord.env['product.image'].with_context(resize_img=resize).create({ 
 							'product_tmpl_id': irecord.id, 
 							'name': irecord.name, 
