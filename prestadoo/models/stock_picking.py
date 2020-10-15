@@ -16,7 +16,6 @@ class StockMove(BaseExtClass):
            and self.sale_id.partner_id.commercial_partner_id.is_notifiable()
 
     def set_props(self, unlink=False):
-        print("------- PRESTADOO SEND PODOCUMENT!!!!!!!!!!!!!!!")
         podocuments = """
                 <podocuments>
                   <IdDocs>{}</IdDocs>

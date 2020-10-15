@@ -3,9 +3,9 @@
 
     <!-- CONFIGURACIÓN DE TIPOS -->
 
-    <record id="js_categorization_types_form" model="ir.ui.view">
-        <field name="name">js_categorization.type.form</field>
-        <field name="model">js_categorization.type</field>
+    <record id="js_parameterization_types_form" model="ir.ui.view">
+        <field name="name">js_parameterization.type.form</field>
+        <field name="model">js_parameterization.type</field>
         <field name="arch" type="xml">
             <form string="Parameterization Type">
                 <sheet>
@@ -17,9 +17,9 @@
         </field>
     </record>
 
-    <record id="js_categorization_types_tree" model="ir.ui.view">
-        <field name="name">js_categorization.type.tree</field>
-        <field name="model">js_categorization.type</field>
+    <record id="js_parameterization_types_tree" model="ir.ui.view">
+        <field name="name">js_parameterization.type.tree</field>
+        <field name="model">js_parameterization.type</field>
         <field name="arch" type="xml">
             <tree string="parameters">
                 <field name="sequence" widget="handle"/>
@@ -28,10 +28,10 @@
         </field>
     </record>
 
-    <record id="js_categorization_types" model="ir.actions.act_window">
+    <record id="js_parameterization_types" model="ir.actions.act_window">
         <field name="name">Parameterization Types</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">js_categorization.type</field>
+        <field name="res_model">js_parameterization.type</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
@@ -45,9 +45,9 @@
 
     <!-- CONFIGURACIÓN DE PARÁMETROS -->
 
-    <record id="js_categorization_fields_form" model="ir.ui.view">
-        <field name="name">js_categorization.field.form</field>
-        <field name="model">js_categorization.field</field>
+    <record id="js_parameterization_fields_form" model="ir.ui.view">
+        <field name="name">js_parameterization.field.form</field>
+        <field name="model">js_parameterization.field</field>
         <field name="arch" type="xml">
             <form string="Parameterization Field" duplicate="0">
                 <sheet>
@@ -55,7 +55,7 @@
                         <group string="Field Info">
                             <field name="id" invisible="1"/>
                             <field name="model_id" invisible="1"/>
-                            <field name="categorization_type" help="Parameterization Template Type"/>
+                            <field name="parameterization_type" help="Parameterization Template Type"/>
                             <field name="field_description" string="Field Label" help="Field display name" default_focus="1"/>
                             <field name="name" help="Field database name" attrs="{ 'readonly': [('id', '!=', False)] }"/>
                             <field name="model_id" help="Create field for this model" options="{ 'no_open': True, 'no_create': True }" invisible="context.get('default_model_id', False)" attrs="{ 'readonly': [('id', '!=', False)] }"/>
@@ -73,7 +73,7 @@
                             <field name="index" string="Indexed" help="Indexed field for faster searchs"/>
                             <field name="copy" string="Copied" help="Value copied when model registry is duplicated"/>
                             <field name="store" string="Stored" help="Saved on database"/>
-                            <field name="filter_vals" string="Filter vals" help="Filter values by selected type in categorization" attrs="{ 'invisible': [('ttype', 'not in', ['js_many2one', 'js_many2many'])] }"/>
+                            <field name="filter_vals" string="Filter vals" help="Filter values by selected type in parameterization" attrs="{ 'invisible': [('ttype', 'not in', ['js_many2one', 'js_many2many'])] }"/>
                         </group>
                     </group>
                 </sheet>
@@ -81,9 +81,9 @@
         </field>
     </record>
 
-    <record id="js_categorization_fields_tree" model="ir.ui.view">
-        <field name="name">js_categorization.field.tree</field>
-        <field name="model">js_categorization.field</field>
+    <record id="js_parameterization_fields_tree" model="ir.ui.view">
+        <field name="name">js_parameterization.field.tree</field>
+        <field name="model">js_parameterization.field</field>
         <field name="arch" type="xml">
             <tree string="parameters">
                 <field name="sequence" widget="handle"/>
@@ -91,27 +91,27 @@
                 <field name="model_id"/>
                 <field name="field_description" string="Field Label"/>
                 <field name="ttype" string="Field Type"/>
-                <field name="categorization_type"/>
+                <field name="parameterization_type"/>
             </tree>
         </field>
     </record>
 
-    <record id="js_categorization_fields_search" model="ir.ui.view">
-        <field name="name">js_categorization.field.search</field>
-        <field name="model">js_categorization.field</field>
+    <record id="js_parameterization_fields_search" model="ir.ui.view">
+        <field name="name">js_parameterization.field.search</field>
+        <field name="model">js_parameterization.field</field>
         <field name="arch" type="xml">
             <search string="Parameterization Field">
                 <field name="name" string="Name" />
                 <field name="field_description" string="Label" />
-                <filter string="Product" name="product_filter" domain="[('model_id.model','=','product.template.categorization')]"/>
-                <filter string="Variant" name="variant_filter" domain="[('model_id.model','=','product.product.categorization')]"/>
+                <filter string="Product" name="product_filter" domain="[('model_id.model','=','product.template.parameterization')]"/>
+                <filter string="Variant" name="variant_filter" domain="[('model_id.model','=','product.product.parameterization')]"/>
             </search>
         </field>
     </record>
 
-    <record id="js_categorization_fields" model="ir.actions.act_window">
+    <record id="js_parameterization_fields" model="ir.actions.act_window">
         <field name="name">Parameterization Fields</field>
-        <field name="res_model">js_categorization.field</field>
+        <field name="res_model">js_parameterization.field</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
@@ -125,15 +125,15 @@
 
     <!-- CONFIGURACIÓN DE VALORES -->
 
-    <record id="js_categorization_values_form" model="ir.ui.view">
-        <field name="name">js_categorization.value.form</field>
-        <field name="model">js_categorization.value</field>
+    <record id="js_parameterization_values_form" model="ir.ui.view">
+        <field name="name">js_parameterization.value.form</field>
+        <field name="model">js_parameterization.value</field>
         <field name="arch" type="xml">
             <form string="Parameterization Value">
                 <sheet>
                     <group>
                         <field name="name"/>
-                        <field name="categorization_type"/>
+                        <field name="parameterization_type"/>
                         <field name="fields" invisible="context.get('hide_fields', False)"/>
                     </group>
                 </sheet>
@@ -141,38 +141,38 @@
         </field>
     </record>
 
-    <record id="js_categorization_values_tree" model="ir.ui.view">
-        <field name="name">js_categorization.value.tree</field>
-        <field name="model">js_categorization.value</field>
+    <record id="js_parameterization_values_tree" model="ir.ui.view">
+        <field name="name">js_parameterization.value.tree</field>
+        <field name="model">js_parameterization.value</field>
         <field name="arch" type="xml">
             <tree string="parameters">
                 <field name="name"/>
-                <field name="categorization_type"/>
+                <field name="parameterization_type"/>
                 <field name="fields"/>
             </tree>
         </field>
     </record>
 
-    <record id="js_categorization_values" model="ir.actions.act_window">
+    <record id="js_parameterization_values" model="ir.actions.act_window">
         <field name="name">Parameterization Values</field>
         <field name="type">ir.actions.act_window</field>
-        <field name="res_model">js_categorization.value</field>
+        <field name="res_model">js_parameterization.value</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
           <p class="oe_view_nocontent_create">
             Push here to create a new value
           </p><p>
-            This values can be selected later in the product categorization fields
+            This values can be selected later in the product parameterization fields
           </p>
         </field>
     </record>
 
     <!-- ACCIONES DE MENÚ -->
 
-    <menuitem id="menu_js_categorization" name="Parameterization" parent="stock.menu_product_in_config_stock" sequence="90" />
-    <menuitem id="menu_js_categorization_fields_tree" name="Fields" parent="menu_js_categorization" action="js_categorization_fields" sequence="1" groups="js_categorization.group_manage_categorization" />
-    <menuitem id="menu_js_categorization_types" name="Types" parent="menu_js_categorization" action="js_categorization_types" sequence="2" groups="js_categorization.group_manage_categorization" />
-    <menuitem id="menu_js_categorization_values" name="Values" parent="menu_js_categorization" action="js_categorization_values" sequence="3" groups="js_categorization.group_manage_categorization" />
+    <menuitem id="menu_js_parameterization" name="Parameterization" parent="stock.menu_product_in_config_stock" sequence="90" />
+    <menuitem id="menu_js_parameterization_fields_tree" name="Fields" parent="menu_js_parameterization" action="js_parameterization_fields" sequence="1" groups="js_parameterization.group_manage_parameterization" />
+    <menuitem id="menu_js_parameterization_types" name="Types" parent="menu_js_parameterization" action="js_parameterization_types" sequence="2" groups="js_parameterization.group_manage_parameterization" />
+    <menuitem id="menu_js_parameterization_values" name="Values" parent="menu_js_parameterization" action="js_parameterization_values" sequence="3" groups="js_parameterization.group_manage_parameterization" />
 
 </odoo>
