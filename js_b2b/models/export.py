@@ -83,7 +83,7 @@ class B2BExport(models.Model):
 			packet.mode = action_str
 			packet.send(timeout_sec=600)
 
-	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, pricelists_filter=None, variant=None, operation=None):
+	def b2b_pricelists_prices(self, test_limit=None, templates_filter=None, pricelists_filter=None, variant=None, qty=None):
 		_logger.info('[b2b_pricelists_prices] INICIO!')
 
 		# Out prices
@@ -139,8 +139,14 @@ class B2BExport(models.Model):
 				
 				# For each pricelist
 				for pricelist in pricelists:
+
+					# Pricelist filtered
+					pricelist_filtered = (pricelists_filter and pricelists_filter[0] == pricelist[0])
+
 					# For each quantity
 					for min_qty in _search_pricelist_quantities(quantities, pricelist[0]):
+						# Update operation
+						is_update = pricelist_filtered and min_qty == qty and (not variant or variant_id == variant)
 
 						# Product in pricelist & qty context
 						product_in_ctx = product.with_context({ 'pricelist': pricelist[0], 'quantity': min_qty })
@@ -155,19 +161,14 @@ class B2BExport(models.Model):
 
 						# Same price in all variants
 						if all(x==variants_prices[0] for x in variants_prices if variants_prices[0]):
-
-							# Get variant price
+							# Get unique variant price (template price)
 							price = round(variants_prices[0], prices_precision)
-
-							# Set price 0 on deletes
-							if operation == 'delete' and not variant:
-								price = 0
 							
 							# If price is not 0 and not in prices list yet with qty 1
 							product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
 							
 							# Save if not in list yet, and is a delete operation or have price
-							if not bool(list(product_filter)) and (operation == 'delete' or price):
+							if not bool(list(product_filter)) and (is_update or price):
 								# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
 								prices.append({ 
 									'company_id': pricelist[2] or None,
@@ -187,15 +188,11 @@ class B2BExport(models.Model):
 								# Get variant price
 								price = round(variants_prices[v], prices_precision)
 
-								# Set price 0 on deletes
-								if operation == 'delete' and variant_id == variant:
-									price = 0
-
 								# If price is not 0 and not in prices list yet with qty 1
 								product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == variant_id and x['quantity'] == 1 and x['price'] == price, prices)
 								
 								# Save if not in list yet, and is a delete operation or have price or actual variant equals variant_id if is setted
-								if not bool(list(product_filter)) and (operation == 'delete' or price) and (not variant or variant_id == variant):
+								if not bool(list(product_filter)) and (is_update or price):
 									# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
 									prices.append({ 
 										'company_id': pricelist[2] or None,

@@ -212,7 +212,7 @@ msgstr "Filtrar valores"
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.js_parameterization_fields_form
 msgid "Filter values by selected type in parameterization"
-msgstr "Filtrar valores para la plantilla seleccionada en la categorización"
+msgstr "Filtrar valores para la plantilla seleccionada en la parametrización"
 
 #. module: js_parameterization
 #: code:addons/js_parameterization/models/parameterization.py:134
@@ -290,7 +290,7 @@ msgstr "Texto Largo"
 #. module: js_parameterization
 #: model:res.groups,name:js_parameterization.group_manage_parameterization
 msgid "Manage types, fields and values in parameterization"
-msgstr "Gestionar plantillas, campos y valores de la categorización"
+msgstr "Gestionar plantillas, campos y valores de la parametrización"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_model_id
@@ -375,7 +375,7 @@ msgstr "Variantes de producto"
 #. module: js_parameterization
 #: sql_constraint:product.template.parameterization:0
 msgid "Product must be unique in parameterization!"
-msgstr "¡El producto debe ser único en la categorización!"
+msgstr "¡El producto debe ser único en la parametrización!"
 
 #. module: js_parameterization
 #: model:ir.ui.menu,name:js_parameterization.menu_js_parameterization_products
@@ -384,7 +384,7 @@ msgstr "Productos"
 
 #. module: js_parameterization
 #: model:ir.actions.act_window,name:js_parameterization.parameterization_products
-msgid "Products Categorizated"
+msgid "Products Parameterizated"
 msgstr "Productos Parametrizados"
 
 #. module: js_parameterization
@@ -507,7 +507,7 @@ msgstr "Las plantillas definen un grupo de campos que se aplica al producto"
 #. module: js_parameterization
 #: model:ir.actions.act_window,help:js_parameterization.js_parameterization_values
 msgid "This values can be selected later in the product parameterization fields"
-msgstr "Estos valores se podrán seleccionar después en los campos de categorización"
+msgstr "Estos valores se podrán seleccionar después en los campos de parametrización"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.js_parameterization_fields_form
@@ -522,7 +522,7 @@ msgstr "Traducir los campos de tipo texto"
 #. module: js_parameterization
 #: sql_constraint:js_parameterization.type:0
 msgid "Type must be unique in parameterization!"
-msgstr "¡El nombre de la plantilla debe ser único en la categorización!"
+msgstr "¡El nombre de la plantilla debe ser único en la parametrización!"
 
 #. module: js_parameterization
 #: model:ir.ui.menu,name:js_parameterization.menu_js_parameterization_types
@@ -537,7 +537,7 @@ msgstr "El valor se copiará cuando un registro del modelo es duplicado"
 #. module: js_parameterization
 #: sql_constraint:js_parameterization.value:0
 msgid "Value must be unique in parameterization type!"
-msgstr "¡El valor debe ser único en la plantilla de categorización!"
+msgstr "¡El valor debe ser único en la plantilla de parametrización!"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_selection_vals
@@ -569,7 +569,7 @@ msgstr "Campos de Parametrización (Variante)"
 #. module: js_parameterization
 #: sql_constraint:product.product.parameterization:0
 msgid "Variant must be unique in parameterization!"
-msgstr "¡La variante debe ser única en la categorización!"
+msgstr "¡La variante debe ser única en la parametrización!"
 
 #. module: js_parameterization
 #: model:ir.ui.menu,name:js_parameterization.menu_js_parameterization_variants
@@ -578,8 +578,8 @@ msgstr "Variantes"
 
 #. module: js_parameterization
 #: model:ir.actions.act_window,name:js_parameterization.parameterization_variants
-msgid "Variants Categorizated"
-msgstr "Variantes Categorizadas"
+msgid "Variants Parameterizated"
+msgstr "Variantes Parametrizadas"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_products_tree

@@ -101,7 +101,7 @@
     <!-- PRODUCTS CATEGORIZATED -->
 
     <record id="parameterization_products_tree" model="ir.ui.view">
-        <field name="name">Products Categorizated</field>
+        <field name="name">Products Parameterizated</field>
         <field name="model">product.template.parameterization</field>
         <field name="arch" type="xml">
             <tree string="products" create="false" edit="false">
@@ -113,7 +113,7 @@
     </record>
 
     <record id="parameterization_variants_tree" model="ir.ui.view">
-        <field name="name">Variants Categorizated</field>
+        <field name="name">Variants Parameterizated</field>
         <field name="model">product.product.parameterization</field>
         <field name="arch" type="xml">
             <tree string="variants" create="false" edit="false">
