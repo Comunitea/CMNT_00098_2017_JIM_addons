@@ -730,11 +730,21 @@ def is_notifiable(self, action, vals):
     return self.pricelist_id.web and (self.product_id or self.product_tmpl_id)
 
 def get_data(self, action):
-    template_obj = self.product_id.product_tmpl_id if self.product_id else self.product_tmpl_id
-    variant_id = self.product_id.id if self.product_id else None
-    # Llamamos al método que envía los precios pero lo limitamos a esta plantilla
-    self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[template_obj.id,], variant=variant_id, operation=action)
-    return list()</field>
+    # Guardar datos de la línea que se está modificando
+    b2b['actual_pricelist_item'] = {
+        'template_id': self.product_id.product_tmpl_id.id if self.product_id else self.product_tmpl_id.id,
+        'variant_id': self.product_id.id if self.product_id else None,
+        'pricelist_id': self.pricelist_id.id,
+        'qty': self.min_quantity if self.min_quantity > 0 else 1
+        
+    }
+    return list()
+    
+def pos_data(self, action):
+    # Recuperar datos de línea
+    item = b2b['actual_pricelist_item']
+    # Llamamos al método que envía los precios pero lo limitamos a esta plantilla, variante y cantidad
+    self.env['b2b.export'].b2b_pricelists_prices(pricelists_filter=[item['pricelist_id'],], templates_filter=[item['template_id'],], variant=item['variant_id'], qty=item['qty'])</field>
         </record>
 
     </data>
