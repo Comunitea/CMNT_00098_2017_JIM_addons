@@ -168,7 +168,7 @@ class B2BExport(models.Model):
 							product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == None and x['quantity'] == 1 and x['price'] == price, prices)
 							
 							# Save if not in list yet, and is a delete operation or have price
-							if not bool(list(product_filter)) and (is_update or price):
+							if not bool(list(product_filter)): # and (is_update or price)
 								# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], '-', min_qty, price))
 								prices.append({ 
 									'company_id': pricelist[2] or None,
@@ -192,7 +192,7 @@ class B2BExport(models.Model):
 								product_filter = filter(lambda x: x['pricelist_id'] == pricelist[0] and x['product_id'] == product_id and x['variant_id'] == variant_id and x['quantity'] == 1 and x['price'] == price, prices)
 								
 								# Save if not in list yet, and is a delete operation or have price or actual variant equals variant_id if is setted
-								if not bool(list(product_filter)) and (is_update or price):
+								if not bool(list(product_filter)): # and (is_update or price)
 									# print(":: %10s\t%10s\t%6s\t%8s" % (pricelist[0], variant_id, min_qty, price))
 									prices.append({ 
 										'company_id': pricelist[2] or None,

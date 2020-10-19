@@ -40,14 +40,14 @@ class ProductTemplate(models.Model):
                                     filled_fields += 1  # Add field to the counter
             if custom_fields:
                 # Calculate and save percent
-                parameterization_percent = int(
-                    (filled_fields/custom_fields) * 100)
+                parameterization_percent = int((filled_fields/custom_fields) * 100)
             record.parameterization_percent_filled = parameterization_percent
 
     #public
     @api.multi
     def parameterization_modal(self):
         self.ensure_one()  # One record expected
+        
         # Get product parameterization
         product_parameterization = self.env['product.template.parameterization'].search([('product_id', '=', self.id)])
         if not product_parameterization:
@@ -72,6 +72,7 @@ class ProductProduct(models.Model):
     @api.multi
     def parameterization_modal(self):
         self.ensure_one()  # One record expected
+
         # Get variant parameterization
         variant_parameterization = self.env['product.product.parameterization'].search([('product_id', '=', self.id)])
         if not variant_parameterization:
@@ -126,7 +127,13 @@ class ProductParameterization(models.Model):
     #public
     @api.multi
     def edit_variant(self):
-        return {  # Open variant selection wizard
+        self.ensure_one()  # One record expected
+
+        # If only have one variant go directly
+        if (len(self.product_id.product_variant_ids) == 1):
+            return self.product_id.product_variant_id.parameterization_modal()
+
+        return { # Else open variant selection wizard
             'name': 'Switch to Variant',
             'view_type': 'form',
             'view_mode': 'form',
@@ -152,6 +159,7 @@ class ProductParameterization(models.Model):
     @api.multi
     def write(self, values):
         reset_fields = dict()
+
         # If parameterization template changed, empty not applicable fields
         # We did this instead of delete asociated parameterization to avoid fill generic fields again
         if values.get('parameterization_template') and self.parameterization_template.id != values['parameterization_template']:
@@ -165,9 +173,11 @@ class ProductParameterization(models.Model):
             values.update(reset_fields)
             self.env['product.product.parameterization'].search([('product_id', 'in', self.product_id.product_variant_ids._ids)]).write(reset_fields)
 
-        # Save and go to variant
+        # Save & calculate percent
         super(ProductParameterization, self).write(values)
         self.product_id.calculate_parameterization_percent()
+
+        # Variant wizard
         return self.with_context(default_product_id=self.product_id.id).edit_variant()
 
     #override
@@ -177,9 +187,7 @@ class ProductParameterization(models.Model):
             # Copy product
             product = record.product_id
             # Delete variants parameterization
-            self.env['product.product.parameterization'].search(
-                [('product_id', 'in',
-                  product.product_variant_ids._ids)]).unlink()
+            self.env['product.product.parameterization'].search([('product_id', 'in', product.product_variant_ids._ids)]).unlink()
             # Delete product parameterization
             super(ProductParameterization, record).unlink()
             # Set product parameterization percent to 0
