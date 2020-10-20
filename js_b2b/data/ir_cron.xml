@@ -13,7 +13,7 @@
             <field name="args">(None, None, None, None, None)</field>
         </record>
 
-        <record model="ir.cron" id="b2b_pricelist_prices">
+        <record model="ir.cron" id="b2b_pricelist_prices_cron">
             <field name='name'>B2B Pricelists Prices</field>
             <field name='interval_number'>1</field>
             <field name='interval_type'>days</field>
@@ -25,16 +25,27 @@
             <field name="args">(None, None, None, None, None)</field>
         </record>
 
-        <record model="ir.cron" id="b2b_customer_prices">
+        <record model="ir.cron" id="b2b_customer_prices_cron">
             <field name='name'>B2B Customer Prices</field>
             <field name='interval_number'>1</field>
             <field name='interval_type'>days</field>
-            <field name='nextcall' eval="datetime.now(pytz.timezone('Europe/Madrid')).strftime('%Y-%m-%d 07:00:00')"></field>
+            <field name='nextcall' eval="datetime.now(pytz.timezone('Europe/Madrid')).strftime('%Y-%m-%d 05:00:00')"></field>
             <field name="numbercall">-1</field>
             <field name="active">True</field>
             <field name="model">b2b.export</field>
             <field name="function">b2b_customers_prices</field>
             <field name="args">(None, None, None, None)</field>
+        </record>
+
+        <record model="ir.cron" id="b2b_supply_plans_cron">
+            <field name='name'>B2B Supply Plans</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name='nextcall' eval="datetime.now(pytz.timezone('Europe/Madrid')).strftime('%Y-%m-%d 06:00:00')"></field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">b2b.export</field>
+            <field name="function">b2b_delete_old_supplies</field>
         </record>
 
     </data>

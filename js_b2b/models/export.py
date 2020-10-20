@@ -297,6 +297,18 @@ class B2BExport(models.Model):
 			mode = 'replace' if all_products == True else 'update'
 			self.send_packet('product_stock', stock, mode)
 
+	def b2b_delete_old_supplies(self):
+		_logger.info('[b2b_delete_old_supplies] INICIO!')
+
+		try:
+			supply_plan_ids = self.search([('res_id', '=like', 'stock.move,%')]).mapped(lambda record: int(record.res_id.split(',')[1]))
+			for record in self.env['stock.move'].search([('id', 'in', supply_plan_ids), ('date_expected', '<', str(datetime.now()))]):
+				record.b2b_record('delete', False)
+		except Exception as e:
+			_logger.critical('[b2b_delete_old_supplies] ERROR EN EL BUCLE! %s' % e)
+		finally:
+			_logger.info('[b2b_delete_old_supplies] FIN!')
+
 	# ------------------------------------ OVERRIDES ------------------------------------
 
 	@api.multi
@@ -305,5 +317,5 @@ class B2BExport(models.Model):
 			resource_id = record.res_id
 			if super(B2BExport, record).unlink():
 				# Delete related records also
-				self.search([('rel_id', '=', resource_id)]).unlink()
+				self.search([('rel_id', '=', resource_id)]).with_context(b2b_evaluate=False).unlink()
 		return True
