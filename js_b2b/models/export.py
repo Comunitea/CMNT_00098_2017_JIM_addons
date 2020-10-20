@@ -303,7 +303,7 @@ class B2BExport(models.Model):
 	def unlink(self):
 		for record in self:
 			resource_id = record.res_id
-			if super(B2BExport, record).unlink():
+			if super(B2BExport, record).with_context(b2b_evaluate=False).unlink():
 				# Delete related records also
-				self.search([('rel_id', '=', resource_id)]).unlink()
+				self.search([('rel_id', '=', resource_id)]).with_context(b2b_evaluate=False).unlink()
 		return True
