@@ -18,7 +18,6 @@
 				</header>
 				<div>
 					<group string="General">
-						<field name="packet_size"/>
 						<field name="url"/>
 						<field name="conexion_error"/>
 						<field name="response_error" attrs="{'invisible': [('conexion_error','=',False)]}"/>
