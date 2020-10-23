@@ -146,7 +146,7 @@ class B2BExport(models.Model):
 					# For each quantity
 					for min_qty in _search_pricelist_quantities(quantities, pricelist[0]):
 						# Update operation
-						is_update = pricelist_filtered and min_qty == qty and (not variant or variant_id == variant)
+						# is_update = pricelist_filtered and min_qty == qty and (not variant or variant_id == variant)
 
 						# Product in pricelist & qty context
 						product_in_ctx = product.with_context({ 'pricelist': pricelist[0], 'quantity': min_qty })
@@ -203,7 +203,7 @@ class B2BExport(models.Model):
 										'price': price
 									})
 		except Exception as e:
-			_logger.critical('[b2b_pricelists_prices] ERROR EN EL BUCLE! %s' % e)
+			_logger.exception('[b2b_customers_prices] ERROR EN EL BUCLE!')
 		finally:
 			_logger.info('[b2b_pricelists_prices] FIN!')
 
@@ -267,7 +267,7 @@ class B2BExport(models.Model):
 						})
 
 		except Exception as e:
-			_logger.critical('[b2b_customers_prices] ERROR EN EL BUCLE! %s' % e)
+			_logger.exception('[b2b_customers_prices] ERROR EN EL BUCLE!')
 		finally:
 			_logger.info('[b2b_customers_prices] FIN!')
 
@@ -287,7 +287,7 @@ class B2BExport(models.Model):
 			_logger.info('¿STOCK DE TODOS? %s' % all_products)
 			stock = self.env['exportxml.object'].compute_product_ids(all=all_products, from_time=from_date, limit=test_limit, inc=1000)
 		except Exception as e:
-			_logger.critical('[b2b_products_stock] ERROR EN EL BUCLE! %s' % e)
+			_logger.exception('[b2b_customers_prices] ERROR EN EL BUCLE!')
 		finally:
 			_logger.info('[b2b_products_stock] FIN!')
 		
@@ -305,7 +305,7 @@ class B2BExport(models.Model):
 			for record in self.env['stock.move'].search([('id', 'in', supply_plan_ids), ('date_expected', '<', str(datetime.now()))]):
 				record.b2b_record('delete', False)
 		except Exception as e:
-			_logger.critical('[b2b_delete_old_supplies] ERROR EN EL BUCLE! %s' % e)
+			_logger.exception('[b2b_customers_prices] ERROR EN EL BUCLE!')
 		finally:
 			_logger.info('[b2b_delete_old_supplies] FIN!')
 

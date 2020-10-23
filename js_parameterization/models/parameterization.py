@@ -86,9 +86,14 @@ class ParameterizationField(models.Model):
         special_values_model = 'js_parameterization.value'
         # Call super overrided method first
         super(ParameterizationField, self)._onchange_ttype()
+        # If is not a text field disable translate
+        if self.ttype not in ('char', 'text'):
+        	self.translate = False
         # If is relational field set relation to js_parameterization.value
         if self.ttype in ('js_many2one', 'js_many2many'):
             self.relation = special_values_model
+        else: # Otherwise not filter vals ever
+        	self.filter_vals = False
         # If is many2many override relation_table name, Odoo by default creates
         # the table starting with x_modelname and wee need different tables for each field
         if self.name and self.model_id and self.ttype == 'js_many2many':
