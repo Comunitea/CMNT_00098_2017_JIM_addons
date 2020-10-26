@@ -6,6 +6,9 @@ from odoo.addons import decimal_precision as dp
 from odoo.exceptions import UserError
 from odoo.tools import float_utils
 
+import logging
+_logger = logging.getLogger(__name__)
+
 
 class PickingType(models.Model):
     _inherit = "stock.picking.type"
@@ -137,7 +140,9 @@ class StockPicking(models.Model):
             if not pick_id:
                 return
             next_pick = pick_id.get_next_pick()
+            _logger.info("Propago valores de %s al albarán %s" % (pick_id.name, next_pick.name))
             if next_pick:
+                _logger.info("Propago valores de %s al albarán %s" % (pick_id.name, next_pick.name))
                 pick_packages = next_pick.pick_packages + pick_id.pick_packages
                 pick_weight = next_pick.pick_weight + pick_id.pick_weight
                 next_pick_vals = {'pick_packages': pick_packages,
@@ -148,8 +153,11 @@ class StockPicking(models.Model):
                 if pick_id.operator and not next_pick.operator:
                     operator = next_pick.operator or pick_id.operator
                     next_pick_vals['operator'] = operator
+                _logger.info("{}".format(next_pick_vals))
                 next_pick.write(next_pick_vals)
+
         except:
+            _logger.info("HA OCURRIDO UN ERROR NO PREVISTO")
             pass
         return
 
