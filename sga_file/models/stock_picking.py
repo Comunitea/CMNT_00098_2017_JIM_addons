@@ -260,7 +260,9 @@ class StockPickingSGA(models.Model):
     def do_pick(self, sga_ops_exists, bool_error=True):
         if not self.picking_type_id.sga_integrated:
             raise ValidationError("Solo albaranes integrados con Mecalux")
-        _logger.info("Entro en do_pick para el albarán %s"%self.name)
+        _logger.info("Entro en do_pick para el albarán %s\n Con valores: sga_ops_exists = %s"%(self.name, sga_ops_exists))
+
+
         partial = ''
         sga_state = 'MT'
         action_done_bool = self.action_done_bool
@@ -270,32 +272,38 @@ class StockPickingSGA(models.Model):
             all_zero = False
         else:
             all_zero = True
+
         if not sga_ops_exists:
             _logger.info("No hay operaciones para el albarán %s" % self.name)
             self.message_post(body="Pick <em>%s</em> ha sido realizado en Mecalux pero los <b>ids no se encuentran en ODOO</b>." % (self.name))
             action_done_bool = False
             sga_state = 'EI'
+
         # Confimo cantidaddes en servicios y consumibles
         pick_ops_product = self.pack_operation_product_ids.filtered(lambda x: x.product_id.type == 'consu')
+        _logger.info("Servicios y consumibles: {}".format(pick_ops_product))
         for op in pick_ops_product:
             op.qty_done = op.product_qty
-
+        _logger.info("action_done_bool: {}".format(action_done_bool))
         if action_done_bool:
             all_done = True
             do_transfer = True
             op_not_done = self.pack_operation_product_ids.filtered(lambda x: x.qty_done != x.product_qty)
+            _logger.info("op_not_done: {}".format(op_not_done))
             if op_not_done:
                 all_done = False
                 display_name_ids = ['%s (Cant: %s)' % (x.product_id.display_name, (x.product_qty - x.qty_done)) for x in
                                     op_not_done]
             if all_done:
-
+                _logger.info("all_done: {}".format(all_done))
+                _logger.info("Action done")
                 self.action_done()
                 _logger.info("Albarán %s validado 100%" % self.name)
                 self.message_post(body="El albarán <em>%s</em> <b>ha sido validado por Mecalux</b>. Todas las operaciones OK" % (self.name))
                 sga_state = 'MT'
 
             else:
+                _logger.info("all_done: {} con do_backorder {} y do_transfer".format(all_done, self.do_backorder, do_transfer))
                 if self.do_backorder == 'default':
                     do_transfer = False
                 elif self.do_backorder == 'yes':
@@ -318,9 +326,11 @@ class StockPickingSGA(models.Model):
                                     body=("La orden <em>%s</em> la orden ha sido cerrada en Mecalux sin realizar nada</br>Nuevo nombre en Odoo<b>%s</b>") % (old_name, new_name))
                         return bool_error
                     else:
+                        _logger.info("Valido con do_new_transfer")
                         res = self.with_context(ctx).do_new_transfer()
                         wiz_id = res.get('res_id', False)
                         wiz = self.env['stock.backorder.confirmation'].browse(wiz_id)
+                        _logger.info("Valido con do_new_transfer {}".format(wiz.display_name))
                         sga_state = 'MT'
                         #print "Creo y encuentro asistente %s"%wiz.id
                         if wiz:
