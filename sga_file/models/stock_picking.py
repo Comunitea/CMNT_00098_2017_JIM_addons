@@ -298,7 +298,7 @@ class StockPickingSGA(models.Model):
                 _logger.info("all_done: {}".format(all_done))
                 _logger.info("Action done")
                 self.action_done()
-                _logger.info("Albaran %s validado 100%" % self.name)
+                _logger.info("Albaran %s validado 100" % self.name)
                 self.message_post(body="El albaran <em>%s</em> <b>ha sido validado por Mecalux</b>. Todas las operaciones OK" % (self.name))
                 sga_state = 'MT'
 
