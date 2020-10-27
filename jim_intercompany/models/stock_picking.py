@@ -140,22 +140,26 @@ class StockPicking(models.Model):
             if not pick_id:
                 return
             next_pick = pick_id.get_next_pick()
-            _logger.info("Propago valores de %s al albarán %s" % (pick_id.name, next_pick.name))
+            _logger.info("Propago valores de %s " % pick_id.name)
             if next_pick:
-                _logger.info("Propago valores de %s al albarán %s" % (pick_id.name, next_pick.name))
+                _logger.info("Propago valores de %s al albaran %s" % (pick_id.name, next_pick.name))
                 pick_packages = next_pick.pick_packages + pick_id.pick_packages
                 pick_weight = next_pick.pick_weight + pick_id.pick_weight
                 next_pick_vals = {'pick_packages': pick_packages,
                                   'pick_weight': pick_weight}
+                _logger.info("Paquetes y volumen {}".format(next_pick_vals))
                 if pick_id.carrier_id and not next_pick.carrier_id:
+                    _logger.info("Transportista:{}".format(pick_id.carrier_id.id))
                     carrier_id = pick_id.carrier_id.id
                     next_pick_vals['carrier_id'] = carrier_id
                 if pick_id.operator and not next_pick.operator:
                     operator = next_pick.operator or pick_id.operator
+                    _logger.info("Operador")
                     next_pick_vals['operator'] = operator
-                _logger.info("{}".format(next_pick_vals))
                 next_pick.write(next_pick_vals)
-
+            else:
+                _logger.info("No se ha encontrado pick al que propagar los datos")
+            _logger.info("Propagarcion de valores: OK")
         except:
             _logger.info("HA OCURRIDO UN ERROR NO PREVISTO")
             pass
