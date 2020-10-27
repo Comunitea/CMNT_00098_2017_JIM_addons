@@ -471,8 +471,7 @@ class StockPickingSGA(models.Model):
         pool_ids = []
         for line in sga_file_lines:
             n_line += 1
-
-            if len(line) == LEN_HEADER:
+            if abs(len(line) - LEN_HEADER) < 2:
                 if pick:
                     pick.do_pick(sga_ops_exists)
                 sga_ops_exists = False
@@ -557,7 +556,7 @@ class StockPickingSGA(models.Model):
                     vals['seur_service_code'] = carrier.seur_service_code
                     vals['seur_product_code'] = carrier.seur_product_code
                 pick.write(vals)
-            elif len(line) == LEN_LINE and pick:
+            elif abs(len(line) - LEN_LINE) < 2 and pick:
                 #Buscamos la operacion relacionada
                 st = 0
                 en = st + 10
