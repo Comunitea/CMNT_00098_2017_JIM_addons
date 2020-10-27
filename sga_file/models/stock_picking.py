@@ -448,7 +448,6 @@ class StockPickingSGA(models.Model):
         return pool_ids
 
     def import_mecalux_ZCS(self, file_id):
-        import ipdb; ipdb.set_trace()
         res = False
         pick_obj = self.env['stock.picking']
         sga_file_obj = self.env['sga.file'].browse(file_id)
