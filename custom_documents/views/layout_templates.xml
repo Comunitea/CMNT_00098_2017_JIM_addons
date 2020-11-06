@@ -59,8 +59,8 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
                         <p>
                             <strong>Telf.:</strong>
                             <span t-field="company.phone"/>
-                            <strong>FAX:</strong>
-                            <span t-field="company.fax"/>
+                            <!--<strong>FAX:</strong>
+                            <span t-field="company.fax"/>-->
                         </p>
                     </div>
                 </div>
