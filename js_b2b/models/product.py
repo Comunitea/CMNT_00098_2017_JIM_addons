@@ -128,6 +128,8 @@ class ProductTemplate(models.Model):
 	@api.multi
 	def write(self, vals):
 
+		results = list()
+
 		for product in self:
 			tag_ids = vals.get('tags_ids', product.tag_ids)
 			barcode = vals.get('barcode', product.barcode)
@@ -148,13 +150,14 @@ class ProductTemplate(models.Model):
 				super(ProductTemplate, product).write({ 'website_published': False })
 
 			updated = super(ProductTemplate, product).write(vals)
+			results.append(updated)
 
 		if 'website_published' in vals:
 			for product in self:
 				# Publish/unpublish variants
 				product.mapped('product_variant_ids').write({ 'website_published': vals['website_published'] })
 
-		return updated
+		return all(results)
 
 	@api.multi
 	def unlink(self):
