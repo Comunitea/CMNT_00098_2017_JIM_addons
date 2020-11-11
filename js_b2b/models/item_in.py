@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
-import re
 import logging
+import re
 
 _logger = logging.getLogger('B2B-IN')
 
@@ -151,18 +151,18 @@ class B2bItemsIn(models.Model):
 								return True
 
 						except Exception as e:
-							_logger.critical('[630] Can not create the record! %s' % e)
+							return '[630] Can not create the record! %s' % e
 
 					else:
-						_logger.critical('[620] Item %s configuration or data error!' % object_name)
+						return '[620] Item %s configuration or data error!' % object_name
 
 				else:
-					_logger.error('[610] CRUD mode %s not found for item %s!' % (item_action, object_name))
+					return '[610] CRUD mode %s not found for item %s!' % (item_action, object_name)
 
 			else:
-				_logger.warning('[600] Item %s not found!' % object_name)
+				return '[600] Item %s not found!' % object_name
 
-		return False
+		return '[500] Data format error!'
 
 	# ------------------------------------ OVERRIDES ------------------------------------
 

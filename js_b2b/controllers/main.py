@@ -37,7 +37,8 @@ class B2bController(http.Controller):
 					"\n    - data: {}".format(item_name, item_action, item_data)
 
 			# Process item
-			if http.request.env['b2b.item.in'].must_process(item_name, item_data, item_action):
+			result = http.request.env['b2b.item.in'].must_process(item_name, item_data, item_action)
+			if result == True:
 
 				# OK
 				_logger.info(debug_str)
@@ -46,8 +47,8 @@ class B2bController(http.Controller):
 			else:
 
 				# ERROR
-				_logger.critical(debug_str)
-				return 'ERROR 500: Unauthorized!'
+				_logger.critical(result)
+				return result
 
 		except ValueError as e:
 
