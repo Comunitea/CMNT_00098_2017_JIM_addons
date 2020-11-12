@@ -100,7 +100,7 @@ class Chrono(object):
 
 class JSync(object):
 
-	__slots__ = ['id', 'env', 'model', 'mode', 'name', 'data', 'part', 'related', 'session', 'settings']
+	__slots__ = ['id', 'env', 'model', 'mode', 'name', 'data', 'related', 'session', 'settings']
 
 	def __init__(self, odoo_env, settings=None, retries=3):
 		retry = httpRetry(total=retries, connect=retries, backoff_factor=0.3, status_forcelist=(500, 502, 504))
@@ -111,7 +111,6 @@ class JSync(object):
 		self.mode = 'create' # CRUD mode
 		self.name = None # Data item name
 		self.data = {} # Item data dict
-		self.part = None # Multi-packet part
 		self.related = None # Odoo related model & record
 		self.env = odoo_env # Odoo environment
 		self.session = Session() # HTTP Session
@@ -209,8 +208,6 @@ class JSync(object):
 
 		if _RECORD_SEND and self.data:
 
-			_logger.info("Enviando datos a JSync...")
-
 			jsync_post = None
 
 			# Header
@@ -220,16 +217,14 @@ class JSync(object):
 			json_data = json_dump({
 				'object': self.name,
 				'operation': self.mode,
-				'data': self.data,
-				'part': self.part
+				'data': self.data
 			})
 
 			# Debug
 			debug_msg = "JSync Response: {}" \
 						"\n    - object: {}" \
 						"\n    - operation: {}" \
-						"\n    - data: DATASET" \
-						"\n    - part: {}"
+						"\n    - data: {}" 
 
 			try:
 
@@ -247,7 +242,7 @@ class JSync(object):
 			# Si la respuesta es OK
 			if jsync_post and jsync_post.status_code is 200:
 
-				_logger.info(debug_msg.format(jsync_post.text, self.name, self.mode, self.part))
+				_logger.debug(debug_msg.format(jsync_post.text, self.name, self.mode, self.data))
 
 				# En los paquetes múltiples no se establecen estos parámetros
 				# por lo que no se notifican al usuario ni se registran en el sistema
@@ -279,7 +274,7 @@ class JSync(object):
 
 			else:
 				_logger.error("JSYNC RESPONSE ERROR: %s" % jsync_post.text)
-				_logger.info(debug_msg.format(jsync_post.text, self.name, self.mode, self.part))
+				_logger.error(debug_msg.format(jsync_post.text, self.name, self.mode, self.data))
 				
 				if jsync_post and self.settings['conexion_error'] and self.settings['response_error']:
 					raise ValidationError("JSync Server Response Error\n%s" % (jsync_post.text.encode('latin1').capitalize()))

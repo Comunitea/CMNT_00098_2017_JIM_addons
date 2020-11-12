@@ -24,6 +24,8 @@
 					<group>
 						<field name="model"/>
 						<field name="description"/>
+						<field name="exclude_on_sync"/>
+						<field name="sync_updates"/>
 					</group>
 					<notebook>
 						<page string="Código" autofocus="autofocus">
@@ -117,8 +119,9 @@
 			<tree string="parameters">
 				<field name="sequence" widget="handle"/>
 				<field name="name"/>
-				<field name="model"/>
 				<field name="description"/>
+				<field name="exclude_on_sync"/>
+				<field name="sync_updates"/>
 				<field name="active"/>
 			</tree>
 		</field>

@@ -188,6 +188,26 @@ msgid "Description"
 msgstr "Descripción"
 
 #. module: js_b2b
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_item_out_exclude_on_sync
+msgid "Exclude on syncing"
+msgstr "Excluir al sincronizar"
+
+#. module: js_b2b
+#: model:ir.model.fields,help:js_b2b.field_b2b_item_out_exclude_on_sync
+msgid "Exclude for sync action"
+msgstr "Excluir modelo para la sincronización"
+
+#. module: js_b2b
+#: model:ir.model.fields,field_description:js_b2b.field_b2b_item_out_sync_updates
+msgid "Updates on sync"
+msgstr "Actualizaciones al sincronizar"
+
+#. module: js_b2b
+#: model:ir.model.fields,help:js_b2b.field_b2b_item_out_sync_updates
+msgid "Send updates on syncing"
+msgstr "Enviar actualizaciones en sincronización"
+
+#. module: js_b2b
 #: model:ir.model.fields,help:js_b2b.field_b2b_item_in_sequence
 #: model:ir.model.fields,help:js_b2b.field_b2b_item_out_sequence
 msgid "Determine the items order"
