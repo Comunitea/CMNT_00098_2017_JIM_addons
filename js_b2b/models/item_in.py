@@ -173,7 +173,7 @@ class B2bItemsIn(models.Model):
 		Check model on create
 		"""
 
-		item = super(B2bItemsIn, self).create(vals)
+		item = super(B2bItemsIn, self).with_context(b2b_evaluate=False).create(vals)
 		item.__check_model()
 		item.__check_code()
 		return item
@@ -185,7 +185,8 @@ class B2bItemsIn(models.Model):
 		Check model on write
 		"""
 
-		super(B2bItemsIn, self).write(vals)
+		self.invalidate_cache()
+		super(B2bItemsIn, self).with_context(b2b_evaluate=False).write(vals)
 		for item in self:
 			item.__check_model()
 			item.__check_code()

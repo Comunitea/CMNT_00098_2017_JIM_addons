@@ -29,23 +29,21 @@ class B2bItemsOut(models.Model):
         # Object data to send
         def get_data(self, action):
             return {
-                # Item key (required)
-                # fixed: modifier forces send even if it has not changed
-                'fixed:jim_id': self.id,
-                # Sends names dict when field has changed
+                'jim_id': self.id, # Item key (required)
                 'name': self.get_field_translations('name'),
-                # field: modifier sends if field has changed, if not setted send null
-                'categ_id:category_id': self.categ_id.id if self.categ_id else None
+                'category_id': self.categ_id.id if self.categ_id else None
             }
 	""", flags=re.M).strip()
 
+	sequence = fields.Integer(help="Determine the items order")
 	name = fields.Char('Item Name', required=True, translate=False, help="Set the item name", index=True)
 	model = fields.Char('Model Names', required=True, translate=False, help="Odoo model names to check separated by , or ;")
 	description = fields.Char('Description', required=False, translate=False, help="Set the item description")
 	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
 	active = fields.Boolean('Active', default=True, help="Enable or disable this item")
-	sequence = fields.Integer(help="Determine the items order")
-
+	exclude_on_sync = fields.Boolean('Exclude on syncing', default=False, help="Exclude for sync action")
+	sync_updates = fields.Boolean('Updates on sync', default=True, help="Send updates on syncing")
+	
 	@api.multi
 	def get_models(self):
 		"""
@@ -128,11 +126,8 @@ class B2bItemsOut(models.Model):
 		# Clients on Jsync
 		client_ids = [int(x.split(',')[1]) for x in self.env['b2b.export'].search([('name', '=', 'customer')]).mapped('res_id')]
 
-		# These models should not be synchronized directly (CRONJOBS)
-		excluded_models = ('customer.price', 'product.pricelist.item')
-
 		for model in self.get_models():
-			if model not in excluded_models:
+			if not self.exclude_on_sync:
 				# Model specific queries
 				if model == 'stock.move':
 					# Movimientos de stock de Jim y EME que tienen un alabarán de origen (group_id) y la fecha es igual o superior a la actual y el estado es asignado
@@ -158,6 +153,7 @@ class B2bItemsOut(models.Model):
 				records_ids = self.env[model].with_context(active_test=only_active).search(search_query, order='id ASC').ids
 				total_records =  len(records_ids)
 				create_records = 0
+				update_records = 0
 				delete_records = 0
 
 				_logger.info("*************** B2B ITEM ***************")
@@ -177,22 +173,27 @@ class B2bItemsOut(models.Model):
 					if notifiable_items and not record_on_jsync:
 
 						create_records += 1
-						_logger.debug("@@ CREATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						for packet in record.b2b_record('create', conf_items_before=notifiable_items, auto_send=False):
-							packet.send(notify=user_notify) # Don't notify
+						_logger.info("@@ CREATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
+						record.b2b_record('create', conf_items_before=notifiable_items, user_notify=user_notify)
 
 					elif not notifiable_items and record_on_jsync:
 
 						delete_records += 1
-						_logger.debug("@@ DELETE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						for packet in record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], auto_send=False):
-							packet.send(notify=user_notify) # Don't notify
+						_logger.info("@@ DELETE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
+						record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], user_notify=user_notify)
+
+					elif notifiable_items and self.sync_updates:
+
+						update_records += 1
+						_logger.info("@@ UPDATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
+						record.b2b_record('update', conf_items_before=notifiable_items, user_notify=user_notify)
 
 					else:
 
-						_logger.debug("@@ %s (%s) ID#%s NOT NOTIFIABLE OR ALREDY IN JSYNC | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						
+						_logger.info("@@ %s (%s) ID#%s NOT NOTIFIABLE | COMPLETED: %s" % (self.name, model, id, record_percent_str))
+
 				_logger.info("@@ CREATE RECORDS: %s" % create_records)
+				_logger.info("@@ UPDATE RECORDS: %s" % update_records)
 				_logger.info("@@ DELETE RECORDS: %s" % delete_records)
 
 				# Notify user
@@ -201,8 +202,9 @@ class B2bItemsOut(models.Model):
 					<ul> \
 						<li>Total: %s</li> \
 						<li>Create: %s</li> \
+						<li>Update: %s</li> \
 						<li>Delete: %s</li> \
-					</ul>') % (self.name, total_records, create_records, delete_records)
+					</ul>') % (self.name, total_records, create_records, update_records, delete_records)
 				)
 
 	# ------------------------------------ OVERRIDES ------------------------------------
@@ -212,7 +214,7 @@ class B2bItemsOut(models.Model):
 		"""
 		Check model & code on create
 		"""
-		item = super(B2bItemsOut, self).create(vals)
+		item = super(B2bItemsOut, self).with_context(b2b_evaluate=False).create(vals)
 		item.__check_model()
 		item.__check_code()
 		return item
@@ -222,7 +224,8 @@ class B2bItemsOut(models.Model):
 		"""
 		Check model & code on write
 		"""
-		res = super(B2bItemsOut, self).write(vals)
+		self.invalidate_cache()
+		res = super(B2bItemsOut, self).with_context(b2b_evaluate=False).write(vals)
 		for item in self:
 			if vals.get('model') or vals.get('active') == True:
 				item.__check_model()

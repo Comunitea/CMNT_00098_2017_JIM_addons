@@ -151,10 +151,11 @@ class BaseB2B(models.AbstractModel):
 		packets = list()
 
 		conf_items_after = self.is_notifiable_check(mode, vals)
+		importing_file = self.env.context.get('import_file', False)
 
 		_logger.debug("Comprobando registro [%s,%i] en modo [%s]" % (self._name, self.id, mode))
 
-		if conf_items_before or conf_items_after:
+		if (conf_items_before or conf_items_after) and not importing_file:
 
 			jsync_conf = self.env['b2b.settings'].get_default_params()
 			b2b_config = self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)])

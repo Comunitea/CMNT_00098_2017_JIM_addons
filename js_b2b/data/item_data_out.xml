@@ -5,6 +5,8 @@
         <record id="b2b_item_out_1" model="b2b.item.out">
             <field name="sequence">1</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">attribute</field>
             <field name="model">product.attribute</field>
             <field name="description">Atributos de producto</field>
@@ -29,6 +31,8 @@ def get_data(self, action):
         <record id="b2b_item_out_2" model="b2b.item.out">
             <field name="sequence">2</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">attribute_value</field>
             <field name="model">product.attribute.value</field>
             <field name="description">Valores de atributos</field>
@@ -56,6 +60,8 @@ def get_data(self, action):
         <record id="b2b_item_out_3" model="b2b.item.out">
             <field name="sequence">3</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">brand</field>
             <field name="model">product.brand</field>
             <field name="description">Marcas de productos</field>
@@ -80,6 +86,8 @@ def get_data(self, action):
         <record id="b2b_item_out_4" model="b2b.item.out">
             <field name="sequence">4</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">category</field>
             <field name="model">product.tag</field>
             <field name="description">Categorías de producto</field>
@@ -111,6 +119,8 @@ def pos_data(self, action):
         <record id="b2b_item_out_5" model="b2b.item.out">
             <field name="sequence">5</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">web_category</field>
             <field name="model">product.public.category</field>
             <field name="description">Categorías públicas de producto</field>
@@ -140,6 +150,8 @@ def pos_data(self, action):
         <record id="b2b_item_out_6" model="b2b.item.out">
             <field name="sequence">6</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">product</field>
             <field name="model">product.template</field>
             <field name="description">Productos</field>
@@ -200,6 +212,8 @@ def pos_data(self, action):
         <record id="b2b_item_out_7" model="b2b.item.out">
             <field name="sequence">7</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">product_variant</field>
             <field name="model">product.product</field>
             <field name="description">Variantes / Combinaciones</field>
@@ -256,6 +270,8 @@ def pos_data(self, action):
         <record id="b2b_item_out_8" model="b2b.item.out">
             <field name="sequence">8</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">product_parameterization</field>
             <field name="model">product.template.parameterization, product.product.parameterization</field>
             <field name="description">Parametrización de productos</field>
@@ -332,6 +348,8 @@ def get_data(self, action):
         <record id="b2b_item_out_9" model="b2b.item.out">
             <field name="sequence">9</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">product_image</field>
             <field name="model">product.image</field>
             <field name="description">Imágenes del producto</field>
@@ -358,6 +376,8 @@ def get_data(self, action):
         <record id="b2b_item_out_10" model="b2b.item.out">
             <field name="sequence">10</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">currency</field>
             <field name="model">res.currency</field>
             <field name="description">Monedas</field>
@@ -379,6 +399,8 @@ def get_data(self, action):
         <record id="b2b_item_out_11" model="b2b.item.out">
             <field name="sequence">11</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">pricelist</field>
             <field name="model">product.pricelist</field>
             <field name="description">Tarifas</field>
@@ -399,6 +421,8 @@ def get_data(self, action):
         <record id="b2b_item_out_12" model="b2b.item.out">
             <field name="sequence">12</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">supply_plan</field>
             <field name="model">stock.move</field>
             <field name="description">Previsión de abastecimiento</field>
@@ -442,6 +466,8 @@ def get_data(self, action):
         <record id="b2b_item_out_13" model="b2b.item.out">
             <field name="sequence">13</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">customer</field>
             <field name="model">res.partner</field>
             <field name="description">Clientes</field>
@@ -500,6 +526,8 @@ def pos_data(self, action):
         <record id="b2b_item_out_14" model="b2b.item.out">
             <field name="sequence">14</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">True</field>
             <field name="name">customer_address</field>
             <field name="model">res.partner</field>
             <field name="description">Direcciones de clientes</field>
@@ -547,6 +575,8 @@ def get_data(self, action):
         <record id="b2b_item_out_15" model="b2b.item.out">
             <field name="sequence">15</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">False</field>
             <field name="name">invoice</field>
             <field name="model">account.invoice</field>
             <field name="description">Factura de venta o abono</field>
@@ -596,6 +626,8 @@ def get_data(self, action):
         <record id="b2b_item_out_16" model="b2b.item.out">
             <field name="sequence">16</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">False</field>
             <field name="name">delivery_note</field>
             <field name="model">stock.picking</field>
             <field name="description">Albarán de venta</field>
@@ -648,6 +680,8 @@ def get_data(self, action):
         <record id="b2b_item_out_17" model="b2b.item.out">
             <field name="sequence">17</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">False</field>
+            <field name="sync_updates">False</field>
             <field name="name">sale_order</field>
             <field name="model">sale.order</field>
             <field name="description">Pedido de venta</field>
@@ -702,6 +736,8 @@ def pos_data(self, action):
         <record id="b2b_item_out_18" model="b2b.item.out">
             <field name="sequence">18</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">customer_price</field>
             <field name="model">customer.price</field>
             <field name="description">Precios de clientes (actualizaciones)</field>
@@ -720,6 +756,8 @@ def get_data(self, action):
         <record id="b2b_item_out_19" model="b2b.item.out">
             <field name="sequence">19</field>
             <field name="active">False</field>
+            <field name="exclude_on_sync">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">pricelist_item</field>
             <field name="model">product.pricelist.item</field>
             <field name="description">Precios de tarifas (actualizaciones)</field>
@@ -744,6 +782,31 @@ def pos_data(self, action):
     item = b2b['actual_pricelist_item']
     # Llamamos al método que envía los precios pero lo limitamos a esta plantilla, variante y cantidad
     self.env['b2b.export'].b2b_pricelists_prices(pricelists_filter=[item['pricelist_id'],], templates_filter=[item['template_id'],], variant=item['variant_id'], qty=item['qty'])</field>
+        </record>
+
+        <record id="b2b_item_out_20" model="b2b.item.out">
+            <field name="sequence">20</field>
+            <field name="active">False</field>
+            <field name="exclude_on_sync">True</field>
+            <field name="sync_updates">False</field>
+            <field name="name">translations</field>
+            <field name="model">ir.translation</field>
+            <field name="description">Traducciones de campos</field>
+            <field name="code">fields_to_watch = ('name', 'value', 'res_id')
+
+def is_notifiable(self, action, vals):
+    return True
+
+def related_to(self, action):
+    return None
+
+def get_data(self, action):
+    record_model, record_field = self.name.split(',')
+    vals = { record_field: self.value }
+    record = self.env[record_model].browse(self.res_id)
+    items_to_send = record.is_notifiable_check('update', vals)
+    record.b2b_record('update', vals, conf_items_before=items_to_send)
+    return list()</field>
         </record>
 
     </data>
