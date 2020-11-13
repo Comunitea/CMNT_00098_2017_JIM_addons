@@ -214,7 +214,7 @@ class B2bItemsOut(models.Model):
 		"""
 		Check model & code on create
 		"""
-		item = super(B2bItemsOut, self).with_context(b2b_evaluate=False).create(vals)
+		item = super(B2bItemsOut, self).create(vals)
 		item.__check_model()
 		item.__check_code()
 		return item
@@ -225,7 +225,7 @@ class B2bItemsOut(models.Model):
 		Check model & code on write
 		"""
 		self.invalidate_cache()
-		res = super(B2bItemsOut, self).with_context(b2b_evaluate=False).write(vals)
+		res = super(B2bItemsOut, self).write(vals)
 		for item in self:
 			if vals.get('model') or vals.get('active') == True:
 				item.__check_model()
