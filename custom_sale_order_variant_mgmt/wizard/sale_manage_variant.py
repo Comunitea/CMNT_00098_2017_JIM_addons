@@ -27,11 +27,9 @@ class SaleManageVariant(models.TransientModel):
             new_template_line.product_id_change()
             vals = new_template_line._convert_to_write(
                     new_template_line._cache)
-            vals.update(template_vals)
             vals.update(
                 {'product_uom_qty': 0, 'price_unit': 0, 'purchase_price': 0})
             template = self.env['sale.order.line.template'].create(vals)
-
 
         super(SaleManageVariant,
               self.with_context(
