@@ -36,9 +36,8 @@ class SaleOrder(models.Model):
         vals = super(SaleOrder, self)._get_ts_line_vals(order_obj, line)
         if product_obj.route_ids:
             vals.update({'route_id': product_obj.route_ids[0].id})
-        if line.get('description', False):
-            vals.update({'name': line.get('description', '')})
         vals.update({'chained_discount': line.get('chained_discount', '0.00'),
+                     'name': line.get('description', ''),
                      'note': line.get('note', '')})
         return vals
 

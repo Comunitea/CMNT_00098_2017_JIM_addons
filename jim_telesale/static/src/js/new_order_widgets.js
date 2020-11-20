@@ -20,11 +20,6 @@ var OrderWidget = NewOrderWidgets.OrderWidget.include({
     create_line_empty: function(product_id){
         var added_line = this._super(product_id);
         var product_obj = this.ts_model.db.get_product_by_id(product_id);
-        var description = product_obj.display_name;
-        if (product_obj.description_sale){
-            description = description + '\n' + product.description_sale
-        }
-        added_line.set('description', description);
         return added_line;
     },
 
@@ -115,7 +110,6 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
     // OVERWRITED Get global stock available in product_id change
     call_product_id_change: function(product_id, add_qty){
         var self = this;
-
         if (!add_qty){
             add_qty = 1.0
         }
@@ -129,7 +123,7 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
             var uom_obj = self.ts_model.db.get_unit_by_id(product_obj.uom_id)
             var description = result.name;
             if (product_obj.description_sale){
-                description = description + '\n' + product.description_sale
+                description = description + '\n' + product_obj.description_sale
             }
             self.model.set('description', description);
             self.model.set('code', product_obj.default_code || "");
