@@ -94,7 +94,7 @@ def get_data(self, action):
             <field name="code">fields_to_watch = ('id', 'name', 'parent_id', 'public_image_name', 'sequence', 'active', 'web')
 
 def is_notifiable(self, action, vals):
-    return action != 'update' or bool(vals)
+    return action in ('create', 'delete') or (action == 'update' and bool(vals))
     
 def get_data(self, action):
     if b2b['crud_mode'] == 'delete':
