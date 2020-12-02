@@ -373,7 +373,7 @@ class ProductImage(models.Model):
 
 	name = fields.Char('Name')
 	image = fields.Binary('Image', attachment=True, required=True)
-	public_image_name = fields.Char('Variant Image Public File Name')
+	public_image_name = fields.Char('Variant Image Public File Name', required=True)
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', copy=True)
 	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel', domain=_default_attributes_domain)
 	sequence = fields.Integer(default=0, help="Gives the sequence order for images")

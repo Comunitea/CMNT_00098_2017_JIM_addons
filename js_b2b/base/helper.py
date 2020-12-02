@@ -121,8 +121,7 @@ class JSync(object):
 		self.settings = settings or self.env['b2b.settings'].get_default_params(fields=[
 			'url', 
 			'conexion_error', 
-			'response_error', 
-			'packet_size'
+			'response_error'
 		])
 
 	def filter_data(self, crudMode=None):
