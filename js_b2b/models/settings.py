@@ -11,7 +11,6 @@ PARAMS = {
 	'url': ('b2b.server_url', 'http://0.0.0.0/'),
 	'conexion_error': ('b2b.show_conexion_error', True),
 	'response_error': ('b2b.show_response_error', True),
-	'packet_size': ('b2b.packet_size_mb', 10),
 	'server': ('b2b.ftp_server', 'premium17.web-hosting.com'),
 	'base_url': ('b2b.public_base_url', 'https://jimsports.website/b2b_images/'),
 	'user': ('b2b.ftp_user', False),
@@ -26,7 +25,6 @@ class B2BSettings(models.TransientModel):
 	url = fields.Char('JSync URL', required=True, translate=False, help="Set the server URL (http://ip:port/)")
 	conexion_error = fields.Boolean('Conexion errors', help="Disturb user with conexion errors and do not execute the action")
 	response_error = fields.Boolean('Response errors', help="Disturb user with response errors and do not execute the action")
-	packet_size = fields.Float(string='Max. Packet Size', help="Messages that exceeds this limit are splited")
 	base_url = fields.Char('Public Base URL', required=False, translate=False, help="Images public base URL")
 	server = fields.Char('Public Server', required=False, translate=False, help="Set the server IP or domain")
 	user = fields.Char('User', required=False, translate=False, help="Set the FTP server username")

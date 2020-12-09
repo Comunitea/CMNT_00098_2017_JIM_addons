@@ -17,14 +17,9 @@ var OrderWidget = NewOrderWidgets.OrderWidget.include({
     },
 
     // Creates a line with product and unit seted
-    create_line_empty: function(product_id){
-        var added_line = this._super(product_id);
+    create_line_empty: function(product_id, variant_mode){
+        var added_line = this._super(product_id, variant_mode);
         var product_obj = this.ts_model.db.get_product_by_id(product_id);
-        var description = product_obj.display_name;
-        if (product_obj.description_sale){
-            description = description + '\n' + product.description_sale
-        }
-        added_line.set('description', description);
         return added_line;
     },
 
@@ -115,7 +110,6 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
     // OVERWRITED Get global stock available in product_id change
     call_product_id_change: function(product_id, add_qty){
         var self = this;
-
         if (!add_qty){
             add_qty = 1.0
         }
@@ -123,13 +117,13 @@ var OrderlineWidget = NewOrderWidgets.OrderlineWidget.include({
         var customer_id = self.ts_model.db.partner_name_id[self.order.get('partner')];
         var pricelist_id = self.ts_model.db.pricelist_name_id[self.order.get('pricelist')];
         var model = new Model("sale.order.line");
-        return model.call("ts_product_id_change", [product_id, customer_id, pricelist_id])
+        return model.call("ts_product_id_change", [product_id, customer_id, pricelist_id], self.ts_model.get_user_ctx())
         .then(function(result){
             var product_obj = self.ts_model.db.get_product_by_id(product_id);
             var uom_obj = self.ts_model.db.get_unit_by_id(product_obj.uom_id)
-            var description = product_obj.display_name;
+            var description = result.name;
             if (product_obj.description_sale){
-                description = description + '\n' + product.description_sale
+                description = description + '\n' + product_obj.description_sale
             }
             self.model.set('description', description);
             self.model.set('code', product_obj.default_code || "");
@@ -252,7 +246,7 @@ var DataOrderWidget = NewOrderWidgets.DataOrderWidget.include({
             else {
                 var partner_obj = self.ts_model.db.get_partner_by_id(partner_id);
                 var model = new Model("sale.order");
-                model.call("ts_onchange_partner_id", [partner_id])
+                model.call("ts_onchange_partner_id", [partner_id], self.ts_model.get_user_ctx())
                 .then(function(result){
                     var cus_name = self.ts_model.getComplexName(partner_obj);
                     self.order_model.set('partner', cus_name);

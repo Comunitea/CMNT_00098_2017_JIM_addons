@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- CONFIGURACIÓN DE TIPOS -->
+
+    <record id="js_parameterization_types_form" model="ir.ui.view">
+        <field name="name">js_parameterization.type.form</field>
+        <field name="model">js_parameterization.type</field>
+        <field name="arch" type="xml">
+            <form string="Parameterization Type">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="js_parameterization_types_tree" model="ir.ui.view">
+        <field name="name">js_parameterization.type.tree</field>
+        <field name="model">js_parameterization.type</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="js_parameterization_types" model="ir.actions.act_window">
+        <field name="name">Parameterization Types</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">js_parameterization.type</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Push here to create a new type
+          </p><p>
+            The types are parameters groups aplied to the product
+          </p>
+        </field>
+    </record>
+
+    <!-- CONFIGURACIÓN DE PARÁMETROS -->
+
+    <record id="js_parameterization_fields_form" model="ir.ui.view">
+        <field name="name">js_parameterization.field.form</field>
+        <field name="model">js_parameterization.field</field>
+        <field name="arch" type="xml">
+            <form string="Parameterization Field" duplicate="0">
+                <sheet>
+                    <group>
+                        <group string="Field Info">
+                            <field name="id" invisible="1"/>
+                            <field name="model_id" invisible="1"/>
+                            <field name="parameterization_type" help="Parameterization Template Type"/>
+                            <field name="field_description" string="Field Label" help="Field display name" default_focus="1"/>
+                            <field name="name" help="Field database name" attrs="{ 'readonly': [('id', '!=', False)] }"/>
+                            <field name="model_id" help="Create field for this model" options="{ 'no_open': True, 'no_create': True }" invisible="context.get('default_model_id', False)" attrs="{ 'readonly': [('id', '!=', False)] }"/>
+                            <field name="ttype" string="Field Type" help="Field data type"/>
+                            <field name="relation" help="Model to make the relation" attrs="{ 'required': [('ttype', 'in', ['many2one', 'many2many'])], 'invisible': [('ttype', 'not in', ['many2one', 'many2many'])] }"/>
+                            <field name="relation_table" help="Relation table name" attrs="{ 'required': [('ttype', '=', 'many2many')], 'invisible': [('ttype', '!=', 'many2many')] }"/>
+                            <field name="selection_vals" widget="js_many2many_tags" help="Values for this field, select or create them" attrs="{ 'required': [('ttype', 'in', ['js_many2one', 'js_many2many'])], 'invisible': [('ttype', 'not in', ['js_many2one', 'js_many2many'])] }"/>
+                            <field name="related" string="Related Field" help="Field value is related to other field" placeholder="product_id.xxx" attrs="{ 'readonly': [('id', '!=', False)] }"/>
+                        </group>
+
+                        <group string="Other Options">
+                            <field name="required" string="Required" help="Field is mandatory"/>
+                            <field name="translate" string="Translate" help="Translate text type fields" attrs="{ 'readonly': [('ttype', 'not in', ['char', 'text'])] }"/>
+                            <field name="readonly" string="Readonly" help="Only display value" attrs="{ 'readonly': [('related', '=', False)] }"/>
+                            <field name="index" string="Indexed" help="Indexed field for faster searchs"/>
+                            <field name="copy" string="Copied" help="Value copied when model registry is duplicated"/>
+                            <field name="store" string="Stored" help="Saved on database"/>
+                            <field name="filter_vals" string="Filter vals" help="Filter values by selected type in parameterization" attrs="{ 'readonly': [('ttype', 'not in', ['js_many2one', 'js_many2many'])] }"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="js_parameterization_fields_tree" model="ir.ui.view">
+        <field name="name">js_parameterization.field.tree</field>
+        <field name="model">js_parameterization.field</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="model_id"/>
+                <field name="field_description" string="Field Label"/>
+                <field name="ttype" string="Field Type"/>
+                <field name="parameterization_type"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="js_parameterization_fields_search" model="ir.ui.view">
+        <field name="name">js_parameterization.field.search</field>
+        <field name="model">js_parameterization.field</field>
+        <field name="arch" type="xml">
+            <search string="Parameterization Field">
+                <field name="name" string="Name" />
+                <field name="field_description" string="Label" />
+                <filter string="Product" name="product_filter" domain="[('model_id.model','=','product.template.parameterization')]"/>
+                <filter string="Variant" name="variant_filter" domain="[('model_id.model','=','product.product.parameterization')]"/>
+            </search>
+        </field>
+    </record>
+
+    <record id="js_parameterization_fields" model="ir.actions.act_window">
+        <field name="name">Parameterization Fields</field>
+        <field name="res_model">js_parameterization.field</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Push here to create a new field
+          </p><p>
+            Also can be created from product sheet, on "Parameterization" button
+          </p>
+        </field>
+    </record>
+
+    <!-- CONFIGURACIÓN DE VALORES -->
+
+    <record id="js_parameterization_values_form" model="ir.ui.view">
+        <field name="name">js_parameterization.value.form</field>
+        <field name="model">js_parameterization.value</field>
+        <field name="arch" type="xml">
+            <form string="Parameterization Value">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="parameterization_type"/>
+                        <field name="fields" invisible="context.get('hide_fields', False)"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="js_parameterization_values_tree" model="ir.ui.view">
+        <field name="name">js_parameterization.value.tree</field>
+        <field name="model">js_parameterization.value</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="name"/>
+                <field name="parameterization_type"/>
+                <field name="fields"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="js_parameterization_values" model="ir.actions.act_window">
+        <field name="name">Parameterization Values</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">js_parameterization.value</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+          <p class="oe_view_nocontent_create">
+            Push here to create a new value
+          </p><p>
+            This values can be selected later in the product parameterization fields
+          </p>
+        </field>
+    </record>
+
+    <!-- ACCIONES DE MENÚ -->
+
+    <menuitem id="menu_js_parameterization" name="Parameterization" parent="stock.menu_product_in_config_stock" sequence="90" />
+    <menuitem id="menu_js_parameterization_fields_tree" name="Fields" parent="menu_js_parameterization" action="js_parameterization_fields" sequence="1" groups="js_parameterization.group_manage_parameterization" />
+    <menuitem id="menu_js_parameterization_types" name="Types" parent="menu_js_parameterization" action="js_parameterization_types" sequence="2" groups="js_parameterization.group_manage_parameterization" />
+    <menuitem id="menu_js_parameterization_values" name="Values" parent="menu_js_parameterization" action="js_parameterization_values" sequence="3" groups="js_parameterization.group_manage_parameterization" />
+
+</odoo>

@@ -28,11 +28,13 @@ class BaseB2B(models.AbstractModel):
 			'es-ES': 'Prueba'
 		}
 		"""
+		origin = self.with_context(lang='en_US')
+		# Field name search string
 		field_name = ','.join([self._name, field])
 		# Search active langs but skip 'es'
 		configured_langs = self.env['res.lang'].search([('active', '=', True), ('translatable', '=', True), ('code', '!=', 'es')])
 		# Default values
-		translations = { lang.code.replace('_', '-'):self[field] or None for lang in configured_langs }
+		translations = { lang.code.replace('_', '-'):origin[field] or None for lang in configured_langs }
 		# Query to get translations
 		self._cr.execute("SELECT lang, value FROM ir_translation WHERE type='model' AND name=%s AND res_id=%s", (field_name, self.id))
 		# Update translations dict
@@ -151,10 +153,11 @@ class BaseB2B(models.AbstractModel):
 		packets = list()
 
 		conf_items_after = self.is_notifiable_check(mode, vals)
+		importing_file = self.env.context.get('import_file', False)
 
 		_logger.debug("Comprobando registro [%s,%i] en modo [%s]" % (self._name, self.id, mode))
 
-		if conf_items_before or conf_items_after:
+		if (conf_items_before or conf_items_after) and not importing_file:
 
 			jsync_conf = self.env['b2b.settings'].get_default_params()
 			b2b_config = self.env['b2b.item.out'].search([('name', 'in', conf_items_before or conf_items_after)])
@@ -205,7 +208,7 @@ class BaseB2B(models.AbstractModel):
 				# Obtenemos los datos
 				packet.data = b2b['get_data'](record, mode)
 				# Filtramos los datos
-				packet.filter_data()
+				packet.filter_data(b2b['crud_mode'])
 				# Si procede enviamos el paquete
 				if auto_send: packet.send(notify=user_notify)
 				# Guardamos el paquete

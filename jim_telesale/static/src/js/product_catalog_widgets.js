@@ -16,9 +16,9 @@ var ProductCatalogWidget = Catalog.ProductCatalogWidget.include({
 
         var product_obj = this.ts_model.db.get_product_by_id(product_id);
         //var description = product_obj.name;
-        var description = product_obj.display_name;
+        var description = catalog_vals.description;
         if (product_obj.description_sale){
-            description = description + '\n' + product.description_sale
+            description = description + '\n' + product_obj.description_sale
         }
         $.extend(res, {description: description})
         return res

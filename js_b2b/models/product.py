@@ -128,33 +128,36 @@ class ProductTemplate(models.Model):
 	@api.multi
 	def write(self, vals):
 
+		results = list()
+
 		for product in self:
 			tag_ids = vals.get('tags_ids', product.tag_ids)
 			barcode = vals.get('barcode', product.barcode)
 			ptype = vals.get('type', product.type)
 
 			# Check if product can be published
-			if not product.website_published and vals.get('website_published'):
+			if not product.website_published and vals.get('website_published') == True:
 				if not tag_ids:
 					raise ValidationError(_(base_product_publish_error) + _('does not have tags.'))
 				# if not product.public_categ_ids:
 				# 	raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
-				if barcode and not self.has_valid_barcode(barcode=barcode):
+				if barcode and not product.has_valid_barcode(barcode=barcode):
 					raise ValidationError(_(base_product_publish_error) + _('does not have a valid barcode.'))
 				if ptype != 'product':
 					raise ValidationError(_(base_product_publish_error) + _('is not stockable.'))
 			# Check if product can stay published otherwise unpublish
-			elif product.website_published and not all([bool(tag_ids), not barcode or self.has_valid_barcode(barcode=barcode), ptype == 'product']):
+			elif product.website_published and not all([bool(tag_ids), not barcode or product.has_valid_barcode(barcode=barcode), ptype == 'product']):
 				super(ProductTemplate, product).write({ 'website_published': False })
 
 			updated = super(ProductTemplate, product).write(vals)
+			results.append(updated)
 
 		if 'website_published' in vals:
 			for product in self:
 				# Publish/unpublish variants
 				product.mapped('product_variant_ids').write({ 'website_published': vals['website_published'] })
 
-		return updated
+		return all(results)
 
 	@api.multi
 	def unlink(self):
@@ -206,7 +209,12 @@ class ProductProduct(models.Model):
 		if not self.id:
 			raise ValidationError(_('Can not publish a variant before saving it!'))
 
-		self.website_published = not self.website_published
+		if self.attribute_names:
+			# Change variant published status
+			self.website_published = not self.website_published
+		else:
+			# Unique variant! Link tmpl published status
+			self.product_tmpl_id.website_published = not self.website_published
 
 	@api.model
 	def create(self, vals):
@@ -223,7 +231,7 @@ class ProductProduct(models.Model):
 			barcode = vals.get('barcode', variant.barcode)
 			ptype = vals.get('type', variant.type)
 
-			if not variant.website_published and vals.get('website_published'):
+			if not variant.website_published and vals.get('website_published') == True:
 				if not variant.product_tmpl_id.website_published:
 					raise ValidationError(_(base_product_publish_error) + _('template is unpublished.'))
 				if not tag_ids:
@@ -365,7 +373,7 @@ class ProductImage(models.Model):
 
 	name = fields.Char('Name')
 	image = fields.Binary('Image', attachment=True, required=True)
-	public_image_name = fields.Char('Variant Image Public File Name')
+	public_image_name = fields.Char('Variant Image Public File Name', required=True)
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', copy=True)
 	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel', domain=_default_attributes_domain)
 	sequence = fields.Integer(default=0, help="Gives the sequence order for images")

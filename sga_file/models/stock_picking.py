@@ -11,7 +11,8 @@ from datetime import datetime, timedelta
 import sga_file
 import os
 import re
-
+import logging
+_logger = logging.getLogger(__name__)
 
 class StockWarehouseSGA(models.Model):
 
@@ -148,9 +149,9 @@ class StockPickingSGA(models.Model):
         if 'action_done_bool' in vals:
             for pick in self:
                 pick.message_post(
-                body="El albarán <em>%s</em> <b>ha cambiado el estado de validación automática a</b> <em>%s</em>" % (pick.name, vals['action_done_bool']))
+                body="El albaran <em>%s</em> <b>ha cambiado el estado de validacion automatica a</b> <em>%s</em>" % (pick.name, vals['action_done_bool']))
         if self.check_write_in_pm(vals):
-            raise ValidationError("No puedes modificar operaciones si está enviado a Mecalux")
+            raise ValidationError("No puedes modificar operaciones si esta enviado a Mecalux")
 
         return super(StockPickingSGA, self).write(vals)
 
@@ -211,7 +212,7 @@ class StockPickingSGA(models.Model):
 
         for pick in self.filtered(lambda x: x.state in states_to_send or force):
             if not pick.partner_id:
-                raise UserError("No puedes enviar un albarán sin asociarlo a una empresa")
+                raise UserError("No puedes enviar un albaran sin asociarlo a una empresa")
 
             new_sga_file = self.env['sga.file'].with_context(ctx).\
                 check_sga_file('stock.picking', pick.id, pick.picking_type_id.sgavar_file_id.code)
@@ -259,6 +260,9 @@ class StockPickingSGA(models.Model):
     def do_pick(self, sga_ops_exists, bool_error=True):
         if not self.picking_type_id.sga_integrated:
             raise ValidationError("Solo albaranes integrados con Mecalux")
+        _logger.info("Entro en do_pick para el albaran %s\n Con valores: sga_ops_exists = %s"%(self.name, sga_ops_exists))
+
+
         partial = ''
         sga_state = 'MT'
         action_done_bool = self.action_done_bool
@@ -268,29 +272,38 @@ class StockPickingSGA(models.Model):
             all_zero = False
         else:
             all_zero = True
+
         if not sga_ops_exists:
+            _logger.info("No hay operaciones para el albaran %s" % self.name)
             self.message_post(body="Pick <em>%s</em> ha sido realizado en Mecalux pero los <b>ids no se encuentran en ODOO</b>." % (self.name))
             action_done_bool = False
             sga_state = 'EI'
+
         # Confimo cantidaddes en servicios y consumibles
         pick_ops_product = self.pack_operation_product_ids.filtered(lambda x: x.product_id.type == 'consu')
+        _logger.info("Servicios y consumibles: {}".format(pick_ops_product))
         for op in pick_ops_product:
             op.qty_done = op.product_qty
-
+        _logger.info("action_done_bool: {}".format(action_done_bool))
         if action_done_bool:
             all_done = True
             do_transfer = True
             op_not_done = self.pack_operation_product_ids.filtered(lambda x: x.qty_done != x.product_qty)
+            _logger.info("op_not_done: {}".format(op_not_done))
             if op_not_done:
                 all_done = False
                 display_name_ids = ['%s (Cant: %s)' % (x.product_id.display_name, (x.product_qty - x.qty_done)) for x in
                                     op_not_done]
             if all_done:
+                _logger.info("all_done: {}".format(all_done))
+                _logger.info("Action done")
                 self.action_done()
-                self.message_post(body="El albarán <em>%s</em> <b>ha sido validado por Mecalux</b>. Todas las operaciones OK" % (self.name))
+                _logger.info("Albaran %s validado 100" % self.name)
+                self.message_post(body="El albaran <em>%s</em> <b>ha sido validado por Mecalux</b>. Todas las operaciones OK" % (self.name))
                 sga_state = 'MT'
 
             else:
+                _logger.info("all_done: {} con do_backorder {} y do_transfer".format(all_done, self.do_backorder, do_transfer))
                 if self.do_backorder == 'default':
                     do_transfer = False
                 elif self.do_backorder == 'yes':
@@ -301,6 +314,7 @@ class StockPickingSGA(models.Model):
                 #print "NO TODAS las cantidades OK con do_backorder = %s y do_transfer a %s" % (self.do_backorder, do_transfer)
                 if do_transfer:
                     if all_zero:
+                        _logger.info("Albaran sin nada hecho %s No se valida" % self.name)
                         # no hay nada hecho >> Solo le cambio el nombre y lo muevo a no enviado
                         # Necesito cambiarle el nombre por Mecalux
                         old_name = self.name
@@ -312,9 +326,11 @@ class StockPickingSGA(models.Model):
                                     body=("La orden <em>%s</em> la orden ha sido cerrada en Mecalux sin realizar nada</br>Nuevo nombre en Odoo<b>%s</b>") % (old_name, new_name))
                         return bool_error
                     else:
+                        _logger.info("Valido con do_new_transfer")
                         res = self.with_context(ctx).do_new_transfer()
                         wiz_id = res.get('res_id', False)
                         wiz = self.env['stock.backorder.confirmation'].browse(wiz_id)
+                        _logger.info("Valido con do_new_transfer {}".format(wiz.display_name))
                         sga_state = 'MT'
                         #print "Creo y encuentro asistente %s"%wiz.id
                         if wiz:
@@ -324,12 +340,14 @@ class StockPickingSGA(models.Model):
                             else:
                                 wiz.process_cancel_backorder()
                                 partial = "(sin parcial) No entregado:</hr>"
-
+                        _logger.info("Albaran %s validado %s" % (self.name, partial))
                         self.message_post(body="Pick <em>%s</em> <b>ha sido validado en Mecalux </b> %s %s" % (self.name, partial, display_name_ids))
         self.sga_state = sga_state
+
+        _logger.info("Propago los valores de Mecalux a los elabaranes enlazados ")
         self.propagate_pick_values()
         #print trasnapaso pesos/carrier....
-
+        _logger.info(">>>Ok para %s" % self.name)
         return bool_error
 
     def import_mecalux_CSO(self, file_id):
@@ -340,6 +358,7 @@ class StockPickingSGA(models.Model):
         pick_obj = self.env['stock.picking']
         sga_file_obj = self.env['sga.file'].browse(file_id)
         sga_file = open(sga_file_obj.sga_file, 'r')
+        _logger.info("Importando archivo: %s"%sga_file_obj.sga_file)
         sga_file_lines = sga_file.readlines()
         sga_file.close()
         bool_error = True
@@ -365,9 +384,11 @@ class StockPickingSGA(models.Model):
                 en = st + 30
                 rec_order_code = line[st:en].strip()
                 pick = pick_obj.search([('name', '=', rec_order_code), ('sga_state', 'in', ('MC', 'PM'))])
+
                 #if not pick:
                 #    pick = pick_obj.search([('backorder_id.name', '=', rec_order_code), ('sga_state', 'in', ('PM', 'EI'))])
                 if pick:
+                    _logger.info(">> Albaran: %s"%pick.name)
                     pool_ids.append(pick.id)
                     st = 70
                     en = st+30
@@ -379,6 +400,7 @@ class StockPickingSGA(models.Model):
                     date_done = line[st:en].strip()
                     pick.date_done = sga_file_obj.format_from_mecalux_date(date_done)
                     if sga_state == 'CANCEL':
+                        _logger.info(">> Albaran: %s CANCELADO EN MECALUX" % pick.name)
                         pick.sga_state = "MC"
                         pick.message_post(body="Pick <em>%s</em> <b>ha sido cancelado en Mecalux</b>." % (pick.name))
                         pick = False
@@ -390,8 +412,8 @@ class StockPickingSGA(models.Model):
                     str_error = "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (rec_order_code, n_line)
 
 
-                    error_message = u'Albarán %s no encontrado o en estado incorrecto.' % (rec_order_code)
-                    self.create_sga_file_error(sga_file_obj, n_line, 'CRP', pick, 'Pick no válido', error_message)
+                    error_message = u'Albaran %s no encontrado o en estado incorrecto.' % (rec_order_code)
+                    self.create_sga_file_error(sga_file_obj, n_line, 'CRP', pick, 'Pick no valido', error_message)
 
                     sga_file_obj.write_log(str_error)
 
@@ -405,14 +427,15 @@ class StockPickingSGA(models.Model):
                 en = st + 10
                 op_id = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (10, 10, 0))
                 op = self.env['stock.pack.operation'].search([('id', '=', op_id)])
+
                 if op_id and not op:
                     bool_error = False
-
-                    error_message = u'Op %s no encontrada en el albarán %s'%(op_id, pick.name)
+                    error_message = u'Op %s no encontrada en el albaran %s'%(op_id, pick.name)
                     self.create_sga_file_error(sga_file_obj, n_line, 'CRP', pick, 'Op no encontrada', error_message)
 
                 # Si op existe, escribo qty_done, si no creo una linea de operacion con lo recibido
                 if op:
+                    _logger.info(">> Linea % s del albaran: %s. Producto: %s Cantidad hecha %s" % (op.id, pick.name, op.product_id.default_code, qty_done))
                     op.qty_done = qty_done
                     op.sga_changed = True
                     sga_ops_exists = True
@@ -429,6 +452,7 @@ class StockPickingSGA(models.Model):
         pick_obj = self.env['stock.picking']
         sga_file_obj = self.env['sga.file'].browse(file_id)
         sga_file = open(sga_file_obj.sga_file, 'r')
+        _logger.info("Importando archivo: %s" % sga_file_obj.sga_file)
         sga_file_lines = sga_file.readlines()
         sga_file.close()
         str_error = ''
@@ -446,8 +470,7 @@ class StockPickingSGA(models.Model):
         pool_ids = []
         for line in sga_file_lines:
             n_line += 1
-
-            if len(line) == LEN_HEADER:
+            if abs(len(line) - LEN_HEADER) < 2:
                 if pick:
                     pick.do_pick(sga_ops_exists)
                 sga_ops_exists = False
@@ -457,14 +480,16 @@ class StockPickingSGA(models.Model):
                 pick = pick_obj.search([('name', '=', sorder_code)])
 
                 if not pick:
+
                     str_error += "Codigo de albaran %s no encontrado o estado incorrecto en linea ...%s " % (sorder_code, n_line)
-                    error_message =  u'Albarán %s no encontrado o en estado incorrecto.' % (
+                    error_message =  u'Albaran %s no encontrado o en estado incorrecto.' % (
                                       sorder_code)
-                    self.create_sga_file_error(sga_file_obj, n_line, 'ZCS', pick, 'Pick no válido', error_message)
+                    _logger.info(error_message)
+                    self.create_sga_file_error(sga_file_obj, n_line, 'ZCS', pick, 'Pick no valido', error_message)
 
                     sga_file_obj.write_log(str_error)
                     continue
-
+                _logger.info(">> Albaran: %s" % pick.name)
                 pool_ids.append(pick.id)
                 st = 60
                 en = st + 10
@@ -472,13 +497,14 @@ class StockPickingSGA(models.Model):
                 if pick_status == "CANCELED":
                     pick.sga_state = 'NE'
                     pick.message_post(body="Pick <em>%s</em> <b>ha sido cancelado en Mecalux</b>." % (pick.name))
+                    _logger.info(">> Albaran: %s CANCELADO EN MECALUX" % pick.name)
                     pick = False
                     continue
                 if pick.sga_state != "PM":
                     pick.message_post(body="Pick <em>%s</em> <b>ha sido realizado en Odoo antes que en Mecalux</b>." % (pick.name))
-                    error_message = u'Albarán %s en estado incorrecto (%s)' % (
+                    error_message = u'Albaran %s en estado incorrecto (%s)' % (
                                       sorder_code, pick.state)
-                    self.create_sga_file_error(sga_file_obj, n_line,'ZCS',pick,'Pick no válido', error_message)
+                    self.create_sga_file_error(sga_file_obj, n_line,'ZCS',pick,'Pick no valido', error_message)
 
                     pick = False
                     continue
@@ -529,7 +555,7 @@ class StockPickingSGA(models.Model):
                     vals['seur_service_code'] = carrier.seur_service_code
                     vals['seur_product_code'] = carrier.seur_product_code
                 pick.write(vals)
-            elif len(line) == LEN_LINE and pick:
+            elif abs(len(line) - LEN_LINE) < 2 and pick:
                 #Buscamos la operacion relacionada
                 st = 0
                 en = st + 10
@@ -537,7 +563,7 @@ class StockPickingSGA(models.Model):
                 op = self.env['stock.pack.operation'].search([('id', '=', op_id), ('picking_id', '=', pick.id)])
                 if op_id and not op:
 
-                    error_message = u'Op %s no encontrada en el albarán %s' % (op_id, pick.name)
+                    error_message = u'Op %s no encontrada en el albaran %s' % (op_id, pick.name)
                     self.create_sga_file_error(sga_file_obj, n_line,'ZCS',pick,'Op no encontrada', error_message)
                     bool_error = False
                     continue
@@ -546,6 +572,8 @@ class StockPickingSGA(models.Model):
                 en = st + 12
                 qty_done = sga_file_obj.format_from_mecalux_number(line[st:en].strip() or 0, (12, 7, 5))
                 if op:
+                    _logger.info(">> Linea % s del albaran: %s. Producto: %s Cantidad hecha %s" % (
+                    op.id, pick.name, op.product_id.default_code, qty_done))
                     op.write({'qty_done': qty_done, 'sga_changed': True})
                     sga_ops_exists = True
             else:

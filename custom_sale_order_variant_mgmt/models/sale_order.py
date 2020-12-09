@@ -74,6 +74,7 @@ class SaleOrderLineTemplate(models.Model):
             new_line = self.env['sale.order.line'].with_context(
                 no_create_template_line=True).create(line_vals)
             vals['order_lines'] = [(6, 0, [new_line.id])]
+            vals['name'] = template_product.display_name
         return super(
             SaleOrderLineTemplate,
             self.with_context(no_create_template_line=True)).create(vals)

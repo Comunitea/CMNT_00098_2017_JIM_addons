@@ -100,7 +100,7 @@ class Chrono(object):
 
 class JSync(object):
 
-	__slots__ = ['id', 'env', 'model', 'mode', 'name', 'data', 'part', 'related', 'session', 'settings']
+	__slots__ = ['id', 'env', 'model', 'mode', 'name', 'data', 'related', 'session', 'settings']
 
 	def __init__(self, odoo_env, settings=None, retries=3):
 		retry = httpRetry(total=retries, connect=retries, backoff_factor=0.3, status_forcelist=(500, 502, 504))
@@ -111,7 +111,6 @@ class JSync(object):
 		self.mode = 'create' # CRUD mode
 		self.name = None # Data item name
 		self.data = {} # Item data dict
-		self.part = None # Multi-packet part
 		self.related = None # Odoo related model & record
 		self.env = odoo_env # Odoo environment
 		self.session = Session() # HTTP Session
@@ -122,39 +121,23 @@ class JSync(object):
 		self.settings = settings or self.env['b2b.settings'].get_default_params(fields=[
 			'url', 
 			'conexion_error', 
-			'response_error', 
-			'packet_size'
+			'response_error'
 		])
 
-	def filter_data(self, vals=None):
+	def filter_data(self, crudMode=None):
 		"""
 		Filter and normalizes item data (data)
 
-		:param vals: Item data to update (from model) * DEPRECATED
+		:param crudMode: Operation mode
 		:return: dict
-
-		* DEPRECATED
-		* data key modifiers:
-		* 	fixed:xxx -> Sends xxx always
-		* 	field_xxx_name:xxx -> Sends xxx field if field_xxx_name has changed
-		* 	xxx: -> Sends xxx field if has changed (no modifier)
 		"""
 
 		if self.data and type(self.data) is dict:
 			for field, value in self.data.items():
-				# obj_old = obj_new = field
-				# If field have :
-				# if ':' in field:
-				#	# Before :
-				#	obj_old = field[:field.index(':')]
-				#	# After :
-				#	obj_new = field[field.index(':') + 1:]
-				#	# Replace key
-				#	self.data[obj_new] = self.data.pop(field)
-				# if obj_old != 'fixed' and (vals is False or (type(vals) is dict and obj_old not in vals)):
-				#	# Remove field because is not found in vals
-				#	del self.data[obj_new]
-				if type(value) is list:
+				if crudMode == 'delete' and field != 'jim_id':
+					# Delete all except jim_id on delete
+					del self.data[field]
+				elif type(value) is list:
 					# Convert lits to tuples
 					self.data[field] = tuple(value)
 				elif type(value) is unicode:
@@ -189,7 +172,7 @@ class JSync(object):
 					EXPORT_RECORD = env['b2b.export'].search([('res_id', '=', RES_ID)], limit=1)
 
 					# Send the record comparing internal table reference?
-					RECORD_SEND = bool((not EXPORT_RECORD and self.mode == 'create') or (EXPORT_RECORD and self.mode in ('update', 'delete')))
+					RECORD_SEND = bool(self.mode in ('create', 'update') or (EXPORT_RECORD and self.mode == 'delete'))
 
 					# Log JSync record status
 					_logger.debug("Registro en JSync: %s" % EXPORT_RECORD)
@@ -224,8 +207,6 @@ class JSync(object):
 
 		if _RECORD_SEND and self.data:
 
-			_logger.info("Enviando datos a JSync...")
-
 			jsync_post = None
 
 			# Header
@@ -235,16 +216,14 @@ class JSync(object):
 			json_data = json_dump({
 				'object': self.name,
 				'operation': self.mode,
-				'data': self.data,
-				'part': self.part
+				'data': self.data
 			})
 
 			# Debug
 			debug_msg = "JSync Response: {}" \
 						"\n    - object: {}" \
 						"\n    - operation: {}" \
-						"\n    - data: DATASET" \
-						"\n    - part: {}"
+						"\n    - data: {}" 
 
 			try:
 
@@ -262,7 +241,7 @@ class JSync(object):
 			# Si la respuesta es OK
 			if jsync_post and jsync_post.status_code is 200:
 
-				_logger.info(debug_msg.format(jsync_post.text, self.name, self.mode, self.part))
+				_logger.debug(debug_msg.format(jsync_post.text, self.name, self.mode, self.data))
 
 				# En los paquetes múltiples no se establecen estos parámetros
 				# por lo que no se notifican al usuario ni se registran en el sistema
@@ -294,7 +273,7 @@ class JSync(object):
 
 			else:
 				_logger.error("JSYNC RESPONSE ERROR: %s" % jsync_post.text)
-				_logger.info(debug_msg.format(jsync_post.text, self.name, self.mode, self.part))
+				_logger.error(debug_msg.format(jsync_post.text, self.name, self.mode, self.data))
 				
 				if jsync_post and self.settings['conexion_error'] and self.settings['response_error']:
 					raise ValidationError("JSync Server Response Error\n%s" % (jsync_post.text.encode('latin1').capitalize()))

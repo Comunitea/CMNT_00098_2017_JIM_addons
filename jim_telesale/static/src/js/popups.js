@@ -64,7 +64,10 @@ var GridWidget = GridWidgetSuper.include({
         var discount = this.line_widget.chained_discount2float(chained_discount)
         line_model.set('discount', discount);
         line_model.set('global_available_stock', line_vals.stock);
-        line_model.set('taxes_ids', line_vals.tax_ids || []); 
+        line_model.set('taxes_ids', line_vals.tax_ids || []);
+        if (!$.isEmptyObject(line_vals.name)){
+            line_model.set('description', line_vals.name);
+        }
         line_model.update_line_values();
     },
 

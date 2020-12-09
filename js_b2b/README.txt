@@ -27,7 +27,7 @@ o bien pip install -librería- por cada una de ellas
 * httplib2 >= 0.13.1
 * Unidecode >= 1.1.1
 * requests >= 2.22.0
-* barcodenumber >= 0.5.0
+* gtin-validator >= 1.0.3
 
 Para poder utilizar este módulo es necesario que un servidor secundario ejecute el módulo de Pyhton 3 "jsync" y esté a la escucha
 
@@ -41,52 +41,6 @@ También cambiaremos los datos del FTP público si es necesario, este se usa par
 Después podemos modificar las configuraciones para cada modelo de Odoo en "Items Out" e "Items In", esta configuración es un tanto especial y sólo debe hacerla una persona con conocimientos de programación, ya que hay que escribir una parte de código. El motivo de hacerlo así fué poder realizar cambios en producción sin necesidad de reiniciar el servidor.
 
 Todas las variables y métodos que se definan en esta configuración pasarán a un diccionario llamado b2b en tiempo de ejecución, por lo tanto si definimos un nuevo método ej. "def test_method(param):" para llamarlo usaremos b2b['test_method'](param)".
-
--- CONFIGURACIÓN ITEMS OUT --
-
-Model Names: Nombre del modelo o modelos separados por comas de los que se obtendrán los datos
-Description: Descripción de la configuración que estamos creando
-Code:
-
-	fields_to_watch = None
-
-		Permite especificar que campos del modelo se vigilarán, si no se le pasa una lista o tupla serán todos
-
-	def is_notifiable(self, action, vals):
-		...
-
-		Aquí debemos devolver True o False si queremos que se notifique sólo cuando el registro cumpla unas condiciones, en caso contrario True
-
-	(opcional) def pre_data(self, action):
-		...
-
-		Acción que se ejecutará si existe antes de llamara a b2b['get_data'](record)
-
-	def get_data(self):
-		...
-
-		Esta función deverá devolver normalmente un diccionario con los datos a enviar, aunque también puede retornar una lista de diccionarios
-
-	(opcional) def pos_data(self, action):
-		...
-
-		Acción que se ejecutará si existe después de llamara a b2b['get_data'](record)
-
--- CONFIGURACIÓN ITEMS IN --
-
-Model Names: Nombre del modelo al que se incorporarán los datos
-Description: Descripción de la configuración que estamos creando
-Code:
-
-	def get_action(action, data):
-		return action
-
-		Permite cambiar la acción cuando se recibe un dato de entrada en función de unas condiciones, por defecto se pasa tal cual
-		
-	def get_data(self, data):
-		...
-
-		Devolverá un único diccionario de datos, que se pasará al modelo para crear el registro
 
 -- CAMBIOS EN LA BASE DE ODOO --
 

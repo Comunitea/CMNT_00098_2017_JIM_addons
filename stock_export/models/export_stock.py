@@ -347,6 +347,7 @@ class DeletedObject(models.Model):
 
         ### Parametro all:
         ### ignora todo y envía todos los productos sintabla intermedia
+        ### si se pasa una lista de ids (plantillas) envía solo esos productos
 
         ### Los parámetros to_time y from_time no deberíana de enviarse nunca, son solo para modo testeo y ver o forzar resultados
         ### from_time
@@ -363,8 +364,12 @@ class DeletedObject(models.Model):
         time_now_str = fields.Datetime.to_string(time_now)
         
         if all:
-            domain = [('type', '=', 'product'), '|', ('active', '=', True), ('active', '=', False), ('website_published', '=', True)]
-            product_ids = self.env['product.product'].search(domain)
+            domain = [('type', '=', 'product'), ('website_published', '=', True)]
+
+            if type(all) is list:
+                domain.append(('product_tmpl_id', 'in', all))
+
+            product_ids = self.env['product.product'].with_context(active_test=False).search(domain)
         else:
             if not from_time:
                 sql_ir_config = "select value from ir_config_parameter where key = 'last_call_export_xmlstock'"

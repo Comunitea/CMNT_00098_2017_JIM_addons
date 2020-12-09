@@ -176,7 +176,10 @@ class SGAProductProduct(models.Model):
     @api.multi
     def _get_sga_names(self):
         ctx = self._context.copy()
-        ctx.update({'display_default_code': False})
+        # icp = self.env['ir.config_parameter']
+        # lang = icp.get_param('mecalux_lang', u'es_ES')
+        ctx.update({u'display_default_code': False,
+                    u'lang': u'es_ES'})
         for product in self:
             #name = product.display_name and product.display_name[0:50] or product.name
             product.sga_name_get = product.with_context(ctx).name_get()[0][1]
@@ -201,7 +204,6 @@ class SGAProductProduct(models.Model):
     sga_uom_base_code = fields.Char(related='uom_id.sga_uom_base_code')
     sga_desc_uom_base_code = fields.Char(related='uom_id.name')
     sga_warehouse_code = fields.Char(related="warehouse_id.code")
-
 
     @api.multi
     def toggle_active(self):
