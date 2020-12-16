@@ -174,19 +174,19 @@ class B2bItemsOut(models.Model):
 
 						create_records += 1
 						_logger.info("@@ CREATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						record.b2b_record('create', conf_items_before=notifiable_items, user_notify=user_notify)
+						record.b2b_record('create', user_notify=user_notify)
 
 					elif not notifiable_items and record_on_jsync:
 
 						delete_records += 1
 						_logger.info("@@ DELETE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], user_notify=user_notify)
+						record.b2b_record('delete', user_notify=user_notify)
 
 					elif notifiable_items and self.sync_updates:
 
 						update_records += 1
 						_logger.info("@@ UPDATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						record.b2b_record('update', conf_items_before=notifiable_items, user_notify=user_notify)
+						record.b2b_record('update', user_notify=user_notify)
 
 					else:
 
