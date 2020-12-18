@@ -126,7 +126,6 @@ class BaseB2B(models.AbstractModel):
 		:param vals: Default model data update dict (to check fields)
 		:return dict: Record applicable configs
 		"""
-		self.ensure_one()
 		items_dict = dict()
 		jsync_conf = self.env['b2b.settings'].get_default_params(['base_url', 'docs_after'])
 		b2b_config = self.env['b2b.item.out'].search([('active', '=', True), ('model', 'like', '%%%s%%' % self._name)])
@@ -180,7 +179,6 @@ class BaseB2B(models.AbstractModel):
 		:param sub_methods: Call pre_data & pos_data
 		:return: JSync Packet
 		"""
-		self.ensure_one()
 		packets = list()
 		conf_items_after = self.is_notifiable_check(mode, vals)
 		applicable_configs = conf_items_before or conf_items_after
