@@ -208,10 +208,11 @@ class BaseB2B(models.AbstractModel):
 						b2b['crud_mode'] = 'delete'
 					# Si antes no era notificable y ahora si o lo creamos
 					elif (item.name not in conf_items_before.keys() and item.name in conf_items_after.keys()) or not self.on_jsync():
+						if self.on_jsync(): applicable_configs.update({ item.name: True })
 						b2b['crud_mode'] = 'create'
 
 				# Restringir cambios no reales. Ej: product_id.write({ 'name': self.name })
-				if b2b['crud_mode'] != mode or applicable_configs.get(item.name, False):
+				if applicable_configs.get(item.name, False):
 					# Creamos un paquete
 					packet = JSync(self.env, settings=jsync_conf)
 					# ID del registro
