@@ -269,7 +269,7 @@ class JSync(object):
 				try:
 					return json_load(jsync_post.text)
 				except:
-					return jsync_post.text
+					return 'Error de conexión con JSync'
 
 			else:
 				_logger.error("JSYNC RESPONSE ERROR: %s" % jsync_post.text)
