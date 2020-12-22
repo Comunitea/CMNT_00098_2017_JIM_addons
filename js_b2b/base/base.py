@@ -189,13 +189,13 @@ class BaseB2B(models.AbstractModel):
 				if mode == 'update':
 					# No se puede buscar dentro de un None
 					if conf_items_before is None:
-						conf_items_before = list()
+						conf_items_before = dict()
 					# Si antes era notificable y ahora no lo eliminamos
 					if item.name in conf_items_before.keys() and item.name not in conf_items_after.keys():
 						b2b['crud_mode'] = 'delete'
 					# Si antes no era notificable y ahora si o lo creamos
 					elif (item.name not in conf_items_before.keys() and item.name in conf_items_after.keys()) or not self.on_jsync():
-						if self.on_jsync(): applicable_configs.update({ item.name: True })
+						if item.name not in conf_items_before.keys() and not self.on_jsync(): applicable_configs.update({ item.name: True })
 						b2b['crud_mode'] = 'create'
 
 				# Restringir cambios no reales. Ej: product_id.write({ 'name': self.name })
