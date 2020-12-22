@@ -129,18 +129,19 @@ class BaseB2B(models.AbstractModel):
 				# Campos vigilados
 				watched_fields = b2b.get('fields_to_watch')
 				# Datos actuales en el registro
-				recordset_data = self.read(watched_fields)
-				record_data = recordset_data[0] if recordset_data else dict()
+				# recordset_data = self.read(watched_fields)
+				# record_data = recordset_data[0] if recordset_data else dict()
 				# Datos cambiados (realmente)
-				changed_fields = { k : vals[k] for k in vals if k in record_data and vals[k] != record_data[k] }
+				# changed_fields = { k : vals[k] for k in vals if k in record_data and vals[k] != record_data[k] }
 				# Sólo enviar updates si hay un cambio en los datos
-				change_allowed = bool(mode in ('create', 'delete', 'replace') or changed_fields)
+				# change_allowed = bool(mode in ('create', 'delete', 'replace') or changed_fields)
 
 				# Si este registro es notificable
 				if b2b['is_notifiable'](self, mode, vals):
 
 					# Si se restringen los campos a enviar
-					if changed_fields and type(watched_fields) in (list, tuple):
+					#if changed_fields and type(watched_fields) in (list, tuple):
+					if type(watched_fields) in (list, tuple):
 
 						# Si se están actualizando campos notificables
 						items_dict.update({ item.name: bool(set(vals).intersection(set(watched_fields))) })
@@ -148,7 +149,8 @@ class BaseB2B(models.AbstractModel):
 					else:
 
 						# Si watched_fields es None o vals está vacío
-						items_dict.update({ item.name: change_allowed })
+						# items_dict.update({ item.name: change_allowed })
+						items_dict.update({ item.name: True })
 
 		# All notifiable items
 		return items_dict
@@ -178,7 +180,6 @@ class BaseB2B(models.AbstractModel):
 
 			jsync_conf = self.env['b2b.settings'].get_default_params()
 			importing_file = self.env.context.get('import_file', False)
-			_logger.info("Configuración aplicable: %s", applicable_configs)
 
 			for item in b2b_config:
 				# Configuration eval
@@ -195,11 +196,12 @@ class BaseB2B(models.AbstractModel):
 						b2b['crud_mode'] = 'delete'
 					# Si antes no era notificable y ahora si o lo creamos
 					elif (item.name not in conf_items_before.keys() and item.name in conf_items_after.keys()) or not self.on_jsync():
-						if item.name not in conf_items_before.keys() and not self.on_jsync(): applicable_configs.update({ item.name: True })
+						# if not self.on_jsync(): applicable_configs.update({ item.name: True })
 						b2b['crud_mode'] = 'create'
 
 				# Restringir cambios no reales. Ej: product_id.write({ 'name': self.name })
 				if applicable_configs.get(item.name, False):
+					_logger.info("Configuración aplicable: %s", applicable_configs)
 					# Creamos un paquete
 					packet = JSync(self.env, settings=jsync_conf)
 					# ID del registro

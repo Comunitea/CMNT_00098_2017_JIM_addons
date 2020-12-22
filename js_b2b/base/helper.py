@@ -255,17 +255,16 @@ class JSync(object):
 
 					if _RES_ID:
 						# Guardar el estado en Odoo
-						# con un nuevo cursor para que se 
-						# haga un commit de forma inmediata
+						# se usan consultas porque con el ORM no funcionaba
 						with api.Environment.manage():
 							with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
 								new_cr.autocommit(True)
 								if not _EXPORT_ID and self.mode == 'create':
-									new_cr.execute("INSERT INTO b2b_export (name, rel_id, res_id) VALUES (%s, %s, %s)", (self.name, self.related, _RES_ID))
+									new_cr.execute("INSERT INTO b2b_export (name, rel_id, res_id, create_date) VALUES (%s, %s, %s)", (self.name, self.related, _RES_ID, datetime.now()))
 								elif _EXPORT_ID and self.mode == 'update':
-									new_cr.execute("UPDATE b2b_export SET name=%s, rel_id=%s, res_id=%s WHERE id=%s", (self.name, self.related, _RES_ID, _EXPORT_ID))
+									new_cr.execute("UPDATE b2b_export SET name=%s, rel_id=%s, write_date=%s WHERE id=%s", (self.name, self.related, datetime.now(), _EXPORT_ID))
 								elif _EXPORT_ID and self.mode == 'delete':
-									new_cr.execute("DELETE FROM b2b_export WHERE id=%s", (_EXPORT_ID,))
+									new_cr.execute("DELETE FROM b2b_export WHERE res_id LIKE %s OR rel_id LIKE %s", (_RES_ID, _RES_ID))
 
 				try:
 					return json_load(jsync_post.text)
