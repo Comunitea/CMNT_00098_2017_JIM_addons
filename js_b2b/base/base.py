@@ -143,7 +143,8 @@ class BaseB2B(models.AbstractModel):
 				# Campos vigilados
 				watched_fields = b2b.get('fields_to_watch')
 				# Datos actuales en el registro
-				record_data = self.read(watched_fields)[0] or dict()
+				recordset_data = self.read(watched_fields)
+				record_data = recordset_data[0] if recordset_data else dict()
 				# Datos cambiados (realmente)
 				changed_fields = { k : vals[k] for k in vals if k in record_data and vals[k] != record_data[k] }
 				# Sólo enviar updates si hay un cambio en los datos
