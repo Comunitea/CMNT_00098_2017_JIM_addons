@@ -103,20 +103,6 @@ class BaseB2B(models.AbstractModel):
 		return True if export_found else False
 
 	@api.multi
-	def auto_mode(self, object_str, conf_after):
-		# Determinamos el modo correcto en actualizaciones
-		if conf_items_before and mode == 'update':
-			# No se puede buscar dentro de un None
-			if conf_items_before is None:
-				conf_items_before = list()
-			# Si antes era notificable y ahora no lo eliminamos
-			if item.name in conf_items_before.keys() and item.name not in conf_items_after.keys():
-				b2b['crud_mode'] = 'delete'
-			# Si antes no era notificable y ahora si o lo creamos
-			elif (item.name not in conf_items_before.keys() and item.name in conf_items_after.keys()) or not self.on_jsync():
-				b2b['crud_mode'] = 'create'
-
-	@api.multi
 	def is_notifiable_check(self, mode='create', vals=dict()):
 		"""
 		Notifiable config items
