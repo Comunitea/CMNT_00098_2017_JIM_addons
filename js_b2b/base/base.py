@@ -124,6 +124,7 @@ class BaseB2B(models.AbstractModel):
 			# en el search() no es suficiente (ej: customer y customer.address)
 			if self._name in item.get_models() and type(item.code) is unicode:
 				b2b = item.evaluate(mode, jsync_conf)
+				b2b['min_docs_date'] = jsync_conf['docs_after']
 
 				# Campos vigilados
 				watched_fields = b2b.get('fields_to_watch')
@@ -183,6 +184,7 @@ class BaseB2B(models.AbstractModel):
 			for item in b2b_config:
 				# Configuration eval
 				b2b = item.evaluate(mode, jsync_conf)
+				b2b['min_docs_date'] = jsync_conf['docs_after']
 				b2b['crud_mode'] = mode
 
 				# Determinamos el modo correcto en actualizaciones
