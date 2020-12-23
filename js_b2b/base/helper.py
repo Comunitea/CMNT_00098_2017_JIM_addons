@@ -260,7 +260,7 @@ class JSync(object):
 							with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
 								new_cr.autocommit(True)
 								if not _EXPORT_ID and self.mode == 'create':
-									new_cr.execute("INSERT INTO b2b_export (name, rel_id, res_id, create_date) VALUES (%s, %s, %s)", (self.name, self.related, _RES_ID, datetime.now()))
+									new_cr.execute("INSERT INTO b2b_export (name, rel_id, res_id, create_date) VALUES (%s, %s, %s, %s)", (self.name, self.related, _RES_ID, datetime.now()))
 								elif _EXPORT_ID and self.mode == 'update':
 									new_cr.execute("UPDATE b2b_export SET name=%s, rel_id=%s, write_date=%s WHERE id=%s", (self.name, self.related, datetime.now(), _EXPORT_ID))
 								elif _EXPORT_ID and self.mode == 'delete':
