@@ -103,21 +103,7 @@ class BaseB2B(models.AbstractModel):
 		return True if export_found else False
 
 	@api.multi
-	def auto_mode(self, object_str, conf_after):
-		# Determinamos el modo correcto en actualizaciones
-		if conf_items_before and mode == 'update':
-			# No se puede buscar dentro de un None
-			if conf_items_before is None:
-				conf_items_before = list()
-			# Si antes era notificable y ahora no lo eliminamos
-			if item.name in conf_items_before.keys() and item.name not in conf_items_after.keys():
-				b2b['crud_mode'] = 'delete'
-			# Si antes no era notificable y ahora si o lo creamos
-			elif (item.name not in conf_items_before.keys() and item.name in conf_items_after.keys()) or not self.on_jsync():
-				b2b['crud_mode'] = 'create'
-
-	@api.multi
-	def is_notifiable_check(self, mode='create', vals=dict()):
+	def is_notifiable_check(self, mode='create', vals=None):
 		"""
 		Notifiable config items
 
@@ -131,8 +117,7 @@ class BaseB2B(models.AbstractModel):
 		b2b_config = self.env['b2b.item.out'].search([('active', '=', True), ('model', 'like', '%%%s%%' % self._name)])
 
 		# Vals siempre como dict
-		if type(vals) is not dict:
-			vals = dict()
+		if type(vals) is not dict: vals = dict()
 
 		for item in b2b_config:
 			# Comprobar que el modelo coincide exactamente ya que con el filtro anterior
@@ -143,17 +128,19 @@ class BaseB2B(models.AbstractModel):
 				# Campos vigilados
 				watched_fields = b2b.get('fields_to_watch')
 				# Datos actuales en el registro
-				record_data = self.read(watched_fields)[0] or dict()
+				# recordset_data = self.read(watched_fields)
+				# record_data = recordset_data[0] if recordset_data else dict()
 				# Datos cambiados (realmente)
-				changed_fields = { k : vals[k] for k in vals if k in record_data and vals[k] != record_data[k] }
+				# changed_fields = { k : vals[k] for k in vals if k in record_data and vals[k] != record_data[k] }
 				# Sólo enviar updates si hay un cambio en los datos
-				change_allowed = bool(mode in ('create', 'delete', 'replace') or changed_fields)
+				# change_allowed = bool(mode in ('create', 'delete', 'replace') or changed_fields)
 
 				# Si este registro es notificable
 				if b2b['is_notifiable'](self, mode, vals):
 
 					# Si se restringen los campos a enviar
-					if changed_fields and type(watched_fields) in (list, tuple):
+					#if changed_fields and type(watched_fields) in (list, tuple):
+					if type(watched_fields) in (list, tuple) and mode == 'update':
 
 						# Si se están actualizando campos notificables
 						items_dict.update({ item.name: bool(set(vals).intersection(set(watched_fields))) })
@@ -161,7 +148,8 @@ class BaseB2B(models.AbstractModel):
 					else:
 
 						# Si watched_fields es None o vals está vacío
-						items_dict.update({ item.name: change_allowed })
+						# items_dict.update({ item.name: change_allowed })
+						items_dict.update({ item.name: True })
 
 		# All notifiable items
 		return items_dict
@@ -191,7 +179,6 @@ class BaseB2B(models.AbstractModel):
 
 			jsync_conf = self.env['b2b.settings'].get_default_params()
 			importing_file = self.env.context.get('import_file', False)
-			_logger.info("Configuración aplicable: %s", applicable_configs)
 
 			for item in b2b_config:
 				# Configuration eval
@@ -202,17 +189,18 @@ class BaseB2B(models.AbstractModel):
 				if mode == 'update':
 					# No se puede buscar dentro de un None
 					if conf_items_before is None:
-						conf_items_before = list()
+						conf_items_before = dict()
 					# Si antes era notificable y ahora no lo eliminamos
 					if item.name in conf_items_before.keys() and item.name not in conf_items_after.keys():
 						b2b['crud_mode'] = 'delete'
 					# Si antes no era notificable y ahora si o lo creamos
 					elif (item.name not in conf_items_before.keys() and item.name in conf_items_after.keys()) or not self.on_jsync():
-						if self.on_jsync(): applicable_configs.update({ item.name: True })
+						# if not self.on_jsync(): applicable_configs.update({ item.name: True })
 						b2b['crud_mode'] = 'create'
 
 				# Restringir cambios no reales. Ej: product_id.write({ 'name': self.name })
 				if applicable_configs.get(item.name, False):
+					_logger.info("Configuración aplicable: %s", applicable_configs)
 					# Creamos un paquete
 					packet = JSync(self.env, settings=jsync_conf)
 					# ID del registro

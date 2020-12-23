@@ -616,17 +616,21 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    return ((action == 'create' or (type(vals) is dict and not vals.get('date_order'))) # No se recibe date_order en vals o se está creando
-        and self.state not in ('draft', 'proforma', 'cancel') # Y el estado no es borrador, proforma o cancelado
+    notifiable = (self.state not in ('draft', 'proforma', 'cancel') # Y el estado no es borrador, proforma o cancelado
         and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
         and self.date_order >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
+    
+    # No enviar datos cuando se cambia el estado si es lo único de los campos vigilados, a no ser que se cancele
+    if (notifiable and action == 'update' and vals.get('state', 'cancel') != 'cancel' and len(vals.keys()) == 1):
+        return False
+    
+    # Otras condiciones
+    return notifiable
 
 def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
 
 def get_data(self, action):
-    # Todos los campos son fixed, ya que hasta que se valida no se notifica
-    # de forma que los campos que no se modifican al validar no se enviarían
     doc_data = { 'jim_id': self.id }
     
     # If not a delete mode
@@ -651,7 +655,7 @@ def pos_data(self, action):
     if b2b['crud_mode'] == 'delete':
         # Eliminamos los albaranes asociados
         for picking in self.picking_ids:
-            picking.b2b_record('delete', conf_items_before=['delivery_note'], user_notify=False)</field>
+            picking.b2b_record('delete', False, conf_items_before=['delivery_note'], user_notify=False)</field>
         </record>
 
         <record id="b2b_item_out_18" model="b2b.item.out">
