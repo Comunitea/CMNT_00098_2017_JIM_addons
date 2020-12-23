@@ -103,7 +103,7 @@ class BaseB2B(models.AbstractModel):
 		return True if export_found else False
 
 	@api.multi
-	def is_notifiable_check(self, mode='create', vals=dict()):
+	def is_notifiable_check(self, mode='create', vals=None):
 		"""
 		Notifiable config items
 
@@ -117,8 +117,7 @@ class BaseB2B(models.AbstractModel):
 		b2b_config = self.env['b2b.item.out'].search([('active', '=', True), ('model', 'like', '%%%s%%' % self._name)])
 
 		# Vals siempre como dict
-		if type(vals) is not dict:
-			vals = dict()
+		if type(vals) is not dict: vals = dict()
 
 		for item in b2b_config:
 			# Comprobar que el modelo coincide exactamente ya que con el filtro anterior
@@ -141,7 +140,7 @@ class BaseB2B(models.AbstractModel):
 
 					# Si se restringen los campos a enviar
 					#if changed_fields and type(watched_fields) in (list, tuple):
-					if type(watched_fields) in (list, tuple):
+					if type(watched_fields) in (list, tuple) and mode == 'update':
 
 						# Si se están actualizando campos notificables
 						items_dict.update({ item.name: bool(set(vals).intersection(set(watched_fields))) })
