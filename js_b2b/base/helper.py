@@ -130,11 +130,21 @@ class JSync(object):
 
 		:param crudMode: Operation mode
 		:return: dict
+
+		data key modifiers:
+			fixed:xxx -> Sends xxx always
 		"""
 
 		if self.data and type(self.data) is dict:
 			for field, value in self.data.items():
-				if crudMode == 'delete' and field != 'jim_id':
+				if ':' in field:
+					# Before :
+					obj_old = field[:field.index(':')]
+					# After :
+					obj_new = field[field.index(':') + 1:]
+					# Replace key
+					self.data[obj_new] = self.data.pop(field)
+				elif crudMode == 'delete' and field != 'jim_id':
 					# Delete all except jim_id on delete
 					del self.data[field]
 				elif type(value) is list:
