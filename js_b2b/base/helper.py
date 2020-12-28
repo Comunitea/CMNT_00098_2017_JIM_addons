@@ -124,7 +124,7 @@ class JSync(object):
 			'response_error'
 		])
 
-	def filter_data(self, crudMode=None):
+	def filter_data(self, crudMode=None, vals=None):
 		"""
 		Filter and normalizes item data (data)
 
@@ -138,12 +138,19 @@ class JSync(object):
 		if self.data and type(self.data) is dict:
 			for field, value in self.data.items():
 				if ':' in field:
+
 					# Before :
-					obj_old = field[:field.index(':')]
+					modifier = field[:field.index(':')]
 					# After :
 					obj_new = field[field.index(':') + 1:]
-					# Replace key
-					self.data[obj_new] = self.data.pop(field)
+
+					if modifier == 'fixed':
+						# Replace key allways
+						self.data[obj_new] = self.data.pop(field)
+					elif modifier == 'changed' and (not vals or not obj_new in vals):
+						# Delete if not changed
+						del self.data[field]
+
 				elif crudMode == 'delete' and field != 'jim_id':
 					# Delete all except jim_id on delete
 					del self.data[field]

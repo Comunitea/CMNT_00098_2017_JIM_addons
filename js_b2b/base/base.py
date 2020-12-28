@@ -227,7 +227,7 @@ class BaseB2B(models.AbstractModel):
 					# Obtenemos los datos
 					packet.data = b2b['get_data'](self, mode)
 					# Filtramos los datos
-					packet.filter_data(b2b['crud_mode'])
+					packet.filter_data(b2b['crud_mode'], vals)
 					# Si procede enviamos el paquete
 					if auto_send: packet.send(notify=user_notify)
 					# Guardamos el paquete
