@@ -6,7 +6,7 @@
             <field name="sequence">1</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">attribute</field>
             <field name="model">product.attribute</field>
             <field name="description">Atributos de producto</field>
@@ -32,7 +32,7 @@ def get_data(self, action):
             <field name="sequence">2</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">attribute_value</field>
             <field name="model">product.attribute.value</field>
             <field name="description">Valores de atributos</field>
@@ -61,7 +61,7 @@ def get_data(self, action):
             <field name="sequence">3</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">brand</field>
             <field name="model">product.brand</field>
             <field name="description">Marcas de productos</field>
@@ -87,7 +87,7 @@ def get_data(self, action):
             <field name="sequence">4</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">category</field>
             <field name="model">product.tag</field>
             <field name="description">Categorías de producto</field>
@@ -120,7 +120,7 @@ def pos_data(self, action):
             <field name="sequence">5</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">web_category</field>
             <field name="model">product.public.category</field>
             <field name="description">Categorías públicas de producto</field>
@@ -151,7 +151,7 @@ def pos_data(self, action):
             <field name="sequence">6</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">product</field>
             <field name="model">product.template</field>
             <field name="description">Productos</field>
@@ -197,8 +197,8 @@ def pos_data(self, action):
         for image in self.product_image_ids:
             image.b2b_record('create', user_notify=False)
         # Crear la parametrización
-        if 'product.template.parameterization' in self.env:
-            for p in self.env['product.template.parameterization'].search([('product_id', '=', self.id)]):
+        if 'product.parameterization' in self.env:
+            for p in self.env['product.parameterization'].search([('product_tmpl_id', '=', self.id)]):
                 p.b2b_record('create', user_notify=False)
         # Previsión de abastecimiento
         for stock_move in self.product_variant_id.stock_move_ids:
@@ -213,7 +213,7 @@ def pos_data(self, action):
             <field name="sequence">7</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">product_variant</field>
             <field name="model">product.product</field>
             <field name="description">Variantes / Combinaciones</field>
@@ -270,7 +270,7 @@ def pos_data(self, action):
             <field name="sequence">9</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">product_image</field>
             <field name="model">product.image</field>
             <field name="description">Imágenes del producto</field>
@@ -298,7 +298,7 @@ def get_data(self, action):
             <field name="sequence">10</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">currency</field>
             <field name="model">res.currency</field>
             <field name="description">Monedas</field>
@@ -321,7 +321,7 @@ def get_data(self, action):
             <field name="sequence">11</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">pricelist</field>
             <field name="model">product.pricelist</field>
             <field name="description">Tarifas</field>
@@ -343,7 +343,7 @@ def get_data(self, action):
             <field name="sequence">12</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">supply_plan</field>
             <field name="model">stock.move</field>
             <field name="description">Previsión de abastecimiento</field>
@@ -388,7 +388,7 @@ def get_data(self, action):
             <field name="sequence">13</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">customer</field>
             <field name="model">res.partner</field>
             <field name="description">Clientes</field>
@@ -448,7 +448,7 @@ def pos_data(self, action):
             <field name="sequence">14</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">customer_address</field>
             <field name="model">res.partner</field>
             <field name="description">Direcciones de clientes</field>
