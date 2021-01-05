@@ -281,7 +281,7 @@ class BaseB2B(models.AbstractModel):
 		for record in self:
 			if b2b_evaluate:
 				items_to_send = record.is_notifiable_check('update', vals)
-			if b2b_evaluate and super(BaseB2B, record).write(vals):
+			if super(BaseB2B, record).write(vals) and b2b_evaluate:
 				record.b2b_record('update', vals, conf_items_before=items_to_send)
 		return True
 
@@ -296,7 +296,7 @@ class BaseB2B(models.AbstractModel):
 		for record in self:
 			if b2b_evaluate:
 				packets = record.b2b_record('delete', auto_send=False)
-			if b2b_evaluate and super(BaseB2B, record).unlink():
+			if super(BaseB2B, record).unlink() and b2b_evaluate:
 				for packet in packets:
 					packet.send(notify=True)
 		return True

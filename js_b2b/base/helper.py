@@ -272,7 +272,6 @@ class JSync(object):
 
 					if _RES_ID:
 						# Guardar el estado en Odoo
-						# se usan consultas porque con el ORM no funcionaba
 						with api.Environment.manage():
 							with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
 								new_cr.autocommit(True)
