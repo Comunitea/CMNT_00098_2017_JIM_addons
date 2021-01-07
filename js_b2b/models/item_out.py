@@ -187,8 +187,9 @@ class B2bItemsOut(models.Model):
 					elif all_notifiable and self.sync_updates:
 
 						update_records += 1
+						conf_items = record.is_notifiable_check('update')
 						_logger.info("@@ UPDATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						record.b2b_record('update', user_notify=user_notify)
+						record.b2b_record('update', conf_items_before=conf_items, user_notify=user_notify)
 
 					else:
 
