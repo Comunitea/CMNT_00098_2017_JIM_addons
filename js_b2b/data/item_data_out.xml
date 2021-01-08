@@ -183,7 +183,7 @@ def get_data(self, action):
         'web_category_id': self.public_categ_ids.ids, 
         'brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
-        'weight': self.weight,
+        'weight': float(self.weight),
         'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
     }
 
@@ -246,7 +246,7 @@ def get_data(self, action):
         'reference': self.default_code,
         'attribute_value': self.attribute_value_ids.ids,
         'ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
-        'weight': self.weight,
+        'weight': float(self.weight),
         'default': bool(self.id == self.product_variant_id.id)
     }
     

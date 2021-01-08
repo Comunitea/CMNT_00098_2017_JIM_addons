@@ -200,7 +200,6 @@ class BaseB2B(models.AbstractModel):
 						# if not self.on_jsync(): applicable_configs.update({ item.name: True })
 						b2b['crud_mode'] = 'create'
 
-				# Restringir cambios no reales. Ej: product_id.write({ 'name': self.name })
 				if applicable_configs.get(item.name, False):
 					_logger.info("Configuración aplicable: %s", applicable_configs)
 					# Creamos un paquete
