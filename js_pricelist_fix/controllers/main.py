@@ -19,7 +19,7 @@ class jsProductPricelist(http.Controller):
 
         # Solo pueden acceder usuarios con permisos de configuración (Administración/Ajustes)
         if request.env.user.has_group('base.group_system'):
-
+            
             product_model = request.env['product.template'].sudo()
             pricelist_model = request.env['product.pricelist'].sudo()
             pricelist_item_model = request.env['product.pricelist.item'].sudo()
@@ -304,7 +304,7 @@ class jsProductPricelist(http.Controller):
     @http.route([
         '/js_pricelist_fix/find_duplicates'
     ], type='http', auth='user')
-    def run(self, tmode=0):
+    def find_duplicates(self, tmode=0):
 
         # Solo pueden acceder usuarios con permisos de configuración (Administración/Ajustes)
         if request.env.user.has_group('base.group_system'):

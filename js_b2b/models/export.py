@@ -307,7 +307,7 @@ class B2BExport(models.Model):
 		_logger.info('[b2b_delete_old_supplies] INICIO!')
 
 		try:
-			supply_plan_ids = self.search([('res_id', '=like', 'stock.move,%')]).mapped(lambda record: int(record.res_id.split(',')[1]))
+			supply_plan_ids = self.search([('res_id', '=like', 'stock.move,%')]).mapped(lambda record: int(record.res_id.split(',')[1] if record.res_id else 0))
 			for record in self.env['stock.move'].search([('id', 'in', supply_plan_ids), ('date_expected', '<', str(datetime.now()))]):
 				record.b2b_record('delete', False)
 		except Exception as e:
