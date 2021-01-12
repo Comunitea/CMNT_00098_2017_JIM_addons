@@ -168,25 +168,27 @@ class B2bItemsOut(models.Model):
 					record = self.env[model].browse(id)
 					res_id = '%s,%s' % (record._name, record.id)
 					notifiable_items = record.is_notifiable_check()
+					notifiable_values = notifiable_items.values()
+					all_notifiable = notifiable_items and all(notifiable_values)
 					record_on_jsync = self.env['b2b.export'].search([('res_id', '=', res_id)], limit=1)
 
-					if notifiable_items and not record_on_jsync:
+					if all_notifiable and not record_on_jsync:
 
 						create_records += 1
 						_logger.info("@@ CREATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						record.b2b_record('create', conf_items_before=notifiable_items, user_notify=user_notify)
+						record.b2b_record('create', user_notify=user_notify)
 
-					elif not notifiable_items and record_on_jsync:
+					elif not all_notifiable and record_on_jsync:
 
 						delete_records += 1
 						_logger.info("@@ DELETE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						record.b2b_record('delete', conf_items_before=[record_on_jsync.name,], user_notify=user_notify)
+						record.b2b_record('delete', user_notify=user_notify)
 
-					elif notifiable_items and self.sync_updates:
+					elif all_notifiable and record_on_jsync and self.sync_updates:
 
 						update_records += 1
 						_logger.info("@@ UPDATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						record.b2b_record('update', conf_items_before=notifiable_items, user_notify=user_notify)
+						record.b2b_record('update', conf_items_before={ record_on_jsync.name: True }, user_notify=user_notify)
 
 					else:
 

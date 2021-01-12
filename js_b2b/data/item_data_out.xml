@@ -6,7 +6,7 @@
             <field name="sequence">1</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">attribute</field>
             <field name="model">product.attribute</field>
             <field name="description">Atributos de producto</field>
@@ -32,7 +32,7 @@ def get_data(self, action):
             <field name="sequence">2</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">attribute_value</field>
             <field name="model">product.attribute.value</field>
             <field name="description">Valores de atributos</field>
@@ -61,7 +61,7 @@ def get_data(self, action):
             <field name="sequence">3</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">brand</field>
             <field name="model">product.brand</field>
             <field name="description">Marcas de productos</field>
@@ -87,7 +87,7 @@ def get_data(self, action):
             <field name="sequence">4</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">category</field>
             <field name="model">product.tag</field>
             <field name="description">Categorías de producto</field>
@@ -120,7 +120,7 @@ def pos_data(self, action):
             <field name="sequence">5</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">web_category</field>
             <field name="model">product.public.category</field>
             <field name="description">Categorías públicas de producto</field>
@@ -151,7 +151,7 @@ def pos_data(self, action):
             <field name="sequence">6</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">product</field>
             <field name="model">product.template</field>
             <field name="description">Productos</field>
@@ -183,7 +183,7 @@ def get_data(self, action):
         'web_category_id': self.public_categ_ids.ids, 
         'brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
-        'weight': self.weight,
+        'weight': float(self.weight),
         'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
     }
 
@@ -197,8 +197,8 @@ def pos_data(self, action):
         for image in self.product_image_ids:
             image.b2b_record('create', user_notify=False)
         # Crear la parametrización
-        if 'product.template.parameterization' in self.env:
-            for p in self.env['product.template.parameterization'].search([('product_id', '=', self.id)]):
+        if 'product.parameterization' in self.env:
+            for p in self.env['product.parameterization'].search([('product_tmpl_id', '=', self.id)]):
                 p.b2b_record('create', user_notify=False)
         # Previsión de abastecimiento
         for stock_move in self.product_variant_id.stock_move_ids:
@@ -213,7 +213,7 @@ def pos_data(self, action):
             <field name="sequence">7</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">product_variant</field>
             <field name="model">product.product</field>
             <field name="description">Variantes / Combinaciones</field>
@@ -225,7 +225,6 @@ def pos_data(self, action):
     'attribute_names', 
     'attribute_value_ids', 
     'weight',
-    'default',
     'website_published'
 )
 
@@ -247,8 +246,8 @@ def get_data(self, action):
         'reference': self.default_code,
         'attribute_value': self.attribute_value_ids.ids,
         'ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
-        'weight': self.weight,
-        'default': False
+        'weight': float(self.weight),
+        'default': bool(self.id == self.product_variant_id.id)
     }
     
 def pos_data(self, action):
@@ -267,89 +266,11 @@ def pos_data(self, action):
         self.env['b2b.export'].b2b_products_stock(export_all=[self.product_tmpl_id.id,])</field>
         </record>
 
-        <record id="b2b_item_out_8" model="b2b.item.out">
-            <field name="sequence">8</field>
-            <field name="active">False</field>
-            <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
-            <field name="name">product_parameterization</field>
-            <field name="model">product.template.parameterization, product.product.parameterization</field>
-            <field name="description">Parametrización de productos</field>
-            <field name="code">fields_to_watch = None
-
-def is_notifiable(self, action, vals):
-    return (self.product_id # Está asociada a un producto
-        and self.product_id.website_published # Y el producto está publicado
-        and (not vals or (type(vals) is dict and vals.get('lang')))) # Y se recibe "lang" o se está creando
-
-def pre_data(self, action):
-    self._product_id = None
-    self._variant_id = None
-    # Now updating product parameterization
-    if self._name == 'product.template.parameterization':
-        self._product_id = self.product_id.id
-    # Now updating variant parameterization
-    elif self._name == 'product.product.parameterization':
-        self._product_id = self.product_id.product_tmpl_id.id
-        self._variant_id = self.product_id.id
-
-def related_to(self, action):
-    return 'product.template,%s' % self._product_id
-    
-def model_parameterization(self):
-    parameters = dict()
-    # Get fields and data
-    model_id = self.env['ir.model'].search([('model', '=', self._name)]).id
-    for field in self.env['js_parameterization.field'].search([('model_id', '=', model_id)]):
-        field_value = getattr(self, field.name) or None
-        if str(type(field_value)).lstrip(u"\u003C").startswith('class'):
-            field_value = [val.name for val in field_value]
-        parameters.update({ field.field_description:field_value })
-    return parameters
-
-def get_data(self, action):
-    parameterization = dict()
-    
-    # Now updating product parameterization
-    if self._product_id and not self._variant_id:
-        
-        # Product parameterization
-        parameterization.update(b2b['model_parameterization'](self))
-        
-        # Merge variant parameterization for products without variants
-        if not self.product_id.product_variant_id.attribute_names:
-            variant_parameterization = self.env['product.product.parameterization'].search([('product_id', '=', self.product_id.product_variant_id.id)], limit=1)
-            if variant_parameterization:
-                parameterization.update(b2b['model_parameterization'](variant_parameterization))
-                
-    # Now updating variant parameterization
-    else:
-        
-        # Merge product parameterization for single variants
-        if not self.product_id.attribute_names:
-            self._variant_id = None
-
-            product_parameterization = self.env['product.template.parameterization'].search([('product_id', '=', self.product_id.product_tmpl_id.id)], limit=1)
-            if product_parameterization:
-                parameterization.update(b2b['model_parameterization'](product_parameterization))
-                
-        # Variant parameterization
-        parameterization.update(b2b['model_parameterization'](self))
-    
-    # Return data
-    return {
-        'jim_id': self.id,
-        'product_id': self._product_id,
-        'variant_id': self._variant_id,
-        'parameters': parameterization
-    } if parameterization else dict()</field>
-        </record>
-
         <record id="b2b_item_out_9" model="b2b.item.out">
             <field name="sequence">9</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">product_image</field>
             <field name="model">product.image</field>
             <field name="description">Imágenes del producto</field>
@@ -377,7 +298,7 @@ def get_data(self, action):
             <field name="sequence">10</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">currency</field>
             <field name="model">res.currency</field>
             <field name="description">Monedas</field>
@@ -400,7 +321,7 @@ def get_data(self, action):
             <field name="sequence">11</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">pricelist</field>
             <field name="model">product.pricelist</field>
             <field name="description">Tarifas</field>
@@ -422,12 +343,12 @@ def get_data(self, action):
             <field name="sequence">12</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">supply_plan</field>
             <field name="model">stock.move</field>
             <field name="description">Previsión de abastecimiento</field>
             <field name="code">fields_to_watch = (
-    'order_id', 
+    'purchase_line_id', 
     'company_id',
     'product_id', 
     'product_uom_qty', 
@@ -437,7 +358,7 @@ def get_data(self, action):
 
 def is_notifiable(self, action, vals):
     product_published = self.product_id.product_tmpl_id.website_published
-    variant_published = self.product_id.website_published if self.product_id.product_tmpl_id.product_variant_count > 1 else product_published
+    variant_published = self.product_id.website_published if self.product_id.attribute_names else product_published
     return (product_published # El producto relaccionado está publicado
         and variant_published # La variante relaccionada está publicada
         and self.purchase_line_id # Viene de una línea de un pedido de compra
@@ -457,7 +378,7 @@ def get_data(self, action):
         'company_id': self.company_id.id,
         'order_id': self.purchase_line_id.order_id.id,
         'product_id': self.product_id.product_tmpl_id.id,
-        'variant_id': self.product_id.id if self.product_id.product_tmpl_id.product_variant_count > 1 else None,
+        'variant_id': self.product_id.id if self.product_id.attribute_names else None,
         'quantity': self.product_uom_qty if self.state == 'assigned' else 0,
         'shipping_date': self.date_expected
     }</field>
@@ -467,7 +388,7 @@ def get_data(self, action):
             <field name="sequence">13</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">customer</field>
             <field name="model">res.partner</field>
             <field name="description">Clientes</field>
@@ -527,7 +448,7 @@ def pos_data(self, action):
             <field name="sequence">14</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
-            <field name="sync_updates">True</field>
+            <field name="sync_updates">False</field>
             <field name="name">customer_address</field>
             <field name="model">res.partner</field>
             <field name="description">Direcciones de clientes</field>
@@ -542,7 +463,7 @@ def pos_data(self, action):
     'state_id', 
     'country_id',
     'commercial_partner_id', 
-    'default', 
+    'default_partner_by_type', 
     'active'
 )
 
@@ -695,17 +616,21 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    return ((action == 'create' or (type(vals) is dict and not vals.get('date_order'))) # No se recibe date_order en vals o se está creando
-        and self.state not in ('draft', 'proforma', 'cancel') # Y el estado no es borrador, proforma o cancelado
+    notifiable = (self.state not in ('draft', 'proforma', 'cancel') # Y el estado no es borrador, proforma o cancelado
         and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
         and self.date_order >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
+    
+    # No enviar datos cuando se cambia el estado si es lo único de los campos vigilados, a no ser que se cancele
+    if (notifiable and action == 'update' and vals.get('state', 'cancel') != 'cancel' and len(vals.keys()) == 1):
+        return False
+    
+    # Otras condiciones
+    return notifiable
 
 def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
 
 def get_data(self, action):
-    # Todos los campos son fixed, ya que hasta que se valida no se notifica
-    # de forma que los campos que no se modifican al validar no se enviarían
     doc_data = { 'jim_id': self.id }
     
     # If not a delete mode
@@ -730,7 +655,7 @@ def pos_data(self, action):
     if b2b['crud_mode'] == 'delete':
         # Eliminamos los albaranes asociados
         for picking in self.picking_ids:
-            picking.b2b_record('delete', conf_items_before=['delivery_note'], user_notify=False)</field>
+            picking.b2b_record('delete', False, conf_items_before=['delivery_note'], user_notify=False)</field>
         </record>
 
         <record id="b2b_item_out_18" model="b2b.item.out">
