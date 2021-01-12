@@ -193,8 +193,8 @@ def pos_data(self, action):
         # Crear las variantes
         for variant in self.product_variant_ids:
             variant.b2b_record('create', user_notify=False)
-        # Crear las imágenes del producto
-        for image in self.product_image_ids:
+        # Crear las imágenes de la plantilla
+        for image in self.template_image_ids:
             image.b2b_record('create', user_notify=False)
         # Crear la parametrización
         if 'product.parameterization' in self.env:
@@ -253,6 +253,9 @@ def get_data(self, action):
 def pos_data(self, action):
     # Creamos los datos relaccionados
     if b2b['crud_mode'] == 'create':
+        # Crear las imágenes del producto
+        for image in self.product_image_ids:
+            image.b2b_record('create', user_notify=False)
         # Crear la parametrización
         if 'product.product.parameterization' in self.env:
             for p in self.env['product.product.parameterization'].search([('product_id', '=', self.id)]):
