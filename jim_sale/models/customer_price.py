@@ -24,7 +24,7 @@ class CustomerPrice(models.Model):
                            help="End date for this customer price")
     company_id = fields.\
         Many2one('res.company', 'Company',
-                 default=lambda self: self.env.user.company_id.id, index=1)
+                 default=lambda self: self.env.user.company_id.id, index=1, required=True)
 
     @api.model
     def get_customer_price(self, partner_id, product, qty, date=False):
