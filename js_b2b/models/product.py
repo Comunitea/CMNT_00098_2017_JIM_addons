@@ -89,8 +89,14 @@ class ProductTemplate(models.Model):
 	_name = "product.template"
 	_inherit = ["product.template", "b2b.image"]
 
+	@api.one
+	def _filter_template_images(self):
+		# Images not associated to attributes
+		self.template_image_ids = self.env['product.image'].search([('product_tmpl_id', '=', self.product_tmpl_id.id)]).filtered(lambda image: image.product_attributes_values == False)
+
 	website_published = fields.Boolean('Visible on Website', default=False, copy=False)
 	public_categ_ids = fields.Many2many('product.public.category', string='Website Product Category', help="Categories for stores that sells to end customer")
+	template_image_ids = fields.One2many('product.image', string='Images', compute='_filter_template_images')
 	product_image_ids = fields.One2many('product.image', 'product_tmpl_id', string='Images')
 	public_image_name = fields.Char('Product Public Image Name')
 
@@ -175,7 +181,6 @@ class ProductProduct(models.Model):
 	@api.one
 	def _filter_variant_images(self):
 		product_attrs = self.attribute_value_ids._ids
-
 		self.product_image_ids = self.env['product.image'].search([
 			('product_tmpl_id', '=', self.product_tmpl_id.id)
 		# Filter images that contains at least one attribute of variant, not order dependent

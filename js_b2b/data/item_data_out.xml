@@ -511,18 +511,22 @@ def get_data(self, action):
 )
 
 def is_notifiable(self, action, vals):
-    return (self.number # Tiene un número asignado
+    notifiable =  (self.number # Tiene un número asignado
         and self.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
         and self.type in ('out_invoice', 'out_refund') # Y es de tipo out_invoice o out_refund
         and self.state in ('open', 'paid') # Y el estado es abierta o pagada
         and self.date_invoice >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
+    
+    if notifiable and b2b['crud_mode'] == 'update' and vals.get('state', 'open') != 'open' and len(vals.keys()) == 1:
+        b2b['logger'].critical("------> [%s] FACTURA NOTIFICABLE PERO NO SE ENVIA CAMBIO DE ESTADO A: %s", self.id, vals.get('state'))
+        notifiable = False
+        
+    return notifiable
 
 def related_to(self, action):
     return 'res.partner,%s' % self.commercial_partner_id.id
 
 def get_data(self, action):
-    # Todos los campos son fixed, ya que hasta que se valida no se notifica
-    # de forma que los campos que no se modifican al validar no se enviarían
     doc_data = { 'jim_id': self.id }
     
     # If not a delete mode
@@ -575,8 +579,6 @@ def related_to(self, action):
     return 'res.partner,%s' % self.sale_id.partner_id.commercial_partner_id.id
 
 def get_data(self, action):
-    # Todos los campos son fixed, ya que hasta que se valida no se notifica
-    # de forma que los campos que no se modifican al validar no se enviarían
     doc_data = { 'jim_id': self.id }
     
     # If not a delete mode
@@ -625,7 +627,7 @@ def is_notifiable(self, action, vals):
         notifiable = False
         
     return notifiable
-
+    
 def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
 
