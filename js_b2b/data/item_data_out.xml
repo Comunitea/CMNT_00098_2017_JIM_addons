@@ -193,7 +193,7 @@ def pos_data(self, action):
         # Crear las variantes
         for variant in self.product_variant_ids:
             variant.b2b_record('create', user_notify=False)
-        # Crear las imágenes de la plantilla
+        # Crear las imágenes de la plantilla (que no tienen atributos)
         for image in self.env['product.image'].search([('product_tmpl_id', '=', self.id), ('product_attributes_values', '=', False)]):
             image.b2b_record('create', user_notify=False)
         # Crear la parametrización
