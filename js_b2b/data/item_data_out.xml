@@ -256,10 +256,6 @@ def pos_data(self, action):
         # Crear las imágenes del producto
         for image in self.product_image_ids:
             image.b2b_record('create', user_notify=False)
-        # Crear la parametrización
-        if 'product.product.parameterization' in self.env:
-            for p in self.env['product.product.parameterization'].search([('product_id', '=', self.id)]):
-                p.b2b_record('create', user_notify=False)
         # Previsión de abastecimiento
         for stock_move in self.stock_move_ids:
             stock_move.b2b_record('create', user_notify=False)
