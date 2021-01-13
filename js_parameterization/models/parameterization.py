@@ -49,10 +49,7 @@ class ProductParameterization(models.Model):
 	_rec_name = 'product_tmpl_id' 
 
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', required=True, ondelete='cascade')
-
-	# [LOIS] Estado de la parametrización de este producto
-	# [LOIS] Si se archiva el producto, la parametrización también, y viceversa
-	active = fields.Boolean('Active', related='product_tmpl_id.active', store=False)
+	
 	# [LOIS] Crea el select, no carga las opciones de ningún sitio
 	# PARAM_TEMPLATE_FIELD Definition
 	parameterization_template = fields.Selection(constants.TEMPLATES_LIST, required=False)
