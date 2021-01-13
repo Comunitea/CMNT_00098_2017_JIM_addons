@@ -262,7 +262,13 @@ def pos_data(self, action):
         # Enviar precios y stock (plantilla y variantes)
         self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[self.product_tmpl_id.id,], variant=self.id)
         self.env['b2b.export'].b2b_customers_prices(templates_filter=[self.product_tmpl_id.id,], variant=self.id)
-        self.env['b2b.export'].b2b_products_stock(export_all=[self.product_tmpl_id.id,])</field>
+        self.env['b2b.export'].b2b_products_stock(export_all=[self.product_tmpl_id.id,])
+
+    # Eliminamos la imágen relaccionada si procede
+    if b2b['crud_mode'] == 'delete':
+        for image in self.product_image_ids:
+            if image.on_one_product():
+                image.b2b_record('delete', user_notify=False)</field>
         </record>
 
         <record id="b2b_item_out_9" model="b2b.item.out">

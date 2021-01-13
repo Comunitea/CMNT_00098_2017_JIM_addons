@@ -377,6 +377,16 @@ class ProductImage(models.Model):
 	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel', domain=_default_attributes_domain)
 	sequence = fields.Integer(default=0, help="Gives the sequence order for images")
 
+	@api.multi
+	def on_one_product(self):
+		self.ensure_one()
+		only_one = True
+		variants_published = self.product_tmpl_id.product_variant_ids.filtered(lambda x: x.website_published == True)
+		for attr_id in variants_published.mapped('attribute_value_ids').ids:
+			on_images_counter = self.env['product.image'].search_count([('product_attributes_values', '=', attr_id)])
+			if on_images_counter > 1: only_one = False
+		return only_one
+
 	@api.onchange('product_tmpl_id', 'product_attributes_values')
 	def _onchange_product_attributes_values(self, product_template=None):
 		if not product_template: product_template = self.product_tmpl_id
