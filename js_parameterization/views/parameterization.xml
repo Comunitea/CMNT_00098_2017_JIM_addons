@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+
+    <!-- FORMULARIO DE PARAMETRIZACIÓN -->
+
+    <record id="parameterization_product_form_view" model="ir.ui.view">
+        <field name="name">Product Parameterization</field>
+        <field name="model">product.parameterization</field>
+        <field name="sequence">20</field>
+        <field name="arch" type="xml">
+            <form string="Parameterization" create="false">
+                <header id="parameterization_header" invisible="not context.get('default_product_tmpl_id')">
+                    <field name="product_tmpl_id" readonly="1" class="label label-default" options="{ 'no_open': True }"/>
+                </header>
+                
+                <sheet>
+                    <div id="template_selection_wrapper">
+                        <label for="parameterization_template"/>
+                        <field name="parameterization_template" options="{ 'no_create': True, 'no_open': True, 'no_edit': True }"/>
+                    </div>
+
+                    <div id="parameterization_fields">
+                        <group>
+                            <group string="General">
+                                <field name="certificaciones_ensayos" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="envase" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="nivel_habilidad" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="coleccion" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="reglamentacion" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="articulos_envase" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="deporte" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="uso" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="composicion_material" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="tipo_producto" options="{ 'no_open': True, 'no_create': True }"/>
+                            </group>
+
+                            <group string="Pala" attrs="{ 'invisible': [('parameterization_template', '!=', 1)] }">
+                                <field name="pala_construccion" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_tipo_juego" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_cara" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_forma" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_nucleo" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_agarre" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_balance" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_perfil" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_acabado" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_tamano_cabeza" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_ancho" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_longitud" options="{ 'no_open': True, 'no_create': True }"/>
+                            </group>
+
+                            <group string="Raqueta" attrs="{ 'invisible': [('parameterization_template', '!=', 2)] }">
+                                <field name="raqueta_construccion" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_tension_cordaje" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_tipo_juego" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_balance" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_tamano_cabeza" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_perfil" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_longitud" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_marco" options="{ 'no_open': True, 'no_create': True }"/>
+                            </group>
+
+                            <group string="Red" attrs="{ 'invisible': [('parameterization_template', '!=', 3)] }">
+                                <field name="redes_tratamiento" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="redes_malla" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="redes_requisitos" options="{ 'no_open': True, 'no_create': True }"/>
+                            </group>
+
+
+                            <group string="Equipamiento" attrs="{ 'invisible': [('parameterization_template', '!=', 4)] }">
+                                <field name="equipamiento_requisitos" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="equipamiento_seccion_tubo" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="equipamiento_tratamiento" options="{ 'no_open': True, 'no_create': True }"/>
+                            </group>
+
+                            <group string="Textil" attrs="{ 'invisible': [('parameterization_template', '!=', 5)] }">
+                                <field name="textil_tipo_prenda" options="{ 'no_open': True, 'no_create': True }"/>
+                            </group>
+                        </group>
+                    </div>
+                </sheet>
+
+                <!--<footer invisible="not context.get('default_product_id')">
+                    <button name="save" string="Save" class="btn-primary oe_edit_only" type="object"/>
+                    <button string="Cancel" class="btn-default" special="cancel"/>
+                </footer>-->
+            </form>
+        </field>
+    </record>
+
+    <!-- VALORES DE PARAMETRIZACIÓN -->
+
+    <record id="js_parameterization_values_form" model="ir.ui.view">
+        <field name="name">js_parameterization.value.form</field>
+        <field name="model">js_parameterization.value</field>
+        <field name="arch" type="xml">
+            <form string="Parameterization Value">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="fields" invisible="context.get('hide_fields', False)" options="{ 'no_create': True, 'no_edit': True }"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="js_parameterization_values_tree" model="ir.ui.view">
+        <field name="name">js_parameterization.value.tree</field>
+        <field name="model">js_parameterization.value</field>
+        <field name="arch" type="xml">
+            <tree string="parameters">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="js_parameterization_values" model="ir.actions.act_window">
+        <field name="name">Parameterization Values</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">js_parameterization.value</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Push here to create a new value
+            </p><p>
+                This values can be selected later in the product parameterization fields
+            </p>
+        </field>
+    </record>
+
+    <!-- WIZARD ENVÍO DE CAMPOS -->
+
+    <record id="js_parameterization_fields_wizard" model="ir.ui.view">
+        <field name="name">Parameterization Fields Wizard</field>
+        <field name="model">js_parameterization.field</field>
+        <field name="arch" type="xml">
+            <form string="Field to send">                
+                <group string="Fields to send">
+                    <field name="parameterization_fields" options= "{ 'no_create': True, 'no_open': True, 'no_edit': True }"/>
+                    <field name="action"/>                        
+                </group>
+                <footer>
+                    <button name="send" type="object" string="Send" class="oe_highlight"/>
+                    <button special="cancel" string="Cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="js_parameterization_fields" model="ir.actions.act_window">
+        <field name="name">Parameterization Fields</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">js_parameterization.field</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <!-- ACCIONES DE MENÚ -->
+
+    <menuitem id="menu_js_parameterization" name="Parameterization" parent="stock.menu_product_in_config_stock" sequence="90" />
+    <menuitem id="menu_js_parameterization_fields" name="Fields" parent="menu_js_parameterization" action="js_parameterization_fields" sequence="2" groups="js_parameterization.group_manage_parameterization" />
+    <menuitem id="menu_js_parameterization_values" name="Values" parent="menu_js_parameterization" action="js_parameterization_values" sequence="3" groups="js_parameterization.group_manage_parameterization" />
+
+</odoo>

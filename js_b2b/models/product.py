@@ -175,7 +175,6 @@ class ProductProduct(models.Model):
 	@api.one
 	def _filter_variant_images(self):
 		product_attrs = self.attribute_value_ids._ids
-
 		self.product_image_ids = self.env['product.image'].search([
 			('product_tmpl_id', '=', self.product_tmpl_id.id)
 		# Filter images that contains at least one attribute of variant, not order dependent
@@ -377,6 +376,16 @@ class ProductImage(models.Model):
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', copy=True)
 	product_attributes_values = fields.Many2many('product.attribute.value', relation='product_image_rel', domain=_default_attributes_domain)
 	sequence = fields.Integer(default=0, help="Gives the sequence order for images")
+
+	@api.multi
+	def on_one_product(self):
+		self.ensure_one()
+		only_one = True
+		variants_published = self.product_tmpl_id.product_variant_ids.filtered(lambda x: x.website_published == True)
+		for attr_id in variants_published.mapped('attribute_value_ids').ids:
+			on_images_counter = self.env['product.image'].search_count([('product_attributes_values', '=', attr_id)])
+			if on_images_counter > 1: only_one = False
+		return only_one
 
 	@api.onchange('product_tmpl_id', 'product_attributes_values')
 	def _onchange_product_attributes_values(self, product_template=None):
