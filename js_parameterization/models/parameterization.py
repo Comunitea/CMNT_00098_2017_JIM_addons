@@ -179,6 +179,13 @@ class ProductParameterization(models.Model):
 		}
 
 	#override
+	@api.model
+	def create(self, values):
+		param = super(ProductParameterization, self).create(values)
+		if param and not param.is_empty(): self.product_tmpl_id.compute_parameterization_percent()
+		return param
+
+	#override
 	@api.multi
 	def write(self, values):
 		values = self.template_fields_reset(values)
