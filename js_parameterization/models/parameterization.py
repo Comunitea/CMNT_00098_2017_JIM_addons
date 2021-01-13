@@ -197,6 +197,6 @@ class ProductParameterization(models.Model):
 	@api.multi
 	def unlink(self):
 		product_tmpl_ids = self.mapped('product_tmpl_id').ids
-		if super(ProductParameterization, self).unlink()
+		if super(ProductParameterization, self).unlink():
 			self.env['product.template'].browse(product_tmpl_ids).compute_parameterization_percent()
 		return True
