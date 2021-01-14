@@ -136,6 +136,7 @@
         <field name="res_model">product.parameterization</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="parameterization_product_search_view"/>
     </record>
 
     <!-- VALORES DE PARAMETRIZACIÓN -->
