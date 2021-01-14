@@ -22,16 +22,16 @@
                     <div id="parameterization_fields">
                         <group>
                             <group string="General">
-                                <field name="certificaciones_ensayos" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="envase" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="nivel_habilidad" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="coleccion" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="reglamentacion" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="articulos_envase" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="deporte" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="uso" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="composicion_material" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="tipo_producto" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="deporte" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="nivel_habilidad" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="uso" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="envase" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="articulos_envase" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="composicion_material" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="reglamentacion" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="certificaciones_ensayos" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="coleccion" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
                             <group string="Pala" attrs="{ 'invisible': [('parameterization_template', '!=', 1)] }">

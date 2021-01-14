@@ -49,10 +49,7 @@ class ProductParameterization(models.Model):
 	_rec_name = 'product_tmpl_id' 
 
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', required=True, ondelete='cascade')
-
-	# [LOIS] Estado de la parametrización de este producto
-	# [LOIS] Si se archiva el producto, la parametrización también, y viceversa
-	active = fields.Boolean('Active', related='product_tmpl_id.active', store=False)
+	
 	# [LOIS] Crea el select, no carga las opciones de ningún sitio
 	# PARAM_TEMPLATE_FIELD Definition
 	parameterization_template = fields.Selection(constants.TEMPLATES_LIST, required=False)
@@ -179,9 +176,24 @@ class ProductParameterization(models.Model):
 		}
 
 	#override
+	@api.model
+	def create(self, values):
+		param = super(ProductParameterization, self).create(values)
+		if param and not param.is_empty(): param.product_tmpl_id.compute_parameterization_percent()
+		return param
+
+	#override
 	@api.multi
 	def write(self, values):
 		values = self.template_fields_reset(values)
 		super(ProductParameterization, self).write(values)
 		self.product_tmpl_id.compute_parameterization_percent()
+		return True
+
+	#override
+	@api.multi
+	def unlink(self):
+		product_tmpl_ids = self.mapped('product_tmpl_id').ids
+		if super(ProductParameterization, self).unlink():
+			self.env['product.template'].browse(product_tmpl_ids).compute_parameterization_percent()
 		return True
