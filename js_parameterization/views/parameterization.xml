@@ -88,6 +88,56 @@
         </field>
     </record>
 
+    <!-- ÁRBOL DE PARAMETRIZACIÓN -->
+
+     <record id="parameterization_products_tree" model="ir.ui.view">
+        <field name="name">Products Parameterizated</field>
+        <field name="model">product.parameterization</field>
+        <field name="arch" type="xml">
+            <tree string="products" edit="false">
+                <field name="product_tmpl_id"/>
+                <field name="parameterization_template"/>
+                <button name="go_to_product" type="object" string="View Product"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- BÚSQUEDA DE PARAMETRIZACIÓN -->
+
+    <record id="parameterization_product_search_view" model="ir.ui.view">
+        <field name="name">Product Parameterization Search</field>
+        <field name="model">product.parameterization</field>
+        <field name="arch" type="xml">
+            <search string="Product Parameterization">
+                <field name="product_tmpl_id" />
+                <field name="parameterization_template" />
+				<group expand="0" string="Group By">                                            
+					<filter name="parameterization_template" context="{'group_by': 'parameterization_template'}" />                                     
+				</group> 
+            </search>
+        </field>
+    </record>
+
+    <!-- ACCIONES DE PARAMETRIZACIÓN -->
+
+    <record id="parameterization_recalculate" model="ir.actions.server">
+        <field name="name">Re-calculate Parameterization Percent</field>
+        <field name="model_id" ref="model_product_parameterization"/>
+        <field name="state">code</field>
+        <field name="code">
+            for record in records:
+                record.product_tmpl_id.calculate_parameterization_percent()
+        </field>
+    </record>
+
+    <record id="parameterization_products" model="ir.actions.act_window">
+        <field name="name">Parameterized Products</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">product.parameterization</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
     <!-- VALORES DE PARAMETRIZACIÓN -->
 
     <record id="js_parameterization_values_form" model="ir.ui.view">
@@ -162,5 +212,6 @@
     <menuitem id="menu_js_parameterization" name="Parameterization" parent="stock.menu_product_in_config_stock" sequence="90" />
     <menuitem id="menu_js_parameterization_fields" name="Fields" parent="menu_js_parameterization" action="js_parameterization_fields" sequence="2" groups="js_parameterization.group_manage_parameterization" />
     <menuitem id="menu_js_parameterization_values" name="Values" parent="menu_js_parameterization" action="js_parameterization_values" sequence="3" groups="js_parameterization.group_manage_parameterization" />
+    <menuitem id="menu_js_parameterization_products" name="Products" parent="menu_js_parameterization" action="parameterization_products" sequence="4" />
 
 </odoo>

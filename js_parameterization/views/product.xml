@@ -16,53 +16,18 @@
         </field>
     </record>
 
-    <!-- PARAMETERIZATION FILTERS -->
+    <!-- PARAMETERIZATED PRODUCTS SEARCH -->
 
-    <record id="parameterization_product_search_by_field" model="ir.ui.view">
-        <field name="model">product.parameterization</field>
+    <record id="product_template_search_view" model="ir.ui.view">
+        <field name="name">Products Parameterizated Search</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
         <field name="arch" type="xml">
-            <search/>
+            <field name="pricelist_id" position="after">
+                <separator/>
+                <field name="parameterization_percent_filled"/>
+            </field>
         </field>
     </record>
-
-    <!-- PRODUCTS CATEGORIZATED -->
-
-    <record id="parameterization_products_tree" model="ir.ui.view">
-        <field name="name">Products Parameterizated</field>
-        <field name="model">product.parameterization</field>
-        <field name="arch" type="xml">
-            <tree string="products" edit="false">
-                <field name="product_tmpl_id"/>
-                <field name="parameterization_template"/>
-                <button name="go_to_product" type="object" string="View Product"/>
-            </tree>
-        </field>
-    </record>
-
-    <!-- TREE ACTIONS -->
-
-    <record id="parameterization_recalculate" model="ir.actions.server">
-        <field name="name">Re-calculate Parameterization Percent</field>
-        <field name="model_id" ref="model_product_parameterization"/>
-        <field name="state">code</field>
-        <field name="code">
-            for record in records:
-                record.product_tmpl_id.calculate_parameterization_percent()
-        </field>
-    </record>
-
-    <!-- MENU ACTIONS -->
-
-    <record id="parameterization_products" model="ir.actions.act_window">
-        <field name="name">Parameterized Products</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">product.parameterization</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <!-- MENU LINKS -->
-    
-    <menuitem id="menu_js_parameterization_products" name="Products" parent="menu_js_parameterization" action="parameterization_products" sequence="4" />
 
 </odoo>
