@@ -32,6 +32,7 @@
                                 <field name="reglamentacion" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="certificaciones_ensayos" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="coleccion" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="genero" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
                             <group string="Pala" attrs="{ 'invisible': [('parameterization_template', '!=', 1)] }">
@@ -39,8 +40,9 @@
                                 <field name="pala_tipo_juego" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="pala_cara" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="pala_forma" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_marco" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="pala_nucleo" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_agarre" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_agarre_mango" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="pala_balance" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="pala_perfil" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="pala_acabado" options="{ 'no_open': True, 'no_create': True }"/>
@@ -49,7 +51,7 @@
                                 <field name="pala_longitud" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
-                            <group string="Raqueta" attrs="{ 'invisible': [('parameterization_template', '!=', 2)] }">
+                            <group string="Raqueta Tenis" attrs="{ 'invisible': [('parameterization_template', '!=', 2)] }">
                                 <field name="raqueta_construccion" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="raqueta_tension_cordaje" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="raqueta_tipo_juego" options="{ 'no_open': True, 'no_create': True }"/>
@@ -60,21 +62,52 @@
                                 <field name="raqueta_marco" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
-                            <group string="Red" attrs="{ 'invisible': [('parameterization_template', '!=', 3)] }">
+                            <group string="Raqueta Bádminton" attrs="{ 'invisible': [('parameterization_template', '!=', 3)] }">
+                                <field name="badminton_perfil" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="badminton_tension_cordaje" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="badminton_longitud" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="badminton_construccion" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="badminton_tamano_cabeza" options="{ 'no_open': True, 'no_create': True }"/>
+                            </group>
+
+                            <group string="Red" attrs="{ 'invisible': [('parameterization_template', '!=', 4)] }">
                                 <field name="redes_tratamiento" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="redes_malla" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="redes_requisitos" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
 
-                            <group string="Equipamiento" attrs="{ 'invisible': [('parameterization_template', '!=', 4)] }">
+                            <group string="Equipamiento" attrs="{ 'invisible': [('parameterization_template', '!=', 5)] }">
                                 <field name="equipamiento_requisitos" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="equipamiento_seccion_tubo" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="equipamiento_tratamiento" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
-                            <group string="Textil" attrs="{ 'invisible': [('parameterization_template', '!=', 5)] }">
+                            <group string="Textil" attrs="{ 'invisible': [('parameterization_template', '!=', 6)] }">
                                 <field name="textil_tipo_prenda" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_formato" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_gramaje" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_acabado" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tratamientos" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_diseno" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tejido" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_bolsilllos" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_patron" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_bajo" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_cintura" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_manga" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_cuello" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_cierre" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_logo" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_interior" options="{ 'no_open': True, 'no_create': True }"/>
+                            </group>
+
+                            <group string="Calzado" attrs="{ 'invisible': [('parameterization_template', '!=', 7)] }">
+                                <field name="calzado_tipo" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="calzado_suela" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="calzado_empeine" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="calzado_forro_y_plantilla" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="calzado_cierre" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
                         </group>
                     </div>
