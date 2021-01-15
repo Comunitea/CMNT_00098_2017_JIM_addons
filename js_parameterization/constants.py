@@ -1,7 +1,9 @@
 TEMPLATES_LIST = [
 	(1, 'Padel Racket'),
 	(2, 'Tennis Racket'),
-	(3, 'Net'),
-	(4, 'Equipment'),
-	(5, 'Textil')
+	(3, 'Badminton Racket'),
+	(4, 'Net'),
+	(5, 'Equipment'),
+	(6, 'Textil'),
+	(7, 'Calzado')
 ]
