@@ -732,11 +732,12 @@ def related_to(self, action):
     return None
 
 def get_data(self, action):
-    record_model, record_field = self.name.split(',')
-    vals = { record_field: self.value }
-    record = self.env[record_model].browse(self.res_id)
-    items_to_send = record.is_notifiable_check('update', vals)
-    record.b2b_record('update', vals, conf_items_before=items_to_send)
+    if ',' in self.name:
+        record_model, record_field = self.name.split(',')
+        vals = { record_field: self.value }
+        record = self.env[record_model].browse(self.res_id)
+        items_to_send = record.is_notifiable_check('update', vals)
+        record.b2b_record('update', vals, conf_items_before=items_to_send)
     return list()</field>
         </record>
 
