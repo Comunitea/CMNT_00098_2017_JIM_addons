@@ -6,22 +6,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Odoo Server 10.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-12-18 10:55+0000\n"
-"PO-Revision-Date: 2020-12-18 12:04+0100\n"
+"POT-Creation-Date: 2021-01-20 13:47+0000\n"
+"PO-Revision-Date: 2021-01-20 15:07+0100\n"
+"Last-Translator: <>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 2.2.3\n"
-"Last-Translator: \n"
+"Plural-Forms: \n"
 "Language: es\n"
+"X-Generator: Poedit 2.2.3\n"
 
 #. module: js_parameterization
-#: code:addons/js_parameterization/wizards/fields_wizard.py:44
-#, python-format
-msgid "Warning"
-msgstr "¡Atención!"
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_action
+msgid "Action"
+msgstr "Acción"
 
 #. module: js_parameterization
 #: code:addons/js_parameterization/wizards/fields_wizard.py:44
@@ -30,55 +29,50 @@ msgid "All parameterization values relations will be deleted!"
 msgstr "Las relacciones de los valores con este campo serán eliminadas"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_acabado
-msgid "FINISH"
-msgstr "ACABADO"
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_badminton_tamano_cabeza
+msgid "BADMINTON RACKET HEAD SIZE"
+msgstr "RAQUETA BADMINTON TAMAÑO CABEZA"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_agarre
-msgid "GRIP"
-msgstr "AGARRE"
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_badminton_longitud
+msgid "BADMINTON RACKET LENGTH"
+msgstr "RAQUETA BADMINTON LONGITUD"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_ancho
-msgid "WIDTH"
-msgstr "ANCHO"
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_badminton_perfil
+msgid "BADMINTON RACKET PROFILE"
+msgstr "RAQUETA BADMINTON  PERFIL"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_articulos_envase
-msgid "PACKAGE ITEMS NUM"
-msgstr "ARTÍCULOS ENVASE"
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_badminton_tension_cordaje
+msgid "BADMINTON RACKET STRING TENSION"
+msgstr "RAQUETA BADMINTON TENSIÓN CORDAJE"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_action
-msgid "Action"
-msgstr "Acción"
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_badminton_construccion
+msgid "BADMINTON RACKET STRUCTURE"
+msgstr "RAQUETA BADMINTON CONSTRUCCIÓN"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_active
-msgid "Active"
-msgstr "Activa"
-
-#. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_balance
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_balance
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "BALANCE"
 msgstr "BALANCE"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_cara
-msgid "FACE"
-msgstr "CARA"
-
-#. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_categoria_general
-msgid "GENERAL CATEGORY"
-msgstr "CATEGORÍA GENERAL"
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: selection:product.parameterization,parameterization_template:0
+msgid "Badminton Racket"
+msgstr "Raqueta de Bádminton"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_certificaciones_ensayos
 msgid "CERTIFICATIONS/TESTS"
 msgstr "CERTIFICACIONES/ENSAYOS"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "CLASP TYPE"
+msgstr "TIPO DE CIERRE"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_coleccion
@@ -91,10 +85,9 @@ msgid "COMPOSITION/MATERIAL"
 msgstr "COMPOSICIÓN/MATERIAL"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_construccion
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_construccion
-msgid "STRUCTURE"
-msgstr "CONSTRUCCIÓN"
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "CORE"
+msgstr "NÚCLEO"
 
 #. module: js_parameterization
 #: selection:js_parameterization.field,action:0
@@ -107,26 +100,55 @@ msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_create_uid
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_value_create_uid
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_create_uid
+msgid "Created by"
+msgstr "Creado por"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_create_date
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_value_create_date
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_create_date
+msgid "Created on"
+msgstr "Creado en"
+
+#. module: js_parameterization
 #: selection:js_parameterization.field,action:0
 msgid "DELETE"
 msgstr "DELETE"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_deporte
-msgid "SPORT"
-msgstr "DEPORTE"
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "DESIGN"
+msgstr "DISEÑO"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_display_name
 #: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_value_display_name
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_display_name
 msgid "Display Name"
-msgstr "Nombre a mostrar"
+msgstr "Nombre mostrado"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_envase
-msgid "PACKAGING"
-msgstr "ENVASE"
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_equipamiento_reglamentacion
+msgid "EQUIPMENT REGULATION"
+msgstr "EQUIPAMIENTO REGLAMENTACIÓN"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_equipamiento_requisitos
+msgid "EQUIPMENT REQUIREMENTS"
+msgstr "EQUIPAMIENTO REQUISITOS"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_equipamiento_tratamiento
+msgid "EQUIPMENT TREATMENT"
+msgstr "EQUIPAMIENTO TRATAMIENTO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_equipamiento_seccion_tubo
+msgid "EQUIPMENT TUBE SECTION"
+msgstr "EQUIPAMIENTO SECCIÓN TUBO"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
@@ -135,9 +157,49 @@ msgid "Equipment"
 msgstr "Equipamiento"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_forma
-msgid "SHAPE"
-msgstr "FORMA"
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "FACE"
+msgstr "CARA"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "FINISH"
+msgstr "ACABADO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_calzado_empeine
+msgid "FOOTWEAR INSTEP"
+msgstr "CALZADO EMPEINE"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_calzado_forro_y_plantilla
+msgid "FOOTWEAR LINING AND INSOLE"
+msgstr "CALZADO FORRO Y PLANTILLA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_calzado_cierre
+msgid "FOOTWEAR LOCK"
+msgstr "CALZADO CIERRE"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_calzado_suela
+msgid "FOOTWEAR SOLE"
+msgstr "CALZADO PLANTILLA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_calzado_tipo
+msgid "FOOTWEAR TYPE"
+msgstr "CALZADO TIPO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "FORMAT"
+msgstr "FORMATO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "FRAME"
+msgstr "MARCO"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.js_parameterization_fields_wizard
@@ -158,33 +220,126 @@ msgstr "Campos a enviar"
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_template_and_product_form_view
 msgid "Filled fields"
-msgstr "Campos cubiertos"
+msgstr "Valores asignados"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
-msgid "General"
-msgstr "General"
+#: selection:product.parameterization,parameterization_template:0
+msgid "Footwear"
+msgstr "Calzado"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_longitud
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_longitud
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "GAME TYPE"
+msgstr "TIPO DE JUEGO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "GARMENT INTERIOR"
+msgstr "TEXTIL INTERIOR"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "GARMENT TYPE"
+msgstr "TEXTIL TIPO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_genero
+msgid "GENDER"
+msgstr "GÉNERO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "GRAMMAGE"
+msgstr "GRAMAJE"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "Generic"
+msgstr "Genérico"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
+msgid "Group By"
+msgstr "Agrupar por"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "HANDLE FIXING"
+msgstr "AGARRE MANGO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "HEAD SIZE"
+msgstr "TAMAÑO CABEZA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_id
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_value_id
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_id
+msgid "ID"
+msgstr "ID"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "INSTEP"
+msgstr "EMPEINE"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "LENGTH"
 msgstr "LONGITUD"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_redes_malla
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "LINING AND INSOLE"
+msgstr "FORRO Y PLANTILLA"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "LOCK"
+msgstr "CIERRE"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "LOGO"
+msgstr "LOGO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "LOWER FINISHED"
+msgstr "TIPO BAJO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field___last_update
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_value___last_update
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization___last_update
+msgid "Last Modified on"
+msgstr "Última modificación en"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_write_uid
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_value_write_uid
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_write_uid
+msgid "Last Updated by"
+msgstr "Última actualización por"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_write_date
+#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_value_write_date
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_write_date
+msgid "Last Updated on"
+msgstr "Última actualización en"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "MESH"
 msgstr "MALLA"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_marco
-msgid "FRAME"
-msgstr "MARCO"
-
-#. module: js_parameterization
 #: model:res.groups,name:js_parameterization.group_manage_parameterization
 msgid "Manage types, fields and values in parameterization"
-msgstr "Gestionar tipos, campos y valores de parametrización"
+msgstr "Gestionar plantillas, campos y valores de la parametrización"
 
 #. module: js_parameterization
 #: model:ir.model,name:js_parameterization.model_ir_model
@@ -192,9 +347,24 @@ msgid "Models"
 msgstr "Modelos"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_nivel_habilidad
-msgid "SKILL LEVEL"
-msgstr "NIVEL DE HABILIDAD"
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "NECK TYPE"
+msgstr "TIPO DE CUELLO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_redes_malla
+msgid "NET MESH"
+msgstr "RED MALLA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_redes_requisitos
+msgid "NET REQUIREMENTS"
+msgstr "RED REQUISITOS"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_redes_tratamiento
+msgid "NET TREATMENT"
+msgstr "RED TRATAMIENTO"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_value_name
@@ -202,13 +372,103 @@ msgid "Name"
 msgstr "Nombre"
 
 #. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: selection:product.parameterization,parameterization_template:0
+msgid "Net"
+msgstr "Red"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_articulos_envase
+msgid "PACKAGE ITEMS NUM"
+msgstr "ARTÍCULOS ENVASE"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_envase
+msgid "PACKAGING"
+msgstr "ENVASE"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_balance
+msgid "PADEL RACKET BALANCE"
+msgstr "PALA PÁDEL BALANCE"
+
+#. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_nucleo
-msgid "CORE"
-msgstr "NÚCLEO"
+msgid "PADEL RACKET CORE"
+msgstr "PALA PÁDEL NÚCLEO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_cara
+msgid "PADEL RACKET FACE"
+msgstr "PALA PÁDEL CARA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_acabado
+msgid "PADEL RACKET FINISH"
+msgstr "PALA PÁDEL ACABADO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_marco
+msgid "PADEL RACKET FRAME"
+msgstr "PALA PÁDEL MARCO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_tipo_juego
+msgid "PADEL RACKET GAME TYPE"
+msgstr "PALA PÁDEL TIPO JUEGO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_agarre_mango
+msgid "PADEL RACKET HANDLE FIXING"
+msgstr "PALA PÁDEL AGARRE MANGO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_tamano_cabeza
+msgid "PADEL RACKET HEAD SIZE"
+msgstr "PALA PÁDEL TAMAÑO CABEZA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_longitud
+msgid "PADEL RACKET LENGTH"
+msgstr "PALA PÁDEL LONGITUD"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_perfil
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_perfil
+msgid "PADEL RACKET PROFILE"
+msgstr "PALA PÁDEL PERFIL"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_forma
+msgid "PADEL RACKET SHAPE"
+msgstr "PADEL RACKET FORMA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_construccion
+msgid "PADEL RACKET STRUCTURE"
+msgstr "PADEL RACKET CONSTRUCCIÓN"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_ancho
+msgid "PADEL RACKET WIDTH"
+msgstr "PALA PÁDEL ANCHO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "PATTERN"
+msgstr "PATRÓN"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "POCKETS"
+msgstr "BOLSILLOS"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_tipo_producto
+msgid "PRODUCT TYPE"
+msgstr "TIPO DE PRODUCTO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "PROFILE"
 msgstr "PERFIL"
 
@@ -216,7 +476,7 @@ msgstr "PERFIL"
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Padel Racket"
-msgstr "Pala"
+msgstr "Pala de Pádel"
 
 #. module: js_parameterization
 #: model:ir.ui.menu,name:js_parameterization.menu_js_parameterization
@@ -234,7 +494,7 @@ msgstr "Campos de Parametrización"
 #: model:ir.model.fields,field_description:js_parameterization.field_product_product_parameterization_percent_filled
 #: model:ir.model.fields,field_description:js_parameterization.field_product_template_parameterization_percent_filled
 msgid "Parameterization Percent Completed"
-msgstr "Porcentaje de Parametrización"
+msgstr "Porcentaje Completado de Parametrización"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.js_parameterization_values_form
@@ -260,17 +520,18 @@ msgstr "Plantillas de Parametrización"
 #. module: js_parameterization
 #: model:ir.actions.act_window,name:js_parameterization.parameterization_products
 msgid "Parameterized Products"
-msgstr "Productos Parametrizados"
+msgstr "Parameterized Products"
 
 #. module: js_parameterization
 #: model:ir.model,name:js_parameterization.model_product_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 msgid "Product Parameterization"
 msgstr "Parametrización de Producto"
 
 #. module: js_parameterization
 #: model:ir.model,name:js_parameterization.model_product_template
 msgid "Product Template"
-msgstr "Plantilla de Producto"
+msgstr "Plantilla de producto"
 
 #. module: js_parameterization
 #: sql_constraint:product.parameterization:0
@@ -288,42 +549,59 @@ msgid "Push here to create a new value"
 msgstr "Pulsa aquí para crear un nuevo valor"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_reglamentacion
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "REGULATION"
 msgstr "REGLAMENTACIÓN"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_equipamiento_requisitos
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_redes_requisitos
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "REQUIREMENTS"
 msgstr "REQUISITOS"
 
 #. module: js_parameterization
-#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
-#: selection:product.parameterization,parameterization_template:0
-msgid "Tennis Racket"
-msgstr "Raqueta"
-
-#. module: js_parameterization
-#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
-#: selection:product.parameterization,parameterization_template:0
-msgid "Net"
-msgstr "Red"
-
-#. module: js_parameterization
 #: model:ir.actions.server,name:js_parameterization.parameterization_recalculate
 msgid "Re-calculate Parameterization Percent"
-msgstr "Recalcular porcentaje de parametrización"
+msgstr "Re-calcular Porcentaje Parametrización"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_product_tmpl_id
 msgid "Related Product"
-msgstr "Producto Relacionado"
+msgstr "Producto Relaccionado"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_equipamiento_seccion_tubo
-msgid "TUBE SECTION"
-msgstr "SECCIÓN TUBO"
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "SHAPE"
+msgstr "FORMA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_nivel_habilidad
+msgid "SKILL LEVEL"
+msgstr "NIVEL DE HABILIDAD"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "SLEEVE TYPE"
+msgstr "TIPO MANGA"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "SOLE"
+msgstr "SUELA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_deporte
+msgid "SPORT"
+msgstr "DEPORTE"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "STRING TENSION"
+msgstr "TENSIÓN CORDAJE"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "STRUCTURE"
+msgstr "CONSTRUCCIÓN"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.js_parameterization_fields_wizard
@@ -331,37 +609,150 @@ msgid "Send"
 msgstr "Enviar"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_tamano_cabeza
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_balance
+msgid "TENNIS RACKET BALANCE"
+msgstr "RAQUETA TENIS BALANCE"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_marco
+msgid "TENNIS RACKET FRAME"
+msgstr "RAQUETA TENIS MARCO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tipo_juego
+msgid "TENNIS RACKET GAME TYPE"
+msgstr "RAQUETA TENIS TIPO JUEGO"
+
+#. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tamano_cabeza
-msgid "HEAD SIZE"
-msgstr "TAMAÑO CABEZA"
+msgid "TENNIS RACKET HEAD SIZE"
+msgstr "RAQUETA TENIS TAMAÑO CABEZA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_longitud
+msgid "TENNIS RACKET LENGTH"
+msgstr "RAQUETA TENIS LONGITUD"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_perfil
+msgid "TENNIS RACKET PROFILE"
+msgstr "RAQUETA TENIS PERFIL"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tension_cordaje
-msgid "STRING TENSION"
-msgstr "TENSIÓN CORDAJE"
+msgid "TENNIS RACKET STRING TENSION"
+msgstr "RAQUETA TENIS TENSIÓN CORDAJE"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_tipo_producto
-msgid "PRODUCT TYPE"
-msgstr "TIPO DE PRODUCTO"
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_construccion
+msgid "TENNIS RACKET STRUCTURE"
+msgstr "RAQUETA TENIS CONSTRUCCIÓN"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_tipo_juego
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tipo_juego
-msgid "GAME TYPE"
-msgstr "TIPO JUEGO"
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_tipo_cierre
+msgid "TEXTIL CLASP TYPE"
+msgstr "TEXTIL TIPO CIERRE"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_diseno
+msgid "TEXTIL DESIGN"
+msgstr "TEXTIL DISEÑO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_acabado
+msgid "TEXTIL FINISH"
+msgstr "TEXTIL ACABADO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_formato
+msgid "TEXTIL FORMAT"
+msgstr "TEXTIL FORMATO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_interior
+msgid "TEXTIL GARMENT INTERIOR"
+msgstr "TEXTIL INTERIOR"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_tipo_prenda
-msgid "GARMENT TYPE"
-msgstr "TIPO PRENDA"
+msgid "TEXTIL GARMENT TYPE"
+msgstr "TEXTIL TIPO"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_equipamiento_tratamiento
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_redes_tratamiento
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_gramaje
+msgid "TEXTIL GRAMMAGE"
+msgstr "TEXTIL GRAMAJE"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_logo
+msgid "TEXTIL LOGO"
+msgstr "TEXTIL LOGO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_tipo_bajo
+msgid "TEXTIL LOWER FINISHED"
+msgstr "TEXTIL TIPO BAJO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_tipo_cuello
+msgid "TEXTIL NECK TYPE"
+msgstr "TEXTIL TIPO CUELLO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_patron
+msgid "TEXTIL PATTERN"
+msgstr "TEXTIL PATRÓN"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_bolsilllos
+msgid "TEXTIL POCKETS"
+msgstr "TEXTIL BOLSILLOS"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_tipo_manga
+msgid "TEXTIL SLEEVE TYPE"
+msgstr "TEXTIL TIPO MANGA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_tejido
+msgid "TEXTIL TISSUE"
+msgstr "TEXTIL TEJIDO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_tratamiento
+msgid "TEXTIL TREATMENT"
+msgstr "TEXTIL TRATAMIENTO"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_tipo_cintura
+msgid "TEXTIL WAIST TYPE"
+msgstr "TEXTIL TIPO CINTURA"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "TISSUE"
+msgstr "TEJIDO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "TREATMENT"
 msgstr "TRATAMIENTO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "TUBE SECTION"
+msgstr "SECCIÓN TUBO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "TYPE"
+msgstr "TIPO"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: selection:product.parameterization,parameterization_template:0
+msgid "Tennis Racket"
+msgstr "Raqueta de Tenis"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
@@ -372,7 +763,7 @@ msgstr "Textil"
 #. module: js_parameterization
 #: model:ir.actions.act_window,help:js_parameterization.js_parameterization_values
 msgid "This values can be selected later in the product parameterization fields"
-msgstr "Estos valores se podrán seleccionar en la parametrización de los productos"
+msgstr "Estos valores se podrán seleccionar después en los campos de parametrización"
 
 #. module: js_parameterization
 #: selection:js_parameterization.field,action:0
@@ -385,6 +776,11 @@ msgid "USE"
 msgstr "USO"
 
 #. module: js_parameterization
+#: sql_constraint:js_parameterization.value:0
+msgid "Value must be unique in parameterization!"
+msgstr "¡El valor debe ser único en la parametrización!"
+
+#. module: js_parameterization
 #: model:ir.ui.menu,name:js_parameterization.menu_js_parameterization_values
 msgid "Values"
 msgstr "Valores"
@@ -393,3 +789,34 @@ msgstr "Valores"
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_products_tree
 msgid "View Product"
 msgstr "Ver Producto"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "WAIST TYPE"
+msgstr "TIPO DE CINTURA"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "WIDTH"
+msgstr "ANCHO"
+
+#. module: js_parameterization
+#: code:addons/js_parameterization/wizards/fields_wizard.py:44
+#, python-format
+msgid "Warning"
+msgstr "¡Atención!"
+
+#. module: js_parameterization
+#: model:ir.model,name:js_parameterization.model_js_parameterization_field
+msgid "js_parameterization.field"
+msgstr "js_parameterization.field"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.js_parameterization_values_tree
+msgid "parameters"
+msgstr "Parámetros"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_products_tree
+msgid "products"
+msgstr "productos"

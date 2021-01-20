@@ -97,6 +97,31 @@
             line-height: normal;
         }
     }
+
+    // Diferenciar many2many en parametrización
+    .o_form_field_many2manytags::before{
+        top: 1px;
+        width: 18px;
+        position: relative;
+        font: normal normal normal 14px/1 FontAwesome;
+        font-size: 14px;
+        display: inline-block;
+        text-align: right;
+        margin-right: 8px;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        content: "\f0ca";
+        color: #7c7bad;
+    }
+
+    // Color de many2many en parametrización
+    /*.o_form_field_many2manytags{
+        background-color: #ffeb0085;
+
+        & .o_form_field_many2one input.o_form_input{
+            background-color: transparent;
+        }
+    }*/
 }
 
 // Unificar la vista de los campos
