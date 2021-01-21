@@ -110,7 +110,7 @@ class ProductParameterization(models.Model):
 
 	# EQUIPAMIENTO
 	equipamiento_requisitos = fields.Many2one('js_parameterization.value', string='EQUIPMENT REQUIREMENTS', domain="[('fields.name', '=', 'equipamiento_requisitos')]")
-	equipamiento_seccion_tubo = fields.Many2one('js_parameterization.value', string='EQUIPMENT TUBE SECTION', domain="[('fields.name', '=', 'equipamiento_seccion_tubo')]")
+	equipamiento_seccion_tubo = fields.Many2many('js_parameterization.value', 'js_parameterization_field_equipamiento_seccion_tubo_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='EQUIPMENT TUBE SECTION', domain="[('fields.name', '=', 'equipamiento_seccion_tubo')]")
 	equipamiento_tratamiento = fields.Many2many('js_parameterization.value', 'js_parameterization_field_equipamiento_tratamiento_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='EQUIPMENT TREATMENT', domain="[('fields.name', '=', 'equipamiento_tratamiento')]")
 	equipamiento_reglamentacion = fields.Many2many('js_parameterization.value', 'js_parameterization_field_equipamiento_reglamentacion_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='EQUIPMENT REGULATION', domain="[('fields.name', '=', 'equipamiento_reglamentacion')]")
 
