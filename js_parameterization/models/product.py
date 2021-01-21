@@ -26,18 +26,20 @@ class ProductTemplate(models.Model):
             parameterization_percent = 0  # Record parameterization percent
             custom_fields = 0.0  # Parameterization fields counter
             filled_fields = 0.0  # Parameterization filled fields counter
-            # Get all parameterization fields
-            parameterization_fields = self.env['product.parameterization'].fields_get()
+
             # Get product parameterization
             product_parameterization = record.get_parameterization()
+            # Template applicable fields
+            template_fields = product_parameterization.template_fields_get()
+            # Get all parameterization fields
+            parameterization_fields = self.env['product.parameterization'].fields_get(template_fields)
             # Loop parameterization fields
             for field, attrs in parameterization_fields.items():
-                # All fields related to value
-                if attrs.get('relation') == 'js_parameterization.value':
-                    custom_fields += 1  # Add field to the counter
-                    # If field exists and have value
-                    if hasattr(product_parameterization, field) and product_parameterization[field]:
-                        filled_fields += 1  # Add field to the counter
+                custom_fields += 1 # Add field to the counter
+                # If field exists and have value
+                if hasattr(product_parameterization, field) and product_parameterization[field]:
+                    filled_fields += 1 # Add field to the counter
+
             if custom_fields:
                 # Calculate and save percent
                 parameterization_percent = int((filled_fields/custom_fields) * 100)
