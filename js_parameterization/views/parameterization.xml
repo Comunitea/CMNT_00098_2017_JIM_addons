@@ -78,7 +78,7 @@
 
                             <group string="Equipment" attrs="{ 'invisible': [('parameterization_template', '!=', 5)] }">
                                 <field name="equipamiento_requisitos" string="REQUIREMENTS" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="equipamiento_seccion_tubo" string="TUBE SECTION" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="equipamiento_seccion_tubo" string="TUBE SECTION" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                                 <field name="equipamiento_tratamiento" string="TREATMENT" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                                 <field name="equipamiento_reglamentacion" string="REGULATION" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                             </group>
