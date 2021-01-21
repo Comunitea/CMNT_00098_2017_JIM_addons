@@ -5,5 +5,5 @@ TEMPLATES_LIST = [
 	(4, 'Net'),
 	(5, 'Equipment'),
 	(6, 'Textil'),
-	(7, 'Calzado')
+	(7, 'Footwear')
 ]
