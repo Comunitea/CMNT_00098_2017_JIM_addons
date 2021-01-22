@@ -184,18 +184,18 @@ class ProductParameterization(models.Model):
 
 	@api.multi
 	def template_fields_reset(self, values):
+		self.ensure_one()
 		view_id = self.env.ref(PRODUCT_PARAM_FORM_ID)
 		all_param_fields = [tag.attrib.get('name') for tag in xee.fromstring(str(view_id.arch_base)).findall('%s//field' % PARAM_FIELDS_XPATH)]
 
 		# If parameterization template changed, empty not applicable fields
 		# We did this instead of delete asociated parameterization to avoid fill generic fields again
 		if values.get(PARAM_TEMPLATE_FIELD):
-			for record in self:
-				if record.parameterization_template != values[PARAM_TEMPLATE_FIELD]:
-					record_applicable_fields = record.template_fields_get(values[PARAM_TEMPLATE_FIELD])
-					fields_to_reset = [field for field in all_param_fields if field not in record_applicable_fields]
-					for field_name in fields_to_reset:
-						values.update({ field_name: False })
+			if self.parameterization_template != values[PARAM_TEMPLATE_FIELD]:
+				record_applicable_fields = self.template_fields_get(values[PARAM_TEMPLATE_FIELD])
+				fields_to_reset = [field for field in all_param_fields if field not in record_applicable_fields]
+				for field_name in fields_to_reset:
+					values.update({ field_name: False })
 
 		return values
 
@@ -220,12 +220,10 @@ class ProductParameterization(models.Model):
 	#override
 	@api.multi
 	def write(self, values):
-		values = self.template_fields_reset(values)
-		super(ProductParameterization, self).write(values)
-
 		for record in self:
+			values = record.template_fields_reset(values)
+			super(ProductParameterization, record).write(values)
 			record.product_tmpl_id.compute_parameterization_percent()
-			
 		return True
 
 	#override
