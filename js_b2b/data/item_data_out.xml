@@ -367,7 +367,7 @@ def is_notifiable(self, action, vals):
     return (product_published # El producto relaccionado está publicado
         and variant_published # La variante relaccionada está publicada
         and self.purchase_line_id # Viene de una línea de un pedido de compra
-        and self.company_id.id in (1, 5) # La compañía es Jim Sports o Eme Inversia
+        and self.company_id.id in (1, 5, 6) # La compañía es Jim Sports, Eme Inversia o Grinverter
         and self.picking_id.picking_type_id.id in (13, 97) # Y el tipo de picking es 'Recepciones (MECALUX) o Recepciones EME'
         and self.state == 'assigned' # Y el estado es 'assigned'
         and self.picking_id.picking_type_id.code == 'incoming' # Y es un INT

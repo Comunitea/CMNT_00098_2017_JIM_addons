@@ -131,7 +131,7 @@ class B2bItemsOut(models.Model):
 				# Model specific queries
 				if model == 'stock.move':
 					# Movimientos de stock de Jim y EME que tienen un alabarán de origen (group_id) y la fecha es igual o superior a la actual y el estado es asignado
-					search_query = [('company_id', 'in', [1, 11]), ('group_id', '!=', False), ('date_expected', '>=', str(datetime.now()))]
+					search_query = [('company_id', 'in', [1, 5, 6]), ('group_id', '!=', False), ('date_expected', '>=', str(datetime.now()))]
 				elif model == 'res.partner':
 					# Direcciones o clientes empresa
 					search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
