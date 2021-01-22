@@ -38,12 +38,13 @@ class ParameterizationValue(models.Model):
 	#override
 	@api.multi
 	def write(self, values):	
-		old_fields = self.fields.ids
-		super(ParameterizationValue, self).write(values)
-		removed_fields = list(set(old_fields) - set(self.fields.ids))
+		for record in self:
+			old_fields = record.fields.ids
+			super(ParameterizationValue, record).write(values)
+			removed_fields = list(set(old_fields) - set(record.fields.ids))
 
-		for field in self.env['ir.model.fields'].browse(removed_fields):
-			self.update_parameterization_relations(self.id, field.name)
+			for field in self.env['ir.model.fields'].browse(removed_fields):
+				self.update_parameterization_relations(record.id, field.name)
 
 		return True
 
@@ -54,9 +55,6 @@ class ProductParameterization(models.Model):
 	_rec_name = 'product_tmpl_id' 
 
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', required=True, ondelete='cascade')
-	
-	# [LOIS] Crea el select, no carga las opciones de ningún sitio
-	# PARAM_TEMPLATE_FIELD Definition
 	parameterization_template = fields.Selection(constants.TEMPLATES_LIST, required=False)
 
 	# TODO
@@ -224,7 +222,10 @@ class ProductParameterization(models.Model):
 	def write(self, values):
 		values = self.template_fields_reset(values)
 		super(ProductParameterization, self).write(values)
-		self.product_tmpl_id.compute_parameterization_percent()
+
+		for record in self:
+			record.product_tmpl_id.compute_parameterization_percent()
+			
 		return True
 
 	#override
