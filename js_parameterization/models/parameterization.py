@@ -38,12 +38,13 @@ class ParameterizationValue(models.Model):
 	#override
 	@api.multi
 	def write(self, values):	
-		old_fields = self.fields.ids
-		super(ParameterizationValue, self).write(values)
-		removed_fields = list(set(old_fields) - set(self.fields.ids))
+		for record in self:
+			old_fields = record.fields.ids
+			super(ParameterizationValue, record).write(values)
+			removed_fields = list(set(old_fields) - set(record.fields.ids))
 
-		for field in self.env['ir.model.fields'].browse(removed_fields):
-			self.update_parameterization_relations(self.id, field.name)
+			for field in self.env['ir.model.fields'].browse(removed_fields):
+				self.update_parameterization_relations(record.id, field.name)
 
 		return True
 
@@ -54,9 +55,6 @@ class ProductParameterization(models.Model):
 	_rec_name = 'product_tmpl_id' 
 
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', required=True, ondelete='cascade')
-	
-	# [LOIS] Crea el select, no carga las opciones de ningún sitio
-	# PARAM_TEMPLATE_FIELD Definition
 	parameterization_template = fields.Selection(constants.TEMPLATES_LIST, required=False)
 
 	# TODO
@@ -186,18 +184,18 @@ class ProductParameterization(models.Model):
 
 	@api.multi
 	def template_fields_reset(self, values):
+		self.ensure_one()
 		view_id = self.env.ref(PRODUCT_PARAM_FORM_ID)
 		all_param_fields = [tag.attrib.get('name') for tag in xee.fromstring(str(view_id.arch_base)).findall('%s//field' % PARAM_FIELDS_XPATH)]
 
 		# If parameterization template changed, empty not applicable fields
 		# We did this instead of delete asociated parameterization to avoid fill generic fields again
 		if values.get(PARAM_TEMPLATE_FIELD):
-			for record in self:
-				if record.parameterization_template != values[PARAM_TEMPLATE_FIELD]:
-					record_applicable_fields = record.template_fields_get(values[PARAM_TEMPLATE_FIELD])
-					fields_to_reset = [field for field in all_param_fields if field not in record_applicable_fields]
-					for field_name in fields_to_reset:
-						values.update({ field_name: False })
+			if self.parameterization_template != values[PARAM_TEMPLATE_FIELD]:
+				record_applicable_fields = self.template_fields_get(values[PARAM_TEMPLATE_FIELD])
+				fields_to_reset = [field for field in all_param_fields if field not in record_applicable_fields]
+				for field_name in fields_to_reset:
+					values.update({ field_name: False })
 
 		return values
 
@@ -222,9 +220,10 @@ class ProductParameterization(models.Model):
 	#override
 	@api.multi
 	def write(self, values):
-		values = self.template_fields_reset(values)
-		super(ProductParameterization, self).write(values)
-		self.product_tmpl_id.compute_parameterization_percent()
+		for record in self:
+			values = record.template_fields_reset(values)
+			super(ProductParameterization, record).write(values)
+			record.product_tmpl_id.compute_parameterization_percent()
 		return True
 
 	#override
