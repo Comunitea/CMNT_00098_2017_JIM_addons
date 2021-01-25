@@ -29,6 +29,11 @@ msgid "All parameterization values relations will be deleted!"
 msgstr "Las relacciones de los valores con este campo serán eliminadas"
 
 #. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
+msgid "Parameterization Template"
+msgstr "Plantilla de Parametrización"
+
+#. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_badminton_tamano_cabeza
 msgid "BADMINTON RACKET HEAD SIZE"
 msgstr "RAQUETA BADMINTON TAMAÑO CABEZA"
