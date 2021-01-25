@@ -45,7 +45,7 @@ odoo.define('js_parameterization.form_widgets', function (require) {
                     res_id: record_id,
                     context: self.dataset.context.add({ 'hide_fields': true }),
                     title: _t('Open: ') + self.many2one.string,
-                    readonly: true
+                    readonly: true // self.many2one.get('effective_readonly')
                 }).on('write_completed', self, function() {
                     self.dataset.cache[record_id].from_read = {};
                     self.dataset.evict_record(record_id);
