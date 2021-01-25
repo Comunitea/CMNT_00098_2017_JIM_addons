@@ -142,11 +142,20 @@
         <field name="model">product.parameterization</field>
         <field name="arch" type="xml">
             <search string="Product Parameterization">
-                <field name="product_tmpl_id" />
+                <field name="product_tmpl_id"/>
                 <field name="parameterization_template" />
-				<group expand="0" string="Group By">                                            
-					<filter name="parameterization_template" context="{'group_by': 'parameterization_template'}" />                                     
-				</group> 
+                <!-- FILTROS -->
+                <filter string="Padel Racket" name="padel_racket_tmpl_filter" domain="[('parameterization_template', '=', 1)]"/>
+                <filter string="Tennis Racket" name="tennis_racket_tmpl_filter" domain="[('parameterization_template', '=', 2)]"/>
+                <filter string="Badminton Racket" name="badminton_racket_tmpl_filter" domain="[('parameterization_template', '=', 3)]"/>
+                <filter string="Net" name="net_tmpl_filter" domain="[('parameterization_template', '=', 4)]"/>
+                <filter string="Equipment" name="equipment_tmpl_filter" domain="[('parameterization_template', '=', 5)]"/>
+                <filter string="Textil" name="textil_tmpl_filter" domain="[('parameterization_template', '=', 6)]"/>
+                <filter string="Footwear" name="footwear_tmpl_filter" domain="[('parameterization_template', '=', 7)]"/>
+                <!-- AGRUPACIONES -->
+                <group expand="0" string="Group By">
+                    <filter string="Parameterization Template" name="groupby_param_template" context="{'group_by' : 'parameterization_template'}"/>                                 
+                </group> 
             </search>
         </field>
     </record>

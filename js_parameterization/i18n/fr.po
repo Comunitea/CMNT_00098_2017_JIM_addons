@@ -60,6 +60,7 @@ msgstr "ÉQUILIBRE"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Badminton Racket"
 msgstr "Raquette de badminton"
@@ -152,6 +153,7 @@ msgstr "SECTION TUBE D'ÉQUIPEMENT"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Equipment"
 msgstr "Équipement"
@@ -224,6 +226,7 @@ msgstr "Champs remplis"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Footwear"
 msgstr "Chaussure"
@@ -373,6 +376,7 @@ msgstr "Nom"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Net"
 msgstr "Filet"
@@ -474,6 +478,7 @@ msgstr "PROFIL"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Padel Racket"
 msgstr "Raquette de padel"
@@ -750,12 +755,14 @@ msgstr "TYPE"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Tennis Racket"
 msgstr "Raquette de tennis"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Textil"
 msgstr "Textile"
