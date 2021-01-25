@@ -116,7 +116,7 @@ class ProductParameterization(models.Model):
 	textil_tipo_prenda = fields.Many2one('js_parameterization.value', string='TEXTIL GARMENT TYPE', domain=[('fields.name', '=', 'textil_tipo_prenda')])
 	textil_formato = fields.Many2one('js_parameterization.value', string='TEXTIL FORMAT', domain=[('fields.name', '=', 'textil_formato')])
 	textil_gramaje = fields.Many2one('js_parameterization.value', string='TEXTIL GRAMMAGE', domain=[('fields.name', '=', 'textil_gramaje')])
-	textil_acabado = fields.Many2one('js_parameterization.value', string='TEXTIL FINISH', domain=[('fields.name', '=', 'textil_acabado')])
+	textil_acabado = fields.Many2many('js_parameterization.value', 'js_parameterization_field_textil_acabado_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='TEXTIL FINISH', domain=[('fields.name', '=', 'textil_acabado')])
 	textil_tratamiento = fields.Many2many('js_parameterization.value', 'js_parameterization_field_textil_tratamiento_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='TEXTIL TREATMENT', domain=[('fields.name', '=', 'textil_tratamiento')])
 	textil_diseno = fields.Many2one('js_parameterization.value', string='TEXTIL DESIGN', domain=[('fields.name', '=', 'textil_diseno')])
 	textil_tejido = fields.Many2many('js_parameterization.value', 'js_parameterization_field_textil_tejido_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='TEXTIL TISSUE', domain=[('fields.name', '=', 'textil_tejido')])
