@@ -56,6 +56,7 @@ class ProductParameterization(models.Model):
 
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', required=True, ondelete='cascade')
 	parameterization_template = fields.Selection(constants.TEMPLATES_LIST, required=False)
+	percent_filled = fields.Integer('Parameterization Percent Completed', related='product_tmpl_id.parameterization_percent_filled', store=False)
 
 	# TODO
 	tipo_producto = fields.Many2one('js_parameterization.value', string='PRODUCT TYPE', domain=[('fields.name', '=', 'tipo_producto')])
@@ -80,7 +81,6 @@ class ProductParameterization(models.Model):
 	pala_balance = fields.Many2one('js_parameterization.value', string='PADEL RACKET BALANCE', domain=[('fields.name', '=', 'pala_balance')])
 	pala_perfil = fields.Many2one('js_parameterization.value', string='PADEL RACKET PROFILE', domain=[('fields.name', '=', 'pala_perfil')])
 	pala_acabado = fields.Many2one('js_parameterization.value', string='PADEL RACKET FINISH', domain=[('fields.name', '=', 'pala_acabado')])
-	pala_tamano_cabeza = fields.Many2one('js_parameterization.value', string='PADEL RACKET HEAD SIZE', domain=[('fields.name', '=', 'pala_tamano_cabeza')])
 	pala_ancho = fields.Many2one('js_parameterization.value', string='PADEL RACKET WIDTH', domain=[('fields.name', '=', 'pala_ancho')])
 	pala_longitud = fields.Many2one('js_parameterization.value', string='PADEL RACKET LENGTH', domain=[('fields.name', '=', 'pala_longitud')])
 
@@ -136,6 +136,12 @@ class ProductParameterization(models.Model):
 	calzado_empeine = fields.Many2one('js_parameterization.value', string='FOOTWEAR INSTEP', domain=[('fields.name', '=', 'calzado_empeine')])
 	calzado_forro_y_plantilla = fields.Many2one('js_parameterization.value', string='FOOTWEAR LINING AND INSOLE', domain=[('fields.name', '=', 'calzado_forro_y_plantilla')])
 	calzado_cierre = fields.Many2one('js_parameterization.value', string='FOOTWEAR LOCK', domain=[('fields.name', '=', 'calzado_cierre')])
+
+	# RAQUETAS TENIS MESA
+	raqueta_tenis_mesa_caras = fields.Many2many('js_parameterization.value', 'js_parameterization_field_raqueta_tenis_mesa_caras_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='TABLE TENNIS RACKET TYPE OF FACES', domain=[('fields.name', '=', 'raqueta_tenis_mesa_caras')])
+	raqueta_tenis_mesa_num_laminas = fields.Many2one('js_parameterization.value', string='TABLE TENNIS RACKET NO. OF SHEETS', domain=[('fields.name', '=', 'raqueta_tenis_mesa_num_laminas')])
+	raqueta_tenis_mesa_grosor_lamina = fields.Many2one('js_parameterization.value', string='TABLE TENNIS RACKET SHEET THICKNESS', domain=[('fields.name', '=', 'raqueta_tenis_mesa_grosor_lamina')])
+	raqueta_tenis_mesa_calidad = fields.Many2one('js_parameterization.value', string='TABLE TENNIS RACKET QUALITY', domain=[('fields.name', '=', 'raqueta_tenis_mesa_calidad')])
 
 	@api.model
 	def get_field_id(self, field_name):

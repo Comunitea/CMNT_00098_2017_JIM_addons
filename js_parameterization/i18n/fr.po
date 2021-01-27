@@ -387,6 +387,58 @@ msgid "Net"
 msgstr "Filet"
 
 #. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
+#: selection:product.parameterization,parameterization_template:0
+msgid "Table Tennis Racket"
+msgstr "Raquette de tennis de table"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_caras
+msgid "TYPE OF FACES"
+msgstr "TYPE DE FACES"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_num_laminas
+msgid "NO. OF SHEETS"
+msgstr "NO. DE FEUILLES"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_grosor_lamina
+msgid "SHEET THICKNESS"
+msgstr "GROSOR LÁMINA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_calidad
+msgid "TYPE OF FACES"
+msgstr "ÉPAISSEUR DE LA FEUILLE"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_calidad
+msgid "QUALITY"
+msgstr "QUALITÉ"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_caras
+msgid "TABLE TENNIS RACKET TYPE OF FACES"
+msgstr "RAQUETTE DE TENNIS DE TABLE TYPE DE FACES"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_num_laminas
+msgid "TABLE TENNIS RACKET NO. OF SHEETS"
+msgstr "RAQUETTE DE TENNIS DE TABLE NO. DE FEUILLES"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_grosor_lamina
+msgid "TABLE TENNIS RACKET SHEET THICKNESS"
+msgstr "ÉPAISSEUR DE LA FEUILLE DE RAQUETTE DE TENNIS DE TABLE"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_calidad
+msgid "TABLE TENNIS RACKET QUALITY"
+msgstr "QUALITÉ DE LA RAQUETTE DE TENNIS DE TABLE"
+
+#. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_articulos_envase
 msgid "PACKAGE ITEMS NUM"
 msgstr "ARTICLES DE PAQUET"
@@ -430,11 +482,6 @@ msgstr "TYPE DE JEU RAQUETTE DE PADEL"
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_agarre_mango
 msgid "PADEL RACKET HANDLE FIXING"
 msgstr "FIXATION DE LA POIGNÉE RAQUETTE DE PADEL"
-
-#. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_tamano_cabeza
-msgid "PADEL RACKET HEAD SIZE"
-msgstr "TAILLE DE LA TÊTE RAQUETTE DE PADEL"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_longitud

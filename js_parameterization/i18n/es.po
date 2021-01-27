@@ -387,6 +387,58 @@ msgid "Net"
 msgstr "Red"
 
 #. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
+#: selection:product.parameterization,parameterization_template:0
+msgid "Table Tennis Racket"
+msgstr "Raqueta Tenis de Mesa"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_caras
+msgid "TYPE OF FACES"
+msgstr "TIPO DE CARAS"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_num_laminas
+msgid "NO. OF SHEETS"
+msgstr "Nº DE LÁMINAS"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_grosor_lamina
+msgid "SHEET THICKNESS"
+msgstr "GROSOR LÁMINA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_calidad
+msgid "TYPE OF FACES"
+msgstr "TIPO DE CARAS"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_calidad
+msgid "QUALITY"
+msgstr "CALIDAD"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_caras
+msgid "TABLE TENNIS RACKET TYPE OF FACES"
+msgstr "RAQUETA TENIS DE MESA TIPO DE CARAS"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_num_laminas
+msgid "TABLE TENNIS RACKET NO. OF SHEETS"
+msgstr "RAQUETA TENIS DE MESA Nº DE LÁMINAS"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_grosor_lamina
+msgid "TABLE TENNIS RACKET SHEET THICKNESS"
+msgstr "RAQUETA TENIS DE MESA GROSOR LÁMINA"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_calidad
+msgid "TABLE TENNIS RACKET QUALITY"
+msgstr "RAQUETA TENIS DE MESA CALIDAD"
+
+#. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_articulos_envase
 msgid "PACKAGE ITEMS NUM"
 msgstr "ARTÍCULOS ENVASE"
@@ -430,11 +482,6 @@ msgstr "PALA PÁDEL TIPO JUEGO"
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_agarre_mango
 msgid "PADEL RACKET HANDLE FIXING"
 msgstr "PALA PÁDEL AGARRE MANGO"
-
-#. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_tamano_cabeza
-msgid "PADEL RACKET HEAD SIZE"
-msgstr "PALA PÁDEL TAMAÑO CABEZA"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_longitud
