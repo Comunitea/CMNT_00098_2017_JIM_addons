@@ -29,6 +29,11 @@ msgid "All parameterization values relations will be deleted!"
 msgstr "Toutes les relations de valeurs de paramétrage seront supprimées!"
 
 #. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
+msgid "Parameterization Template"
+msgstr "Modèle de paramétrage"
+
+#. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_badminton_tamano_cabeza
 msgid "BADMINTON RACKET HEAD SIZE"
 msgstr "TAILLE DE TÊTE RAQUETTE DE BADMINTON"
@@ -60,6 +65,7 @@ msgstr "ÉQUILIBRE"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Badminton Racket"
 msgstr "Raquette de badminton"
@@ -152,6 +158,7 @@ msgstr "SECTION TUBE D'ÉQUIPEMENT"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Equipment"
 msgstr "Équipement"
@@ -224,6 +231,7 @@ msgstr "Champs remplis"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Footwear"
 msgstr "Chaussure"
@@ -373,9 +381,62 @@ msgstr "Nom"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Net"
 msgstr "Filet"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
+#: selection:product.parameterization,parameterization_template:0
+msgid "Table Tennis Racket"
+msgstr "Raquette de tennis de table"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "TYPE OF FACES"
+msgstr "TYPE DE FACES"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "NO. OF SHEETS"
+msgstr "NO. DE FEUILLES"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "SHEET THICKNESS"
+msgstr "GROSOR LÁMINA"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "TYPE OF FACES"
+msgstr "ÉPAISSEUR DE LA FEUILLE"
+
+#. module: js_parameterization
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+msgid "QUALITY"
+msgstr "QUALITÉ"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_caras
+msgid "TABLE TENNIS RACKET TYPE OF FACES"
+msgstr "RAQUETTE DE TENNIS DE TABLE TYPE DE FACES"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_num_laminas
+msgid "TABLE TENNIS RACKET NO. OF SHEETS"
+msgstr "RAQUETTE DE TENNIS DE TABLE NO. DE FEUILLES"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_grosor_lamina
+msgid "TABLE TENNIS RACKET SHEET THICKNESS"
+msgstr "ÉPAISSEUR DE LA FEUILLE DE RAQUETTE DE TENNIS DE TABLE"
+
+#. module: js_parameterization
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_calidad
+msgid "TABLE TENNIS RACKET QUALITY"
+msgstr "QUALITÉ DE LA RAQUETTE DE TENNIS DE TABLE"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_articulos_envase
@@ -421,11 +482,6 @@ msgstr "TYPE DE JEU RAQUETTE DE PADEL"
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_agarre_mango
 msgid "PADEL RACKET HANDLE FIXING"
 msgstr "FIXATION DE LA POIGNÉE RAQUETTE DE PADEL"
-
-#. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_tamano_cabeza
-msgid "PADEL RACKET HEAD SIZE"
-msgstr "TAILLE DE LA TÊTE RAQUETTE DE PADEL"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_pala_longitud
@@ -474,6 +530,7 @@ msgstr "PROFIL"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Padel Racket"
 msgstr "Raquette de padel"
@@ -750,12 +807,14 @@ msgstr "TYPE"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Tennis Racket"
 msgstr "Raquette de tennis"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_search_view
 #: selection:product.parameterization,parameterization_template:0
 msgid "Textil"
 msgstr "Textile"

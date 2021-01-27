@@ -45,7 +45,6 @@
                                 <field name="pala_balance" string="BALANCE" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="pala_perfil" string="PROFILE" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="pala_acabado" string="FINISH" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_tamano_cabeza" string="HEAD SIZE" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="pala_ancho" string="WIDTH" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="pala_longitud" string="LENGTH" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
@@ -109,6 +108,13 @@
                                 <field name="calzado_forro_y_plantilla" string="LINING AND INSOLE" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="calzado_cierre" string="LOCK" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
+
+                            <group string="Table Tennis Racket" attrs="{ 'invisible': [('parameterization_template', '!=', 8)] }">
+                                <field name="raqueta_tenis_mesa_caras" string="TYPE OF FACES" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="raqueta_tenis_mesa_num_laminas" string="NO. OF SHEETS" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_tenis_mesa_grosor_lamina" string="SHEET THICKNESS" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_tenis_mesa_calidad" string="QUALITY" options="{ 'no_open': True, 'no_create': True }"/>
+                            </group>
                         </group>
                     </div>
                 </sheet>
@@ -130,6 +136,7 @@
             <tree string="products" edit="false">
                 <field name="product_tmpl_id"/>
                 <field name="parameterization_template"/>
+                <field name="percent_filled"/>
                 <button name="go_to_product" type="object" string="View Product"/>
             </tree>
         </field>
@@ -142,11 +149,23 @@
         <field name="model">product.parameterization</field>
         <field name="arch" type="xml">
             <search string="Product Parameterization">
-                <field name="product_tmpl_id" />
+                <field name="product_tmpl_id"/>
                 <field name="parameterization_template" />
-				<group expand="0" string="Group By">                                            
-					<filter name="parameterization_template" context="{'group_by': 'parameterization_template'}" />                                     
-				</group> 
+
+                <!-- FILTROS -->
+                <filter string="Padel Racket" name="padel_racket_tmpl_filter" domain="[('parameterization_template', '=', 1)]"/>
+                <filter string="Tennis Racket" name="tennis_racket_tmpl_filter" domain="[('parameterization_template', '=', 2)]"/>
+                <filter string="Badminton Racket" name="badminton_racket_tmpl_filter" domain="[('parameterization_template', '=', 3)]"/>
+                <filter string="Table Tennis Racket" name="table_tennis_racket_tmpl_filter" domain="[('parameterization_template', '=', 8)]"/>
+                <filter string="Net" name="net_tmpl_filter" domain="[('parameterization_template', '=', 4)]"/>
+                <filter string="Equipment" name="equipment_tmpl_filter" domain="[('parameterization_template', '=', 5)]"/>
+                <filter string="Textil" name="textil_tmpl_filter" domain="[('parameterization_template', '=', 6)]"/>
+                <filter string="Footwear" name="footwear_tmpl_filter" domain="[('parameterization_template', '=', 7)]"/>
+
+                <!-- AGRUPACIONES -->
+                <group expand="0" string="Group By">
+                    <filter string="Parameterization Template" name="groupby_param_template" context="{'group_by' : 'parameterization_template'}"/>                                 
+                </group> 
             </search>
         </field>
     </record>
