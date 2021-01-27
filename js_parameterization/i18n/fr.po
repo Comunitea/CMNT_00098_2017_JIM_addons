@@ -394,27 +394,27 @@ msgid "Table Tennis Racket"
 msgstr "Raquette de tennis de table"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_caras
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "TYPE OF FACES"
 msgstr "TYPE DE FACES"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_num_laminas
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "NO. OF SHEETS"
 msgstr "NO. DE FEUILLES"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_grosor_lamina
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "SHEET THICKNESS"
 msgstr "GROSOR LÁMINA"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_calidad
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "TYPE OF FACES"
 msgstr "ÉPAISSEUR DE LA FEUILLE"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_raqueta_tenis_mesa_calidad
+#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "QUALITY"
 msgstr "QUALITÉ"
 
