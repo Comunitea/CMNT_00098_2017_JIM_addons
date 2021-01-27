@@ -5,6 +5,17 @@ from volumes import calcCubeVolume
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
+    discontinued_product = fields.Boolean('Discontinued', default=False, help="If checked, the product will not be sold in main company")
+    product_size_width = fields.Float('Width', compute='_compute_size', inverse='_set_size', help="Product max width in cm")
+    product_size_height = fields.Float('Height', compute='_compute_size', inverse='_set_size', help="Product max height in cm")
+    product_size_depth = fields.Float('Depth', compute='_compute_size', inverse='_set_size', help="Product max depth in cm")
+    volume = fields.Float(compute='_compute_size', inverse=False, digits=(3,6), store=False, help="Computed volume of the product (cube formula) in m³")
+
+    # Sobreescribir product_custom por indicaciones de Comunitea
+    name = fields.Char(translate=True)
+    # description = fields.Text(translate=True)
+    list_price = fields.Float(default=0.0)
+
     # Copiado de addons/product/models/product_template.py
     @api.depends('product_variant_ids', 'product_variant_ids.product_size_width', 'product_variant_ids.product_size_height', 'product_variant_ids.product_size_depth')
     def _compute_size(self):
@@ -20,21 +31,19 @@ class ProductTemplate(models.Model):
             template.product_size_depth = 0.0
             template.volume = 0.0
 
-    discontinued_product = fields.Boolean('Discontinued', default=False, help="If checked, the product will not be sold in main company")
-    product_size_width = fields.Float('Width', compute='_compute_size', help="Product max width in cm")
-    product_size_height = fields.Float('Height', compute='_compute_size', help="Product max height in cm")
-    product_size_depth = fields.Float('Depth', compute='_compute_size', help="Product max depth in cm")
-    volume = fields.Float(compute='_compute_size', inverse=False, digits=(3,6), store=False, help="Computed volume of the product (cube formula) in m³")
+    @api.one
+    def _set_size(self):
+        if len(self.product_variant_ids) == 1:
+            self.product_variant_ids.product_size_width = self.product_size_width
+            self.product_variant_ids.product_size_height = self.product_size_height
+            self.product_variant_ids.product_size_depth = self.product_size_depth
 
-    # Sobreescribir product_custom por indicaciones de Comunitea
-    name = fields.Char(translate=True)
-    # description = fields.Text(translate=True)
-    list_price = fields.Float(default=0.0)
-
+    @api.multi
     def _set_variant_discontinued(self, values):
         if 'discontinued_product' in values:
-            for variant in self.product_variant_ids:
-                variant.discontinued_product = values['discontinued_product']
+            for record in self:
+                for variant in record.product_variant_ids:
+                    variant.discontinued_product = values['discontinued_product']
 
     @api.model
     def create(self, vals):
