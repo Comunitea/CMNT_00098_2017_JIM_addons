@@ -160,17 +160,22 @@ def pos_data(self, action):
     'barcode', 
     'description', 
     'product_brand_id', 
-    'image',  
-    'tag_ids', 
+    'image', 
+    'tag_ids',
     'product_brand_id', 
     'public_categ_ids', 
     'type', 
     'company_id',
-    'website_published'
+    'website_published',
+    'weight',
+    'origin_country_id',
+    'product_size_width',
+    'product_size_height',
+    'product_size_depth'
 )
 
 def is_notifiable(self, action, vals):
-    # Los productos no se envían cuando se crean sino cuando se pulsa el botón de publicar
+    # Los productos no se envían cuando se crean sino cuando se pulsa el botón de publicar+
     return self.website_published
 
 def get_data(self, action):
@@ -183,7 +188,12 @@ def get_data(self, action):
         'web_category_id': self.public_categ_ids.ids, 
         'brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
+        'origin_country': self.origin_country_id.name if self.origin_country_id else None,
         'weight': float(self.weight),
+        'width': float(self.product_size_width),
+        'height': float(self.product_size_height),
+        'length': float(self.product_size_depth),
+        'volume': float(self.volume),
         'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
     }
 
@@ -203,10 +213,10 @@ def pos_data(self, action):
         # Previsión de abastecimiento
         for stock_move in self.product_variant_id.stock_move_ids:
             stock_move.b2b_record('create', user_notify=False)
-        # Enviar precios y stock (plantilla y variantes)
-        self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[self.id,])
-        self.env['b2b.export'].b2b_customers_prices(templates_filter=[self.id,])
-        self.env['b2b.export'].b2b_products_stock(export_all=[self.id,])</field>
+        # Enviar precios y stock
+        self.env['b2b.export'].with_context(b2b_notify=True).b2b_pricelists_prices(templates_filter=[self.id,])
+        self.env['b2b.export'].with_context(b2b_notify=True).b2b_customers_prices(templates_filter=[self.id,])
+        self.env['b2b.export'].with_context(b2b_notify=True).b2b_products_stock(export_all=[self.id,])</field>
         </record>
 
         <record id="b2b_item_out_7" model="b2b.item.out">
@@ -225,13 +235,15 @@ def pos_data(self, action):
     'attribute_names', 
     'attribute_value_ids', 
     'weight',
-    'website_published'
+    'website_published',
+    'product_size_width',
+    'product_size_height',
+    'product_size_depth'
 )
 
 def is_notifiable(self, action, vals):
     return (self.product_tmpl_id.website_published # La plantilla está publicada
         and self.default_code # Y tiene código
-        and self.product_tmpl_id.type == 'product' # Y es almacenable
         and self.attribute_names # Y tiene atributos (las variantes únicas no tienen atributos)
         and len(self.attribute_value_ids) == 2 # Y tiene 2 atributos
         and self.website_published) # Y está publicada
@@ -247,6 +259,10 @@ def get_data(self, action):
         'attribute_value': self.attribute_value_ids.ids,
         'ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
         'weight': float(self.weight),
+        'width': float(self.product_size_width),
+        'height': float(self.product_size_height),
+        'length': float(self.product_size_depth),
+        'volume': float(self.volume),
         'default': bool(self.id == self.product_variant_id.id)
     }
     
@@ -255,15 +271,16 @@ def pos_data(self, action):
     if b2b['crud_mode'] == 'create':
         # Crear las imágenes del producto
         for image in self.product_image_ids:
-            image.b2b_record('create', user_notify=False)
+            if not image.on_jsync():
+                image.b2b_record('create', user_notify=False)
         # Previsión de abastecimiento
         for stock_move in self.stock_move_ids:
             stock_move.b2b_record('create', user_notify=False)
-        # Enviar precios y stock (plantilla y variantes)
+        # Enviar precios y stock (de todas las variantes)
         self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[self.product_tmpl_id.id,], variant=self.id)
         self.env['b2b.export'].b2b_customers_prices(templates_filter=[self.product_tmpl_id.id,], variant=self.id)
         self.env['b2b.export'].b2b_products_stock(export_all=[self.product_tmpl_id.id,])
-
+        
     # Eliminamos la imágen relaccionada si procede
     if b2b['crud_mode'] == 'delete':
         for image in self.product_image_ids:
