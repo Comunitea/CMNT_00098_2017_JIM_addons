@@ -549,6 +549,7 @@ msgstr "Campos de Parametrización"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_delivery_carrier_parameterization_percent_filled
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_percent_filled
 #: model:ir.model.fields,field_description:js_parameterization.field_product_product_parameterization_percent_filled
 #: model:ir.model.fields,field_description:js_parameterization.field_product_template_parameterization_percent_filled
 msgid "Parameterization Percent Completed"
