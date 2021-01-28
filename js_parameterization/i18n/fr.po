@@ -543,6 +543,7 @@ msgstr "Paramétrage"
 
 #. module: js_parameterization
 #: model:ir.actions.act_window,name:js_parameterization.js_parameterization_fields
+#: model:ir.ui.view,arch_db:js_parameterization.js_parameterization_values_search
 msgid "Parameterization Fields"
 msgstr "Champs de paramétrage"
 
@@ -565,9 +566,9 @@ msgid "Parameterization Values"
 msgstr "Valeurs de paramétrage"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_parameterization_fields
-msgid "Parameterization fields"
-msgstr "Champs de paramétrage"
+#: model:ir.model,name:js_parameterization.model_js_parameterization_value
+msgid "Parameterization Values Search"
+msgstr "Recherche de valeurs de paramétrage"
 
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_parameterization_template

@@ -144,6 +144,15 @@ class ProductParameterization(models.Model):
 	raqueta_tenis_mesa_calidad = fields.Many2one('js_parameterization.value', string='TABLE TENNIS RACKET QUALITY', domain=[('fields.name', '=', 'raqueta_tenis_mesa_calidad')])
 
 	@api.model
+	def fields_get(self, allfields=None, attributes=None):
+	    res = super(ProductParameterization, self).fields_get(allfields, attributes=attributes)
+	    # Hide this fields on search filters
+	    for field in ['create_date', 'create_uid', 'write_date', 'write_uid', 'product_tmpl_id', 'parameterization_template']:
+	        if res.get(field):
+	           res.get(field)['searchable'] = False
+	    return res
+
+	@api.model
 	def get_field_id(self, field_name):
 		self.env.cr.execute("SELECT id FROM ir_model_fields WHERE name LIKE %s LIMIT 1", (field_name,))
 		result = self.env.cr.fetchone()

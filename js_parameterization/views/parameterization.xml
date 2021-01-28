@@ -136,7 +136,7 @@
             <tree string="products" edit="false">
                 <field name="product_tmpl_id"/>
                 <field name="parameterization_template"/>
-                <field name="percent_filled"/>
+                <field name="percent_filled" widget="js_progressbar"/>
                 <button name="go_to_product" type="object" string="View Product"/>
             </tree>
         </field>
@@ -191,6 +191,22 @@
         <field name="search_view_id" ref="parameterization_product_search_view"/>
     </record>
 
+    <record id="js_parameterization_values" model="ir.actions.act_window">
+        <field name="name">Parameterization Values</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">js_parameterization.value</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="js_parameterization_values_search"/>
+        <field name="help" type="html">
+            <p class="oe_view_nocontent_create">
+                Push here to create a new value
+            </p><p>
+                This values can be selected later in the product parameterization fields
+            </p>
+        </field>
+    </record>
+
     <!-- VALORES DE PARAMETRIZACIÓN -->
 
     <record id="js_parameterization_values_form" model="ir.ui.view">
@@ -218,12 +234,24 @@
         </field>
     </record>
 
+    <record id="js_parameterization_values_search" model="ir.ui.view">
+        <field name="name">Parameterization Values Search</field>
+        <field name="model">js_parameterization.value</field>
+        <field name="arch" type="xml">
+            <search string="Parameterization Values">
+                <field name="name"/>
+                <field name="fields" string="Parameterization Fields" filter_domain="['|', ('fields.name','ilike', self), ('fields.field_description','ilike', self)]"/>
+            </search>
+        </field>
+    </record>
+
     <record id="js_parameterization_values" model="ir.actions.act_window">
         <field name="name">Parameterization Values</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">js_parameterization.value</field>
         <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
+        <field name="search_view_id" ref="js_parameterization_values_search"/>
         <field name="help" type="html">
             <p class="oe_view_nocontent_create">
                 Push here to create a new value
