@@ -191,7 +191,11 @@ class JSync(object):
 					EXPORT_ID = env['b2b.export'].search([('res_id', '=', RES_ID)], limit=1).id
 
 					# Send the record comparing internal table reference?
-					RECORD_SEND = bool(self.mode in ('create', 'update') or (EXPORT_ID and self.mode == 'delete'))
+					RECORD_SEND = bool(
+						(not EXPORT_ID and self.mode == 'create') or 
+						(EXPORT_ID and self.mode == 'delete') or 
+						self.mode == 'update'
+					)
 
 					# Log JSync record status
 					_logger.debug("Registro en JSync: %s" % EXPORT_ID)
