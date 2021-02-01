@@ -61,4 +61,4 @@ class ParameterizationField(models.TransientModel):
 
 			if packet.send() and self.action == 'DELETE':
 				for value in self.env['js_parameterization.value'].search([('fields', 'in', field.id)]):
-					value.fields = (3, field.id)
+					value.fields = [(3, field.id)]
