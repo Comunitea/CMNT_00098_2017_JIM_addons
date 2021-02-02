@@ -395,11 +395,6 @@ msgstr "Raquette de tennis de table"
 
 #. module: js_parameterization
 #: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
-msgid "TYPE OF FACES"
-msgstr "TYPE DE FACES"
-
-#. module: js_parameterization
-#: model:ir.ui.view,arch_db:js_parameterization.parameterization_product_form_view
 msgid "NO. OF SHEETS"
 msgstr "NO. DE FEUILLES"
 
