@@ -141,7 +141,19 @@
         model="purchase.order"
         string="Etiquetas para compras"/>
 
+    <report
+        id="report_product_label_from_sale"
+        name="custom_documents.product_from_sale_label_report"
+        file="custom_documents.product_label_report"
+        report_type="qweb-pdf"
+        model="sale.order"
+        string="Etiquetas para ventas"/>
+
+
     <record id="custom_documents.report_product_label_from_purchase" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="product_labels_paperformat_euro" />
+    </record>
+    <record id="custom_documents.report_product_label_from_sale" model="ir.actions.report.xml">
         <field name="paperformat_id" ref="product_labels_paperformat_euro" />
     </record>
 
