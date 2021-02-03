@@ -17,8 +17,8 @@ var OrderWidget = NewOrderWidgets.OrderWidget.include({
     },
 
     // Creates a line with product and unit seted
-    create_line_empty: function(product_id){
-        var added_line = this._super(product_id);
+    create_line_empty: function(product_id, variant_mode){
+        var added_line = this._super(product_id, variant_mode);
         var product_obj = this.ts_model.db.get_product_by_id(product_id);
         return added_line;
     },

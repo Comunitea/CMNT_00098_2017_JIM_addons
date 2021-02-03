@@ -121,21 +121,37 @@ class JSync(object):
 		self.settings = settings or self.env['b2b.settings'].get_default_params(fields=[
 			'url', 
 			'conexion_error', 
-			'response_error', 
-			'packet_size'
+			'response_error'
 		])
 
-	def filter_data(self, crudMode=None):
+	def filter_data(self, crudMode=None, vals=None):
 		"""
 		Filter and normalizes item data (data)
 
 		:param crudMode: Operation mode
 		:return: dict
+
+		data key modifiers:
+			fixed:xxx -> Sends xxx always
 		"""
 
 		if self.data and type(self.data) is dict:
 			for field, value in self.data.items():
-				if crudMode == 'delete' and field != 'jim_id':
+				if ':' in field:
+
+					# Before :
+					modifier = field[:field.index(':')]
+					# After :
+					obj_new = field[field.index(':') + 1:]
+
+					if modifier == 'fixed':
+						# Replace key allways
+						self.data[obj_new] = self.data.pop(field)
+					elif modifier == 'changed' and (not vals or not obj_new in vals):
+						# Delete if not changed
+						del self.data[field]
+
+				elif crudMode == 'delete' and field != 'jim_id':
 					# Delete all except jim_id on delete
 					del self.data[field]
 				elif type(value) is list:
@@ -156,7 +172,7 @@ class JSync(object):
 		"""
 
 		RECORD_SEND = False
-		EXPORT_RECORD = None
+		EXPORT_ID = False
 		RES_ID = '%s,%s' % (self.model, self.id)
 		
 		_logger.debug("¿Enviamos el paquete? Defecto: %s" % RECORD_SEND)
@@ -168,15 +184,21 @@ class JSync(object):
 			# Check with new cursor
 			with api.Environment.manage():
 				with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
+					new_cr.autocommit(True)
 					env = api.Environment(new_cr, self.env.uid, self.env.context)
+
 					# Check if record is synced with JSync
-					EXPORT_RECORD = env['b2b.export'].search([('res_id', '=', RES_ID)], limit=1)
+					EXPORT_ID = env['b2b.export'].search([('res_id', '=', RES_ID)], limit=1).id
 
 					# Send the record comparing internal table reference?
-					RECORD_SEND = bool(self.mode in ('create', 'update') or (EXPORT_RECORD and self.mode == 'delete'))
+					RECORD_SEND = bool(
+						(not EXPORT_ID and self.mode == 'create') or 
+						(EXPORT_ID and self.mode == 'delete') or 
+						self.mode == 'update'
+					)
 
 					# Log JSync record status
-					_logger.debug("Registro en JSync: %s" % EXPORT_RECORD)
+					_logger.debug("Registro en JSync: %s" % EXPORT_ID)
 
 					# Is related record notifiable?
 					if RECORD_SEND and self.related:
@@ -187,7 +209,7 @@ class JSync(object):
 							_logger.warning("El registro relaccionado ha invalidado el paquete!")
 							RECORD_SEND = False
 
-		return RECORD_SEND, RES_ID, EXPORT_RECORD
+		return RECORD_SEND, RES_ID, EXPORT_ID
 
 	def send(self, timeout_sec=30, notify=True, **kwargs):
 		"""
@@ -204,7 +226,7 @@ class JSync(object):
 		# Estos paquetes se envían de forma agrupada y no se controlan
 		if self.name not in ('customer_price', 'pricelist_item', 'product_stock'):
 			# Check record and get required params
-			_RECORD_SEND, _RES_ID, _EXPORT_RECORD = self.can_send()
+			_RECORD_SEND, _RES_ID, _EXPORT_ID = self.can_send()
 
 		if _RECORD_SEND and self.data:
 
@@ -254,23 +276,20 @@ class JSync(object):
 
 					if _RES_ID:
 						# Guardar el estado en Odoo
-						# con un nuevo cursor para que se 
-						# haga un commit de forma inmediata
 						with api.Environment.manage():
 							with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
-								env = api.Environment(new_cr, self.env.uid, self.env.context)
-								env.cr.autocommit(True)
-								if not _EXPORT_RECORD and self.mode == 'create':
-									env['b2b.export'].with_context(b2b_evaluate=False).create({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
-								elif _EXPORT_RECORD and self.mode == 'update':
-									env['b2b.export'].browse(_EXPORT_RECORD.id).with_context(b2b_evaluate=False).write({ 'name': self.name, 'res_id': _RES_ID, 'rel_id': self.related })
-								elif _EXPORT_RECORD and self.mode == 'delete':
-									env['b2b.export'].browse(_EXPORT_RECORD.id).with_context(b2b_evaluate=False).unlink()
+								new_cr.autocommit(True)
+								if not _EXPORT_ID and self.mode == 'create':
+									new_cr.execute("INSERT INTO b2b_export (name, rel_id, res_id, create_date) VALUES (%s, %s, %s, %s)", (self.name, self.related, _RES_ID, datetime.now()))
+								elif _EXPORT_ID and self.mode == 'update':
+									new_cr.execute("UPDATE b2b_export SET name=%s, rel_id=%s, write_date=%s WHERE id=%s", (self.name, self.related, datetime.now(), _EXPORT_ID))
+								elif _EXPORT_ID and self.mode == 'delete':
+									new_cr.execute("DELETE FROM b2b_export WHERE res_id LIKE %s OR rel_id LIKE %s", (_RES_ID, _RES_ID))
 
 				try:
 					return json_load(jsync_post.text)
 				except:
-					return jsync_post.text
+					return 'Error de conexión con JSync'
 
 			else:
 				_logger.error("JSYNC RESPONSE ERROR: %s" % jsync_post.text)

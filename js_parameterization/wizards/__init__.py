@@ -1,1 +1,1 @@
-import select_variant_wizard
+import fields_wizard

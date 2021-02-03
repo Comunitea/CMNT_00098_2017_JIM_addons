@@ -13,29 +13,38 @@
     return action
     
 def prepare_address_fields(self, address):
+    search_lang = 'en_US'
+    orm_country = self.env['res.country'].with_context(lang=search_lang)
+    orm_better_zip = self.env['res.better.zip'].with_context(lang=search_lang)
+    
+    # Buscar país
+    res_country_id = orm_country.search([('name', 'ilike', address.get('country_id'))], limit=1).id
+    
     # Buscar provincia por ciudad, CP y país
-    res_zip = self.env['res.better.zip'].search([('city', 'ilike', address.get('state_id')), ('name', 'ilike', address.get('zip')), ('display_name', 'ilike', address.get('country_id'))], limit=1)
+    res_state_id = orm_better_zip.search([('country_id', '=', res_country_id), ('city', 'ilike', address.get('state_id')), ('name', 'ilike', address.get('zip'))], limit=1).state_id.id
     
-    if not res_zip:
-        # Buscar por CP y país (menos restrictiva)
-        res_zip = self.env['res.better.zip'].search([('name', 'ilike', address.get('zip')), ('display_name', 'ilike', address.get('country_id'))], limit=1)
+    if not res_state_id:
+        # Buscar provincia por CP y país (menos restrictiva)
+        res_state_id = orm_better_zip.search([('country_id', '=', res_country_id), ('name', 'ilike', address.get('zip'))], limit=1).state_id.id
     
-    if not res_zip:
-        # Buscar por ciudad y país (puede dar un CP erróneo ya que hay ciudades con muchos códigos postales)
-        res_zip = self.env['res.better.zip'].search([('city', 'ilike', address.get('state_id')), ('display_name', 'ilike', address.get('country_id'))], limit=1)
+    if not res_state_id:
+        # Buscar provincia por ciudad y país (puede dar un CP erróneo ya que hay ciudades con muchos códigos postales)
+        res_state_id = orm_better_zip.search([('country_id', '=', res_country_id), ('city', 'ilike', address.get('state_id'))], limit=1).state_id.id
     
     # Si no se encontró la relacción
-    if not res_zip:
-        raise ValueError('ERROR SO01: Country or state not found!')
+    # if not res_zip:
+    #    raise ValueError('ERROR SO01: Country or state not found!')
     
-    # Datos extra, ponemos en type 'other' para que no se pase a la web
+    # Datos extra, ponemos el comentario 'DROPSHIPPING-WEB' 
+    # para que no se pase de nuevo a los clientes VIP
     address.update({
         'comment': 'DROPSHIPPING-WEB',
         'type': 'delivery',
         'active': False,
-        'state_id': res_zip.state_id.id,
-        'country_id': res_zip.country_id.id
+        'state_id': res_state_id,
+        'country_id': res_country_id
     })
+    
     return address
     
 def prepare_order_fields(self, order):
@@ -73,7 +82,6 @@ def prepare_order_fields(self, order):
     return order
     
 def get_data(self, data):
-    
     # Si recibimos la dirección de envío como un diccionario primero tenemos que crearla
     if type(data.get('partner_shipping_id')) is dict:
         parsed_address = b2b['prepare_address_fields'](self, data['partner_shipping_id'])

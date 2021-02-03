@@ -29,6 +29,35 @@
         </field>
     </record>
 
+    <!-- Variant Easy edit -->
+    <record id="js_addons_variant_easy_edit_form" model="ir.ui.view">
+        <field name="name">product.product.view.form.easy.inherit</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_variant_easy_edit_view"/>
+        <field name="arch" type="xml">
+            <!-- Add size fields -->
+            <xpath expr="//group[@name='weight']/label[@for='volume']" position="before">
+                <label for="product_size_width"/>
+                <div class="o_row">
+                    <field name="product_size_width"/>
+                    <span>cm</span>
+                </div>
+
+                <label for="product_size_height"/>
+                <div class="o_row">
+                    <field name="product_size_height"/>
+                    <span>cm</span>
+                </div>
+
+                <label for="product_size_depth"/>
+                <div class="o_row">
+                    <field name="product_size_depth"/>
+                    <span>cm</span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
     <!-- Inventory Section -->
     <record id="js_addons_stock_view_template_property_form_inherit" model="ir.ui.view">
         <field name="name">stock.view.template.property.form.inherit</field>

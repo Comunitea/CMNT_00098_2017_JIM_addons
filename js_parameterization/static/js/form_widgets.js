@@ -5,8 +5,10 @@ odoo.define('js_parameterization.form_widgets', function (require) {
     var common = require('web.form_common');
     var FieldPercentPie = core.form_widget_registry.get('percentpie');
     var FieldMany2ManyTags = core.form_widget_registry.get('many2many_tags');
+    var ColumnProgressBar = core.list_widget_registry.get('field.progressbar');
     var _t = core._t;
 
+    // Custom percent pie widget (FORM)
     var JsPercentPie = FieldPercentPie.extend({
         render_value: function(){
             this._super.apply(this, arguments);
@@ -20,6 +22,7 @@ odoo.define('js_parameterization.form_widgets', function (require) {
         }
     });
 
+    // Custom many2many tags widget (FORM)
     var JsFieldMany2ManyTags = FieldMany2ManyTags.extend({
         get_badge_id: function(el){
             if ($(el).hasClass('badge')) return $(el).data('id');
@@ -45,7 +48,7 @@ odoo.define('js_parameterization.form_widgets', function (require) {
                     res_id: record_id,
                     context: self.dataset.context.add({ 'hide_fields': true }),
                     title: _t('Open: ') + self.many2one.string,
-                    readonly: self.many2one.get('effective_readonly')
+                    readonly: true // self.many2one.get('effective_readonly')
                 }).on('write_completed', self, function() {
                     self.dataset.cache[record_id].from_read = {};
                     self.dataset.evict_record(record_id);
@@ -55,12 +58,25 @@ odoo.define('js_parameterization.form_widgets', function (require) {
         }
     });
 
+    // Custom progress bar widget (LIST)
+    var JsProgressBar = ColumnProgressBar.extend({
+        _format: function (row_data, options) {
+            return _.template('<div class="progress no-margins"><div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="<%-value%>" aria-valuemin="0" aria-valuemax="100" style="width: <%-value%>%;"><%-value%>%</div></div>')({
+                value: _.str.sprintf("%.0f", row_data[this.id].value || 0)
+            });
+        }
+    });
+
+    // Add to registry
     core.form_widget_registry.add('js_percentpie', JsPercentPie);
     core.form_widget_registry.add('js_many2many_tags', JsFieldMany2ManyTags);
+    core.list_widget_registry.add('field.js_progressbar', JsProgressBar);
 
+    // Return to allow override
     return {
         JsPercentPie : JsPercentPie,
-        JsFieldMany2ManyTags: JsFieldMany2ManyTags
+        JsFieldMany2ManyTags: JsFieldMany2ManyTags,
+        JsProgressBar : JsProgressBar
     };
 
 });

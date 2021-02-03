@@ -5,7 +5,7 @@
 
     <record id="parameterization_template_and_product_form_view" model="ir.ui.view">
         <field name="model">product.template</field>
-        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="inherit_id" ref="product.product_template_only_form_view"/>
         <field name="arch" type="xml">
             <xpath expr="//group[@name='group_general']" position="inside">
                 <label for="parameterization_percent_filled" />
@@ -16,155 +16,18 @@
         </field>
     </record>
 
-    <!-- PRODUCTS PARAMETERIZATION FORM -->
+    <!-- PARAMETERIZATED PRODUCTS SEARCH -->
 
-    <record id="parameterization_product_form_view" model="ir.ui.view">
-        <field name="name">Product Parameterization</field>
-        <field name="model">product.template.parameterization</field>
-        <field name="sequence">20</field>
+    <record id="product_template_search_view" model="ir.ui.view">
+        <field name="name">Products Parameterizated Search</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_search_view"/>
         <field name="arch" type="xml">
-            <form string="Parameterization" create="false">
-                <header id="parameterization_header" invisible="not context.get('default_product_id')">
-                    <field name="product_id" readonly="1" class="label label-default" options="{ 'no_open': True }"/>
-                </header>
-                <sheet>
-                    <div id="template_selection_wrapper">
-                        <label for="parameterization_template"/>
-                        <field name="parameterization_template" options="{'no_open': True, 'no_create': True}"/>
-                    </div>
-
-                    <div id="parameterization_actions" class="oe_button_box" invisible="not context.get('default_product_id')">
-                        <button name="edit_variant" type="object" class="btn-warning" string="Switch to Variant" attrs="{ 'invisible': [('product_id', '=', False)] }"/>
-                        <button name="new_field_modal" type="object" class="btn-primary" string="New Field" groups="js_parameterization.group_manage_parameterization"/>
-                    </div>
-
-                    <div id="parameterization_fields">
-                        <group/>
-                    </div>
-                </sheet>
-                <footer invisible="not context.get('default_product_id')">
-                    <button name="write" string="Save" class="btn-primary oe_edit_only" type="object"/>
-                    <button string="Cancel" class="btn-default" special="cancel"/>
-                </footer>
-            </form>
+            <field name="pricelist_id" position="after">
+                <separator/>
+                <field name="parameterization_percent_filled"/>
+            </field>
         </field>
     </record>
-
-    <!-- VARIANTS PARAMETERIZATION FORM -->
-
-    <record id="parameterization_variant_form_view" model="ir.ui.view">
-        <field name="name">Variant Parameterization</field>
-        <field name="model">product.product.parameterization</field>
-        <field name="arch" type="xml">
-            <form string="Parameterization" create="false">
-                <header id="parameterization_header" invisible="not context.get('default_product_id')">
-                    <field name="product_id" readonly="1" class="label label-default" options="{ 'no_open': True }"/>
-                </header>
-                <sheet>
-                    <div id="template_selection_wrapper">
-                        <field name="parameterization_template" invisible="1"/>
-                    </div>
-
-                    <div id="parameterization_actions" class="oe_button_box" invisible="not context.get('default_product_id')">
-                        <button name="edit_template" type="object" class="btn-warning" string="Product Template" attrs="{ 'invisible': [('product_id', '=', False)] }"/>
-                        <button name="new_field_modal" type="object" class="btn-primary" string="New Field" groups="js_parameterization.group_manage_parameterization"/>
-                    </div>
-
-                    <div id="parameterization_fields">
-                        <group/>
-                    </div>
-                </sheet>
-                <footer invisible="not context.get('default_product_id')">
-                    <button name="write" string="Save" class="btn-primary oe_edit_only" type="object"/>
-                    <button string="Cancel" class="btn-default" special="cancel"/>
-                </footer>
-            </form>
-        </field>
-    </record>
-
-    <!-- PARAMETERIZATION FILTERS -->
-
-    <record id="parameterization_product_search_by_field" model="ir.ui.view">
-        <field name="model">product.template.parameterization</field>
-        <field name="arch" type="xml">
-            <search/>
-        </field>
-    </record>
-
-    <record id="parameterization_variant_search_by_field" model="ir.ui.view">
-        <field name="model">product.product.parameterization</field>
-        <field name="arch" type="xml">
-            <search/>
-        </field>
-    </record>
-
-    <!-- PRODUCTS CATEGORIZATED -->
-
-    <record id="parameterization_products_tree" model="ir.ui.view">
-        <field name="name">Products Parameterizated</field>
-        <field name="model">product.template.parameterization</field>
-        <field name="arch" type="xml">
-            <tree string="products" create="false" edit="false">
-                <field name="product_id"/>
-                <field name="parameterization_template"/>
-                <button name="go_to_product" type="object" string="View Product"/>
-            </tree>
-        </field>
-    </record>
-
-    <record id="parameterization_variants_tree" model="ir.ui.view">
-        <field name="name">Variants Parameterizated</field>
-        <field name="model">product.product.parameterization</field>
-        <field name="arch" type="xml">
-            <tree string="variants" create="false" edit="false">
-                <field name="product_id"/>
-                <field name="parameterization_template"/>
-                <button name="go_to_variant" type="object" string="View Variant"/>
-            </tree>
-        </field>
-    </record>
-
-    <!-- TREE ACTIONS -->
-
-    <record id="parameterization_recalculate" model="ir.actions.server">
-        <field name="name">Re-calculate Parameterization Percent</field>
-        <field name="model_id" ref="model_product_template_parameterization"/>
-        <field name="state">code</field>
-        <field name="code">
-            for record in records:
-                record.product_id.calculate_parameterization_percent()
-        </field>
-    </record>
-
-    <record model="ir.values" id="ir_values_parameterization_recalculate_button">
-        <field name="name">Re-calculate Parameterization Percent</field>
-        <field name="model">product.template.parameterization</field>
-        <field name="key2">client_action_multi</field>
-        <field name="value" eval="'ir.actions.server,' + str(ref('parameterization_recalculate'))" />
-        <field name="key">action</field>
-    </record>
-
-    <!-- MENU ACTIONS -->
-
-    <record id="parameterization_products" model="ir.actions.act_window">
-        <field name="name">Parameterized Products</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">product.template.parameterization</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <record id="parameterization_variants" model="ir.actions.act_window">
-        <field name="name">Parameterized Variants</field>
-        <field name="type">ir.actions.act_window</field>
-        <field name="res_model">product.product.parameterization</field>
-        <field name="view_type">form</field>
-        <field name="view_mode">tree,form</field>
-    </record>
-
-    <!-- MENU LINKS -->
-
-    <menuitem id="menu_js_parameterization_products" name="Products" parent="menu_js_parameterization" action="parameterization_products" sequence="4" />
-    <menuitem id="menu_js_parameterization_variants" name="Variants" parent="menu_js_parameterization" action="parameterization_variants" sequence="5" />
 
 </odoo>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
-    <template id="assets" inherit_id="web.assets_backend" name="Parameterization Assets">
+    <template id="parameterization_assets" inherit_id="web.assets_backend" name="Parameterization Assets">
         <xpath expr="link[last()]" position="after">
             <link href="/js_parameterization/static/less/styles.less" rel="stylesheet" type="text/less"/>
         </xpath>

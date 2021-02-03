@@ -9,15 +9,16 @@
     "data": [
         "security/res.groups.xml",
         "security/ir.model.access.csv",
+        "data/b2b_out.xml",
         "views/parameterization.xml",
         "views/product.xml",
-        "views/assets.xml",
-        "wizards/select_variant_wizard_view.xml"
+        "views/assets.xml"
     ],
     "depends": [
         "base",
         "stock",
-        "product"
+        "product",
+        "js_b2b"
     ],
     "installable": True
 }
