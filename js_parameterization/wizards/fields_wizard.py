@@ -85,7 +85,7 @@ class ParameterizationField(models.TransientModel):
 
 					group_names = self.__template_translations(group)
 					field_names = field.get_field_translations('field_description')
-					merged_names = { k: '[%s] %s' % (group_names[k], field_names[k]) for k in field_names.keys() if k in group_names }
+					merged_names = { k: '[%s] %s' % (group_names.get(k, 'Generic'), field_names[k]) if group else field_names[k] for k in field_names.keys() }
 
 					packet = JSync(self.env)
 					packet.id = field.id
