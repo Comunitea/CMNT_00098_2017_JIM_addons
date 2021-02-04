@@ -34,87 +34,87 @@
                             </group>
 
                             <group string="Padel Racket" attrs="{ 'invisible': [('parameterization_template', '!=', 1)] }">
-                                <field name="pala_construccion" string="Structure" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_tipo_juego" string="Game type" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_cara" string="Face" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_forma" string="Shape" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_marco" string="Frame" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_nucleo" string="Core" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_agarre_mango" string="Handle fixing" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_balance" string="Balance" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_perfil" string="Profile" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_acabado" string="Finish" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_ancho" string="Width" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="pala_longitud" string="Length" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_construccion" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_tipo_juego" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_cara" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_forma" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_marco" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_nucleo" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_agarre_mango" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_balance" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_perfil" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_acabado" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_ancho" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="pala_longitud" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
                             <group string="Tennis Racket" attrs="{ 'invisible': [('parameterization_template', '!=', 2)] }">
-                                <field name="raqueta_construccion" string="Structure" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="raqueta_tension_cordaje" string="String tension" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="raqueta_tipo_juego" string="Game type" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="raqueta_balance" string="Balance" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="raqueta_tamano_cabeza" string="Head size" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="raqueta_perfil" string="Profile" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="raqueta_longitud" string="Length" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="raqueta_marco" string="Frame" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_construccion" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_tension_cordaje" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_tipo_juego" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_balance" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_tamano_cabeza" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_perfil" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_longitud" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_marco" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
                             <group string="Badminton Racket" attrs="{ 'invisible': [('parameterization_template', '!=', 3)] }">
-                                <field name="badminton_perfil" string="Profile" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="badminton_tension_cordaje" string="String tension" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="badminton_longitud" string="Length" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="badminton_construccion" string="Structure" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="badminton_tamano_cabeza" string="Head size" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="badminton_perfil" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="badminton_tension_cordaje" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="badminton_longitud" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="badminton_construccion" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="badminton_tamano_cabeza" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
                             <group string="Net" attrs="{ 'invisible': [('parameterization_template', '!=', 4)] }">
-                                <field name="redes_tratamiento" string="Treatment" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="redes_malla" string="Mesh" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="redes_requisitos" string="Requirements" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="redes_tratamiento" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="redes_malla" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="redes_requisitos" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                             </group>
 
 
                             <group string="Equipment" attrs="{ 'invisible': [('parameterization_template', '!=', 5)] }">
-                                <field name="equipamiento_requisitos" string="Requirements" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="equipamiento_seccion_tubo" string="Tube section" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="equipamiento_tratamiento" string="Treatment" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="equipamiento_reglamentacion" string="Regulation" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="equipamiento_requisitos" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="equipamiento_seccion_tubo" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="equipamiento_tratamiento" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="equipamiento_reglamentacion" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                             </group>
 
                             <group string="Textil" attrs="{ 'invisible': [('parameterization_template', '!=', 6)] }">
                                 <field name="genero" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_tipo_prenda" string="Garment type" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_formato" string="Format" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_gramaje" string="Grammage" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_acabado" string="Finish" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="textil_tratamiento" string="Treatment" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="textil_diseno" string="Design" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_tejido" string="Tissue" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="textil_bolsilllos" string="Pockets" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="textil_patron" string="Pattern" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_tipo_bajo" string="Lower finished" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_tipo_cintura" string="Waist type" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_tipo_manga" string="Sleeve type" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_tipo_cuello" string="Neck type" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_tipo_cierre" string="Clasp type" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_logo" string="Logo" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_interior" string="Garment interior" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_prenda" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_formato" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_gramaje" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_acabado" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="textil_tratamiento" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="textil_diseno" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tejido" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="textil_bolsilllos" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="textil_patron" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_bajo" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_cintura" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_manga" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_cuello" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_cierre" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_logo" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_interior" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
                             <group string="Footwear" attrs="{ 'invisible': [('parameterization_template', '!=', 7)] }">
                                 <field name="genero" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="calzado_tipo" string="Type" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="calzado_suela" string="Sole" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="calzado_empeine" string="Instep" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="calzado_forro_y_plantilla" string="Lining and insole" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="calzado_cierre" string="Lock" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="calzado_tipo" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="calzado_suela" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="calzado_empeine" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="calzado_forro_y_plantilla" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="calzado_cierre" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
                             <group string="Table Tennis Racket" attrs="{ 'invisible': [('parameterization_template', '!=', 8)] }">
-                                <field name="raqueta_tenis_mesa_caras" string="Type of faces" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="raqueta_tenis_mesa_num_laminas" string="No. of sheets" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="raqueta_tenis_mesa_grosor_lamina" string="Sheet thickness" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="raqueta_tenis_mesa_calidad" string="Quality" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_tenis_mesa_caras" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="raqueta_tenis_mesa_num_laminas" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_tenis_mesa_grosor_lamina" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="raqueta_tenis_mesa_calidad" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
                         </group>
                     </div>
