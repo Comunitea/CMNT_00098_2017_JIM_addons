@@ -5,19 +5,14 @@ import xml.etree.ElementTree as xee
 from ...js_b2b.base.helper import JSync
 from .. import constants
 
-PARAM_TEMPLATE_FIELD = 'parameterization_template'
-PRODUCT_PARAMETERIZATION = 'product.parameterization'
-PARAM_FIELDS_XPATH = './/div[@id="parameterization_fields"]'
-PRODUCT_PARAM_FORM_ID = 'js_parameterization.parameterization_product_form_view'
-
 class ParameterizationField(models.TransientModel):
 	_name = 'js_parameterization.field'
 
 	@api.multi
 	def set_domain(self):
-		view_id = self.env.ref(PRODUCT_PARAM_FORM_ID)
-		model_id = self.env['ir.model'].sudo().search([('model', '=', 'product.parameterization')])
-		field_list = [tag.attrib['name'] for tag in xee.fromstring(str(view_id.arch_base)).findall('%s//field' % PARAM_FIELDS_XPATH)]
+		view_id = self.env.ref(constants.PRODUCT_PARAM_FORM_ID)
+		model_id = self.env['ir.model'].sudo().search([('model', '=', constants.PRODUCT_PARAMETERIZATION)])
+		field_list = [tag.attrib['name'] for tag in xee.fromstring(str(view_id.arch_base)).findall('%s//field' % constants.PARAM_FIELDS_XPATH)]
 		return [('model_id', '=', model_id.id), ('state', '=', 'base'), ('name', 'in', field_list)]
 
 	parameterization_fields = fields.Many2many('ir.model.fields', 'ir_model_field_js_field_wizard_rel', 'field_wizard_id', 'ir_model_field_id', domain=set_domain, required=True)
@@ -26,23 +21,23 @@ class ParameterizationField(models.TransientModel):
 	#@api.model
 	#def __remove_field(self, field_name):
 	#	self.env.cr.execute("""
-	#		DELETE FROM ir_model_fields WHERE model = 'product.parameterization' AND name=%s; 
+	#		DELETE FROM ir_model_fields WHERE model = constants.PRODUCT_PARAMETERIZATION AND name=%s; 
 	#		ALTER TABLE product_parameterization DROP COLUMN %s;
 	#	""", (field_name, field_name)).commit()
 
 	@api.model
 	def __parameterization_fields(self):
 		fields_dict = dict()
-		view_id = self.env.ref(PRODUCT_PARAM_FORM_ID)
+		view_id = self.env.ref(constants.PRODUCT_PARAM_FORM_ID)
 
-		for group in xee.fromstring(str(view_id.arch_base)).findall('%s//group//group' % PARAM_FIELDS_XPATH):
+		for group in xee.fromstring(str(view_id.arch_base)).findall('%s//group//group' % constants.PARAM_FIELDS_XPATH):
 			group_attrs = safe_eval(group.attrib.get('attrs', '{}'))
 			groups_attr_invisible = group_attrs.get('invisible')
 			group_fields = tuple([field.attrib.get('name') for field in group.findall('.//field')])
 			if groups_attr_invisible and group_fields:
 				for domain_item in groups_attr_invisible:
 					is_valid_domain = type(domain_item) in (list, tuple) and len(domain_item)==3
-					is_param_domain = (is_valid_domain and domain_item[0] == PARAM_TEMPLATE_FIELD and domain_item[1] == '!=')
+					is_param_domain = (is_valid_domain and domain_item[0] == constants.PARAM_TEMPLATE_FIELD and domain_item[1] == '!=')
 					if is_param_domain: fields_dict.update({ int(domain_item[2]): group_fields })
 			elif not groups_attr_invisible:
 				fields_dict.update({ 0: group_fields })
@@ -53,7 +48,7 @@ class ParameterizationField(models.TransientModel):
 	def __template_translations(self, template_id):
 		templates_dict = dict(constants.TEMPLATES_LIST)
 		template_name = templates_dict.get(template_id, str())
-		field_name = '%s,%s' % (PRODUCT_PARAMETERIZATION, PARAM_TEMPLATE_FIELD)
+		field_name = '%s,%s' % (constants.PRODUCT_PARAMETERIZATION, constants.PARAM_TEMPLATE_FIELD)
 		self._cr.execute("""
 			SELECT 'en-US' AS lang, %s AS value 
 			UNION 

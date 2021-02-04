@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from odoo import api, fields, models
+from .. import constants
 
 class ProductTemplate(models.Model):
     _inherit = "product.template"
@@ -9,7 +10,7 @@ class ProductTemplate(models.Model):
     @api.multi
     def get_parameterization(self):
         self.ensure_one()  # One record expected
-        return self.env['product.parameterization'].search([
+        return self.env[constants.PRODUCT_PARAMETERIZATION].search([
             ('product_tmpl_id', '=', self.id)
         ], limit=1)
 
@@ -17,7 +18,7 @@ class ProductTemplate(models.Model):
     def create_parameterization(self, values=dict()):
         self.ensure_one()  # One record expected
         values.update({ 'product_tmpl_id': self.id })
-        return self.env['product.parameterization'].create(values)
+        return self.env[constants.PRODUCT_PARAMETERIZATION].create(values)
 
     #public
     @api.multi
@@ -32,7 +33,7 @@ class ProductTemplate(models.Model):
             # Template applicable fields
             template_fields = product_parameterization.template_fields_get()
             # Get all parameterization fields
-            parameterization_fields = self.env['product.parameterization'].fields_get(template_fields)
+            parameterization_fields = self.env[constants.PRODUCT_PARAMETERIZATION].fields_get(template_fields)
             # Loop parameterization fields
             for field, attrs in parameterization_fields.items():
                 custom_fields += 1 # Add field to the counter
@@ -58,7 +59,7 @@ class ProductTemplate(models.Model):
             'view_type': 'form',
             'view_mode': 'form',
             'res_id': parameterization.id,
-            'res_model': 'product.parameterization',
+            'res_model': constants.PRODUCT_PARAMETERIZATION,
             'type': 'ir.actions.act_window',
             'context': { 'default_product_tmpl_id': self.id },
             'target': 'current'

@@ -5,11 +5,6 @@ from psycopg2.extensions import AsIs
 import xml.etree.ElementTree as xee
 from .. import constants
 
-PARAM_TEMPLATE_FIELD = 'parameterization_template'
-PRODUCT_PARAMETERIZATION = 'product.parameterization'
-PARAM_FIELDS_XPATH = './/div[@id="parameterization_fields"]'
-PRODUCT_PARAM_FORM_ID = 'js_parameterization.parameterization_product_form_view'
-
 class ParameterizationValue(models.Model):
 	_name = 'js_parameterization.value'
 	_description = "Parameterization Values"
@@ -17,9 +12,9 @@ class ParameterizationValue(models.Model):
 	_order = 'name, fields'
 
 	def set_domain(self):
-		view_id = self.env.ref(PRODUCT_PARAM_FORM_ID)
-		model_id = self.env['ir.model'].sudo().search([('model', '=', 'product.parameterization')])
-		field_list = [tag.attrib.get('name') for tag in xee.fromstring(str(view_id.arch_base)).findall('%s//field' % PARAM_FIELDS_XPATH)]
+		view_id = self.env.ref(constants.PRODUCT_PARAM_FORM_ID)
+		model_id = self.env['ir.model'].sudo().search([('model', '=', constants.PRODUCT_PARAMETERIZATION)])
+		field_list = [tag.attrib.get('name') for tag in xee.fromstring(str(view_id.arch_base)).findall('%s//field' % constants.PARAM_FIELDS_XPATH)]
 		return [('model_id', '=', model_id.id), ('state', '=', 'base'), ('name', 'in', field_list)]
 
 	name = fields.Char(required=True, translate=True)
@@ -27,8 +22,8 @@ class ParameterizationValue(models.Model):
 
 	@api.model
 	def update_parameterization_relations(self, value_id, field_name):
-		parameterization_obj = self.env['product.parameterization'].with_context(b2b_evaluate=False)
-		for field_type in self.env['ir.model.fields'].search([('model', 'like', 'product.parameterization'), ('name', 'like', field_name)]).mapped('ttype'):
+		parameterization_obj = self.env[constants.PRODUCT_PARAMETERIZATION].with_context(b2b_evaluate=False)
+		for field_type in self.env['ir.model.fields'].search([('model', 'like', constants.PRODUCT_PARAMETERIZATION), ('name', 'like', field_name)]).mapped('ttype'):
 			if field_type == 'many2one':
 				parameterization_obj.search([(field_name, '=', value_id)]).write({ field_name: False })
 			elif field_type == 'many2many':
@@ -49,7 +44,7 @@ class ParameterizationValue(models.Model):
 		return True
 
 class ProductParameterization(models.Model):
-	_name = 'product.parameterization'
+	_name = constants.PRODUCT_PARAMETERIZATION
 	_description = "Product Parameterization"
 	_sql_constraints = [('parameterization_product_unique', 'unique(product_tmpl_id)', 'Product must be unique in parameterization!')]
 	_rec_name = 'product_tmpl_id' 
@@ -163,10 +158,10 @@ class ProductParameterization(models.Model):
 	@api.model
 	def template_fields_get(self, template_id=None):
 		fields_set = set()
-		view_id = self.env.ref(PRODUCT_PARAM_FORM_ID)
-		parameterization_template_id = template_id or getattr(self, PARAM_TEMPLATE_FIELD)
+		view_id = self.env.ref(constants.PRODUCT_PARAM_FORM_ID)
+		parameterization_template_id = template_id or getattr(self, constants.PARAM_TEMPLATE_FIELD)
 
-		for group in xee.fromstring(str(view_id.arch_base)).findall('%s//group//group' % PARAM_FIELDS_XPATH):
+		for group in xee.fromstring(str(view_id.arch_base)).findall('%s//group//group' % constants.PARAM_FIELDS_XPATH):
 			group_attrs = safe_eval(group.attrib.get('attrs', '{}'))
 			groups_attr_invisible = group_attrs.get('invisible')
 			group_fields = tuple([field.attrib.get('name') for field in group.findall('.//field')])
@@ -174,7 +169,7 @@ class ProductParameterization(models.Model):
 			if parameterization_template_id and groups_attr_invisible and group_fields:
 				for domain_item in groups_attr_invisible:
 					is_valid_domain = type(domain_item) in (list, tuple) and len(domain_item)==3
-					is_param_domain = (is_valid_domain and domain_item[0] == PARAM_TEMPLATE_FIELD and domain_item[1] == '!=')
+					is_param_domain = (is_valid_domain and domain_item[0] == constants.PARAM_TEMPLATE_FIELD and domain_item[1] == '!=')
 					if is_param_domain and parameterization_template_id == domain_item[2]:
 						fields_set |= set(group_fields)
 
@@ -202,14 +197,14 @@ class ProductParameterization(models.Model):
 	@api.multi
 	def template_fields_reset(self, values):
 		self.ensure_one()
-		view_id = self.env.ref(PRODUCT_PARAM_FORM_ID)
-		all_param_fields = [tag.attrib.get('name') for tag in xee.fromstring(str(view_id.arch_base)).findall('%s//field' % PARAM_FIELDS_XPATH)]
+		view_id = self.env.ref(constants.PRODUCT_PARAM_FORM_ID)
+		all_param_fields = [tag.attrib.get('name') for tag in xee.fromstring(str(view_id.arch_base)).findall('%s//field' % constants.PARAM_FIELDS_XPATH)]
 
 		# If parameterization template changed, empty not applicable fields
 		# We did this instead of delete asociated parameterization to avoid fill generic fields again
-		if values.get(PARAM_TEMPLATE_FIELD):
-			if self.parameterization_template != values[PARAM_TEMPLATE_FIELD]:
-				record_applicable_fields = self.template_fields_get(values[PARAM_TEMPLATE_FIELD])
+		if values.get(constants.PARAM_TEMPLATE_FIELD):
+			if self.parameterization_template != values[constants.PARAM_TEMPLATE_FIELD]:
+				record_applicable_fields = self.template_fields_get(values[constants.PARAM_TEMPLATE_FIELD])
 				fields_to_reset = [field for field in all_param_fields if field not in record_applicable_fields]
 				for field_name in fields_to_reset:
 					values.update({ field_name: False })
