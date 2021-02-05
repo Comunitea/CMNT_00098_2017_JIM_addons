@@ -204,8 +204,8 @@ msgstr "Actualizaciones al sincronizar"
 
 #. module: js_b2b
 #: model:ir.model.fields,help:js_b2b.field_b2b_item_out_sync_updates
-msgid "Send updates on syncing"
-msgstr "Enviar actualizaciones en sincronización"
+msgid "Send updates if the date of the last modification is greater than the date of the last submission"
+msgstr "Enviar actualizaciones si la fecha de la última modificación es mayor que la del último envío"
 
 #. module: js_b2b
 #: model:ir.model.fields,help:js_b2b.field_b2b_item_in_sequence

@@ -41,7 +41,7 @@ class B2bItemsOut(models.Model):
 	description = fields.Char('Description', required=False, translate=False, help="Set the item description")
 	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
 	active = fields.Boolean('Active', default=True, help="Enable or disable this item")
-	sync_updates = fields.Boolean('Updates on sync', default=True, help="Send updates on syncing")
+	sync_updates = fields.Boolean('Updates on sync', default=True, help="Send updates if the date of the last modification is greater than the date of the last submission")
 
 	@api.multi
 	def toggle_updates(self):
