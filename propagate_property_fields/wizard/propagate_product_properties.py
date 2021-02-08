@@ -46,4 +46,4 @@ class PropagateProductProperties(models.TransientModel):
                 vals = {
                     field: [(6, 0, new_tax_ids)]
                 }
-                product2.sudo().write(vals)
+                product2.sudo().with_context(b2b_evaluate=False).write(vals)

@@ -46,7 +46,7 @@ class PropagatePartnerProperties(models.TransientModel):
                         if company.no_propagate_term:
                             continue
                         # WRITE in new company
-                        partner2.sudo().write({field: model_value.id})
+                        partner2.sudo().with_context(b2b_evaluate=False).write({field: model_value.id})
 
                 # NON SHARED objects between companies
                 for field in company_fields_list:
@@ -68,4 +68,4 @@ class PropagatePartnerProperties(models.TransientModel):
                                         'supplier_payment_mode_id']:
                                 continue
                             # WRITE in new company
-                            partner2.sudo().write({field: model_obj.id})
+                            partner2.sudo().with_context(b2b_evaluate=False).write({field: model_obj.id})
