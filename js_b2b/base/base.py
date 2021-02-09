@@ -31,12 +31,12 @@ class BaseB2B(models.AbstractModel):
 		origin = self.with_context(lang='en_US')
 		# Field name search string
 		field_name = ','.join([self._name, field])
-		# Search active langs but skip 'es'
+		# Search active langs but skip 'es' we use 'es_ES' instead
 		configured_langs = self.env['res.lang'].search([('active', '=', True), ('translatable', '=', True), ('code', '!=', 'es')])
 		# Default values
 		translations = { lang.code.replace('_', '-'):origin[field] or None for lang in configured_langs }
 		# Query to get translations
-		self._cr.execute("SELECT lang, value FROM ir_translation WHERE type='model' AND name=%s AND res_id=%s", (field_name, self.id))
+		self._cr.execute("SELECT lang, value FROM ir_translation WHERE name=%s AND res_id=%s", (field_name, self.id))
 		# Update translations dict
 		translations.update({ lang_code.replace('_', '-'):field_translation for lang_code, field_translation in self._cr.fetchall() if lang_code.replace('_', '-') in translations })
 		# Return lang -> str dict

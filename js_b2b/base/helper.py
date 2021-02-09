@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 from requests import Session
 from requests.adapters import HTTPAdapter
 from odoo.exceptions import ValidationError
@@ -276,15 +275,12 @@ class JSync(object):
 
 					if _RES_ID:
 						# Guardar el estado en Odoo
-						with api.Environment.manage():
-							with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
-								new_cr.autocommit(True)
-								if not _EXPORT_ID and self.mode == 'create':
-									new_cr.execute("INSERT INTO b2b_export (name, rel_id, res_id, create_date) VALUES (%s, %s, %s, %s)", (self.name, self.related, _RES_ID, datetime.now()))
-								elif _EXPORT_ID and self.mode == 'update':
-									new_cr.execute("UPDATE b2b_export SET name=%s, rel_id=%s, write_date=%s WHERE id=%s", (self.name, self.related, datetime.now(), _EXPORT_ID))
-								elif _EXPORT_ID and self.mode == 'delete':
-									new_cr.execute("DELETE FROM b2b_export WHERE res_id LIKE %s OR rel_id LIKE %s", (_RES_ID, _RES_ID))
+						if not _EXPORT_ID and self.mode == 'create':
+							self.env['b2b.export'].with_context(b2b_evaluate=False).create({ 'name': self.name, 'rel_id': self.related, 'res_id': _RES_ID })
+						elif _EXPORT_ID and self.mode == 'update':
+							self.env['b2b.export'].browse(_EXPORT_ID).with_context(b2b_evaluate=False).write({ 'name': self.name, 'rel_id': self.related })
+						elif _EXPORT_ID and self.mode == 'delete':
+							self.env['b2b.export'].browse(_EXPORT_ID).with_context(b2b_evaluate=False).unlink()
 
 				try:
 					return json_load(jsync_post.text)
