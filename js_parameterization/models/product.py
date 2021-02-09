@@ -5,7 +5,7 @@ from .. import constants
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    parameterization_percent_filled = fields.Integer(string='Parameterization Percent Completed', default=0, store=True)
+    parameterization_percent_filled = fields.Integer(string='Parameterization Percent Completed', default=0, store=True, copy=False)
 
     @api.multi
     def get_parameterization(self):
