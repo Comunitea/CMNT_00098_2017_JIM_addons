@@ -135,7 +135,7 @@ class ProductParameterization(models.Model):
 	calzado_cierre = fields.Many2one('js_parameterization.value', string='Lock', domain=[('fields.name', '=', 'calzado_cierre')])
 
 	# RAQUETAS TENIS MESA
-	raqueta_tenis_mesa_caras = fields.Many2many('js_parameterization.value', 'js_parameterization_field_raqueta_tenis_mWesa_caras_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Type of faces', domain=[('fields.name', '=', 'raqueta_tenis_mesa_caras')])
+	raqueta_tenis_mesa_caras = fields.Many2many('js_parameterization.value', 'js_parameterization_field_raqueta_tenis_mesa_caras_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Type of faces', domain=[('fields.name', '=', 'raqueta_tenis_mesa_caras')])
 	raqueta_tenis_mesa_num_laminas = fields.Many2one('js_parameterization.value', string='No. of sheets', domain=[('fields.name', '=', 'raqueta_tenis_mesa_num_laminas')])
 	raqueta_tenis_mesa_grosor_lamina = fields.Many2one('js_parameterization.value', string='Sheet thickness', domain=[('fields.name', '=', 'raqueta_tenis_mesa_grosor_lamina')])
 	raqueta_tenis_mesa_calidad = fields.Many2one('js_parameterization.value', string='Quality', domain=[('fields.name', '=', 'raqueta_tenis_mesa_calidad')])
