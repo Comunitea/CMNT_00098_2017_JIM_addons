@@ -187,7 +187,7 @@ class B2bItemsOut(models.Model):
 					_logger.info("@@ DELETE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
 					record.b2b_record('delete', user_notify=user_notify)
 
-				elif all_notifiable and record_on_jsync and self.sync_updates and record.__last_update > record_on_jsync.__last_update:
+				elif all_notifiable and record_on_jsync and self.sync_updates and record.write_date > record_on_jsync.write_date:
 
 					update_records += 1
 					_logger.info("@@ UPDATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
