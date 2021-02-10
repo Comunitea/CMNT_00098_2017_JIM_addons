@@ -293,14 +293,6 @@ class JSync(object):
 				
 				if jsync_post and self.settings['conexion_error'] and self.settings['response_error']:
 					raise ValidationError("JSync Server Response Error\n%s" % (jsync_post.text.encode('latin1').capitalize()))
-
-		elif _EXPORT_ID and self.mode == 'update':
-
-			# Fake write on export table to update write date
-			export_obj = self.env['b2b.export'].browse(_EXPORT_ID)
-			export_obj.with_context(b2b_evaluate=False).write({ 'name': export_obj.name })
-			_logger.info("El paquete para '%s' no se envió en modo '%s' pero se actualizó la tabla de exportación!" % (self.name, self.mode))
-
 		else:
 
 			_logger.warning("El paquete para '%s' no se envió en modo '%s' ya que no cumple las condiciones!" % (self.name, self.mode))
