@@ -100,7 +100,7 @@ class BaseB2B(models.AbstractModel):
 		self.ensure_one()
 		res_id = '%s,%s' % (self._name, self.id)
 		export_found = self.env['b2b.export'].search([('res_id', '=', res_id)], limit=1)
-		return True if export_found else False
+		return export_found.id if export_found else False
 
 	@api.multi
 	def is_notifiable_check(self, mode='create', vals=None):
@@ -200,8 +200,10 @@ class BaseB2B(models.AbstractModel):
 						# if not self.on_jsync(): applicable_configs.update({ item.name: True })
 						b2b['crud_mode'] = 'create'
 
-				if applicable_configs.get(item.name, False):
+				if applicable_configs.get(item.name) == True:
+
 					_logger.info("Configuración aplicable: %s", applicable_configs)
+					
 					# Creamos un paquete
 					packet = JSync(self.env, settings=jsync_conf)
 					# ID del registro
@@ -235,6 +237,17 @@ class BaseB2B(models.AbstractModel):
 					# Ejecutamos la función pos_data si existe y sub_methods es True
 					if sub_methods and 'pos_data' in b2b and callable(b2b['pos_data']):
 						Subprocess(self).add(b2b['pos_data'], self, mode)
+
+				elif applicable_configs.get(item.name) == False and mode == 'update':
+
+					# Check if record exists on export table
+					record_on_jsync = self.on_jsync()
+
+					if record_on_jsync:
+						# Fake write on export table to mantain last write date
+						export_obj = self.env['b2b.export'].browse(record_on_jsync.id)
+						export_obj.with_context(b2b_evaluate=False).write({ 'name': export_obj.name })
+						_logger.info("El registro '%s,%s' no es notificable pero se actualizó la tabla de exportación!" % (self._name, self.id))
 
 		# Paquetes a enviar
 		return packets
