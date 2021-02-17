@@ -245,7 +245,7 @@ class BaseB2B(models.AbstractModel):
 
 					if record_on_jsync:
 						# Fake write on export table to mantain last write date
-						export_obj = self.env['b2b.export'].browse(record_on_jsync.id)
+						export_obj = self.env['b2b.export'].browse(record_on_jsync)
 						export_obj.with_context(b2b_evaluate=False).write({ 'name': export_obj.name })
 						_logger.info("El registro '%s,%s' no es notificable pero se actualizó la tabla de exportación!" % (self._name, self.id))
 
