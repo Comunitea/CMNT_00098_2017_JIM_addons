@@ -17,7 +17,7 @@
 )
 
 def is_notifiable(self, action, vals):
-    return True if action == 'delete' or vals else False
+    return True
 
 def get_data(self, action):
     return {

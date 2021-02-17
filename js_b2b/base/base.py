@@ -135,6 +135,7 @@ class BaseB2B(models.AbstractModel):
 				# changed_fields = { k : vals[k] for k in vals if k in record_data and vals[k] != record_data[k] }
 				# Sólo enviar updates si hay un cambio en los datos
 				# change_allowed = bool(mode in ('create', 'delete', 'replace') or changed_fields)
+				change_allowed = bool(mode == 'create' or vals)
 
 				# Si este registro es notificable
 				if b2b['is_notifiable'](self, mode, vals):
@@ -149,8 +150,7 @@ class BaseB2B(models.AbstractModel):
 					else:
 
 						# Si watched_fields es None o vals está vacío
-						# items_dict.update({ item.name: change_allowed })
-						items_dict.update({ item.name: True })
+						items_dict.update({ item.name: change_allowed })
 
 		# All notifiable items
 		return items_dict
