@@ -6,9 +6,9 @@ class ProductTemplate(models.Model):
     _inherit = "product.template"
 
     discontinued_product = fields.Boolean('Discontinued', default=False, help="If checked, the product will not be sold in main company")
-    product_size_width = fields.Float('Width', compute='_compute_size', inverse='_set_size', help="Product max width in cm")
-    product_size_height = fields.Float('Height', compute='_compute_size', inverse='_set_size', help="Product max height in cm")
-    product_size_depth = fields.Float('Depth', compute='_compute_size', inverse='_set_size', help="Product max depth in cm")
+    product_size_width = fields.Float('Width', compute='_compute_size', inverse='_set_size', store=True, help="Product max width in cm")
+    product_size_height = fields.Float('Height', compute='_compute_size', inverse='_set_size', store=True, help="Product max height in cm")
+    product_size_depth = fields.Float('Depth', compute='_compute_size', inverse='_set_size', store=True, help="Product max depth in cm")
     volume = fields.Float(compute='_compute_size', inverse=False, digits=(3,6), store=False, help="Computed volume of the product (cube formula) in m³")
 
     # Sobreescribir product_custom por indicaciones de Comunitea
@@ -34,9 +34,11 @@ class ProductTemplate(models.Model):
     @api.one
     def _set_size(self):
         if len(self.product_variant_ids) == 1:
-            self.product_variant_id.product_size_width = self.product_size_width
-            self.product_variant_id.product_size_height = self.product_size_height
-            self.product_variant_id.product_size_depth = self.product_size_depth
+            self.product_variant_id.write({
+                'product_size_width': self.product_size_width,
+                'product_size_height': self.product_size_height,
+                'product_size_depth': self.product_size_depth
+            })
 
     @api.multi
     def _set_variant_discontinued(self, values):
@@ -49,15 +51,6 @@ class ProductTemplate(models.Model):
     def create(self, vals):
         template = super(ProductTemplate, self).create(vals)
         template._set_variant_discontinued(vals);
-        related_vals = {}
-        if vals.get('product_size_width'):
-            related_vals['product_size_width'] = vals['product_size_width']
-        if vals.get('product_size_height'):
-            related_vals['product_size_height'] = vals['product_size_height']
-        if vals.get('product_size_depth'):
-            related_vals['product_size_depth'] = vals['product_size_depth']
-        if related_vals:
-            template.write(related_vals)
         return template
 
     @api.multi
