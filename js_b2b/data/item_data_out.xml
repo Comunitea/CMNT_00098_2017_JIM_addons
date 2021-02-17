@@ -244,12 +244,16 @@ def pos_data(self, action):
 def is_notifiable(self, action, vals):
     return (self.product_tmpl_id.website_published # La plantilla está publicada
         and self.default_code # Y tiene código
-        and self.attribute_names # Y tiene atributos (las variantes únicas no tienen atributos)
-        and len(self.attribute_value_ids) == 2 # Y tiene 2 atributos
         and self.website_published) # Y está publicada
 
 def related_to(self, action):
     return 'product.template,%s' % self.product_tmpl_id.id
+
+def pre_data(self, action, vals):
+    if action == 'update' and len(self.attribute_value_ids) != 2:
+        # Comprobar si se deben notificar cambios en campos de la variante para la plantilla (related)
+        items_to_send = self.product_tmpl_id.is_notifiable_check('update', vals)
+        self.product_tmpl_id.b2b_record('update', vals, conf_items_before=items_to_send)
 
 def get_data(self, action):
     return {
@@ -264,7 +268,7 @@ def get_data(self, action):
         'length': float(self.product_size_depth),
         'volume': float(self.volume),
         'default': bool(self.id == self.product_variant_id.id)
-    }
+    } if len(self.attribute_value_ids) == 2 else dict()
     
 def pos_data(self, action):
     # Creamos los datos relaccionados
