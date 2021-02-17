@@ -223,7 +223,7 @@ class BaseB2B(models.AbstractModel):
 
 					# Ejecutamos la función pre_data si existe y sub_methods es True
 					if sub_methods and 'pre_data' in b2b and callable(b2b['pre_data']):
-						b2b['pre_data'](self, mode)
+						b2b['pre_data'](self, mode, vals)
 
 					# Obtenemos los datos
 					packet.data = b2b['get_data'](self, mode)

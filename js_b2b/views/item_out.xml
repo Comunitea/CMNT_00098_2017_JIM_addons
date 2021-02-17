@@ -56,7 +56,7 @@
                                 </p>
 
                                 <p>
-                                    <b>pre_data</b>(self, action)
+                                    <b>pre_data</b>(self, action, vals)
                                     <span class="help-block">
                                         <p>Realiza acciones antes de obtener los datos (get_data)</p>
                                         <p>Se ejecuta de forma síncrona y es opcional</p>
