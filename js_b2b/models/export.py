@@ -3,6 +3,9 @@ from odoo import api, fields, models
 from ..base.helper import JSync
 from os import path, pardir
 from datetime import datetime
+from sys import getsizeof
+from math import ceil
+import psycopg2.extras
 import logging
 
 _logger = logging.getLogger('B2B-EXPORT')

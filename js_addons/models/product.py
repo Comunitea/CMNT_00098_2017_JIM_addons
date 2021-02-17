@@ -34,9 +34,9 @@ class ProductTemplate(models.Model):
     @api.one
     def _set_size(self):
         if len(self.product_variant_ids) == 1:
-            self.product_variant_id.product_size_width = self.product_size_width
-            self.product_variant_id.product_size_height = self.product_size_height
-            self.product_variant_id.product_size_depth = self.product_size_depth
+            self.product_variant_ids.product_size_width = self.product_size_width
+            self.product_variant_ids.product_size_height = self.product_size_height
+            self.product_variant_ids.product_size_depth = self.product_size_depth
 
     @api.multi
     def _set_variant_discontinued(self, values):
