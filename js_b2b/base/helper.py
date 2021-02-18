@@ -123,6 +123,26 @@ class JSync(object):
 			'response_error'
 		])
 
+	def update_b2b_export_table(self, b2b_export_id=False):
+		"""
+		Mantains B2B export table updated
+
+		:param mode: CRUD mode str
+		:param b2b_export_id: B2B Record ID
+		"""
+		updated = False
+		with api.Environment.manage():
+			with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
+				new_cr.autocommit(True)
+				env = api.Environment(new_cr, self.env.uid, self.env.context)
+				if not b2b_export_id and self.mode == 'create':
+					updated = env['b2b.export'].with_context(b2b_evaluate=False).create({ 'name': self.name, 'rel_id': self.related, 'res_id': _RES_ID })
+				elif b2b_export_id and self.mode == 'update':
+					updated = env['b2b.export'].browse(b2b_export_id).with_context(b2b_evaluate=False).write({ 'name': self.name, 'rel_id': self.related })
+				elif b2b_export_id and self.mode == 'delete':
+					updated = env['b2b.export'].browse(b2b_export_id).with_context(b2b_evaluate=False).unlink()
+		return updated
+
 	def filter_data(self, crudMode=None, vals=None):
 		"""
 		Filter and normalizes item data (data)
@@ -263,28 +283,17 @@ class JSync(object):
 			# Si la respuesta es OK
 			if jsync_post and jsync_post.status_code is 200:
 
+				# Información de debug apra el mensaje saliente
 				_logger.debug(debug_msg.format(jsync_post.text, self.name, self.mode, self.data))
 
-				# En los paquetes múltiples no se establecen estos parámetros
-				# por lo que no se notifican al usuario ni se registran en el sistema
-				if self.name and self.id and self.model:
+				if _RES_ID:
 
 					# Mostrar notificación no invasiva al usuario en Odoo
 					if notify and 'show_b2b_notifications' in self.env.user and self.env.user.show_b2b_notifications:
 						self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
 
-					if _RES_ID:
-						# Guardar el estado en Odoo con un nuevo cursor
-						with api.Environment.manage():
-							with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
-								new_cr.autocommit(True)
-								env = api.Environment(new_cr, self.env.uid, self.env.context)
-								if not _EXPORT_ID and self.mode == 'create':
-									env['b2b.export'].with_context(b2b_evaluate=False).create({ 'name': self.name, 'rel_id': self.related, 'res_id': _RES_ID })
-								elif _EXPORT_ID and self.mode == 'update':
-									env['b2b.export'].browse(_EXPORT_ID).with_context(b2b_evaluate=False).write({ 'name': self.name, 'rel_id': self.related })
-								elif _EXPORT_ID and self.mode == 'delete':
-									env['b2b.export'].browse(_EXPORT_ID).with_context(b2b_evaluate=False).unlink()
+					# Guardar el estado en Odoo con un nuevo cursor
+					self.update_b2b_export_table(_EXPORT_ID)
 
 				try:
 					return json_load(jsync_post.text)
@@ -299,6 +308,6 @@ class JSync(object):
 					raise ValidationError("JSync Server Response Error\n%s" % (jsync_post.text.encode('latin1').capitalize()))
 		else:
 
-			_logger.warning("El paquete para '%s' no se envió en modo '%s' ya que no cumple las condiciones!" % (self.name, self.mode))
+			_logger.info("El paquete para '%s,%s' no se envió en modo '%s' ya que no cumple las condiciones!" % (self.name, self.id, self.mode))
 
 		return False
