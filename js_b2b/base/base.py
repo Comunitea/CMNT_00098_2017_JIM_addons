@@ -179,15 +179,17 @@ class BaseB2B(models.AbstractModel):
 
 			jsync_conf = self.env['b2b.settings'].get_default_params()
 			importing_file = self.env.context.get('import_file', False)
+			_logger.info("Configuración aplicable: %s", applicable_configs)
 
 			for item in b2b_config:
-				# Configuration eval
+
+				# Evaluamos la configuración
 				b2b = item.evaluate(mode, jsync_conf)
 				b2b['min_docs_date'] = jsync_conf['docs_after']
 				b2b['crud_mode'] = mode
 
 				# Determinamos el modo correcto en actualizaciones
-				if mode == 'update':
+				if mode == 'update' and conf_items_after != None:
 					# No se puede buscar dentro de un None
 					if conf_items_before is None:
 						conf_items_before = dict()
@@ -196,29 +198,26 @@ class BaseB2B(models.AbstractModel):
 						b2b['crud_mode'] = 'delete'
 					# Si antes no era notificable y ahora si o lo creamos
 					elif (item.name not in conf_items_before.keys() and item.name in conf_items_after.keys()) or not self.on_jsync():
-						# if not self.on_jsync(): applicable_configs.update({ item.name: True })
 						b2b['crud_mode'] = 'create'
 
+				_logger.info("Paquete para [%s,%i] en modo [%s]" % (self._name, self.id, b2b['crud_mode']))
+
+				# Creamos un paquete
+				packet = JSync(self.env, settings=jsync_conf)
+				# ID del registro
+				packet.id = self.id
+				# Modelo del registro
+				packet.model = self._name
+				# Obtenemos el nombre
+				packet.name = item.name
+				# Obtenemos la copia del modo
+				packet.mode = b2b['crud_mode']
+
+				# Obtenemos la relacción (si la tiene)
+				if 'related_to' in b2b and callable(b2b['related_to']):
+					packet.related = b2b['related_to'](self, mode)
+
 				if applicable_configs.get(item.name) == True:
-
-					_logger.info("Configuración aplicable: %s", applicable_configs)
-					
-					# Creamos un paquete
-					packet = JSync(self.env, settings=jsync_conf)
-					# ID del registro
-					packet.id = self.id
-					# Modelo del registro
-					packet.model = self._name
-					# Obtenemos el nombre
-					packet.name = item.name
-					# Obtenemos la copia del modo
-					packet.mode = b2b['crud_mode']
-
-					_logger.info("Paquete para [%s,%i] en modo [%s]" % (packet.model, packet.id, b2b['crud_mode']))
-
-					# Obtenemos la relacción (si la tiene)
-					if 'related_to' in b2b and callable(b2b['related_to']):
-						packet.related = b2b['related_to'](self, mode)
 
 					# Ejecutamos la función pre_data si existe y sub_methods es True
 					if sub_methods and 'pre_data' in b2b and callable(b2b['pre_data']):
@@ -237,15 +236,14 @@ class BaseB2B(models.AbstractModel):
 					if sub_methods and 'pos_data' in b2b and callable(b2b['pos_data']):
 						Subprocess(self).add(b2b['pos_data'], self, mode)
 
-				elif applicable_configs.get(item.name) == False and mode == 'update':
+				elif applicable_configs.get(item.name) == False:
 
 					# Check if record exists on export table
 					record_on_jsync = self.on_jsync()
 
-					if record_on_jsync:
-						# Fake write on export table to mantain last write date
-						export_obj = self.env['b2b.export'].browse(record_on_jsync)
-						export_obj.with_context(b2b_evaluate=False).write({ 'name': export_obj.name })
+					if record_on_jsync and packet.mode == 'update':
+						# Mantain last write date on export table
+						packet.update_b2b_export_table(record_on_jsync)
 						_logger.info("El registro '%s,%s' no es notificable pero se actualizó la tabla de exportación!" % (self._name, self.id))
 
 		# Paquetes a enviar
