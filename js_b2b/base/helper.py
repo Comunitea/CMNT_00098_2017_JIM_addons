@@ -299,6 +299,6 @@ class JSync(object):
 					raise ValidationError("JSync Server Response Error\n%s" % (jsync_post.text.encode('latin1').capitalize()))
 		else:
 
-			_logger.warning("El paquete para '%s' no se envió en modo '%s' ya que no cumple las condiciones!" % (self.name, self.mode))
+			_logger.info("El paquete para '%s,%s' no se envió en modo '%s' ya que no cumple las condiciones!" % (self.name, self.id, self.mode))
 
 		return False
