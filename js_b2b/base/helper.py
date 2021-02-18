@@ -123,7 +123,7 @@ class JSync(object):
 			'response_error'
 		])
 
-	def update_b2b_export_table(self, b2b_export_id=False):
+	def update_b2b_export_table(self, b2b_export_id=False, res_id=False):
 		"""
 		Mantains B2B export table updated
 
@@ -135,8 +135,8 @@ class JSync(object):
 			with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
 				new_cr.autocommit(True)
 				env = api.Environment(new_cr, self.env.uid, self.env.context)
-				if not b2b_export_id and self.mode == 'create':
-					updated = env['b2b.export'].with_context(b2b_evaluate=False).create({ 'name': self.name, 'rel_id': self.related, 'res_id': _RES_ID })
+				if not b2b_export_id and self.mode == 'create' and res_id:
+					updated = env['b2b.export'].with_context(b2b_evaluate=False).create({ 'name': self.name, 'rel_id': self.related, 'res_id': res_id })
 				elif b2b_export_id and self.mode == 'update':
 					updated = env['b2b.export'].browse(b2b_export_id).with_context(b2b_evaluate=False).write({ 'name': self.name, 'rel_id': self.related })
 				elif b2b_export_id and self.mode == 'delete':
@@ -293,7 +293,7 @@ class JSync(object):
 						self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
 
 					# Guardar el estado en Odoo con un nuevo cursor
-					self.update_b2b_export_table(_EXPORT_ID)
+					self.update_b2b_export_table(_EXPORT_ID, _RES_ID)
 
 				try:
 					return json_load(jsync_post.text)
