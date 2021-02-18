@@ -274,13 +274,17 @@ class JSync(object):
 						self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
 
 					if _RES_ID:
-						# Guardar el estado en Odoo
-						if not _EXPORT_ID and self.mode == 'create':
-							self.env['b2b.export'].with_context(b2b_evaluate=False).create({ 'name': self.name, 'rel_id': self.related, 'res_id': _RES_ID })
-						elif _EXPORT_ID and self.mode == 'update':
-							self.env['b2b.export'].browse(_EXPORT_ID).with_context(b2b_evaluate=False).write({ 'name': self.name, 'rel_id': self.related })
-						elif _EXPORT_ID and self.mode == 'delete':
-							self.env['b2b.export'].browse(_EXPORT_ID).with_context(b2b_evaluate=False).unlink()
+						# Guardar el estado en Odoo con un nuevo cursor
+						with api.Environment.manage():
+							with registry.RegistryManager.get(self.env.cr.dbname).cursor() as new_cr:
+								new_cr.autocommit(True)
+								env = api.Environment(new_cr, self.env.uid, self.env.context)
+								if not _EXPORT_ID and self.mode == 'create':
+									env['b2b.export'].with_context(b2b_evaluate=False).create({ 'name': self.name, 'rel_id': self.related, 'res_id': _RES_ID })
+								elif _EXPORT_ID and self.mode == 'update':
+									env['b2b.export'].browse(_EXPORT_ID).with_context(b2b_evaluate=False).write({ 'name': self.name, 'rel_id': self.related })
+								elif _EXPORT_ID and self.mode == 'delete':
+									env['b2b.export'].browse(_EXPORT_ID).with_context(b2b_evaluate=False).unlink()
 
 				try:
 					return json_load(jsync_post.text)
