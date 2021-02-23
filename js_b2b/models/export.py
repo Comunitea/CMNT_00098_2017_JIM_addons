@@ -276,7 +276,7 @@ class B2BExport(models.Model):
 		try:
 			stock = self.env['exportxml.object'].compute_product_ids(all=export_all, from_time=from_date, limit=test_limit, inc=1000)
 		except Exception as e:
-			_logger.exception('[b2b_customers_prices] ERROR EN EL BUCLE!')
+			_logger.exception('[b2b_products_stock] ERROR EN EL BUCLE!')
 		finally:
 			_logger.info('[b2b_products_stock] FIN!')
 		
@@ -294,7 +294,7 @@ class B2BExport(models.Model):
 			for record in self.env['stock.move'].search([('id', 'in', supply_plan_ids), ('date_expected', '<', str(datetime.now()))]):
 				record.b2b_record('delete', False)
 		except Exception as e:
-			_logger.exception('[b2b_customers_prices] ERROR EN EL BUCLE!')
+			_logger.exception('[b2b_delete_old_supplies] ERROR EN EL BUCLE!')
 		finally:
 			_logger.info('[b2b_delete_old_supplies] FIN!')
 
