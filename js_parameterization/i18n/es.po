@@ -16,6 +16,12 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. module: js_parameterization
+#: code:addons/js_parameterization/models/parameterization.py:147
+#, python-format
+msgid "Parameterization for %s"
+msgstr "Parametrización para %s"
+
+#. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_js_parameterization_field_action
 msgid "Action"
 msgstr "Acción"
@@ -369,7 +375,7 @@ msgstr "Parameterization fields"
 #. module: js_parameterization
 #: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_parameterization_template
 msgid "Parameterization template"
-msgstr "Plantillas de Parametrización"
+msgstr "Plantilla de Parametrización"
 
 #. module: js_parameterization
 #: model:ir.actions.act_window,name:js_parameterization.parameterization_products

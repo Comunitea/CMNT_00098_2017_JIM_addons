@@ -47,7 +47,6 @@ class ProductParameterization(models.Model):
 	_name = constants.PRODUCT_PARAMETERIZATION
 	_description = "Product Parameterization"
 	_sql_constraints = [('parameterization_product_unique', 'unique(product_tmpl_id)', 'Product must be unique in parameterization!')]
-	_rec_name = 'product_tmpl_id' 
 
 	product_tmpl_id = fields.Many2one('product.template', string='Related Product', required=True, ondelete='cascade')
 	parameterization_template = fields.Selection(constants.TEMPLATES_LIST, required=False)
@@ -139,6 +138,14 @@ class ProductParameterization(models.Model):
 	raqueta_tenis_mesa_num_laminas = fields.Many2one('js_parameterization.value', string='No. of sheets', domain=[('fields.name', '=', 'raqueta_tenis_mesa_num_laminas')])
 	raqueta_tenis_mesa_grosor_lamina = fields.Many2one('js_parameterization.value', string='Sheet thickness', domain=[('fields.name', '=', 'raqueta_tenis_mesa_grosor_lamina')])
 	raqueta_tenis_mesa_calidad = fields.Many2one('js_parameterization.value', string='Quality', domain=[('fields.name', '=', 'raqueta_tenis_mesa_calidad')])
+
+	@api.multi
+	def name_get(self):
+		res = list()
+		for record in self:
+			display_name = list()
+			res.append((record.id, _('Parameterization for %s') % record.product_tmpl_id.display_name))
+		return res
 
 	@api.model
 	def fields_get(self, allfields=None, attributes=None):
