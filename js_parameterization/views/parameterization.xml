@@ -9,16 +9,14 @@
         <field name="sequence">20</field>
         <field name="arch" type="xml">
             <form string="Parameterization" create="false">
-                <header id="parameterization_header" invisible="not context.get('default_product_tmpl_id')">
-                    <field name="product_tmpl_id" readonly="1" class="label label-default" options="{ 'no_open': True }"/>
+                <header id="parameterization_header">
+                    <div id="template_selection_wrapper">
+                        <label for="parameterization_template" />
+                        <field name="parameterization_template" />
+                    </div>
                 </header>
                 
                 <sheet>
-                    <div id="template_selection_wrapper">
-                        <label for="parameterization_template"/>
-                        <field name="parameterization_template" options="{ 'no_create': True, 'no_open': True, 'no_edit': True }"/>
-                    </div>
-
                     <div id="parameterization_fields">
                         <group>
                             <group string="Generic">
