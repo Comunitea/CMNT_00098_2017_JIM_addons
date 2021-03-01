@@ -6,7 +6,7 @@ import xml.etree.ElementTree as xee
 from .. import constants
 
 class ParameterizationValue(models.Model):
-	_name = 'js_parameterization.value'
+	_name = constants.PARAMETERIZATION_VALUES
 	_description = "Parameterization Values"
 	_sql_constraints = [('parameterization_value_unique', 'unique(name)', 'Value must be unique in parameterization!')]
 	_order = 'name, fields'
@@ -53,91 +53,90 @@ class ProductParameterization(models.Model):
 	percent_filled = fields.Integer('Parameterization Percent Completed', related='product_tmpl_id.parameterization_percent_filled', store=False)
 
 	# TODO
-	tipo_producto = fields.Many2one('js_parameterization.value', string='Product type', domain=[('fields.name', '=', 'tipo_producto')])
-	deporte = fields.Many2many('js_parameterization.value', 'js_parameterization_field_deporte_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Sport', domain=[('fields.name', '=', 'deporte')])
-	nivel_habilidad = fields.Many2one('js_parameterization.value', string='Skill level', domain=[('fields.name', '=', 'nivel_habilidad')])
-	uso = fields.Many2one('js_parameterization.value', string='Use', domain=[('fields.name', '=', 'uso')])
-	envase = fields.Many2one('js_parameterization.value', string='Packaging', domain=[('fields.name', '=', 'envase')])
-	articulos_envase = fields.Many2one('js_parameterization.value', string='Package items num', domain=[('fields.name', '=', 'articulos_envase')])
-	composicion_material = fields.Many2many('js_parameterization.value', 'js_parameterization_field_composicion_material_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Composition/material', domain=[('fields.name', '=', 'composicion_material')])
-	certificaciones_ensayos = fields.Many2many('js_parameterization.value', 'js_parameterization_field_certificaciones_ensayos_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Certifications/tests', domain=[('fields.name', '=', 'certificaciones_ensayos')])
-	coleccion = fields.Many2one('js_parameterization.value', string='Collection', domain=[('fields.name', '=', 'coleccion')])
-
-	# TEXTIL Y CALZADO
-	genero = fields.Many2one('js_parameterization.value', string='Gender', domain=[('fields.name', '=', 'genero')])
+	tipo_producto = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Product type', domain=[('fields.name', '=', 'tipo_producto')])
+	deporte = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_deporte_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Sport', domain=[('fields.name', '=', 'deporte')])
+	nivel_habilidad = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Skill level', domain=[('fields.name', '=', 'nivel_habilidad')])
+	uso = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Use', domain=[('fields.name', '=', 'uso')])
+	envase = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Packaging', domain=[('fields.name', '=', 'envase')])
+	articulos_envase = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Package items num', domain=[('fields.name', '=', 'articulos_envase')])
+	composicion_material = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_composicion_material_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Composition/material', domain=[('fields.name', '=', 'composicion_material')])
+	certificaciones_ensayos = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_certificaciones_ensayos_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Certifications/tests', domain=[('fields.name', '=', 'certificaciones_ensayos')])
+	coleccion = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Collection', domain=[('fields.name', '=', 'coleccion')])
 
 	# PALAS
-	pala_construccion = fields.Many2one('js_parameterization.value', string='Structure', domain=[('fields.name', '=', 'pala_construccion')])
-	pala_tipo_juego = fields.Many2one('js_parameterization.value', string='Game type', domain=[('fields.name', '=', 'pala_tipo_juego')])
-	pala_cara = fields.Many2one('js_parameterization.value', string='Face', domain=[('fields.name', '=', 'pala_cara')])
-	pala_forma = fields.Many2one('js_parameterization.value', string='Shape', domain=[('fields.name', '=', 'pala_forma')])
-	pala_marco = fields.Many2one('js_parameterization.value', string='Frame', domain=[('fields.name', '=', 'pala_marco')])
-	pala_nucleo = fields.Many2one('js_parameterization.value', string='Core', domain=[('fields.name', '=', 'pala_nucleo')])
-	pala_agarre_mango = fields.Many2one('js_parameterization.value', string='Handle fixing', domain=[('fields.name', '=', 'pala_agarre')])
-	pala_balance = fields.Many2one('js_parameterization.value', string='Balance', domain=[('fields.name', '=', 'pala_balance')])
-	pala_perfil = fields.Many2one('js_parameterization.value', string='Profile', domain=[('fields.name', '=', 'pala_perfil')])
-	pala_acabado = fields.Many2one('js_parameterization.value', string='Finish', domain=[('fields.name', '=', 'pala_acabado')])
-	pala_ancho = fields.Many2one('js_parameterization.value', string='Width', domain=[('fields.name', '=', 'pala_ancho')])
-	pala_longitud = fields.Many2one('js_parameterization.value', string='Length', domain=[('fields.name', '=', 'pala_longitud')])
+	pala_construccion = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Structure', domain=[('fields.name', '=', 'pala_construccion')])
+	pala_tipo_juego = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Game type', domain=[('fields.name', '=', 'pala_tipo_juego')])
+	pala_cara = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Face', domain=[('fields.name', '=', 'pala_cara')])
+	pala_forma = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Shape', domain=[('fields.name', '=', 'pala_forma')])
+	pala_marco = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Frame', domain=[('fields.name', '=', 'pala_marco')])
+	pala_nucleo = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Core', domain=[('fields.name', '=', 'pala_nucleo')])
+	pala_agarre_mango = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Handle fixing', domain=[('fields.name', '=', 'pala_agarre')])
+	pala_balance = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Balance', domain=[('fields.name', '=', 'pala_balance')])
+	pala_perfil = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Profile', domain=[('fields.name', '=', 'pala_perfil')])
+	pala_acabado = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Finish', domain=[('fields.name', '=', 'pala_acabado')])
+	pala_ancho = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Width', domain=[('fields.name', '=', 'pala_ancho')])
+	pala_longitud = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Length', domain=[('fields.name', '=', 'pala_longitud')])
 
 	# RAQUETAS TENIS
-	raqueta_construccion = fields.Many2one('js_parameterization.value', string='Structure', domain=[('fields.name', '=', 'raqueta_construccion')])
-	raqueta_tension_cordaje = fields.Many2one('js_parameterization.value', string='String tension', domain=[('fields.name', '=', 'raqueta_tension_cordaje')])
-	raqueta_tipo_juego = fields.Many2one('js_parameterization.value', string='Game type', domain=[('fields.name', '=', 'raqueta_tipo_juego')])
-	raqueta_balance = fields.Many2one('js_parameterization.value', string='Balance', domain=[('fields.name', '=', 'raqueta_balance')])
-	raqueta_tamano_cabeza = fields.Many2one('js_parameterization.value', string='Head size', domain=[('fields.name', '=', 'raqueta_tamano_cabeza')])
-	raqueta_perfil = fields.Many2one('js_parameterization.value', string='Profile', domain=[('fields.name', '=', 'raqueta_perfil')])
-	raqueta_longitud = fields.Many2one('js_parameterization.value', string='Length', domain=[('fields.name', '=', 'raqueta_longitud')])
-	raqueta_marco = fields.Many2one('js_parameterization.value', string='Frame', domain=[('fields.name', '=', 'raqueta_marco')])
+	raqueta_construccion = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Structure', domain=[('fields.name', '=', 'raqueta_construccion')])
+	raqueta_tension_cordaje = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='String tension', domain=[('fields.name', '=', 'raqueta_tension_cordaje')])
+	raqueta_tipo_juego = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Game type', domain=[('fields.name', '=', 'raqueta_tipo_juego')])
+	raqueta_balance = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Balance', domain=[('fields.name', '=', 'raqueta_balance')])
+	raqueta_tamano_cabeza = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Head size', domain=[('fields.name', '=', 'raqueta_tamano_cabeza')])
+	raqueta_perfil = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Profile', domain=[('fields.name', '=', 'raqueta_perfil')])
+	raqueta_longitud = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Length', domain=[('fields.name', '=', 'raqueta_longitud')])
+	raqueta_marco = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Frame', domain=[('fields.name', '=', 'raqueta_marco')])
 
 	# RAQUETAS BADMINTON
-	badminton_perfil = fields.Many2one('js_parameterization.value', string='Profile', domain=[('fields.name', '=', 'badminton_perfil')])
-	badminton_tension_cordaje = fields.Many2one('js_parameterization.value', string='String tension', domain=[('fields.name', '=', 'badminton_tension_cordaje')])
-	badminton_longitud = fields.Many2one('js_parameterization.value', string='Length', domain=[('fields.name', '=', 'badminton_longitud')])
-	badminton_construccion = fields.Many2one('js_parameterization.value', string='Structure', domain=[('fields.name', '=', 'badminton_construccion')])
-	badminton_tamano_cabeza = fields.Many2one('js_parameterization.value', string='Head size', domain=[('fields.name', '=', 'badminton_tamano_cabeza')])
+	badminton_perfil = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Profile', domain=[('fields.name', '=', 'badminton_perfil')])
+	badminton_tension_cordaje = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='String tension', domain=[('fields.name', '=', 'badminton_tension_cordaje')])
+	badminton_longitud = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Length', domain=[('fields.name', '=', 'badminton_longitud')])
+	badminton_construccion = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Structure', domain=[('fields.name', '=', 'badminton_construccion')])
+	badminton_tamano_cabeza = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Head size', domain=[('fields.name', '=', 'badminton_tamano_cabeza')])
 
 	# REDES
-	redes_tratamiento = fields.Many2many('js_parameterization.value', 'js_parameterization_field_redes_tratamiento_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Treatment', domain=[('fields.name', '=', 'redes_tratamiento')])
-	redes_malla = fields.Many2one('js_parameterization.value', string='Mesh', domain=[('fields.name', '=', 'redes_malla')])
-	redes_requisitos = fields.Many2many('js_parameterization.value', 'js_parameterization_field_redes_requisitos_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Requirements', domain=[('fields.name', '=', 'redes_requisitos')])
+	redes_tratamiento = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_redes_tratamiento_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Treatment', domain=[('fields.name', '=', 'redes_tratamiento')])
+	redes_malla = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Mesh', domain=[('fields.name', '=', 'redes_malla')])
+	redes_requisitos = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_redes_requisitos_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Requirements', domain=[('fields.name', '=', 'redes_requisitos')])
 
 	# EQUIPAMIENTO
-	equipamiento_requisitos = fields.Many2many('js_parameterization.value', 'js_parameterization_field_equipamiento_requisitos_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Requirements', domain=[('fields.name', '=', 'equipamiento_requisitos')])
-	equipamiento_seccion_tubo = fields.Many2many('js_parameterization.value', 'js_parameterization_field_equipamiento_seccion_tubo_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Tube section', domain=[('fields.name', '=', 'equipamiento_seccion_tubo')])
-	equipamiento_tratamiento = fields.Many2many('js_parameterization.value', 'js_parameterization_field_equipamiento_tratamiento_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Treatment', domain=[('fields.name', '=', 'equipamiento_tratamiento')])
-	equipamiento_reglamentacion = fields.Many2many('js_parameterization.value', 'js_parameterization_field_equipamiento_reglamentacion_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Regulation', domain=[('fields.name', '=', 'equipamiento_reglamentacion')])
+	equipamiento_requisitos = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_equipamiento_requisitos_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Requirements', domain=[('fields.name', '=', 'equipamiento_requisitos')])
+	equipamiento_seccion_tubo = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_equipamiento_seccion_tubo_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Tube section', domain=[('fields.name', '=', 'equipamiento_seccion_tubo')])
+	equipamiento_tratamiento = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_equipamiento_tratamiento_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Treatment', domain=[('fields.name', '=', 'equipamiento_tratamiento')])
+	equipamiento_reglamentacion = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_equipamiento_reglamentacion_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Regulation', domain=[('fields.name', '=', 'equipamiento_reglamentacion')])
 
 	# TEXTIL
-	textil_tipo_prenda = fields.Many2one('js_parameterization.value', string='Garment type', domain=[('fields.name', '=', 'textil_tipo_prenda')])
-	textil_formato = fields.Many2one('js_parameterization.value', string='Format', domain=[('fields.name', '=', 'textil_formato')])
-	textil_gramaje = fields.Many2one('js_parameterization.value', string='Grammage', domain=[('fields.name', '=', 'textil_gramaje')])
-	textil_acabado = fields.Many2many('js_parameterization.value', 'js_parameterization_field_textil_acabado_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Finish', domain=[('fields.name', '=', 'textil_acabado')])
-	textil_tratamiento = fields.Many2many('js_parameterization.value', 'js_parameterization_field_textil_tratamiento_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Treatment', domain=[('fields.name', '=', 'textil_tratamiento')])
-	textil_diseno = fields.Many2one('js_parameterization.value', string='Design', domain=[('fields.name', '=', 'textil_diseno')])
-	textil_tejido = fields.Many2many('js_parameterization.value', 'js_parameterization_field_textil_tejido_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Tissue', domain=[('fields.name', '=', 'textil_tejido')])
-	textil_bolsilllos = fields.Many2many('js_parameterization.value', 'js_parameterization_field_textil_bolsilllos_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Pockets', domain=[('fields.name', '=', 'textil_bolsilllos')])
-	textil_patron = fields.Many2one('js_parameterization.value', string='Pattern', domain=[('fields.name', '=', 'textil_patron')])
-	textil_tipo_bajo = fields.Many2one('js_parameterization.value', string='Lower finished', domain=[('fields.name', '=', 'textil_tipo_bajo')])
-	textil_tipo_cintura = fields.Many2one('js_parameterization.value', string='Waist type', domain=[('fields.name', '=', 'textil_tipo_cintura')])
-	textil_tipo_manga = fields.Many2one('js_parameterization.value', string='Sleeve type', domain=[('fields.name', '=', 'textil_tipo_manga')])
-	textil_tipo_cuello = fields.Many2one('js_parameterization.value', string='Neck type', domain=[('fields.name', '=', 'textil_tipo_cuello')])
-	textil_tipo_cierre = fields.Many2one('js_parameterization.value', string='Clasp type', domain=[('fields.name', '=', 'textil_tipo_cierre')])
-	textil_logo = fields.Many2one('js_parameterization.value', string='Logo', domain=[('fields.name', '=', 'textil_logo')])
-	textil_interior = fields.Many2one('js_parameterization.value', string='Garment interior', domain=[('fields.name', '=', 'textil_interior')])
+	textil_genero = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Gender', domain=[('fields.name', '=', 'textil_genero')])
+	textil_tipo_prenda = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Garment type', domain=[('fields.name', '=', 'textil_tipo_prenda')])
+	textil_formato = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Format', domain=[('fields.name', '=', 'textil_formato')])
+	textil_gramaje = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Grammage', domain=[('fields.name', '=', 'textil_gramaje')])
+	textil_acabado = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_textil_acabado_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Finish', domain=[('fields.name', '=', 'textil_acabado')])
+	textil_tratamiento = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_textil_tratamiento_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Treatment', domain=[('fields.name', '=', 'textil_tratamiento')])
+	textil_diseno = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Design', domain=[('fields.name', '=', 'textil_diseno')])
+	textil_tejido = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_textil_tejido_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Tissue', domain=[('fields.name', '=', 'textil_tejido')])
+	textil_bolsilllos = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_textil_bolsilllos_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Pockets', domain=[('fields.name', '=', 'textil_bolsilllos')])
+	textil_patron = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Pattern', domain=[('fields.name', '=', 'textil_patron')])
+	textil_tipo_bajo = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Lower finished', domain=[('fields.name', '=', 'textil_tipo_bajo')])
+	textil_tipo_cintura = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Waist type', domain=[('fields.name', '=', 'textil_tipo_cintura')])
+	textil_tipo_manga = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Sleeve type', domain=[('fields.name', '=', 'textil_tipo_manga')])
+	textil_tipo_cuello = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Neck type', domain=[('fields.name', '=', 'textil_tipo_cuello')])
+	textil_tipo_cierre = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Clasp type', domain=[('fields.name', '=', 'textil_tipo_cierre')])
+	textil_logo = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Logo', domain=[('fields.name', '=', 'textil_logo')])
+	textil_interior = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Garment interior', domain=[('fields.name', '=', 'textil_interior')])
 
 	# CALZADO
-	calzado_tipo = fields.Many2one('js_parameterization.value', string='Type', domain=[('fields.name', '=', 'calzado_tipo')])
-	calzado_suela = fields.Many2one('js_parameterization.value', string='Sole', domain=[('fields.name', '=', 'calzado_suela')])
-	calzado_empeine = fields.Many2one('js_parameterization.value', string='Instep', domain=[('fields.name', '=', 'calzado_empeine')])
-	calzado_forro_y_plantilla = fields.Many2one('js_parameterization.value', string='Lining and insole', domain=[('fields.name', '=', 'calzado_forro_y_plantilla')])
-	calzado_cierre = fields.Many2one('js_parameterization.value', string='Lock', domain=[('fields.name', '=', 'calzado_cierre')])
+	calzado_genero = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Gender', domain=[('fields.name', '=', 'calzado_genero')])
+	calzado_tipo = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Type', domain=[('fields.name', '=', 'calzado_tipo')])
+	calzado_suela = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Sole', domain=[('fields.name', '=', 'calzado_suela')])
+	calzado_empeine = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Instep', domain=[('fields.name', '=', 'calzado_empeine')])
+	calzado_forro_y_plantilla = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Lining and insole', domain=[('fields.name', '=', 'calzado_forro_y_plantilla')])
+	calzado_cierre = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Lock', domain=[('fields.name', '=', 'calzado_cierre')])
 
 	# RAQUETAS TENIS MESA
-	raqueta_tenis_mesa_caras = fields.Many2many('js_parameterization.value', 'js_parameterization_field_raqueta_tenis_mesa_caras_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Type of faces', domain=[('fields.name', '=', 'raqueta_tenis_mesa_caras')])
-	raqueta_tenis_mesa_num_laminas = fields.Many2one('js_parameterization.value', string='No. of sheets', domain=[('fields.name', '=', 'raqueta_tenis_mesa_num_laminas')])
-	raqueta_tenis_mesa_grosor_lamina = fields.Many2one('js_parameterization.value', string='Sheet thickness', domain=[('fields.name', '=', 'raqueta_tenis_mesa_grosor_lamina')])
-	raqueta_tenis_mesa_calidad = fields.Many2one('js_parameterization.value', string='Quality', domain=[('fields.name', '=', 'raqueta_tenis_mesa_calidad')])
+	raqueta_tenis_mesa_caras = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_raqueta_tenis_mesa_caras_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Type of faces', domain=[('fields.name', '=', 'raqueta_tenis_mesa_caras')])
+	raqueta_tenis_mesa_num_laminas = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='No. of sheets', domain=[('fields.name', '=', 'raqueta_tenis_mesa_num_laminas')])
+	raqueta_tenis_mesa_grosor_lamina = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Sheet thickness', domain=[('fields.name', '=', 'raqueta_tenis_mesa_grosor_lamina')])
+	raqueta_tenis_mesa_calidad = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Quality', domain=[('fields.name', '=', 'raqueta_tenis_mesa_calidad')])
 
 	@api.multi
 	def name_get(self):
@@ -149,12 +148,24 @@ class ProductParameterization(models.Model):
 
 	@api.model
 	def fields_get(self, allfields=None, attributes=None):
-	    res = super(ProductParameterization, self).fields_get(allfields, attributes=attributes)
-	    # Hide this fields on search filters
-	    for field in ['create_date', 'create_uid', 'write_date', 'write_uid', 'product_tmpl_id', 'parameterization_template']:
-	        if res.get(field):
-	           res.get(field)['searchable'] = False
-	    return res
+		res = super(ProductParameterization, self).fields_get(allfields, attributes=attributes)
+
+		# Add group name on each field name
+		if constants.PARAM_TEMPLATE_FIELD in res:
+			for group, fields in self.env[constants.PARAMETERIZATION_FIELDS].parameterization_fields_get():
+				param_tmpls = res[constants.PARAM_TEMPLATE_FIELD]['selection']
+				group_name = next((t[1] for t in param_tmpls if t[0] == group), None)
+				if group_name:
+					for field_name in fields:
+						field = res[field_name]
+						field['string'] = '[%s] %s' % (group_name, field['string'])
+
+		# Hide this fields on search filters
+		for field in ['create_date', 'create_uid', 'write_date', 'write_uid', 'product_tmpl_id', 'parameterization_template']:
+			if res.get(field):
+			   res.get(field)['searchable'] = False
+
+		return res
 
 	@api.model
 	def get_field_id(self, field_name):

@@ -80,7 +80,7 @@
                             </group>
 
                             <group string="Textil" attrs="{ 'invisible': [('parameterization_template', '!=', 6)] }">
-                                <field name="genero" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_genero" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="textil_tipo_prenda" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="textil_formato" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="textil_gramaje" options="{ 'no_open': True, 'no_create': True }"/>
@@ -100,7 +100,7 @@
                             </group>
 
                             <group string="Footwear" attrs="{ 'invisible': [('parameterization_template', '!=', 7)] }">
-                                <field name="genero" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="calzado_genero" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="calzado_tipo" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="calzado_suela" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="calzado_empeine" options="{ 'no_open': True, 'no_create': True }"/>

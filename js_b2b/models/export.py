@@ -282,7 +282,7 @@ class B2BExport(models.Model):
 		
 		# Send to JSync
 		if stock:
-			mode = 'replace' if all_products == True else 'update'
+			mode = 'replace' if export_all == True else 'update'
 			self.write_to_log('%s -> %s' % (mode, str(stock)), 'product_stock', "a+")
 			self.send_packet('product_stock', stock, mode)
 
