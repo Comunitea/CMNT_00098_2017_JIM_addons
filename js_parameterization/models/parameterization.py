@@ -62,7 +62,6 @@ class ProductParameterization(models.Model):
 	composicion_material = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_composicion_material_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Composition/material', domain=[('fields.name', '=', 'composicion_material')])
 	certificaciones_ensayos = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_certificaciones_ensayos_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Certifications/tests', domain=[('fields.name', '=', 'certificaciones_ensayos')])
 	coleccion = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Collection', domain=[('fields.name', '=', 'coleccion')])
-	genero = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Gender', domain=[('fields.name', '=', 'calzado_genero')])
 
 	# PALAS
 	pala_construccion = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Structure', domain=[('fields.name', '=', 'pala_construccion')])

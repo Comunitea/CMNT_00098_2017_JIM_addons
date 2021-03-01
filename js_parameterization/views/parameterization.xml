@@ -29,7 +29,6 @@
                                 <field name="composicion_material" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                                 <field name="certificaciones_ensayos" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                                 <field name="coleccion" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="genero" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
                             <group string="Padel Racket" attrs="{ 'invisible': [('parameterization_template', '!=', 1)] }">
