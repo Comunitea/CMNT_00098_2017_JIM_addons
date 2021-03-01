@@ -6,7 +6,7 @@ from ...js_b2b.base.helper import JSync
 from .. import constants
 
 class ParameterizationField(models.TransientModel):
-	_name = 'js_parameterization.field'
+	_name = constants.PARAMETERIZATION_FIELDS
 
 	@api.multi
 	def set_domain(self):
@@ -26,7 +26,7 @@ class ParameterizationField(models.TransientModel):
 	#	""", (field_name, field_name)).commit()
 
 	@api.model
-	def __parameterization_fields(self):
+	def parameterization_fields_get(self):
 		fields_dict = dict()
 		view_id = self.env.ref(constants.PRODUCT_PARAM_FORM_ID)
 
@@ -72,7 +72,7 @@ class ParameterizationField(models.TransientModel):
 	@api.multi
 	def send(self):
 		selected_fields_list = self.parameterization_fields.mapped('name')
-		for group, fields in self.__parameterization_fields():
+		for group, fields in self.parameterization_fields_get():
 			for field_name in fields:
 				if field_name in selected_fields_list:
 					field = self.parameterization_fields.filtered(lambda r: r.name == field_name)
@@ -93,5 +93,5 @@ class ParameterizationField(models.TransientModel):
 					}
 
 					if packet.send() and self.action == 'DELETE':
-						for value in self.env['js_parameterization.value'].search([('fields', 'in', field.id)]):
+						for value in self.env[constants.PARAMETERIZATION_VALUES].search([('fields', 'in', field.id)]):
 							value.fields = [(3, field.id)]

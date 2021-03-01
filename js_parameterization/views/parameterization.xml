@@ -29,6 +29,7 @@
                                 <field name="composicion_material" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                                 <field name="certificaciones_ensayos" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                                 <field name="coleccion" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="genero" options="{ 'no_open': True, 'no_create': True }"/>
                             </group>
 
                             <group string="Padel Racket" attrs="{ 'invisible': [('parameterization_template', '!=', 1)] }">
@@ -80,7 +81,7 @@
                             </group>
 
                             <group string="Textil" attrs="{ 'invisible': [('parameterization_template', '!=', 6)] }">
-                                <field name="genero" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_genero" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="textil_tipo_prenda" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="textil_formato" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="textil_gramaje" options="{ 'no_open': True, 'no_create': True }"/>
@@ -100,7 +101,7 @@
                             </group>
 
                             <group string="Footwear" attrs="{ 'invisible': [('parameterization_template', '!=', 7)] }">
-                                <field name="genero" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="calzado_genero" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="calzado_tipo" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="calzado_suela" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="calzado_empeine" options="{ 'no_open': True, 'no_create': True }"/>
