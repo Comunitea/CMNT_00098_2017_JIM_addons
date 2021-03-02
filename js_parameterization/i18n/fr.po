@@ -186,7 +186,8 @@ msgid "Garment type"
 msgstr "Type de vêtement"
 
 #. module: js_parameterization
-#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_genero
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_textil_genero
+#: model:ir.model.fields,field_description:js_parameterization.field_product_parameterization_calzado_genero
 msgid "Gender"
 msgstr "Sexe"
 
