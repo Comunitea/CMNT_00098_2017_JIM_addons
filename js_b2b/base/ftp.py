@@ -52,7 +52,7 @@ def _redundant_check(filename):
 		if response.status_code == 200:
 			return True
 	except Exception as e:
-		_logger.error('Redundant Check Error: %s' % e)
+		_logger.error('Redundant Check Error: %s', e)
 	return False
 
 def save_file(filename):
@@ -71,10 +71,10 @@ def save_file(filename):
 			# Check if file exits
 			# This should not be needed but sometimes wrong images are saved
 			if _redundant_check(filename):
-				_logger.info('File [%s] saved!' % filename)
+				_logger.info('File [%s] saved!', filename)
 				return True
 		except (all_errors, Exception) as e:
-			_logger.error('File Error: %s' % e)
+			_logger.error('File Error: %s', e)
 	return False
 
 def save_base64(base64_str):
@@ -97,10 +97,10 @@ def save_base64(base64_str):
 			# Check if file exits
 			# This should not be needed but sometimes wrong images are saved
 			if _redundant_check(filename):
-				_logger.info('File stream [%s] saved!' % filename)
+				_logger.info('File stream [%s] saved!', filename)
 				return filename
 		except (all_errors, Exception) as e:
-			_logger.error('Bytes Error: %s' % e)
+			_logger.error('Bytes Error: %s', e)
 	return False
 
 def delete_file(filename):
@@ -114,8 +114,8 @@ def delete_file(filename):
 			ftps = _ftp_connect()
 			ftps.delete(filename)
 			ftps.quit()
-			_logger.info('File [%s] deleted!' % filename)
+			_logger.info('File [%s] deleted!', filename)
 			return True
 		except all_errors as e:
-			_logger.error('Delete Error: %s' % e)
+			_logger.error('Delete Error: %s', e)
 	return False

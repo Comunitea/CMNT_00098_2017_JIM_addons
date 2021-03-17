@@ -200,7 +200,7 @@ class BaseB2B(models.AbstractModel):
 					elif (item.name not in conf_items_before.keys() and item.name in conf_items_after.keys()) or not self.on_jsync():
 						b2b['crud_mode'] = 'create'
 
-				_logger.info("Paquete para [%s,%i] en modo [%s]" % (self._name, self.id, b2b['crud_mode']))
+				_logger.info("Paquete para [%s,%i] en modo [%s]", self._name, self.id, b2b['crud_mode'])
 
 				# Creamos un paquete
 				packet = JSync(self.env, settings=jsync_conf)
@@ -244,7 +244,7 @@ class BaseB2B(models.AbstractModel):
 					if record_on_jsync and packet.mode == 'update':
 						# Mantain last write date on export table
 						packet.update_b2b_export_table(record_on_jsync)
-						_logger.info("El registro '%s,%s' no es notificable pero se actualizó la tabla de exportación!" % (self._name, self.id))
+						_logger.info("El registro '%s,%s' no es notificable pero se actualizó la tabla de exportación!", self._name, self.id)
 
 		# Paquetes a enviar
 		return packets
