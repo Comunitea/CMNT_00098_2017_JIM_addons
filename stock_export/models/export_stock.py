@@ -127,8 +127,8 @@ class StockLocation(models.Model):
             domain = [('location_id', 'child_of', location_ids.ids)]
             res = self.env['stock.quant'].read_group(domain, ['qty', 'product_id'], ['product_id'])
             for res_id in res:
-                if res_id['qty'] >= 0:
-                    product_ids.append(res_id['product_id'][0])
+                # if res_id['qty'] >= 0:
+                product_ids.append(res_id['product_id'][0])
             if product_ids:
                 self.env['exportxml.object'].insert_product_ids(self.browse(product_ids), self._name, bom=False)
 
@@ -431,7 +431,7 @@ class DeletedObject(models.Model):
             print ("-- Evaluando de {} a {}".format(cont-inc, cont)); mid_time = time.time()
             res += [{'variant_id': x[field_id] if x.attribute_names else None,
                      'product_id': x['product_tmpl_id']['id'],
-                     'stock': x[stock_field] if x[stock_field] > 0 else 0} for x in product_ids[cont-inc: cont] if x['website_published'] == True]
+                     'stock': x[stock_field]} for x in product_ids[cont-inc: cont] if x['website_published'] == True]
             print ("-- Evaluado. Tiempo: {} ".format(time.time() - mid_time))
             mid_time = time.time()
 

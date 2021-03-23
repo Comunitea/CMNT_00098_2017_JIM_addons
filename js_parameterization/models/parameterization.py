@@ -48,7 +48,7 @@ class ProductParameterization(models.Model):
 	_description = "Product Parameterization"
 	_sql_constraints = [('parameterization_product_unique', 'unique(product_tmpl_id)', 'Product must be unique in parameterization!')]
 
-	product_tmpl_id = fields.Many2one('product.template', string='Related Product', required=True, ondelete='cascade')
+	product_tmpl_id = fields.Many2one('product.template', string='Related Product', required=True, ondelete='cascade', index=True)
 	parameterization_template = fields.Selection(constants.TEMPLATES_LIST, required=False)
 	percent_filled = fields.Integer('Parameterization Percent Completed', related='product_tmpl_id.parameterization_percent_filled', store=False)
 
@@ -147,24 +147,26 @@ class ProductParameterization(models.Model):
 		return res
 
 	@api.model
-	def fields_get(self, allfields=None, attributes=None):
+	def fields_get(self, allfields=None, attributes=None, with_groups=False):
 		res = super(ProductParameterization, self).fields_get(allfields, attributes=attributes)
-
-		# Add group name on each field name
-		if constants.PARAM_TEMPLATE_FIELD in res:
-			for group, fields in self.env[constants.PARAMETERIZATION_FIELDS].parameterization_fields_get():
-				param_tmpls = res[constants.PARAM_TEMPLATE_FIELD]['selection']
-				group_name = next((t[1] for t in param_tmpls if t[0] == group), None)
-				if group_name:
-					for field_name in fields:
-						field = res[field_name]
-						field['string'] = '[%s] %s' % (group_name, field['string'])
-
 		# Hide this fields on search filters
 		for field in ['create_date', 'create_uid', 'write_date', 'write_uid', 'product_tmpl_id', 'parameterization_template']:
 			if res.get(field):
 			   res.get(field)['searchable'] = False
+		return res
 
+	@api.model
+	def load_views(self, views, options=None):
+		res = super(ProductParameterization, self).load_views(views, options=options)
+		# Add group name on each field name
+		if constants.PARAM_TEMPLATE_FIELD in res['fields']:
+			param_tmpls = res['fields'][constants.PARAM_TEMPLATE_FIELD]['selection']
+			for group, fields in self.env[constants.PARAMETERIZATION_FIELDS].parameterization_fields_get():
+				group_name = next((t[1] for t in param_tmpls if t[0] == group), None)
+				if group_name:
+					for field_name in fields:
+						field_metadata = res['fields'][field_name]
+						field_metadata['string'] = '[%s] %s' % (group_name, field_metadata['string'])
 		return res
 
 	@api.model
