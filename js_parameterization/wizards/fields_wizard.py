@@ -18,13 +18,6 @@ class ParameterizationField(models.TransientModel):
 	parameterization_fields = fields.Many2many('ir.model.fields', 'ir_model_field_js_field_wizard_rel', 'field_wizard_id', 'ir_model_field_id', domain=set_domain, required=True)
 	action = fields.Selection([('CREATE', 'CREATE'), ('UPDATE', 'UPDATE'), ('DELETE', 'DELETE')], required=True, default='CREATE')
 
-	#@api.model
-	#def __remove_field(self, field_name):
-	#	self.env.cr.execute("""
-	#		DELETE FROM ir_model_fields WHERE model = constants.PRODUCT_PARAMETERIZATION AND name=%s; 
-	#		ALTER TABLE product_parameterization DROP COLUMN %s;
-	#	""", (field_name, field_name)).commit()
-
 	@api.model
 	def parameterization_fields_get(self):
 		fields_dict = dict()
@@ -69,6 +62,22 @@ class ParameterizationField(models.TransientModel):
 				}
 			} 
 
+	@api.model
+	def _send(self, action, id, name=None):
+		packet = JSync(self.env)
+		packet.id = id
+		packet.model = 'ir.model_fields'
+		packet.name = 'parameterization_field'
+		packet.mode = self.action.lower()
+		packet.data = { 
+			'jim_id': id, 
+			'name': name
+		}
+
+		if packet.send() and self.action == 'DELETE':
+			for value in self.env[constants.PARAMETERIZATION_VALUES].search([('fields', 'in', id)]):
+				value.fields = [(3, id)]
+
 	@api.multi
 	def send(self):
 		selected_fields_list = self.parameterization_fields.mapped('name')
@@ -81,17 +90,4 @@ class ParameterizationField(models.TransientModel):
 					group_names = self.__template_translations(group)
 					field_names = field.get_field_translations('field_description')
 					merged_names = { k: '[%s] %s' % (group_names.get(k, 'Generic'), field_names[k]) if group else field_names[k] for k in field_names.keys() }
-
-					packet = JSync(self.env)
-					packet.id = field.id
-					packet.model = 'ir.model_fields'
-					packet.name = 'parameterization_field'
-					packet.mode = self.action.lower()
-					packet.data = { 
-						'jim_id': field.id, 
-						'name': merged_names
-					}
-
-					if packet.send() and self.action == 'DELETE':
-						for value in self.env[constants.PARAMETERIZATION_VALUES].search([('fields', 'in', field.id)]):
-							value.fields = [(3, field.id)]
+					self._send(self.action, field.id, merged_names)
