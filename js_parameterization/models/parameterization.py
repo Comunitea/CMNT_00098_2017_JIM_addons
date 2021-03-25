@@ -115,10 +115,10 @@ class ProductParameterization(models.Model):
 	textil_diseno = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Design', domain=[('fields.name', '=', 'textil_diseno')])
 	textil_tejido = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_textil_tejido_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Tissue', domain=[('fields.name', '=', 'textil_tejido')])
 	textil_bolsilllos = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_textil_bolsilllos_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Pockets', domain=[('fields.name', '=', 'textil_bolsilllos')])
-	textil_patron = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Pattern', domain=[('fields.name', '=', 'textil_patron')])
+	textil_patron = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_textil_patron_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Pattern', domain=[('fields.name', '=', 'textil_patron')])
 	textil_tipo_bajo = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Lower finished', domain=[('fields.name', '=', 'textil_tipo_bajo')])
 	textil_tipo_cintura = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Waist type', domain=[('fields.name', '=', 'textil_tipo_cintura')])
-	textil_tipo_manga = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Sleeve type', domain=[('fields.name', '=', 'textil_tipo_manga')])
+	textil_tipo_manga = fields.Many2many(constants.PARAMETERIZATION_VALUES, 'js_parameterization_field_textil_tipo_manga_rel', 'js_product_parameterization_id', 'js_parameterization_value_id', string='Sleeve type', domain=[('fields.name', '=', 'textil_tipo_manga')])
 	textil_tipo_cuello = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Neck type', domain=[('fields.name', '=', 'textil_tipo_cuello')])
 	textil_tipo_cierre = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Clasp type', domain=[('fields.name', '=', 'textil_tipo_cierre')])
 	textil_logo = fields.Many2one(constants.PARAMETERIZATION_VALUES, string='Logo', domain=[('fields.name', '=', 'textil_logo')])
@@ -159,7 +159,7 @@ class ProductParameterization(models.Model):
 	def load_views(self, views, options=None):
 		res = super(ProductParameterization, self).load_views(views, options=options)
 		# Add group name on each field name
-		if constants.PARAM_TEMPLATE_FIELD in res['fields']:
+		if constants.PARAM_TEMPLATE_FIELD in res.get('fields', list()):
 			param_tmpls = res['fields'][constants.PARAM_TEMPLATE_FIELD]['selection']
 			for group, fields in self.env[constants.PARAMETERIZATION_FIELDS].parameterization_fields_get():
 				group_name = next((t[1] for t in param_tmpls if t[0] == group), None)
