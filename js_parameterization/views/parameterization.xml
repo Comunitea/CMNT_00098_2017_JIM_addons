@@ -86,12 +86,12 @@
                                 <field name="textil_gramaje" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="textil_acabado" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                                 <field name="textil_tratamiento" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="textil_diseno" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_diseno" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                                 <field name="textil_tejido" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                                 <field name="textil_bolsilllos" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="textil_patron" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
-                                <field name="textil_tipo_bajo" options="{ 'no_open': True, 'no_create': True }"/>
-                                <field name="textil_tipo_cintura" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_patron" options="{ 'no_open': True, 'no_create': True }"/>
+                                <field name="textil_tipo_bajo" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
+                                <field name="textil_tipo_cintura" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                                 <field name="textil_tipo_manga" options="{ 'no_open': True, 'no_create': True }" widget="js_many2many_tags"/>
                                 <field name="textil_tipo_cuello" options="{ 'no_open': True, 'no_create': True }"/>
                                 <field name="textil_tipo_cierre" options="{ 'no_open': True, 'no_create': True }"/>
@@ -228,7 +228,6 @@
         <field name="arch" type="xml">
             <tree string="parameters">
                 <field name="name"/>
-                <field name="fields"/>
             </tree>
         </field>
     </record>
