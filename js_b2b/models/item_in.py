@@ -11,6 +11,7 @@ _logger = logging.getLogger('B2B-IN')
 # 610 CRUD mode don't exists
 # 620 Item configuration error
 # 630 Data error
+# 640 Company error
 
 class B2bItemsIn(models.Model):
 	_name = 'b2b.item.in'
@@ -114,7 +115,7 @@ class B2bItemsIn(models.Model):
 			# Change current company (mandatory)
 			company_id = data.get('company_id', 1)
 			if not self.__change_active_company(company_id):
-				return False
+				return '[640] Company error!'
 				
 			# Process item based on config
 			item = self.search([('name', '=', object_name), ('active', '=', True)], limit=1)
