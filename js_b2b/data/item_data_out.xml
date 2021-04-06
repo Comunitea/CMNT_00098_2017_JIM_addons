@@ -640,6 +640,7 @@ def get_data(self, action):
     'name', 
     'date_order', 
     'amount_total',
+    'origin',
     'state'
 )
 
@@ -648,8 +649,10 @@ def is_notifiable(self, action, vals):
         and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
         and self.date_order >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
         
-    if notifiable and b2b['crud_mode'] == 'update' and vals.get('state', 'cancel') != 'cancel' and len(vals.keys()) == 1:
-        b2b['logger'].critical("------> [%s] PEDIDO NOTIFICABLE PERO NO SE ENVIA CAMBIO DE ESTADO A: %s", self.id, vals.get('state'))
+    new_state = vals.get('state', 'cancel')
+    # Sólo se notifican estados 'pending', 'sale' y 'cancel'
+    if notifiable and b2b['crud_mode'] == 'update' and new_state != 'cancel' and len(vals.keys()) == 1 and new_state not in ('pending', 'sale'):
+        b2b['logger'].critical("------> [%s] PEDIDO NOTIFICABLE PERO NO SE ENVIA CAMBIO DE ESTADO A: %s", self.id, new_state)
         notifiable = False
         
     return notifiable
@@ -673,7 +676,9 @@ def get_data(self, action):
             'name': self.name, 
             'date': self.date_order, 
             'total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
-            'pdf': self.get_base64_report_pdf('sale.report_saleorder')
+            'pdf': self.get_base64_report_pdf('sale.report_saleorder'),
+            'origin': self.origin,
+            'state': self.state
         })
         
     return doc_data
