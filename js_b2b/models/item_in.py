@@ -160,7 +160,7 @@ class B2bItemsIn(models.Model):
 				else:
 					return '[610] CRUD mode %s not found for item %s!' % (item_action, object_name)
 
-			else:
+			elif not item:
 				return '[600] Item %s not found!' % object_name
 
 		return '[500] Data format error!'

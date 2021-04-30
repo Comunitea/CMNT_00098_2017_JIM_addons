@@ -640,18 +640,18 @@ def get_data(self, action):
     'name', 
     'date_order', 
     'amount_total',
-    'origin',
+    'origin', 
     'state'
 )
 
 def is_notifiable(self, action, vals):
-    notifiable = (self.state not in ('draft', 'proforma', 'cancel') # Y el estado no es borrador, proforma o cancelado
+    notifiable = (self.state not in ('draft', 'proforma') # Y el estado no es borrador, proforma o cancelado
         and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
         and self.date_order >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
         
-    new_state = vals.get('state', 'cancel')
     # Sólo se notifican estados 'pending', 'sale' y 'cancel'
-    if notifiable and b2b['crud_mode'] == 'update' and new_state != 'cancel' and len(vals.keys()) == 1 and new_state not in ('pending', 'sale'):
+    new_state = vals.get('state')
+    if notifiable and b2b['crud_mode'] == 'update' and len(vals.keys()) == 1 and vals.get('state') not in ('pending', 'sale', 'cancel'):
         b2b['logger'].critical("------> [%s] PEDIDO NOTIFICABLE PERO NO SE ENVIA CAMBIO DE ESTADO A: %s", self.id, new_state)
         notifiable = False
         
@@ -661,7 +661,7 @@ def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
 
 def get_data(self, action):
-    doc_data = { 'jim_id': self.id }
+    doc_data = { 'jim_id': self.id, 'origin': self.origin or None }
     
     # If not a delete mode
     if b2b['crud_mode'] != 'delete':
@@ -677,7 +677,6 @@ def get_data(self, action):
             'date': self.date_order, 
             'total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
             'pdf': self.get_base64_report_pdf('sale.report_saleorder'),
-            'origin': self.origin,
             'state': self.state
         })
         
