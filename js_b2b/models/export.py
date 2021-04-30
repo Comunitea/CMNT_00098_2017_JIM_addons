@@ -207,14 +207,23 @@ class B2BExport(models.Model):
 
 	def b2b_customers_prices(self, lines_filter=None, operation=None, templates_filter=None, variant=None):
 		_logger.info('[b2b_customers_prices] INICIO!')
+		now_str = str(datetime.now())
 		prices = list()
 
 		# Out prices
 		prices = list()
 		# Get decimals number
 		prices_precision = self.env['decimal.precision'].precision_get('Product Price')
-		# Default filter
-		prices_filter = []
+		# Default dates filter
+		prices_filter = [
+			"&",
+			"|",
+			('date_start', '=', False),
+			('date_start', '<=', now_str),
+			"|",
+			('date_end', '=', False),
+			('date_end', '>=', now_str)
+		]
 
 		# Price lines filter
 		if lines_filter and type(lines_filter) is list:
@@ -249,7 +258,7 @@ class B2BExport(models.Model):
 					
 					# Add price
 					if not price_found and (operation == 'delete' or price_line['price']):
-						prices.append({ 
+						prices.append({
 							'company_id': price_line['company_id'][0] if price_line['company_id'] else None,
 							'customer_id': price_line['partner_id'][0],
 							'product_id': template_id,
