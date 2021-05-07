@@ -81,7 +81,7 @@ class WizardValuationHistory(models.TransientModel):
                 SUM(quantity_imp) AS CantidadTotal, SUM(price_subtotal_imp) AS 
                 ImporteTotal,
                 CASE
-                WHEN AVG(quantity_imp) = 0 THEN NULL
+                WHEN sum(quantity_imp) = 0 THEN NULL
                 ELSE ROUND(CAST(SUM(arancel_linea) / sum(quantity_imp) AS numeric), 2)
                 END AS Arancel,
                 CASE
@@ -89,9 +89,8 @@ class WizardValuationHistory(models.TransientModel):
                 ELSE SUM(price_subtotal_imp)/SUM(quantity_imp)
                 END AS PrecioUnitario,
                 CASE
-                WHEN AVG(price_subtotal_imp) = 0 THEN NULL
+                WHEN sum(quantity_imp) = 0 THEN NULL
                 ELSE ROUND( cast((sum(arancel_percentage_linea) / sum(quantity_imp))as numeric ), 2)
-            
                 END AS PorcentajeArancel,
                 AVG(delivery) as delivery, AVG(price_unit) as price_unit,
                 count(tb3.line_id) as num_lineas
