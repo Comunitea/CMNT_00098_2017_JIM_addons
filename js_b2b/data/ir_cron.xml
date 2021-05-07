@@ -3,7 +3,7 @@
     <data noupdate="1">
 
         <record model="ir.cron" id="b2b_stock_cron">
-            <field name='name'>B2B Stock</field>
+            <field name='name'>B2B Stock Updates</field>
             <field name='interval_number'>15</field>
             <field name='interval_type'>minutes</field>
             <field name="numbercall">-1</field>
@@ -11,6 +11,18 @@
             <field name="model">b2b.export</field>
             <field name="function">b2b_products_stock</field>
             <field name="args">(None, None, None, None, None)</field>
+        </record>
+
+        <record model="ir.cron" id="b2b_stock_cron">
+            <field name='name'>B2B All Stock</field>
+            <field name='interval_number'>1</field>
+            <field name='interval_type'>days</field>
+            <field name='nextcall' eval="datetime.now(pytz.timezone('Europe/Madrid')).strftime('%Y-%m-%d 00:00:00')"></field>
+            <field name="numbercall">-1</field>
+            <field name="active">True</field>
+            <field name="model">b2b.export</field>
+            <field name="function">b2b_products_stock</field>
+            <field name="args">(None, None, True, None, None)</field>
         </record>
 
         <record model="ir.cron" id="b2b_pricelist_prices_cron">

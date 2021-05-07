@@ -3,9 +3,6 @@ from odoo import api, fields, models
 from ..base.helper import JSync
 from os import path, pardir
 from datetime import datetime
-from sys import getsizeof
-from math import ceil
-import psycopg2.extras
 import logging
 
 _logger = logging.getLogger('B2B-EXPORT')
@@ -59,17 +56,6 @@ class B2BExport(models.Model):
 			) \
 			GROUP BY product_tmpl_id")
 		return tuple(r[0] for r in self.env.cr.fetchall())
-
-	# ------------------------------------ STATIC METHODS ------------------------------------
-
-	@staticmethod
-	def is_time_between(begin_time, end_time, check_time=None):
-		# If check time is not given, default to current UTC time
-		check_time = check_time or datetime.now().strftime("%H:%M:%S")
-		if begin_time < end_time:
-			return check_time >= begin_time and check_time <= end_time
-		else: # crosses midnight
-			return check_time >= begin_time or check_time <= end_time
 
 	# ------------------------------------ PUBLIC METHODS ------------------------------------
 
@@ -209,26 +195,35 @@ class B2BExport(models.Model):
 										'price': price
 									})
 		except Exception as e:
-			_logger.exception('[b2b_customers_prices] ERROR EN EL BUCLE!')
+			_logger.exception('[b2b_pricelists_prices] ERROR EN EL BUCLE!')
 		finally:
 			_logger.info('[b2b_pricelists_prices] FIN!')
 
 		# Send to JSync
 		if prices:
-			self.write_to_log(str(prices), 'pricelist_item', "a+")
 			mode = 'update' if (templates_filter or pricelists_filter) else 'replace'
+			self.write_to_log('%s -> %s' % (mode, str(prices)), 'pricelist_item', "a+")
 			self.send_packet('pricelist_item', prices, mode)
 
 	def b2b_customers_prices(self, lines_filter=None, operation=None, templates_filter=None, variant=None):
 		_logger.info('[b2b_customers_prices] INICIO!')
+		now_str = str(datetime.now())
 		prices = list()
 
 		# Out prices
 		prices = list()
 		# Get decimals number
 		prices_precision = self.env['decimal.precision'].precision_get('Product Price')
-		# Default filter
-		prices_filter = []
+		# Default dates filter
+		prices_filter = [
+			"&",
+			"|",
+			('date_start', '=', False),
+			('date_start', '<=', now_str),
+			"|",
+			('date_end', '=', False),
+			('date_end', '>=', now_str)
+		]
 
 		# Price lines filter
 		if lines_filter and type(lines_filter) is list:
@@ -263,7 +258,7 @@ class B2BExport(models.Model):
 					
 					# Add price
 					if not price_found and (operation == 'delete' or price_line['price']):
-						prices.append({ 
+						prices.append({
 							'company_id': price_line['company_id'][0] if price_line['company_id'] else None,
 							'customer_id': price_line['partner_id'][0],
 							'product_id': template_id,
@@ -279,8 +274,8 @@ class B2BExport(models.Model):
 
 		# Send to JSync
 		if prices:
-			self.write_to_log(str(prices), 'customer_price', "a+")
 			mode = 'update' if (lines_filter or templates_filter) else 'replace'
+			self.write_to_log('%s -> %s' % (mode, str(prices)), 'customer_price', "a+")
 			self.send_packet('customer_price', prices, mode)
 
 	def b2b_products_stock(self, test_limit=None, from_date=None, export_all=None, templates_filter=None, variant=None):
@@ -288,19 +283,16 @@ class B2BExport(models.Model):
 		stock = list()
 
 		try:
-			# If actual time is between 00:30 & 00:45 set "all" to True
-			all_products = export_all or B2BExport.is_time_between('00:30:00', '00:45:00')
-			_logger.info('¿STOCK DE TODOS? %s' % all_products)
-			stock = self.env['exportxml.object'].compute_product_ids(all=all_products, from_time=from_date, limit=test_limit, inc=1000)
+			stock = self.env['exportxml.object'].compute_product_ids(all=export_all, from_time=from_date, limit=test_limit, inc=1000)
 		except Exception as e:
-			_logger.exception('[b2b_customers_prices] ERROR EN EL BUCLE!')
+			_logger.exception('[b2b_products_stock] ERROR EN EL BUCLE!')
 		finally:
 			_logger.info('[b2b_products_stock] FIN!')
 		
 		# Send to JSync
 		if stock:
-			self.write_to_log(str(stock), 'product_stock', "a+")
-			mode = 'replace' if all_products == True else 'update'
+			mode = 'replace' if export_all == True else 'update'
+			self.write_to_log('%s -> %s' % (mode, str(stock)), 'product_stock', "a+")
 			self.send_packet('product_stock', stock, mode)
 
 	def b2b_delete_old_supplies(self):
@@ -311,7 +303,7 @@ class B2BExport(models.Model):
 			for record in self.env['stock.move'].search([('id', 'in', supply_plan_ids), ('date_expected', '<', str(datetime.now()))]):
 				record.b2b_record('delete', False)
 		except Exception as e:
-			_logger.exception('[b2b_customers_prices] ERROR EN EL BUCLE!')
+			_logger.exception('[b2b_delete_old_supplies] ERROR EN EL BUCLE!')
 		finally:
 			_logger.info('[b2b_delete_old_supplies] FIN!')
 

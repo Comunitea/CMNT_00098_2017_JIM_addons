@@ -31,12 +31,12 @@ class BaseB2B(models.AbstractModel):
 		origin = self.with_context(lang='en_US')
 		# Field name search string
 		field_name = ','.join([self._name, field])
-		# Search active langs but skip 'es'
+		# Search active langs but skip 'es' we use 'es_ES' instead
 		configured_langs = self.env['res.lang'].search([('active', '=', True), ('translatable', '=', True), ('code', '!=', 'es')])
 		# Default values
 		translations = { lang.code.replace('_', '-'):origin[field] or None for lang in configured_langs }
 		# Query to get translations
-		self._cr.execute("SELECT lang, value FROM ir_translation WHERE type='model' AND name=%s AND res_id=%s", (field_name, self.id))
+		self._cr.execute("SELECT lang, value FROM ir_translation WHERE name=%s AND res_id=%s", (field_name, self.id))
 		# Update translations dict
 		translations.update({ lang_code.replace('_', '-'):field_translation for lang_code, field_translation in self._cr.fetchall() if lang_code.replace('_', '-') in translations })
 		# Return lang -> str dict
@@ -100,7 +100,7 @@ class BaseB2B(models.AbstractModel):
 		self.ensure_one()
 		res_id = '%s,%s' % (self._name, self.id)
 		export_found = self.env['b2b.export'].search([('res_id', '=', res_id)], limit=1)
-		return True if export_found else False
+		return export_found.id if export_found else False
 
 	@api.multi
 	def is_notifiable_check(self, mode='create', vals=None):
@@ -149,8 +149,7 @@ class BaseB2B(models.AbstractModel):
 					else:
 
 						# Si watched_fields es None o vals está vacío
-						# items_dict.update({ item.name: change_allowed })
-						items_dict.update({ item.name: True })
+						items_dict.update({ item.name: bool(mode in ('create', 'delete') or vals) })
 
 		# All notifiable items
 		return items_dict
@@ -180,15 +179,17 @@ class BaseB2B(models.AbstractModel):
 
 			jsync_conf = self.env['b2b.settings'].get_default_params()
 			importing_file = self.env.context.get('import_file', False)
+			_logger.info("Configuración aplicable: %s", applicable_configs)
 
 			for item in b2b_config:
-				# Configuration eval
+
+				# Evaluamos la configuración
 				b2b = item.evaluate(mode, jsync_conf)
 				b2b['min_docs_date'] = jsync_conf['docs_after']
 				b2b['crud_mode'] = mode
 
 				# Determinamos el modo correcto en actualizaciones
-				if mode == 'update':
+				if mode == 'update' and conf_items_after != None:
 					# No se puede buscar dentro de un None
 					if conf_items_before is None:
 						conf_items_before = dict()
@@ -197,31 +198,30 @@ class BaseB2B(models.AbstractModel):
 						b2b['crud_mode'] = 'delete'
 					# Si antes no era notificable y ahora si o lo creamos
 					elif (item.name not in conf_items_before.keys() and item.name in conf_items_after.keys()) or not self.on_jsync():
-						# if not self.on_jsync(): applicable_configs.update({ item.name: True })
 						b2b['crud_mode'] = 'create'
 
-				if applicable_configs.get(item.name, False):
-					_logger.info("Configuración aplicable: %s", applicable_configs)
-					# Creamos un paquete
-					packet = JSync(self.env, settings=jsync_conf)
-					# ID del registro
-					packet.id = self.id
-					# Modelo del registro
-					packet.model = self._name
-					# Obtenemos el nombre
-					packet.name = item.name
-					# Obtenemos la copia del modo
-					packet.mode = b2b['crud_mode']
+				_logger.info("Paquete para [%s,%i] en modo [%s]", self._name, self.id, b2b['crud_mode'])
 
-					_logger.info("Paquete para [%s,%i] en modo [%s]" % (packet.model, packet.id, b2b['crud_mode']))
+				# Creamos un paquete
+				packet = JSync(self.env, settings=jsync_conf)
+				# ID del registro
+				packet.id = self.id
+				# Modelo del registro
+				packet.model = self._name
+				# Obtenemos el nombre
+				packet.name = item.name
+				# Obtenemos la copia del modo
+				packet.mode = b2b['crud_mode']
 
-					# Obtenemos la relacción (si la tiene)
-					if 'related_to' in b2b and callable(b2b['related_to']):
-						packet.related = b2b['related_to'](self, mode)
+				# Obtenemos la relacción (si la tiene)
+				if 'related_to' in b2b and callable(b2b['related_to']):
+					packet.related = b2b['related_to'](self, mode)
+
+				if applicable_configs.get(item.name) == True:
 
 					# Ejecutamos la función pre_data si existe y sub_methods es True
 					if sub_methods and 'pre_data' in b2b and callable(b2b['pre_data']):
-						b2b['pre_data'](self, mode)
+						b2b['pre_data'](self, mode, vals)
 
 					# Obtenemos los datos
 					packet.data = b2b['get_data'](self, mode)
@@ -235,6 +235,16 @@ class BaseB2B(models.AbstractModel):
 					# Ejecutamos la función pos_data si existe y sub_methods es True
 					if sub_methods and 'pos_data' in b2b and callable(b2b['pos_data']):
 						Subprocess(self).add(b2b['pos_data'], self, mode)
+
+				elif applicable_configs.get(item.name) == False:
+
+					# Check if record exists on export table
+					record_on_jsync = self.on_jsync()
+
+					if record_on_jsync and packet.mode == 'update':
+						# Mantain last write date on export table
+						packet.update_b2b_export_table(record_on_jsync)
+						_logger.info("El registro '%s,%s' no es notificable pero se actualizó la tabla de exportación!", self._name, self.id)
 
 		# Paquetes a enviar
 		return packets

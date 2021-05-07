@@ -52,18 +52,12 @@
 /* PARAMETERIZATION */
 
 #parameterization_header{
-    padding: 4px 13px;
+    display: none;
 
     .label{
         margin-bottom: 2px;
         font-size: 84%;
     }
-}
-
-#template_selection_wrapper{
-    float: left;
-    margin-left: 0.5%;
-    margin-top: 0.5%;
 }
 
 #parameterization_actions button{
@@ -132,6 +126,20 @@
 // Unificar la vista de los campos
 
 .o_form_view.o_form_editable{
+    #parameterization_header{
+        display: block;
+    }
+
+    #template_selection_wrapper{
+        margin-left: 2px;
+        line-height: 33px;
+        height: 32px;
+
+        & > .o_form_input{
+            width: auto;
+        }
+    }
+
     #parameterization_fields{
         .o_form_input, .o_form_textarea{
             padding: 4px 8px;

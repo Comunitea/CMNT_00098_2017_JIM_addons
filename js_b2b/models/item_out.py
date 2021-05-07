@@ -41,8 +41,12 @@ class B2bItemsOut(models.Model):
 	description = fields.Char('Description', required=False, translate=False, help="Set the item description")
 	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
 	active = fields.Boolean('Active', default=True, help="Enable or disable this item")
-	exclude_on_sync = fields.Boolean('Exclude on syncing', default=False, help="Exclude for sync action")
-	sync_updates = fields.Boolean('Updates on sync', default=True, help="Send updates on syncing")
+	sync_updates = fields.Boolean('Updates on sync', default=True, help="Send updates if the date of the last modification is greater than the date of the last submission")
+
+	@api.multi
+	def toggle_updates(self):
+		self.ensure_one()
+		self.sync_updates = not self.sync_updates
 	
 	@api.multi
 	def get_models(self):
@@ -127,87 +131,82 @@ class B2bItemsOut(models.Model):
 		client_ids = [int(x.split(',')[1]) for x in self.env['b2b.export'].search([('name', '=', 'customer')]).mapped('res_id')]
 
 		for model in self.get_models():
-			if not self.exclude_on_sync:
-				# Model specific queries
-				if model == 'stock.move':
-					# Movimientos de stock de Jim y EME que tienen un alabarán de origen (group_id) y la fecha es igual o superior a la actual y el estado es asignado
-					search_query = [('company_id', 'in', [1, 5, 6]), ('group_id', '!=', False), ('date_expected', '>=', str(datetime.now()))]
-				elif model == 'res.partner':
-					# Direcciones o clientes empresa
-					search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
-				elif model == 'account.invoice':
-					# Facturas de clientes que se exportaron
-					search_query = [('date_invoice', '>=', docs_min_date), ('commercial_partner_id', 'in', client_ids)]
-				elif model == 'stock.picking':
-					# Los albarares no se filtran por el cliente, ya que
-					# pueden ser de DROPSIPPING y no ser notificables
-					search_query = [('date_done', '>=', docs_min_date)]
-				elif model == 'sale.order':
-					# Pedidos de venta con fecha igual o superior a la establecida de clientes que se exportaron
-					search_query = [('date_order', '>=', docs_min_date), ('partner_id.commercial_partner_id', 'in', client_ids)]
-				elif model in ('product.template', 'product.product', 'product.tag'):
-					# Todos los registros (activos e inactivos)
-					only_active = False
+			# Model specific queries
+			if model == 'stock.move':
+				# Movimientos de stock de Jim y EME que tienen un alabarán de origen (group_id) y la fecha es igual o superior a la actual y el estado es asignado
+				search_query = [('company_id', 'in', [1, 5, 6]), ('group_id', '!=', False), ('date_expected', '>=', str(datetime.now()))]
+			elif model == 'res.partner':
+				# Direcciones o clientes empresa
+				search_query = ['|', ('type', '=', 'delivery'), ('is_company', '=', True)]
+			elif model == 'account.invoice':
+				# Facturas de clientes que se exportaron
+				search_query = [('date_invoice', '>=', docs_min_date), ('commercial_partner_id', 'in', client_ids)]
+			elif model == 'stock.picking':
+				# Los albarares no se filtran por el cliente, ya que
+				# pueden ser de DROPSIPPING y no ser notificables
+				search_query = [('date_done', '>=', docs_min_date)]
+			elif model == 'sale.order':
+				# Pedidos de venta con fecha igual o superior a la establecida de clientes que se exportaron
+				search_query = [('date_order', '>=', docs_min_date), ('partner_id.commercial_partner_id', 'in', client_ids)]
+			elif model in ('product.template', 'product.product', 'product.tag'):
+				# Todos los registros (activos e inactivos)
+				only_active = False
 
-				# Get code model records
-				records_ids = self.env[model].with_context(active_test=only_active).search(search_query, order='id ASC').ids
-				total_records =  len(records_ids)
-				create_records = 0
-				update_records = 0
-				delete_records = 0
+			# Get code model records
+			records_ids = self.env[model].with_context(active_test=only_active).search(search_query, order='id ASC').ids
+			total_records =  len(records_ids)
+			create_records = 0
+			update_records = 0
+			delete_records = 0
 
-				_logger.info("*************** B2B ITEM ***************")
-				_logger.info("@@ ITEM NAME: %s" % str(self.name))
-				_logger.info("@@ ITEM MODEL: %s" % str(model))
-				_logger.info("@@ TOTAL RECORDS: %s" % total_records)
+			_logger.info("*************** B2B ITEM ***************")
+			_logger.info("@@ ITEM NAME: %s" % str(self.name))
+			_logger.info("@@ ITEM MODEL: %s" % str(model))
+			_logger.info("@@ TOTAL RECORDS: %s" % total_records)
 
-				for id in records_ids:
-					record_number += 1
-					record_percent = round((record_number / total_records) * 100, 1)
-					record_percent_str = str(record_percent) + '%'
-					record = self.env[model].browse(id)
-					res_id = '%s,%s' % (record._name, record.id)
-					notifiable_items = record.is_notifiable_check()
-					notifiable_values = notifiable_items.values()
-					all_notifiable = notifiable_items and all(notifiable_values)
-					record_on_jsync = self.env['b2b.export'].search([('res_id', '=', res_id)], limit=1)
+			for id in records_ids:
+				record_number += 1
+				record_percent = round((record_number / total_records) * 100, 1)
+				record_percent_str = str(record_percent) + '%'
+				record = self.env[model].browse(id)
+				res_id = '%s,%s' % (record._name, record.id)
+				notifiable_items = record.is_notifiable_check()
+				notifiable_values = notifiable_items.values()
+				all_notifiable = notifiable_items and all(notifiable_values)
+				record_on_jsync = self.env['b2b.export'].search([('res_id', '=', res_id)], limit=1)
 
-					if all_notifiable and not record_on_jsync:
+				if all_notifiable and not record_on_jsync:
 
-						create_records += 1
-						_logger.info("@@ CREATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						record.b2b_record('create', user_notify=user_notify)
+					create_records += 1
+					_logger.info("@@ CREATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
+					record.b2b_record('create', user_notify=user_notify)
 
-					elif not all_notifiable and record_on_jsync:
+				elif not all_notifiable and record_on_jsync:
 
-						delete_records += 1
-						_logger.info("@@ DELETE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						record.b2b_record('delete', user_notify=user_notify)
+					delete_records += 1
+					_logger.info("@@ DELETE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
+					record.b2b_record('delete', user_notify=user_notify)
 
-					elif all_notifiable and record_on_jsync and self.sync_updates:
+				elif all_notifiable and record_on_jsync and self.sync_updates and record.write_date > record_on_jsync.write_date:
 
-						update_records += 1
-						_logger.info("@@ UPDATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-						record.b2b_record('update', conf_items_before={ record_on_jsync.name: True }, user_notify=user_notify)
+					update_records += 1
+					_logger.info("@@ UPDATE %s (%s) WITH ID#%s | COMPLETED: %s" % (self.name, model, id, record_percent_str))
+					record.b2b_record('update', conf_items_before={ record_on_jsync.name: True }, user_notify=user_notify)
 
-					else:
+			_logger.info("@@ CREATE RECORDS: %s" % create_records)
+			_logger.info("@@ UPDATE RECORDS: %s" % update_records)
+			_logger.info("@@ DELETE RECORDS: %s" % delete_records)
 
-						_logger.info("@@ %s (%s) ID#%s NOT NOTIFIABLE | COMPLETED: %s" % (self.name, model, id, record_percent_str))
-
-				_logger.info("@@ CREATE RECORDS: %s" % create_records)
-				_logger.info("@@ UPDATE RECORDS: %s" % update_records)
-				_logger.info("@@ DELETE RECORDS: %s" % delete_records)
-
-				# Notify user
-				self.env.user.notify_info(
-					_('Synchronizing <b>%s</b><br/> \
-					<ul> \
-						<li>Total: %s</li> \
-						<li>Create: %s</li> \
-						<li>Update: %s</li> \
-						<li>Delete: %s</li> \
-					</ul>') % (self.name, total_records, create_records, update_records, delete_records)
-				)
+			# Notify user
+			self.env.user.notify_info(
+				_('Synchronizing <b>%s</b><br/> \
+				<ul> \
+					<li>Total: %s</li> \
+					<li>Create: %s</li> \
+					<li>Update: %s</li> \
+					<li>Delete: %s</li> \
+				</ul>') % (self.name, total_records, create_records, update_records, delete_records)
+			)
 
 	# ------------------------------------ OVERRIDES ------------------------------------
 
