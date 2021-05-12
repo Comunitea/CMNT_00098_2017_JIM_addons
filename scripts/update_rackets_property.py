@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-session.open(db='odoo_12_DISMAC_14_02')
+session.open(db='JIM_SPORTS')
 
 
 domain = [('is_company', '=', True),('customer', '=', True)]
