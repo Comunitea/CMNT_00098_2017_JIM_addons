@@ -313,7 +313,12 @@ class B2BExport(models.Model):
 	def unlink(self):
 		for record in self:
 			resource_id = record.res_id
+			res_model, res_id = resource_id.split(',')
 			if super(B2BExport, record).unlink():
+				self.env[res_model].browse(int(res_id)).b2b_record('delete')
 				# Delete related records also
-				self.search([('rel_id', '=', resource_id)]).with_context(b2b_evaluate=False).unlink()
+				for related in self.search([('rel_id', '=', resource_id)]).with_context(b2b_evaluate=False):
+					rel_model, rel_id = related.rel_id.split(',')
+					if related.unlink():
+						self.env[rel_model].browse(rel_id).b2b_record('delete')
 		return True
