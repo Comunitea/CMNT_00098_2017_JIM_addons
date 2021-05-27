@@ -309,3 +309,9 @@ class BaseB2B(models.AbstractModel):
 				for packet in packets:
 					packet.send(notify=True)
 		return True
+
+	@api.multi
+	def delete_link(self):
+		for record in self:
+			link = self.env['b2b.export'].search([('res_id', '=', '%s,%s' % (record._name, record.id))], limit=1)
+			link.unlink()

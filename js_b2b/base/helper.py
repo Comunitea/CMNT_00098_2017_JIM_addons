@@ -293,7 +293,8 @@ class JSync(object):
 						self.env.user.notify_info('[B2B] %s <b>%s</b> %s' % (self.mode.capitalize(), self.name, self.id))
 
 					# Guardar el estado en Odoo con un nuevo cursor
-					self.update_b2b_export_table(_EXPORT_ID, _RES_ID)
+					if self.env.context.get('b2b_autolinks', True):
+						self.update_b2b_export_table(_EXPORT_ID, _RES_ID)
 
 				try:
 					return json_load(jsync_post.text)
