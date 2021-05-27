@@ -312,13 +312,15 @@ class B2BExport(models.Model):
 	@api.multi
 	def unlink(self):
 		for record in self:
-			resource_id = record.res_id
+			resource_id = str(record.res_id)
+			resource_name = str(record.name)
 			res_model, res_id = resource_id.split(',')
 			if super(B2BExport, record).unlink():
-				self.env[res_model].browse(int(res_id)).b2b_record('delete')
+				self.env[res_model].browse(int(res_id)).b2b_record('delete', conf_items_before={resource_name: True})
 				# Delete related records also
-				for related in self.search([('rel_id', '=', resource_id)]).with_context(b2b_evaluate=False):
-					rel_model, rel_id = related.rel_id.split(',')
+				for related in self.search([('rel_id', '=', resource_id)]):
+					related_name = str(related.name)
+					rel_model, rel_id = related.res_id.split(',')
 					if related.unlink():
-						self.env[rel_model].browse(rel_id).b2b_record('delete')
+						self.env[rel_model].browse(int(rel_id)).b2b_record('delete', conf_items_before={related_name: True})
 		return True
