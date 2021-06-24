@@ -279,7 +279,7 @@ class SaleOrderLine(models.Model):
     def get_stock_export_products(self, from_time, to_time = False, table=True):
 
         time_domain = self.env['exportxml.object'].get_time_domain(from_time, to_time, 'order_id')
-        state_domain = [('state', 'in', ('cancel', 'draft', 'lqdr', 'pending'))]
+        state_domain = [('state', 'in', ('cancel', 'draft', 'lqdr', 'pending', 'proforma'))]
         product_domain = [('product_id.type', '=', 'product')]
         domain = expression.AND([product_domain, state_domain, time_domain])
         sol = self.search(domain)
