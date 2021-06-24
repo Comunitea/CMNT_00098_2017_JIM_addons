@@ -100,11 +100,7 @@
                             </tr>
                         </tfoot>
                     </table>
-                    <div class="row" t-if="not o.company_id.hide_fields">
-                        <div class="col-xs-2">
-                            <img src="/custom_documents/static/src/img/invoice_logo.jpg"/>
-                        </div>
-                    </div>
+                   
                     <div class="col-xs-4 pull-right"  style="page-break-inside:avoid">
                         <table class="table table-condensed">
                             <tr class="border-black">
@@ -159,6 +155,13 @@
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+
+                    <div class="row" t-if="o.company_id.secure_logo">
+                        <div class="col-xs-2">
+                            <!-- <img src="/custom_documents/static/src/img/invoice_logo.jpg"/> -->
+                            <img t-att-src="'data:image/png;base64,%s' % o.company_id.secure_logo"/>
                         </div>
                     </div>
 

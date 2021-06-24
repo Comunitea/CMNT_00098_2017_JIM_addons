@@ -32,6 +32,8 @@
                     </group>
                     <separator string="ISO logo"/>
                     <field name="iso_logo" widget="image"/>
+                    <separator string="Secure logo"/>
+                    <field name="secure_logo" widget="image"/>
                     <separator string="Generic footer"/>
                     <field name="qweb_footer"/>
                     <separator string="Invoice footer"/>

@@ -13,6 +13,7 @@ class ResCompany(models.Model):
     qweb_invoice_footer = fields.Html(translate=True)
     show_discount = fields.Boolean(default=True)
     iso_logo = fields.Binary()
+    secure_logo = fields.Binary()
     hide_fields = fields.Boolean()
     iso_purchase_order_text = fields.Html(translate=True)
     company_advise = fields.Html(translate=True)

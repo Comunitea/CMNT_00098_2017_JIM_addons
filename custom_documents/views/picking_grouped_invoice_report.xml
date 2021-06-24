@@ -155,7 +155,8 @@
                 </div>
                 <div class="row" t-if="not o.company_id.hide_fields">
                     <div class="col-xs-2">
-                        <img src="/custom_documents/static/src/img/invoice_logo.jpg"/>
+                        <!-- <img src="/custom_documents/static/src/img/invoice_logo.jpg"/> -->
+                        <img t-att-src="'data:image/png;base64,%s' % o.company_id.secure_logo"/>
                     </div>
                 </div>
 
