@@ -10,6 +10,7 @@
         "base",
         "product",
         "sale",
+        "stock",
         "product_custom",
         "custom_sale_order_variant_mgmt",
         "telesale_manage_variants",
