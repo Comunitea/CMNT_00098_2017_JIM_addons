@@ -8,6 +8,14 @@ from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from datetime import datetime,timedelta
 from odoo.osv import expression
 
+class ExportStockUpdate(models.Model):
+    _name = 'export.stock.update'
+    _order = "id desc"
+
+    last_call_export_xmlstock = fields.Char('Last call export xml_stock')
+    result = fields.Boolean("Ok", default=True)
+    product_count = fields.Integer("Product #", default=0)
+    running = fields.Boolean("Running", default=False)
 
 class ConfigPathFiles(models.TransientModel):
     _inherit = 'res.config.settings'
@@ -220,7 +228,6 @@ class StockMove(models.Model):
 class StockLocationRoute(models.Model):
     _inherit = 'stock.location.route'
 
-
     @api.multi
     def insert_product_ids(self):
         ##busco las líneas de venta que no tenga movimientos asignados. Si tienen movimientos ya no influye el cambio
@@ -275,11 +282,10 @@ class SaleOrderLine(models.Model):
         return super(SaleOrderLine, self).unlink()
 
 
-
     def get_stock_export_products(self, from_time, to_time = False, table=True):
 
         time_domain = self.env['exportxml.object'].get_time_domain(from_time, to_time, 'order_id')
-        state_domain = [('state', 'in', ('cancel', 'draft', 'lqdr', 'pending', 'proforma'))]
+        state_domain = [('state', 'in', ('cancel', 'draft', 'lqdr', 'pending', 'proforma', 'sent'))]
         product_domain = [('product_id.type', '=', 'product')]
         domain = expression.AND([product_domain, state_domain, time_domain])
         sol = self.search(domain)
@@ -343,7 +349,25 @@ class DeletedObject(models.Model):
 
     def compute_product_ids(self, all=False, from_time=False, to_time=False, field_id='id', stock_field='web_global_stock', days=0, inc=80, limit=False):
         ### Para que no haya errores pongo el parámetro table siempre a True
+        print ("Entro en compute_product_ids")
         table = True
+        last_update = self.env['export.stock.update'].search([], limit=1)
+
+        #inc = 80
+        #limit = 550
+        ### to_time
+        ### Fecha fin de filtro para moivmientos no debería de enviarse nunca
+        ### Si envío days y no to_time, to_time = from_time + days
+        start_time = time.time()
+        time_now = fields.datetime.now()
+        time_now_str = fields.Datetime.to_string(time_now)
+        if last_update and last_update.running:
+            print ("Salgo en compute_product_ids. Corriendo anterior ...")
+            return False
+        ## creo uno nuevo
+
+        update_vals = {'last_call_export_xmlstock': time_now_str, 'running': True}
+        this_update = self.env['export.stock.update'].create(update_vals)
 
         ### Parametro all:
         ### ignora todo y envía todos los productos sintabla intermedia
@@ -356,31 +380,23 @@ class DeletedObject(models.Model):
 
 
         ###
-        ### to_time
-        ### Fecha fin de filtro para moivmientos no debería de enviarse nunca
-        ### Si envío days y no to_time, to_time = from_time + days
-        start_time = time.time()
-        time_now = fields.datetime.now()
-        time_now_str = fields.Datetime.to_string(time_now)
+
         
         if all:
             domain = [('type', '=', 'product'), ('website_published', '=', True)]
-
             if type(all) is list:
                 domain.append(('product_tmpl_id', 'in', all))
 
             product_ids = self.env['product.product'].with_context(active_test=False).search(domain)
         else:
             if not from_time:
-                sql_ir_config = "select value from ir_config_parameter where key = 'last_call_export_xmlstock'"
-                self._cr.execute(sql_ir_config)
-                res_id = self._cr.fetchall()
-                if res_id:
-                    last_call = res_id[0][0]
-                else:
-                    last_call = time_now_str
+                # Saco el último de la tabla en vez de parameter
+                # last_update = self.env['export.stock.update'].search([], limit=1)
+                from_time = last_update and last_update.last_call_export_xmlstock or time_now_str
+                #sql_ir_config = "select value from ir_config_parameter where key = 'last_call_export_xmlstock'"
+                #self._cr.execute(sql_ir_config)
+                #res_id = self._cr.fetchall()
 
-                from_time = last_call
             if not to_time and days > 0:
                 ##No debería entrar aquí nuca
                 from_time_str = fields.Datetime.from_string(from_time)
@@ -411,7 +427,7 @@ class DeletedObject(models.Model):
             print ("---- {} modelos en la tabla".format(len(model_ids)))
             print ("---- {} productos en la tabla".format(len(product_table_ids)))
             product_ids = product_table_ids
-
+        product_count = len(product_ids)
         if product_ids:
             mid_time = time.time()
             product_bom_ids = self.env['mrp.bom'].export_related_bom(product_ids)
@@ -435,11 +451,14 @@ class DeletedObject(models.Model):
             print ("-- Evaluado. Tiempo: {} ".format(time.time() - mid_time))
             mid_time = time.time()
 
-        sql = "delete from exportxml_object"
-        self._cr.execute(sql)
-        sql_ir_config = "update ir_config_parameter set value = '{}' where key = 'last_call_export_xmlstock'".format(time_now_str)
-        self._cr.execute(sql_ir_config)
-        self._cr.commit()
+        print ("Borro tabla intermedia")
+        self.env['exportxml.object'].search([]).unlink()
+        print ("Borrada tabla intermedia")
+        # sql = "delete from exportxml_object"
+        # self._cr.execute(sql)
+        print ("Actualizo tabla de datos de exportación")
+        this_update.write({'running': False, 'product_count': product_count, 'last_call_export_xmlstock': time_now_str})
+        print ("Actualizada")
         #icp.last_call_export_xmlstock = last_call
         print ("Fin para {} con inc= {}. Tiempo : {}".format(len(product_ids), inc, time.time() - start_time))
         return res
