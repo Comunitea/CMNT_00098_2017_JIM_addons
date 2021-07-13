@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import api, fields, models, _
@@ -6,12 +5,12 @@ from odoo.exceptions import UserError
 
 
 class WzdConfirmProcurement(models.TransientModel):
-    _name = 'wzd.confirm.procurement'
-    _description = 'Confirm procurement in canceled purchases'
+    _name = "wzd.confirm.procurement"
+    _description = "Confirm procurement in canceled purchases"
 
-    purchase_ids = fields.Many2many('purchase.order')
-    procurement_ids = fields.Many2many('procurement.order')
-
+    purchase_ids = fields.Many2many("purchase.order")
+    #TODO: Migrar, el modelo no existe ya. Pero quizás no se siga esta estrategia para el multicompany
+    # ~ procurement_ids = fields.Many2many("procurement.order")
 
     @api.model
     def default_get(self, fields):

@@ -4,7 +4,7 @@
 
 <odoo>
     <template id="custom_purchase_order_report" inherit_id="purchase.report_purchaseorder_document">
-        <xpath expr="//t[@t-call='report.external_layout']" position="replace">
+        <xpath expr="//t[@t-call='web.external_layout']" position="replace">
             <t t-call="custom_documents.custom_layout">
                 <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
                 <div class="page">
@@ -91,7 +91,7 @@
     </template>
 
 
-    <record id="purchase.action_report_purchase_order" model="ir.actions.report.xml">
+    <record id="purchase.action_report_purchase_order" model="ir.actions.report">
         <field name="paperformat_id" ref="sale_paperformat_euro" />
     </record>
 </odoo>

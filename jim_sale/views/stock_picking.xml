@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-
+        <!-- TODO: Migrar, no existe el modelo stock_pack_operation
         <record id="stock_pack_picks_tree" model="ir.ui.view">
             <field name="name">stock.pack.picks.tree</field>
             <field name="model">stock.pack.operation</field>
@@ -13,7 +13,7 @@
                     <field name="qty_done"/>
                 </tree>
             </field>
-        </record>
+        </record>-->
 
         <record id="view_picking_form_scheduled_order" model="ir.ui.view">
             <field name="name">stock.picking.form.scheduled_order</field>

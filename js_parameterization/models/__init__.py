@@ -1,2 +1,2 @@
-import parameterization
-import product
+from . import parameterization
+from . import product

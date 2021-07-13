@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # © 2016 Comunitea Servicios Tecnologicos (<http://www.comunitea.com>)
 # Kiko Sanchez (<kiko@comunitea.com>)
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
@@ -9,30 +8,38 @@ from odoo import fields, models, api, tools
 
 class StockPicking(models.Model):
 
-    _inherit ='stock.picking'
+    _inherit = "stock.picking"
 
-    hide_next_canceled = fields.Boolean('Reviewed (done to cancel)', help="Show in done to cancel picks", default=False)
+    hide_next_canceled = fields.Boolean(
+        "Reviewed (done to cancel)",
+        help="Show in done to cancel picks",
+        default=False,
+    )
+
 
 class UtilsDoneCancelPicks(models.Model):
 
     _name = "done.to.cancel.picks"
     _description = "Done pick to cancelled pick"
     _auto = False
-    _rec_name = 'picking_done_id'
-    _order = 'picking_done_id'
+    _rec_name = "picking_done_id"
+    _order = "picking_done_id"
 
-    picking_done_id = fields.Many2one('stock.picking', readonly=1, string="Picking done")
-    picking_cancelled_id = fields.Many2one('stock.picking', readonly=1, string="Picking cancelled")
-    picking_type_id = fields.Many2one('stock.picking.type')
-    partner_id = fields.Many2one('res.partner', string="Customer/Supplier")
+    picking_done_id = fields.Many2one(
+        "stock.picking", readonly=1, string="Picking done"
+    )
+    picking_cancelled_id = fields.Many2one(
+        "stock.picking", readonly=1, string="Picking cancelled"
+    )
+    picking_type_id = fields.Many2one("stock.picking.type")
+    partner_id = fields.Many2one("res.partner", string="Customer/Supplier")
     sale_id = fields.Many2one(related="picking_cancelled_id.orig_sale_id")
     purchase_id = fields.Many2one(related="picking_cancelled_id.purchase_id")
-    moves = fields.Integer('Moves number')
-    company_id = fields.Many2one('res.company', string='Company')
-    orig_loc_id = fields.Many2one('stock.location', 'Orig location')
-    act_loc_id = fields.Many2one('stock.location', 'Actual location')
-    next_loc_id = fields.Many2one('stock.location', 'Actual location')
-
+    moves = fields.Integer("Moves number")
+    company_id = fields.Many2one("res.company", string="Company")
+    orig_loc_id = fields.Many2one("stock.location", "Orig location")
+    act_loc_id = fields.Many2one("stock.location", "Actual location")
+    next_loc_id = fields.Many2one("stock.location", "Actual location")
 
     def _select(self):
         select_str = """
@@ -67,14 +74,18 @@ class UtilsDoneCancelPicks(models.Model):
     @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
-        sql = """CREATE or REPLACE VIEW %s as (%s FROM %s)""" % (self._table, self._select(), self._from() )
+        sql = """CREATE or REPLACE VIEW %s as (%s FROM %s)""" % (
+            self._table,
+            self._select(),
+            self._from(),
+        )
         self.env.cr.execute(sql)
-
 
     @api.multi
     def set_hide_done_to_cancel(self):
-        pick_ids = self.mapped('picking_done_id').ids
-        return self.env['stock.picking'].browse(pick_ids).write({'hide_next_canceled': True})
-
-
-
+        pick_ids = self.mapped("picking_done_id").ids
+        return (
+            self.env["stock.picking"]
+            .browse(pick_ids)
+            .write({"hide_next_canceled": True})
+        )

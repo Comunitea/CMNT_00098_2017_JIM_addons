@@ -60,5 +60,5 @@
     <!-- ACCIONES DE MENÚ -->
 
     <menuitem id="menu_public_export_b2b" name="Records on JSync" parent="js_b2b_menu" action="export_action_b2b" sequence="0" />
-    
+
 </odoo>

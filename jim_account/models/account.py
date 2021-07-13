@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # © 2016 Comunitea
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import api, fields, models, _
@@ -7,7 +6,7 @@ from odoo.exceptions import UserError
 
 class AccountMoveLine(models.Model):
 
-    _inherit = 'account.move.line'
+    _inherit = "account.move.line"
 
     @api.multi
     def get_mandate_scheme(self):
@@ -18,27 +17,34 @@ class AccountMoveLine(models.Model):
     @api.model
     def _mandate_scheme_search(self, operator, operand):
 
-        moves = self.search([('mandate_id.scheme', operator,
-                              operand)])
-        return [('id', 'in', moves.mapped('id'))]
+        moves = self.search([("mandate_id.scheme", operator, operand)])
+        return [("id", "in", moves.mapped("id"))]
 
-    scheme = fields.Selection(selection=[('CORE', 'Basic (CORE)'),
-                                         ('B2B', 'Enterprise (B2B)')],
-                              string='Scheme',
-                              compute='get_mandate_scheme',
-                              search='_mandate_scheme_search')
+    scheme = fields.Selection(
+        selection=[("CORE", "Basic (CORE)"), ("B2B", "Enterprise (B2B)")],
+        string="Scheme",
+        compute="get_mandate_scheme",
+        search="_mandate_scheme_search",
+    )
     payment_order_line_ids = fields.One2many(
-        'account.payment.line', 'move_line_id', string='Payment Line',
-        readonly=True)
+        "account.payment.line",
+        "move_line_id",
+        string="Payment Line",
+        readonly=True,
+    )
 
 
 class AccountInvoice(models.Model):
 
-    _inherit = 'account.invoice'
+    _inherit = "account.invoice"
 
-    user_id = fields.Many2one(states={'draft': [('readonly', False)],
-                                      'open': [('readonly', False)],
-                                      'paid': [('readonly', False)]})
+    user_id = fields.Many2one(
+        states={
+            "draft": [("readonly", False)],
+            "open": [("readonly", False)],
+            "paid": [("readonly", False)],
+        }
+    )
     invoice_line_ids = fields.One2many(readonly=False)
 
     @api.multi
@@ -49,20 +55,25 @@ class AccountInvoice(models.Model):
 
 class AccountInvoiceLine(models.Model):
 
-    _inherit = 'account.invoice.line'
+    _inherit = "account.invoice.line"
 
-    #name = fields.Char(required=True, states={'open': [('readonly', True)]})
-    state = fields.Selection([
-            ('draft','Draft'),
-            ('proforma', 'Pro-forma'),
-            ('proforma2', 'Pro-forma'),
-            ('open', 'Open'),
-            ('paid', 'Paid'),
-            ('cancel', 'Cancelled'),
-        ], related='invoice_id.state')
+    # name = fields.Char(required=True, states={'open': [('readonly', True)]})
+    state = fields.Selection(
+        [
+            ("draft", "Draft"),
+            ("proforma", "Pro-forma"),
+            ("proforma2", "Pro-forma"),
+            ("open", "Open"),
+            ("paid", "Paid"),
+            ("cancel", "Cancelled"),
+        ],
+        related="invoice_id.state",
+    )
 
     @api.multi
     def unlink(self):
-        if any(self.filtered(lambda r: r.state in ('open', 'paid'))):
-            raise UserError(_('No se pueden eliminar lineas de facturas abiertas'))
+        if any(self.filtered(lambda r: r.state in ("open", "paid"))):
+            raise UserError(
+                _("No se pueden eliminar lineas de facturas abiertas")
+            )
         return super(AccountInvoiceLine, self).unlink()

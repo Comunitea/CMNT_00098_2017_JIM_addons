@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="view_order_form_invoice_amount_cancelled" model="ir.ui.view">
+    <!--TODO: MIgrar<record id="view_order_form_invoice_amount_cancelled" model="ir.ui.view">
         <field name="name">sale.order.form.invoice.amount</field>
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="partner_sale_risk.view_order_form_invoice_amount"/>
@@ -11,7 +11,7 @@
                 <field name="price_total_cancelled" attrs="{'invisible': [('cancelled_order_in_risk', '!=', True)]}"/>
             </field>
         </field>
-    </record>
+    </record>-->
     <record id="sale_order_line_custom_tree_partner_risk" model="ir.ui.view">
         <field name="name">sale.order.line.tree.cancelled.qty</field>
         <field name="model">sale.order.line</field>

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import tools
@@ -9,26 +8,28 @@ class ReportSaleLineJimAttributes(models.Model):
     _name = "report.sale.line.jim.attributes"
     _description = "Sale Lines Statistics Attributes"
     _auto = False
-    _rec_name = 'id'
-    _order = 'id'
+    _rec_name = "id"
+    _order = "id"
 
-
-    product_id = fields.Many2one('product.product', string ="Articulo", readonly=True)
+    product_id = fields.Many2one(
+        "product.product", string="Articulo", readonly=True
+    )
     color = fields.Char(string="Color", readonly=True)
     talla = fields.Char(string="Talla", readonly=True)
     attribute_names = fields.Char(string="Variante", readonly=True)
     product_code = fields.Char(string="Referencia", readonly=True)
-    #qty_delivered = fields.Float(string="Entregada", readonly=True)
-    #qty_invoiced = fields.Float(string="Facturada", readonly=True)
+    # qty_delivered = fields.Float(string="Entregada", readonly=True)
+    # qty_invoiced = fields.Float(string="Facturada", readonly=True)
     product_uom_qty = fields.Float(string="Pedida", readonly=True)
     price_subtotal = fields.Float(string="Subtotal", readonly=True)
     price_unit = fields.Float(string="Precio", readonly=True)
-    company_id = fields.Many2one('res.company', string="Company",
-                                 readonly=True)
+    company_id = fields.Many2one(
+        "res.company", string="Company", readonly=True
+    )
 
-    #picking_id = fields.Many2one('stock.picking', readonly=True)
-    #line_delivered_state = fields.Selection([('E','Entregado'), ('NE','No entregado')], "Entrega", readonly=True)
-    #line_invoice_state = fields.Selection([('NF1','No fact 100%'), ('F','Facturado'), ('NF','No facturado')], "Factura", readonly=True)
+    # picking_id = fields.Many2one('stock.picking', readonly=True)
+    # line_delivered_state = fields.Selection([('E','Entregado'), ('NE','No entregado')], "Entrega", readonly=True)
+    # line_invoice_state = fields.Selection([('NF1','No fact 100%'), ('F','Facturado'), ('NF','No facturado')], "Factura", readonly=True)
     # state = fields.Selection([
     #     ('draft', 'Quotation'),
     #     ('sent', 'Quotation Sent'),
@@ -42,7 +43,6 @@ class ReportSaleLineJimAttributes(models.Model):
     #     ('cancel', 'Cancelled'),
     # ])
     date = fields.Datetime(string="Fecha", readonly=True)
-
 
     def _select(self):
         select_str = """            
@@ -103,8 +103,11 @@ class ReportSaleLineJimAttributes(models.Model):
     def init(self):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (
+        self.env.cr.execute(
+            """CREATE or REPLACE VIEW %s as (
             %s
             FROM %s
             %s
-            )""" % (self._table, self._select(), self._from(), self._group_by()))
+            )"""
+            % (self._table, self._select(), self._from(), self._group_by())
+        )

@@ -3,7 +3,7 @@
 License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
-    <template id="assets_common" name="custom css assets" inherit_id="report.assets_common">
+    <template id="assets_common" name="custom css assets" inherit_id="web.assets_common">
         <xpath expr="." position="inside">
             <link rel="stylesheet" href="/custom_documents/static/src/css/custom.css"/>
         </xpath>
@@ -29,7 +29,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
     </template>
 
     <template id="company_advise">
-        <t t-call="report.html_container">
+        <t t-call="web.html_container">
             <t t-set="o" t-value="docs[0].with_context({'lang':docs[0].partner_id.lang})" />
             <div class="page">
                 <div class="row">
@@ -300,7 +300,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
                             </table>
                         </div>
                     </div>
-                    
+
         </div>
     </template>
 

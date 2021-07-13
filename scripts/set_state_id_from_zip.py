@@ -36,7 +36,7 @@ class SetStateIdFromZip(object):
 
     def exception_handler(self, exception):
         """Manejador de Excepciones"""
-        print "HANDLER: ", (exception)
+        print("HANDLER: ", (exception))
         return True
 
     def create(self, model, data, context={}):
@@ -149,7 +149,7 @@ class SetStateIdFromZip(object):
         partner_ids = self.search('res.partner', [('write_date', '>',
                                                   '6/2/2018 18:30:00'),
                                              ('country_id', '!=', False),('zip', '!=', False)])
-        print "partners no: ", len(partner_ids)
+        print("partners no: ", len(partner_ids))
         cont = 1
 
         for partner_id in partner_ids:
@@ -160,16 +160,16 @@ class SetStateIdFromZip(object):
                     zip_read = self.read("res.better.zip", zip_ids[0], ['state_id'])
                     if zip_read[0]['state_id']:
                         self.write("res.partner", [partner_id], {'state_id': zip_read[0]['state_id']})
-                print "%s de %s" % (cont, len(partner_ids))
+                print("{} de {}".format(cont, len(partner_ids)))
                 cont += 1
             except Exception, e:
-                print "EXCEPTION: Part:", partner_data['name'], repr(e)
+                print("EXCEPTION: Part:", partner_data['name'], repr(e))
 
         return True
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print u"Uso: %s <dbname> <user> <password> <port>" % sys.argv[0]
+        print("Uso: {} <dbname> <user> <password> <port>".format(sys.argv[0]))
     else:
         SetStateIdFromZip(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])

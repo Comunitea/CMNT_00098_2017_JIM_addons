@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # © 2017 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -7,38 +6,47 @@ from odoo.tools import html_escape as escape
 
 
 class Contact(models.AbstractModel):
-    _inherit = 'ir.qweb.field.contact'
+    _inherit = "ir.qweb.field.contact"
 
     @api.model
     def value_to_html(self, value, options):
         res = super(Contact, self).value_to_html(value, options)
-        if options.get('min_name', False):
+        if options.get("min_name", False):
             if not value.exists():
                 return False
 
-            opf = options and options.get('fields') or ["name", "address", "phone", "mobile", "fax", "email"]
+            opf = (
+                options
+                and options.get("fields")
+                or ["name", "address", "phone", "mobile", "fax", "email"]
+            )
             value = value.sudo().with_context(show_address=True)
-            phone = ''
+            phone = ""
             if value.phone:
                 phone = value.phone
-            elif options.get('parent_phone', False) and value.commercial_partner_id.phone:
+            elif (
+                options.get("parent_phone", False)
+                and value.commercial_partner_id.phone
+            ):
                 phone = value.commercial_partner_id.phone
-            name_get = value.name or ''
+            name_get = value.name or ""
             val = {
-                'name': name_get.split("\n")[0],
-                'address': escape("\n".join(value.name_get()[0][1].split("\n")[1:])).strip(),
-                'phone': phone,
-                'mobile': value.mobile,
-                'fax': value.fax,
-                'city': value.city,
-                'country_id': value.country_id.display_name,
-                'website': value.website,
-                'email': value.email,
-                'default_contact_person': value.default_contact_person,
-                'fields': opf,
-                'object': value,
-                'options': options
+                "name": name_get.split("\n")[0],
+                "address": escape(
+                    "\n".join(value.name_get()[0][1].split("\n")[1:])
+                ).strip(),
+                "phone": phone,
+                "mobile": value.mobile,
+                "fax": value.fax,
+                "city": value.city,
+                "country_id": value.country_id.display_name,
+                "website": value.website,
+                "email": value.email,
+                "default_contact_person": value.default_contact_person,
+                "fields": opf,
+                "object": value,
+                "options": options,
             }
-            return self.env['ir.qweb'].render('base.contact', val)
+            return self.env["ir.qweb"].render("base.contact", val)
         else:
             return res

@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Part of Odoo. See LICENSE file for full copyright and licensing details.
 
 from odoo import tools
@@ -9,11 +8,13 @@ class ReportSaleLineJim(models.Model):
     _name = "report.sale.line.jim"
     _description = "Sales Lines Orders Statistics"
     _auto = False
-    _rec_name = 'order_line_id'
-    _order = 'order_line_id'
+    _rec_name = "order_line_id"
+    _order = "order_line_id"
 
-    order_line_id = fields.Many2one('sale.order.line', readonly=True)
-    product_id = fields.Many2one('product.product', string ="Articulo", readonly=True)
+    order_line_id = fields.Many2one("sale.order.line", readonly=True)
+    product_id = fields.Many2one(
+        "product.product", string="Articulo", readonly=True
+    )
     product_code = fields.Char(string="Referencia", readonly=True)
     template_code = fields.Char(string="Ref (patrón)", readonly=True)
     qty_delivered = fields.Float(string="Entregada", readonly=True)
@@ -21,34 +22,45 @@ class ReportSaleLineJim(models.Model):
     product_uom_qty = fields.Float(string="Pedida", readonly=True)
     price_subtotal = fields.Monetary(string="Subtotal", readonly=True)
     price_unit = fields.Float(string="Precio", readonly=True)
-    currency_id = fields.Many2one(related='order_line_id.currency_id')
-    partner_id = fields.Many2one('res.partner', string="Cliente", readonly=True)
-    user_id = fields.Many2one('res.users', string="Comercial", readonly=True)
-    order_id = fields.Many2one('sale.order', string="Order", readonly=True)
-    company_id = fields.Many2one('res.company', string="Company",
-                                 readonly=True)
+    currency_id = fields.Many2one(related="order_line_id.currency_id")
+    partner_id = fields.Many2one(
+        "res.partner", string="Cliente", readonly=True
+    )
+    user_id = fields.Many2one("res.users", string="Comercial", readonly=True)
+    order_id = fields.Many2one("sale.order", string="Order", readonly=True)
+    company_id = fields.Many2one(
+        "res.company", string="Company", readonly=True
+    )
 
-    #picking_id = fields.Many2one('stock.picking', readonly=True)
-    line_delivered_state = fields.Selection([('E','Entregado'), ('NE','No entregado')], "Entrega", readonly=True)
-    line_invoice_state = fields.Selection([('NF1','No fact 100%'), ('F','Facturado'), ('NF','No facturado')], "Factura", readonly=True)
-    state = fields.Selection([
-        ('draft', 'Quotation'),
-        ('sent', 'Quotation Sent'),
-        ('proforma', 'Proforma'),
-        ('lqdr', 'Pending LQDR'),
-        ('progress_lqdr', 'Progress LQDR'),
-        ('pending', 'Revision Pending'),
-        ('progress', 'Confirm in Progress'),
-        ('sale', 'Sales Order'),
-        ('done', 'Locked'),
-        ('cancel', 'Cancelled'),
-    ])
+    # picking_id = fields.Many2one('stock.picking', readonly=True)
+    line_delivered_state = fields.Selection(
+        [("E", "Entregado"), ("NE", "No entregado")], "Entrega", readonly=True
+    )
+    line_invoice_state = fields.Selection(
+        [("NF1", "No fact 100%"), ("F", "Facturado"), ("NF", "No facturado")],
+        "Factura",
+        readonly=True,
+    )
+    state = fields.Selection(
+        [
+            ("draft", "Quotation"),
+            ("sent", "Quotation Sent"),
+            ("proforma", "Proforma"),
+            ("lqdr", "Pending LQDR"),
+            ("progress_lqdr", "Progress LQDR"),
+            ("pending", "Revision Pending"),
+            ("progress", "Confirm in Progress"),
+            ("sale", "Sales Order"),
+            ("done", "Locked"),
+            ("cancel", "Cancelled"),
+        ]
+    )
     date = fields.Datetime(string="Fecha", readonly=True)
 
-    color_id = fields.Many2one('product.attribute.value', 'Color',
-                               readonly=True)
-    size_id = fields.Many2one('product.attribute.value', 'Size',
-                               readonly=True)
+    color_id = fields.Many2one(
+        "product.attribute.value", "Color", readonly=True
+    )
+    size_id = fields.Many2one("product.attribute.value", "Size", readonly=True)
 
     def _select(self):
         select_str = """            
@@ -122,8 +134,11 @@ class ReportSaleLineJim(models.Model):
     def init(self):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)
-        self.env.cr.execute("""CREATE or REPLACE VIEW %s as (
+        self.env.cr.execute(
+            """CREATE or REPLACE VIEW %s as (
             %s
             FROM %s
             %s
-            )""" % (self._table, self._select(), self._from(), self._group_by()))
+            )"""
+            % (self._table, self._select(), self._from(), self._group_by())
+        )

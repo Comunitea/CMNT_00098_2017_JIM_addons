@@ -1,1 +1,1 @@
-import fields_wizard
+from . import fields_wizard

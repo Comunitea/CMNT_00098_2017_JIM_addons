@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
+<odoo>
         <record id="view_sga_config_settings" model="ir.ui.view">
             <field name="name">sga.stock.config.settings</field>
             <field name="model">stock.config.settings</field>
@@ -214,8 +213,6 @@
         <menuitem action="model_sgafile_action_view" id="Models SGAfiles" parent="menu_sga_mecalux" sequence="3"/>
         <menuitem action="model_sgafile_var_action_view" id="Vars SGAfiles" parent="menu_sga_mecalux" sequence="4"/>
 
-    </data>
-
-</openerp>
+</odoo>
 
 

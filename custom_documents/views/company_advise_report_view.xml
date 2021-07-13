@@ -13,7 +13,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
         <form string="Informes con pagina de advertencia">
             <sheet string="Informe">
                 <group>
-                    <field name="xml_id" domain="[('model', '=', 'ir.actions.report.xml')]"/>
+                    <field name="xml_id" domain="[('model', '=', 'ir.actions.report')]"/>
                 </group>
 
                 <group>

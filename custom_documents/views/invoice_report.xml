@@ -9,7 +9,7 @@
     <delete id="account_payment_partner.report_invoice_payment_mode" model="ir.ui.view"/>
 
    <template id="custom_invoice_report" inherit_id="account.report_invoice_document">
-        <xpath expr="//t[@t-call='report.external_layout']" position="replace">
+        <xpath expr="//t[@t-call='web.external_layout']" position="replace">
             <t t-call="custom_documents.custom_layout">
                 <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
                 <div class="page">
@@ -203,7 +203,7 @@
     </template>
 
 
-    <record id="account.account_invoices" model="ir.actions.report.xml">
+    <record id="account.account_invoices" model="ir.actions.report">
         <field name="paperformat_id" ref="sale_paperformat_euro" />
     </record>
 </odoo>

@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
+<odoo>
 
         <record id="res_partner_action_export_to_mecalux" model="ir.actions.server">
             <field name="name">Export changes to Mecalux</field>
-            <field name="model_id" ref="product.model_res_partner"/>
+            <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="condition">True</field>
-            <field name="code">records.new_mecalux_file()</field>
-        </record>
-        <record id="res_partner_menu_export_to_mecalux" model="ir.values">
-            <field name="name">res.partner.menu.export.to.mecalux</field>
-            <field name="model">res.partner</field>
-            <field name="key" >action</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.server,%d'%res_partner_action_export_to_mecalux"/>
+            <field name="model_id" ref="base.model_res_partner"/>
+            <field name="binding_model_id" ref="base.model_res_partner"/>
+            <field name="code">
+records.new_mecalux_file()
+            </field>
         </record>
 
         <record id="view_partner_stock_form_sga" model="ir.ui.view">
@@ -34,5 +29,4 @@
 
 
 
-    </data>
-</openerp>
+</odoo>

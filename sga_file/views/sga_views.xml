@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
+<odoo>
         <record id="view_warehouse_sga" model="ir.ui.view">
             <field name="name">view.warehouse.sga</field>
             <field name="model">stock.warehouse</field>
@@ -14,5 +13,4 @@
 
 
 
-    </data>
-</openerp>
+</odoo>

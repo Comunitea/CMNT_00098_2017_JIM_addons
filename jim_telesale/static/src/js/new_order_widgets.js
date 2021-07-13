@@ -334,7 +334,7 @@ var TotalsOrderWidget = NewOrderWidgets.TotalsOrderWidget.include({
                 report_file: 'custom_documents.custom_sale_order_report_warehouse',
                 report_name: 'custom_documents.custom_sale_order_report_warehouse',
                 report_type: 'qweb-pdf',
-                type: 'ir.actions.report.xml'
+                type: 'ir.actions.report'
             });
             this.enable_more_clicks();
         },

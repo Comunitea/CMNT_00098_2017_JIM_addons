@@ -29,14 +29,14 @@ class FixTemplateProduct(object):
             if res:
                 print ("All set")
         except Exception, e:
-            print ("ERROR: ", (e))
+            print ("ERROR: {}".format(e))
             sys.exit(1)
 
         #Métodos Xml-rpc
 
     def exception_handler(self, exception):
         """Manejador de Excepciones"""
-        print "HANDLER: ", (exception)
+        print("HANDLER: ".format(exception))
         return True
 
     def create(self, model, data, context={}):
@@ -147,7 +147,7 @@ class FixTemplateProduct(object):
 
     def fix_templates(self):
         template_ids = self.search('product.template', [('attribute_line_ids', '!=', [])])
-        print "templates no: ", len(template_ids)
+        print("templates no: {}".format(len(template_ids)))
         cont = 1
         for templ_id in template_ids:
             tmpl_data = self.read("product.template", templ_id, ['attribute_line_ids', 'product_variant_ids', 'name'])
@@ -177,10 +177,10 @@ class FixTemplateProduct(object):
                                {'value_ids':
                                 [(6, 0, templ_attributes[att][0])]})
 
-                print "%s de %s" % (cont, len(template_ids))
+                print("{} de {}".format(cont, len(template_ids)))
                 cont += 1
-            except Exception, e:
-                print "EXCEPTION: Prod:", tmpl_data[0]['name'], repr(e)
+            except Exception as e:
+                print("EXCEPTION: Prod:", tmpl_data[0]['name'], repr(e))
                 raise e
 
         return True
@@ -188,6 +188,6 @@ class FixTemplateProduct(object):
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print u"Uso: %s <dbname> <user> <password> <port>" % sys.argv[0]
+        print("Uso: {} <dbname> <user> <password> <port>".format(sys.argv[0]))
     else:
         FixTemplateProduct(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])

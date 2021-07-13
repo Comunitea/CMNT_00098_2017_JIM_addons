@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 from odoo import api, fields, models, _
 from odoo.exceptions import UserError
 import logging
 import re
 
-_logger = logging.getLogger('B2B-IN')
+_logger = logging.getLogger("B2B-IN")
 
 # ERRORS #############################
 # 600 Item don't exists or is archived
@@ -13,13 +12,23 @@ _logger = logging.getLogger('B2B-IN')
 # 630 Data error
 # 640 Company error
 
-class B2bItemsIn(models.Model):
-	_name = 'b2b.item.in'
-	_description = 'B2B Item In'
-	_order = 'sequence, id'
-	_sql_constraints = [('b2b_item_in_unique', 'unique(name)', 'Name must be unique into B2B Incoming Items!')]
 
-	_default_code_str = re.sub(r'(^[ ]{0,8})', '', """
+class B2bItemsIn(models.Model):
+    _name = "b2b.item.in"
+    _description = "B2B Item In"
+    _order = "sequence, id"
+    _sql_constraints = [
+        (
+            "b2b_item_in_unique",
+            "unique(name)",
+            "Name must be unique into B2B Incoming Items!",
+        )
+    ]
+
+    _default_code_str = re.sub(
+        r"(^[ ]{0,8})",
+        "",
+        """
         # Model method to call
         def get_action(action, data):
             return action
@@ -30,165 +39,208 @@ class B2bItemsIn(models.Model):
                 # Odoo record data
                 'name': self.name
             }
-	""", flags=re.M).strip()
+	""",
+        flags=re.M,
+    ).strip()
 
-	name = fields.Char('Item Name', required=True, translate=False, help="Set the item name", index=True)
-	model = fields.Char('Model Name', required=True, translate=False, help="Odoo model name")
-	description = fields.Char('Description', required=False, translate=False, help="Set the item description")
-	code = fields.Text('Code', required=True, translate=False, default=_default_code_str, help="Write the item code")
-	active = fields.Boolean('Active', default=True, help="Enable or disable this item")
-	sequence = fields.Integer(help="Determine the items order")
+    name = fields.Char(
+        "Item Name",
+        required=True,
+        translate=False,
+        help="Set the item name",
+        index=True,
+    )
+    model = fields.Char(
+        "Model Name", required=True, translate=False, help="Odoo model name"
+    )
+    description = fields.Char(
+        "Description",
+        required=False,
+        translate=False,
+        help="Set the item description",
+    )
+    code = fields.Text(
+        "Code",
+        required=True,
+        translate=False,
+        default=_default_code_str,
+        help="Write the item code",
+    )
+    active = fields.Boolean(
+        "Active", default=True, help="Enable or disable this item"
+    )
+    sequence = fields.Integer(help="Determine the items order")
 
-	@api.model
-	def __check_model(self):
+    @api.model
+    def __check_model(self):
 
-		"""
-		Check if is a valid model
-		"""
+        """
+        Check if is a valid model
+        """
 
-		if not self.model in self.env:
-			raise UserError(_('Model %s not found!') % model_name)
+        if not self.model in self.env:
+            raise UserError(_("Model %s not found!") % model_name)
 
-	@api.model
-	def __check_code(self):
+    @api.model
+    def __check_code(self):
 
-		"""
-		Check if is a valid code
-		"""
+        """
+        Check if is a valid code
+        """
 
-		try:
-			exec(self.code, locals())
-		except Exception as e:
-			raise UserError(_('Syntax Error?\n') + str(e))
-		# Check required vars and methods to avoid fatal errors
-		methods = tuple(['get_action', 'get_data'])
-		for var in methods:
-			if not var in locals():
-				raise UserError(_('Code Error!\n %s not defined' % (var)))
-		for method in methods:
-			if not callable(eval(method)):
-				raise UserError(_('Code Error!\n %s must be a function' % (method)))
+        try:
+            exec(self.code, locals())
+        except Exception as e:
+            raise UserError(_("Syntax Error?\n") + str(e))
+        # Check required vars and methods to avoid fatal errors
+        methods = tuple(["get_action", "get_data"])
+        for var in methods:
+            if not var in locals():
+                raise UserError(_("Code Error!\n %s not defined" % (var)))
+        for method in methods:
+            if not callable(eval(method)):
+                raise UserError(
+                    _("Code Error!\n %s must be a function" % (method))
+                )
 
-	@api.model
-	def __change_active_company(self, company_id):
+    @api.model
+    def __change_active_company(self, company_id):
 
-		"""
-		Change company
-		"""
+        """
+        Change company
+        """
 
-		if company_id not in self.env.user.company_ids.ids:
-			_logger.info('[400] User not authorized on company %s' % company_id)
-			return False
-		# Change current company (mandatory)
-		self.env.user.company_id = company_id
-		return True
+        if company_id not in self.env.user.company_ids.ids:
+            _logger.info(
+                "[400] User not authorized on company %s" % company_id
+            )
+            return False
+        # Change current company (mandatory)
+        self.env.user.company_id = company_id
+        return True
 
-	@api.model
-	def evaluate(self, **kwargs):
+    @api.model
+    def evaluate(self, **kwargs):
 
-		"""
-		Evaluate config code
-		"""
+        """
+        Evaluate config code
+        """
 
-		b2b = dict()
-		# Introducimos el logger
-		b2b['logger'] = _logger
-		# Actualizamos con kwargs
-		if kwargs: b2b.update(kwargs)
-		# Librerías permitidas en el código
-		from datetime import datetime
-		# Ejecutamos el código con exec(item.code)
-		exec(self.code, locals(), b2b)
-		# Devolvemos la variable b2b
-		return b2b
+        b2b = dict()
+        # Introducimos el logger
+        b2b["logger"] = _logger
+        # Actualizamos con kwargs
+        if kwargs:
+            b2b.update(kwargs)
+        # Librerías permitidas en el código
+        from datetime import datetime
 
-	@api.model
-	def must_process(self, object_name, data, mode='create'):
+        # Ejecutamos el código con exec(item.code)
+        exec(self.code, locals(), b2b)
+        # Devolvemos la variable b2b
+        return b2b
 
-		"""
-		Check if item record is configured and do operation
-		"""
+    @api.model
+    def must_process(self, object_name, data, mode="create"):
 
-		# Data check
-		if data and type(data) is dict:
+        """
+        Check if item record is configured and do operation
+        """
 
-			# Change current company (mandatory)
-			company_id = data.get('company_id', 1)
-			if not self.__change_active_company(company_id):
-				return '[640] Company error!'
-				
-			# Process item based on config
-			item = self.search([('name', '=', object_name), ('active', '=', True)], limit=1)
+        # Data check
+        if data and type(data) is dict:
 
-			if item and type(item.code) is unicode:
+            # Change current company (mandatory)
+            company_id = data.get("company_id", 1)
+            if not self.__change_active_company(company_id):
+                return "[640] Company error!"
 
-				# Configuration eval
-				b2b = item.evaluate()
+            # Process item based on config
+            item = self.search(
+                [("name", "=", object_name), ("active", "=", True)], limit=1
+            )
 
-				if mode in ('create', 'update', 'cancel'):
+            if item and type(item.code) is unicode:
 
-					# Ejecutamos la función pre_data si existe
-					if 'pre_data' in b2b and callable(b2b['pre_data']):
-						b2b['pre_data'](self, mode)
+                # Configuration eval
+                b2b = item.evaluate()
 
-					item_data = b2b['get_data'](self, data)
-					item_action = b2b['get_action'](mode, data)
-					# Comprobaciones de seguridad
-					item_data_ok = type(item_data) is dict
-					item_action = getattr(self.env[item.model], item_action, None)
+                if mode in ("create", "update", "cancel"):
 
-					if item_data and item_data_ok and callable(item_action):
+                    # Ejecutamos la función pre_data si existe
+                    if "pre_data" in b2b and callable(b2b["pre_data"]):
+                        b2b["pre_data"](self, mode)
 
-						# Ejecutamos la acción del mensaje
-						try:
-							record_id = item_action(item_data)
+                    item_data = b2b["get_data"](self, data)
+                    item_action = b2b["get_action"](mode, data)
+                    # Comprobaciones de seguridad
+                    item_data_ok = type(item_data) is dict
+                    item_action = getattr(
+                        self.env[item.model], item_action, None
+                    )
 
-							# Ejecutamos la función pos_data si existe
-							if record_id and 'pos_data' in b2b and callable(b2b['pos_data']):
-								record = self.env[item.model].browse(record_id)
-								b2b['pos_data'](record, mode)
+                    if item_data and item_data_ok and callable(item_action):
 
-							if record_id:
-								return True
+                        # Ejecutamos la acción del mensaje
+                        try:
+                            record_id = item_action(item_data)
 
-						except Exception as e:
-							return '[630] Can not create the record! %s' % e
+                            # Ejecutamos la función pos_data si existe
+                            if (
+                                record_id
+                                and "pos_data" in b2b
+                                and callable(b2b["pos_data"])
+                            ):
+                                record = self.env[item.model].browse(record_id)
+                                b2b["pos_data"](record, mode)
 
-					else:
-						return '[620] Item %s configuration or data error!' % object_name
+                            if record_id:
+                                return True
 
-				else:
-					return '[610] CRUD mode %s not found for item %s!' % (item_action, object_name)
+                        except Exception as e:
+                            return "[630] Can not create the record! %s" % e
 
-			elif not item:
-				return '[600] Item %s not found!' % object_name
+                    else:
+                        return (
+                            "[620] Item %s configuration or data error!"
+                            % object_name
+                        )
 
-		return '[500] Data format error!'
+                else:
+                    return "[610] CRUD mode %s not found for item %s!" % (
+                        item_action,
+                        object_name,
+                    )
 
-	# ------------------------------------ OVERRIDES ------------------------------------
+            elif not item:
+                return "[600] Item %s not found!" % object_name
 
-	@api.model
-	def create(self, vals):
+        return "[500] Data format error!"
 
-		"""
-		Check model on create
-		"""
+    # ------------------------------------ OVERRIDES ------------------------------------
 
-		item = super(B2bItemsIn, self).create(vals)
-		item.__check_model()
-		item.__check_code()
-		return item
+    @api.model
+    def create(self, vals):
 
-	@api.multi
-	def write(self, vals):
+        """
+        Check model on create
+        """
 
-		"""
-		Check model on write
-		"""
+        item = super(B2bItemsIn, self).create(vals)
+        item.__check_model()
+        item.__check_code()
+        return item
 
-		self.invalidate_cache()
-		super(B2bItemsIn, self).write(vals)
-		for item in self:
-			item.__check_model()
-			item.__check_code()
-		return True
+    @api.multi
+    def write(self, vals):
+
+        """
+        Check model on write
+        """
+
+        self.invalidate_cache()
+        super(B2bItemsIn, self).write(vals)
+        for item in self:
+            item.__check_model()
+            item.__check_code()
+        return True

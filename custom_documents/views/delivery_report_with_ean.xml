@@ -3,7 +3,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
     <template id="custom_delivery_report_ean_document">
-        <t t-call="report.html_container">
+        <t t-call="web.html_container">
             <t t-call="custom_documents.custom_layout">
                     <t t-set="o" t-value="o.with_context({'lang':o.partner_id.lang})" />
                     <div class="page">
@@ -189,7 +189,7 @@
     </template>
 
     <template id="custom_delivery_report_ean">
-        <t t-call="report.html_container">
+        <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="custom_documents.custom_delivery_report_ean_document" t-lang="o.partner_id.lang"/>
             </t>
@@ -204,7 +204,7 @@
         model="stock.picking"
         string="Delivery order with EAN"/>
 
-    <record id="custom_documents.custom_delivery_report_ean_action" model="ir.actions.report.xml">
+    <record id="custom_documents.custom_delivery_report_ean_action" model="ir.actions.report">
         <field name="paperformat_id" ref="sale_paperformat_euro" />
     </record>
 

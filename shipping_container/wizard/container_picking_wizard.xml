@@ -46,18 +46,11 @@
 
         <act_window name="Add to container"
             res_model="container.picking.wizard"
+            src_model="shipping.container"
             view_mode="form"
             view_type="form"
             target="new"
             id="action_add_container_picking_wzd"
             groups="purchase.group_purchase_user"/>
 
-        <record model="ir.values" id="values_action_add_container_picking_wzd">
-            <field name="model_id" ref="shipping_container.model_shipping_container" />
-            <field name="name">val Add to container</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.act_window,' +str(ref('action_add_container_picking_wzd'))" />
-            <field name="key">action</field>
-            <field name="model">shipping.container</field>
-        </record>
 </odoo>

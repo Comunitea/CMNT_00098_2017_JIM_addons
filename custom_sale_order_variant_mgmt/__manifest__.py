@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
 # © 2017 Comunitea
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "Custom sale order variant management",
     "summary": "",
-    "version": "8.0.1.0.0",
+    "version": "11.0.1.0.0",
     "category": "Uncategorized",
     "website": "comunitea.com",
     "author": "Comunitea",
@@ -13,15 +12,12 @@
     "installable": True,
     "depends": [
         "base",
-        'sale',
-        'sale_stock',
-        'delivery',
-        'sale_order_variant_mgmt',
-        'chained_discount_commercial_rules',
-        'jim_stock',
+        "sale",
+        "sale_stock",
+        "delivery",
+        "sale_order_variant_mgmt",
+        "chained_discount_commercial_rules",
+        "jim_stock",
     ],
-    "data": [
-        'views/sale_order.xml',
-        'security/ir.model.access.csv'
-    ],
+    "data": ["views/sale_order.xml", "security/ir.model.access.csv"],
 }

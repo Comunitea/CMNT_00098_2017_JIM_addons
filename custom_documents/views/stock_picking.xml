@@ -22,6 +22,7 @@
         </field>
     </record>
 
+    <!-- TODO: Migrar, no existe el modelo stock_pack_operation
     <record model="ir.ui.view" id="view_valued_stock_pack_op_tree">
         <field name="name">Stock pack value view (Valued ops)</field>
         <field name="model">stock.pack.operation</field>
@@ -79,5 +80,5 @@
         <field name="view_mode">tree</field>
         <field name="view_id" ref="view_valued_stock_pack_op_tree"/>
         <field name="search_id" ref="view_valued_ops_search"/>
-    </record>
+    </record>-->
 </odoo>

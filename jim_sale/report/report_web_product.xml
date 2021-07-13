@@ -52,21 +52,4 @@
               id="menu_report_product_web_id"
               parent="sales_team.menu_sale_report" />
 
-    <!--
-     <record id="action_export_excell" model="ir.actions.server">
-            <field name="name">Excell</field>
-            <field name="type">ir.actions.server</field>
-            <field name="state">code</field>
-            <field name="model_id" ref="jim_sale.model_report_web_product_jim" />
-            <field name="code">record.get_excell_web_stock2()</field>
-        </record>
-
-        <record id="action_purge_data_line_value" model="ir.values">
-            <field name="name">Export</field>
-            <field name="key">action</field>
-            <field name="key2">client_action_multi</field>
-            <field name="model">report.web.product.jim</field>
-            <field name="value" eval="'ir.actions.server,%d' % ref('jim_sale.action_export_excell')" />
-        </record>
-    -->
 </odoo>

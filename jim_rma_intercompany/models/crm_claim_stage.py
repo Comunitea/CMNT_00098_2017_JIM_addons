@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # © 2017 Comunitea
 # Copyright 2015-2017 Odoo S.A.
 # Copyright 2017 Vicent Cubells <vicent.cubells@tecnativa.com>
@@ -12,7 +11,6 @@ class CrmClaimStage(models.Model):
 
     _inherit = "crm.claim.stage"
 
-
-    default_new = fields.Boolean('New stage')
-    default_run = fields.Boolean('Running stage')
-    default_done= fields.Boolean('Done stage')
+    default_new = fields.Boolean("New stage")
+    default_run = fields.Boolean("Running stage")
+    default_done = fields.Boolean("Done stage")

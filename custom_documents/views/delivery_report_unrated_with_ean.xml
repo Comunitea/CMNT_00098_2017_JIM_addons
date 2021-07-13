@@ -107,7 +107,7 @@
     </template>
 
     <template id="custom_delivery_report_unrated_with_ean">
-        <t t-call="report.html_container">
+        <t t-call="web.html_container">
             <t t-foreach="docs" t-as="o">
                 <t t-call="custom_documents.custom_delivery_report_unrated_with_ean_document" t-lang="o.partner_id.lang"/>
             </t>
@@ -123,7 +123,7 @@
         model="stock.picking"
         string="Albarán sin valorar EAN"/>
 
-    <record id="custom_documents.report_delivery_report_unrated_with_ean" model="ir.actions.report.xml">
+    <record id="custom_documents.report_delivery_report_unrated_with_ean" model="ir.actions.report">
         <field name="paperformat_id" ref="picking_paperformat_euro" />
     </record>
 

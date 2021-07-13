@@ -134,7 +134,7 @@
         </t>
     </template>
 
-    <delete id="stock.action_report_picking" model="ir.actions.report.xml"/>
+    <delete id="stock.action_report_picking" model="ir.actions.report"/>
 
     <report
         id="stock_transfer_report"
@@ -144,7 +144,7 @@
         model="stock.picking"
         string="Traslado"/>
 
-    <record id="custom_documents.stock_transfer_report" model="ir.actions.report.xml">
+    <record id="custom_documents.stock_transfer_report" model="ir.actions.report">
         <field name="paperformat_id" ref="picking_paperformat_euro" />
     </record>
 </odoo>

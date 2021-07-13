@@ -1,7 +1,7 @@
 {
     "name": "JS Parameterization",
     "summary": "Añade una pestaña de parametrización en los productos/variantes",
-    "version": "10.0.2.0",
+    "version": "11.0.1.0.0",
     "license": "AGPL-3",
     "author": "Jim Sports",
     "category": "Inventory",
@@ -12,13 +12,8 @@
         "data/b2b_out.xml",
         "views/parameterization.xml",
         "views/product.xml",
-        "views/assets.xml"
+        "views/assets.xml",
     ],
-    "depends": [
-        "base",
-        "stock",
-        "product",
-        "js_b2b"
-    ],
-    "installable": True
+    "depends": ["base", "stock", "product", "js_b2b"],
+    "installable": True,
 }

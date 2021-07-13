@@ -1,34 +1,28 @@
-# -*- coding: utf-8 -*-
 # © 2016 Comunitea - Javier Colmenero <javier@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 {
-    'name': 'Jim Telesale',
-    'version': '10.0.0.0.0',
-    'author': 'Comunitea ',
+    "name": "Jim Telesale",
+    "version": "11.0.1.0.0",
+    "author": "Comunitea ",
     "category": "Custom",
-    'license': 'AGPL-3',
-    'depends': [
-        'jim_sale',
-        'jim_stock',
-        'chained_discount_commercial_rules',
-        'telesale_manage_variants',
-        'custom_documents',
-        'partner_custom'
+    "license": "AGPL-3",
+    "depends": [
+        "jim_sale",
+        "jim_stock",
+        "chained_discount_commercial_rules",
+        "telesale_manage_variants",
+        "custom_documents",
+        "partner_custom",
     ],
-    'contributors': [
-        "Comunitea ",
-        "Javier Colmenero <javier@comunitea.com>"
+    "contributors": ["Comunitea ", "Javier Colmenero <javier@comunitea.com>"],
+    "data": ["views/telesale_assets.xml"],
+    "qweb": [
+        "static/src/xml/new_order_template.xml",
+        "static/src/xml/order_history_template.xml",
+        "static/src/xml/popups_template.xml",
+        "static/src/xml/customer_list_template.xml",
+        "static/src/xml/product_catalog_template.xml",
     ],
-    "data": [
-        'views/telesale_assets.xml'
-    ],
-    'qweb': [
-        'static/src/xml/new_order_template.xml',
-        'static/src/xml/order_history_template.xml',
-        'static/src/xml/popups_template.xml',
-        'static/src/xml/customer_list_template.xml',
-        'static/src/xml/product_catalog_template.xml',
-    ],
-    "installable": True
+    "installable": True,
 }

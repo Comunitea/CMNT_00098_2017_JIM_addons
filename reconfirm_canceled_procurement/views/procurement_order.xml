@@ -3,6 +3,7 @@
     <data>
 
 
+<!-- #TODO: Migrar, el modelo no existe ya. Pero quizás no se siga esta estrategia para el multicompany
         <record id="procurement_order_server_action_reconfirmed_cancel" model="ir.actions.server">
             <field name="name">Reconfirmed Procurements</field>
             <field name="model_id" ref="model_procurement_order"/>
@@ -21,5 +22,6 @@ if records:
             <field name="model">procurement.order</field>
             <field name="value" eval="'ir.actions.server,' + str(ref('procurement_order_server_action_reconfirmed_cancel'))" />
         </record>
+-->
     </data>
 </odoo>

@@ -130,22 +130,16 @@
     <!-- ACCIONES DE LISTADO -->
 
     <record id="b2b_sync_all" model="ir.actions.server">
-        <field name="name">B2B Sync</field>
-        <field name="model_id" ref="model_b2b_item_out"/>
-        <field name="state">code</field>
-        <field name="code">
-            for record in records:
-                record.sync_item()
-        </field>
-    </record>
-
-    <record id="ir_values_b2b_sync_all" model="ir.values">
-        <field name="name">B2B Send All</field>
-        <field name="model">b2b.item.out</field>
-        <field name="key">action</field>
-        <field name="key2">client_action_multi</field>
-        <field name="value" eval="'ir.actions.server, %d' % b2b_sync_all" />
-    </record>
+            <field name="name">B2B Sync</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="model_b2b_item_out"/>
+            <field name="binding_model_id" ref="model_b2b_item_out"/>
+            <field name="code">
+for record in records:
+    record.sync_item()
+            </field>
+        </record>
 
     <!-- VISTAS -->
 
@@ -164,7 +158,7 @@
           </p>
         </field>
     </record>
-    
+
     <!-- ACCIONES DE MENÚ -->
 
     <menuitem id="js_b2b_items_out_action" name="Items Out" parent="js_b2b_menu" sequence="10" action="js_b2b_items_out" groups="base_technical_features.group_technical_features"  />

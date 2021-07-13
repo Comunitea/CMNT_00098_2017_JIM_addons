@@ -119,7 +119,7 @@
         model="account.payment.order"
         string="Listado"/>
 
-    <record id="custom_documents.account_payment_order_report" model="ir.actions.report.xml">
+    <record id="custom_documents.account_payment_order_report" model="ir.actions.report">
         <field name="paperformat_id" ref="picking_paperformat_euro" />
     </record>
 </odoo>

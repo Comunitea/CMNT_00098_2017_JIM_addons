@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
+<odoo>
 
         <record id="sga_error_ack_action" model="ir.actions.server">
             <field name="name">Confirmar ACK</field>
-            <field name="model_id" ref="model_sga_file_error"/>
+            <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="condition">True</field>
-            <field name="code">records.confirm_ack()</field>
-         </record>
-        <record id="sga_error_ack_values" model="ir.values">
-            <field name="name">sga.error.ack_.values</field>
-            <field name="model">sga.file.error</field>
-            <field name="key" >action</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.server,%d'%sga_error_ack_action"/>
+            <field name="model_id" ref="model_sga_file_error"/>
+            <field name="binding_model_id" ref="model_sga_file_error"/>
+            <field name="code">
+records.confirm_ack()
+            </field>
         </record>
 
         <record id="model_sgafile__error_form_view" model="ir.ui.view">
@@ -86,5 +81,4 @@
             </field>
         </record>
         <menuitem action="model_sgafile_error_action_view" id="Error SGAfiles" parent="menu_sga_mecalux" sequence="5"/>
-    </data>
-</openerp>
+</odoo>

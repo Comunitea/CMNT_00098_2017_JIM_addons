@@ -62,18 +62,15 @@
               parent="jim_stock.menu_stock_scrips"
               action="act_tree_done_dest_move_waiting"/>
 
-    <record id="stock_picking_set_hide_done_to_waiting_moves" model="ir.actions.server">
-        <field name="name">Hide in list</field>
-        <field name="model_id" ref="model_done_to_waiting_moves"/>
-        <field name="state">code</field>
-        <field name="condition">True</field>
-        <field name="code">records.set_hide_done_to_waiting()</field>
-    </record>
-      <record id="stock_picking_menu_set_hide_done_to_waiting" model="ir.values">
-            <field name="name">stock.picking.menu.hide.done.to.waiting.moves</field>
-            <field name="model">done.to.waiting.moves</field>
-            <field name="key" >action</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.server,%d'%stock_picking_set_hide_done_to_waiting_moves"/>
+        <record id="stock_picking_set_hide_done_to_waiting_moves" model="ir.actions.server">
+            <field name="name">Hide in list</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="model_done_to_waiting_moves"/>
+            <field name="binding_model_id" ref="model_done_to_waiting_moves"/>
+            <field name="code">
+records.set_hide_done_to_waiting()
+            </field>
         </record>
+
 </odoo>

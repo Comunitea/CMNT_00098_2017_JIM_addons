@@ -12,7 +12,7 @@
     />
 
 
-    <record id="report_picking_grouped_invoice_action" model="ir.actions.report.xml">
+    <record id="report_picking_grouped_invoice_action" model="ir.actions.report">
         <field name="paperformat_id" ref="invoice_paperformat_euro" />
     </record>
 </odoo>

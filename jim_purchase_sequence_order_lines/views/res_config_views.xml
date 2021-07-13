@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+     <!--TODO: Migrar a modelo común res.config.setting
      <record model="ir.ui.view" id="view_purchase_configuration_template_sequence">
         <field name="name">purchase.res.config.view.template.sequence</field>
         <field name="model">purchase.config.settings</field>
@@ -9,5 +10,5 @@
                 <field name="group_reorder_purchase_line" widget="radio"/>
             </field>
         </field>
-     </record>
+     </record>-->
 </odoo>

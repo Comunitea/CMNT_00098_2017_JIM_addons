@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Copyright 2017 Kiko Sánchez<kiko@xcomunitea.com>.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
@@ -14,5 +13,9 @@ class Currency(models.Model):
     def _get_conversion_rate(self, from_currency, to_currency):
         fixed_rate = 0
         if self._context.get("fixed_rate", False):
-            fixed_rate = to_currency.rate / self._context.get("fixed_rate", False)
-        return fixed_rate or super(Currency, self)._get_conversion_rate(from_currency, to_currency)
+            fixed_rate = to_currency.rate / self._context.get(
+                "fixed_rate", False
+            )
+        return fixed_rate or super(Currency, self)._get_conversion_rate(
+            from_currency, to_currency
+        )

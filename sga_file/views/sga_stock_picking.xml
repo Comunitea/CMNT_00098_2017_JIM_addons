@@ -1,69 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<openerp>
-    <data>
-         <record id="stock_picking_action_move_to_NE" model="ir.actions.server">
-            <field name="name">Move to Mecalux not sended</field>
-            <field name="model_id" ref="model_stock_picking"/>
-            <field name="state">code</field>
-            <field name="condition">True</field>
-            <field name="code">records.move_to_NE()</field>
-         </record>
+<odoo>
 
-        <record id="stock_picking_menu_move_to_NE" model="ir.values">
-            <field name="name">stock.picking.menu.move.to.NE</field>
-            <field name="model">stock.picking</field>
-            <field name="key" >action</field>
-            <field name="key2">client_action_multi</field>
-            <field name="code">records.move_to_NE()</field>
+        <record id="stock_picking_action_move_to_NE" model="ir.actions.server">
+            <field name="name">Move to Mecalux not sended</field>
+            <field name="type">ir.actions.server</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="binding_model_id" ref="stock.model_stock_picking"/>
+            <field name="code">
+records.move_to_NE()
+            </field>
         </record>
 
         <record id="stock_picking_action_move_to_done" model="ir.actions.server">
             <field name="name">Move to Mecalux done</field>
-            <field name="model_id" ref="model_stock_picking"/>
+            <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="condition">True</field>
-            <field name="code">records.move_to_done()</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="binding_model_id" ref="stock.model_stock_picking"/>
+            <field name="code">
+records.move_to_done()
+            </field>
         </record>
-
-        <record id="stock_picking_menu_move_to_done" model="ir.values">
-            <field name="name">stock.picking.menu.move.to.done</field>
-            <field name="model">stock.picking</field>
-            <field name="key" >action</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.server,%d'%stock_picking_action_move_to_done"/>
-        </record>
-
 
         <record id="stock_picking_action_export_to_mecalux2" model="ir.actions.server">
             <field name="name">Import from Mecalux</field>
-            <field name="model_id" ref="model_stock_picking"/>
+            <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="condition">True</field>
-            <field name="code">records.get_outputs_from_mecalux()</field>
-        </record>
-
-        <record id="stock_picking_menu_export_to_mecalux2" model="ir.values">
-            <field name="name">stock.picking.menu.export.to.mecalux2</field>
-            <field name="model">stock.picking</field>
-            <field name="key" >action</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.server,%d'%stock_picking_action_export_to_mecalux2"/>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="binding_model_id" ref="stock.model_stock_picking"/>
+            <field name="code">
+records.get_outputs_from_mecalux()
+            </field>
         </record>
 
         <record id="stock_picking_action_export_to_mecalux" model="ir.actions.server">
             <field name="name">Send to Mecalux</field>
-            <field name="model_id" ref="model_stock_picking"/>
+            <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="condition">True</field>
-            <field name="code">records.new_mecalux_file()</field>
-        </record>
-
-        <record id="stock_picking_menu_export_to_mecalux" model="ir.values">
-            <field name="name">stock.picking.menu.export.to.mecalux</field>
-            <field name="model">stock.picking</field>
-            <field name="key" >action</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.server,%d'%stock_picking_action_export_to_mecalux"/>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="binding_model_id" ref="stock.model_stock_picking"/>
+            <field name="code">
+records.new_mecalux_file()
+            </field>
         </record>
 
         <record model="ir.ui.view" id="view_picking_type_form_sga">
@@ -216,5 +195,4 @@
             </field>
         </record>
 
-    </data>
-</openerp>
+</odoo>

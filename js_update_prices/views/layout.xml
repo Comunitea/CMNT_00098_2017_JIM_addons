@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <odoo>
 
-    <template id="js_update_prices_custom_includes" inherit_id="report.assets_common" name="JS Update Prices Includes">
+    <template id="js_update_prices_custom_includes" inherit_id="web.assets_common" name="JS Update Prices Includes">
         <xpath expr="." position="inside">
             <link href="/js_update_prices/static/less/main.less" rel="stylesheet" type="text/less"/>
         </xpath>
@@ -9,10 +9,10 @@
 
     <!-- Página principal (batch_index)  -->
     <template id="prices_edit_index" name="JS Update Prices Index">
-        <t t-call="report.html_container">
+        <t t-call="web.html_container">
             <t t-set="title">Update Prices - Index</t>
 
-            <div class="oe_structure o_report_layout_background">
+            <div class="oe_structure">
                 <div style="padding-top: 50px">
                     <h1 style="margin-top: 0">Script para modificación de precios</h1>
                     <p>Este script actualiza los precios de los productos en los pedidos de venta.</p>
@@ -20,8 +20,8 @@
                     <form method="GET" action="/js_update_prices/run">
                         <div class="checkbox">
                             <label>
-        						<input name="tmode" type="checkbox" checked="true" value="1" /> Modo de test (no se hacen cambios)
-        					</label>
+                                                        <input name="tmode" type="checkbox" checked="true" value="1" /> Modo de test (no se hacen cambios)
+                                                </label>
                         </div>
 
                         <div class="checkbox">
@@ -64,7 +64,7 @@
 
     <!-- Página de resultados (batch_update)  -->
     <template id="prices_edit_batch" name="JS Update Prices Batch">
-        <t t-call="report.html_container">
+        <t t-call="web.html_container">
             <t t-set="title">Update Prices - Results</t>
 
             <div class="oe_structure" style="margin-top: 50px">

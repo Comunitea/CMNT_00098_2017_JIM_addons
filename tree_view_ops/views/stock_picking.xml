@@ -1,27 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <!-- TODO: Migrar, no existe el modelo stock_pack_operation
       <record id="view_picking_form_jim_packs" model="ir.ui.view">
             <field name="name">view.picking.form.tree.view.ops</field>
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
-                <!--<xpath expr="//button[@name='put_in_pack']" position="after">
-                    <button class="oe_link oe_right" name="show_packs_in_pick" type="object"
-                        string="&#128203;Tree packs" attrs="{'invisible': [('pick_packages', '=',0)]}"
-                        groups="stock.group_tracking_lot"/>
-                </xpath>
-                <xpath expr="//field[@name='pack_operation_product_ids']/tree/field[@name='result_package_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='pack_operation_pack_ids']/tree/field[@name='result_package_id']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                -->
                 <xpath expr="//field[@name='pack_operation_ids']" position="after">
-
-                    <!--button class="oe_link oe_right" name="ordered_qty_to_qty_done" type="object" string="&#8627;Fill qty done" attrs="{'invisible': [('state', 'in', ('done', 'cancel'))]}" groups="stock.group_tracking_lot"/-->
-
                     <button class="oe_link oe_right" name="reserved_qty_to_qty_done" type="object" string="&#8627;Fill qty done (Reserved qty)" attrs="{'invisible': [('state', 'in', ('done', 'cancel'))]}" groups="stock.group_tracking_lot"/>
 
                     <button class="oe_link oe_right" name="reset_qty_done" type="object" string="&#8627;Reset qty done" attrs="{'invisible': [('state', 'in', ('done', 'cancel'))]}" groups="stock.group_tracking_lot"/>
@@ -32,12 +18,12 @@
             </field>
         </record>
 
+
      <record model="ir.ui.view" id="view_qty_split_ops">
         <field name="name">Stock split operations (qties)</field>
         <field name="model">stock.pack.operation</field>
         <field name="arch" type="xml">
             <tree decoration-danger="qty_done&gt;product_qty" decoration-success="qty_done==product_qty" editable="1">
-                <!--field name="product_tmpl_id" readonly="1"/-->
                 <field name="product_id" readonly="1"/>
                 <field name="product_uom_id" groups="product.group_uom" readonly="1"/>
                 <field name="location_id" domain="[('id', 'child_of', parent.location_id)]" invisible="1"/>
@@ -45,9 +31,6 @@
                 <field name="ordered_qty" readonly="1"/>
                 <field name="product_qty" readonly="1"/>
                 <field name="qty_done"/>
-                <!--field name="sale_line" attrs="{'invisible': [('sale_line', '=', False)]}" readonly="1"/-->
-                <!--field name="purchase_line" attrs="{'invisible': [('purchase_line', '=', False)]}" readonly="1"/-->
-
             </tree>
         </field>
     </record>
@@ -57,11 +40,7 @@
             <field eval="3" name="priority"/>
             <field name="arch" type="xml">
                 <search string="Stock Pack Operation">
-                    <!--field name="display_name" filter_domain="['|', ('product_id', 'ilike', self), ('display_name', 'ilike', self)]" string="Reference"/-->
                     <field name="date" groups="base.group_no_one"/>
-
-                    <!--filter string="Purchases" name="purchases" domain="[('sale_line','!=',False)]" help="Stock operation from sale order"/>
-                    <filter string="Sales" name="sales" domain="[('purchase_line','!=',False)]" help="Stock operation from purchase order"/-->
                     <field name="product_id"/>
                     <field name="location_id" string="Location" filter_domain="['|',('location_id','ilike',self),('location_dest_id','ilike',self)]"/>
                     <filter string="Done" name="done" domain="[('qty_done','>',0.00)]" help="Stock pack operations with qty done > 0"/>
@@ -103,36 +82,27 @@
             </field>
         </record>
 
-
     <record id="action_stock_pack_operation_product_qty_qty_done" model="ir.actions.server">
             <field name="name">Product_qty to qty done</field>
-            <field name="model_id" ref="model_stock_pack_operation"/>
+            <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="condition">True</field>
-            <field name="code">records.op_qty_reserved_to_qty_done()</field>
+            <field name="model_id" ref="model_stock_pack_operation"/>
+            <field name="binding_model_id" ref="model_stock_pack_operation"/>
+            <field name="code">
+records.op_qty_reserved_to_qty_done()
+            </field>
         </record>
 
-        <record id="menu_stock_pack_operation_product_qty_qty_done" model="ir.values">
-            <field name="name">stock.pack.operation.product_qty_qty_done</field>
-            <field name="model">stock.pack.operation</field>
-            <field name="key" >action</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.server,%d'%action_stock_pack_operation_product_qty_qty_done"/>
-     </record>
-     <record id="action_stock_pack_operation_reset_qty_done" model="ir.actions.server">
+        <record id="action_stock_pack_operation_reset_qty_done" model="ir.actions.server">
             <field name="name">Reset qty done</field>
-            <field name="model_id" ref="model_stock_pack_operation"/>
+            <field name="type">ir.actions.server</field>
             <field name="state">code</field>
-            <field name="condition">True</field>
-            <field name="code">records.reset_op_qty_done()</field>
-        </record>
+            <field name="model_id" ref="model_stock_pack_operation"/>
+            <field name="binding_model_id" ref="model_stock_pack_operation"/>
+            <field name="code">
+records.reset_op_qty_done()
+            </field>
+        </record>-->
 
-        <record id="menu_stock_pack_operation_reset_qty_done" model="ir.values">
-            <field name="name">stock.pack.operation.reset_qty_done</field>
-            <field name="model">stock.pack.operation</field>
-            <field name="key" >action</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.server,%d'%action_stock_pack_operation_reset_qty_done"/>
-        </record>
     </data>
 </odoo>

@@ -107,10 +107,12 @@
 
     </record>
 
-    <record id="action_view_related_pickings" model="ir.actions.server">
+     <record id="action_view_related_pickings" model="ir.actions.server">
             <field name="name">Related Pickings</field>
-            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="type">ir.actions.server</field>
             <field name="state">code</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="binding_model_id" ref="stock.model_stock_picking"/>
             <field name="code">
 if records:
     domain = records[0].view_related_pickings()
@@ -124,18 +126,7 @@ if records:
             'nodestroy': True,
             'domain': domain,
         }
-
             </field>
-        </record>
-
-
-        <record model="ir.values" id="view_related_pickings">
-            <field name="model_id" ref="stock.model_stock_picking" />
-            <field name="name">Related Pickings</field>
-            <field name="key2">client_action_multi</field>
-            <field name="value" eval="'ir.actions.server,' + str(ref('action_view_related_pickings'))" />
-            <field name="key">action</field>
-            <field name="model">stock.picking</field>
         </record>
 
 

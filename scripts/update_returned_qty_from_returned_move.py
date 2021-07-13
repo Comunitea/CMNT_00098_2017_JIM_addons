@@ -36,7 +36,7 @@ class FixTemplateProduct(object):
 
     def exception_handler(self, exception):
         """Manejador de Excepciones"""
-        print "HANDLER: ", (exception)
+        print("HANDLER: {}".format(exception))
         return True
 
     def create(self, model, data, context={}):
@@ -152,7 +152,7 @@ class FixTemplateProduct(object):
 
         cont = len(move_ids)
         for move_id in move_ids:
-            print cont
+            print(cont)
             cont-=1
             move_data = self.read('stock.move', move_id, ['ordered_qty', 'origin_returned_move_id'])
             if move_data:
@@ -162,6 +162,6 @@ class FixTemplateProduct(object):
 
 if __name__ == "__main__":
     if len(sys.argv) < 4:
-        print u"Uso: %s <dbname> <user> <password> <port>" % sys.argv[0]
+        print("Uso: {} <dbname> <user> <password> <port>".format(sys.argv[0]))
     else:
         FixTemplateProduct(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])

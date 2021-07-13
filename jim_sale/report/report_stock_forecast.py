@@ -1,24 +1,22 @@
-# -*- coding: utf-8 -*-
 # © 2016 Comunitea - Javier Colmenero <javier@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import api, fields, models, tools
 
 
 class ReportStockForecat(models.Model):
-    _inherit = 'report.stock.forecast'
+    _inherit = "report.stock.forecast"
 
-    location_id = fields.Many2one('stock.location', 'Location',
-                                  readonly=True)
-    company_id = fields.Many2one('res.company', 'Company',
-                                 readonly=True)
-    out_qty = fields.Float(readonly=True, string='Outgoing qty')
-    in_qty = fields.Float(readonly=True, string='Incoming qty')
-    real_qty = fields.Float(readonly=True, string='Real qty')
+    location_id = fields.Many2one("stock.location", "Location", readonly=True)
+    company_id = fields.Many2one("res.company", "Company", readonly=True)
+    out_qty = fields.Float(readonly=True, string="Outgoing qty")
+    in_qty = fields.Float(readonly=True, string="Incoming qty")
+    real_qty = fields.Float(readonly=True, string="Real qty")
 
     @api.model_cr
     def init(self):
-        tools.drop_view_if_exists(self._cr, 'report_stock_forecast')
-        self._cr.execute("""CREATE or REPLACE VIEW report_stock_forecast AS (SELECT
+        tools.drop_view_if_exists(self._cr, "report_stock_forecast")
+        self._cr.execute(
+            """CREATE or REPLACE VIEW report_stock_forecast AS (SELECT
         MIN(id) as id,
         product_id as product_id,
         date as date,
@@ -159,4 +157,5 @@ class ReportStockForecat(models.Model):
              SUB ON (SUB.date IS NOT NULL)
     GROUP BY MAIN.product_id,SUB.date, MAIN.date, MAIN.location_id, MAIN.company_id
     ) AS FINAL
-    GROUP BY product_id,date,location_id, company_id)""")
+    GROUP BY product_id,date,location_id, company_id)"""
+        )

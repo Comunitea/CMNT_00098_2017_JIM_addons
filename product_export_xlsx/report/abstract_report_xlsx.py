@@ -1,19 +1,14 @@
-# -*- coding: utf-8 -*-
 # Author: Julien Coux
 # Copyright 2016 Camptocamp SA
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl.html).
 
-from odoo.addons.report_xlsx.report.report_xlsx import ReportXlsx
+from odoo import models
 
+class ReportXlsxAbstract(models.AbstractModel):
+    _name = 'report.product_export_xlsx.abstract_xls'
+    _inherit = 'report.report_xlsx.abstract'
 
-class AbstractReportXslx(ReportXlsx):
-
-    def __init__(self, name, table, rml=False, parser=False, header=True,
-                 store=False):
-
-        super(AbstractReportXslx, self).__init__(
-            name, table, rml, parser, header, store)
-
+    def __init__(self, pool, cr):
         # main sheet which will contains report
         self.sheet = None
 
@@ -35,26 +30,28 @@ class AbstractReportXslx(ReportXlsx):
         self.format_percent_bold_italic = None
 
     def get_workbook_options(self):
-        return {'constant_memory': True}
+        return {"constant_memory": True}
 
     def generate_xlsx_report(self, workbook, data, objects):
 
-        report = data['form']
+        report = data["form"]
         self.row_pos = 0
         self._define_formats(workbook)
         report_name = self._get_report_name()
-        #filters = self._get_report_filters(report)
-        self.columns = self._get_report_columns(report, data['stock_field'], data['valued'])
+        # filters = self._get_report_filters(report)
+        self.columns = self._get_report_columns(
+            report, data["stock_field"], data["valued"]
+        )
         self.sheet = workbook.add_worksheet(report_name[:31])
         self._set_column_width()
-        #self._write_report_title(report_name)
-        #self._write_filters(filters)
+        # self._write_report_title(report_name)
+        # self._write_filters(filters)
 
         self.write_array_header()
         self._generate_report_content(workbook, report)
 
     def _define_formats(self, workbook):
-        """ Add cell formats to current workbook.
+        """Add cell formats to current workbook.
         Those formats can be used on all cell.
 
         Available formats are :
@@ -68,53 +65,61 @@ class AbstractReportXslx(ReportXlsx):
          * format_amount
          * format_percent_bold_italic
         """
-        self.format_bold = workbook.add_format({'bold': True})
-        self.format_right = workbook.add_format({'align': 'right'})
+        self.format_bold = workbook.add_format({"bold": True})
+        self.format_right = workbook.add_format({"align": "right"})
         self.format_right_bold_italic = workbook.add_format(
-            {'align': 'right', 'bold': True, 'italic': True}
+            {"align": "right", "bold": True, "italic": True}
         )
         self.format_header_left = workbook.add_format(
-            {'bold': True,
-             'border': True,
-             'bg_color': '#FFFFCC'})
-        self.format_header_center = workbook.add_format(
-            {'bold': True,
-             'align': 'center',
-             'border': True,
-             'bg_color': '#FFFFCC'})
-        self.format_header_right = workbook.add_format(
-            {'bold': True,
-             'align': 'right',
-             'border': True,
-             'bg_color': '#FFFFCC'})
-        self.format_header_amount = workbook.add_format(
-            {'bold': True,
-             'border': True,
-             'bg_color': '#FFFFCC'})
-        self.format_header_amount.set_num_format('#,##0.00')
-        self.format_amount = workbook.add_format()
-        self.format_amount.set_num_format('#,##0.00')
-        self.format_int = workbook.add_format()
-        self.format_int.set_num_format('#0')
-        self.format_percent_bold_italic = workbook.add_format(
-            {'bold': True, 'italic': True}
+            {"bold": True, "border": True, "bg_color": "#FFFFCC"}
         )
-        self.format_percent_bold_italic.set_num_format('#,##0.00%')
+        self.format_header_center = workbook.add_format(
+            {
+                "bold": True,
+                "align": "center",
+                "border": True,
+                "bg_color": "#FFFFCC",
+            }
+        )
+        self.format_header_right = workbook.add_format(
+            {
+                "bold": True,
+                "align": "right",
+                "border": True,
+                "bg_color": "#FFFFCC",
+            }
+        )
+        self.format_header_amount = workbook.add_format(
+            {"bold": True, "border": True, "bg_color": "#FFFFCC"}
+        )
+        self.format_header_amount.set_num_format("#,##0.00")
+        self.format_amount = workbook.add_format()
+        self.format_amount.set_num_format("#,##0.00")
+        self.format_int = workbook.add_format()
+        self.format_int.set_num_format("#0")
+        self.format_percent_bold_italic = workbook.add_format(
+            {"bold": True, "italic": True}
+        )
+        self.format_percent_bold_italic.set_num_format("#,##0.00%")
 
     def _set_column_width(self):
         """Set width for all defined columns.
         Columns are defined with `_get_report_columns` method.
         """
         for position, column in self.columns.iteritems():
-            self.sheet.set_column(position, position, column['width'])
+            self.sheet.set_column(position, position, column["width"])
 
     def _write_report_title(self, title):
         """Write report title on current line using all defined columns width.
         Columns are defined with `_get_report_columns` method.
         """
         self.sheet.merge_range(
-            self.row_pos, 0, self.row_pos, len(self.columns) - 1,
-            title, self.format_bold
+            self.row_pos,
+            0,
+            self.row_pos,
+            len(self.columns) - 1,
+            title,
+            self.format_bold,
         )
         self.row_pos += 3
 
@@ -131,13 +136,20 @@ class AbstractReportXslx(ReportXlsx):
         col_value = col_name + col_count_filter_name + 1
         for title, value in filters:
             self.sheet.merge_range(
-                self.row_pos, col_name,
-                self.row_pos, col_name + col_count_filter_name - 1,
-                title, self.format_header_left)
+                self.row_pos,
+                col_name,
+                self.row_pos,
+                col_name + col_count_filter_name - 1,
+                title,
+                self.format_header_left,
+            )
             self.sheet.merge_range(
-                self.row_pos, col_value,
-                self.row_pos, col_value + col_count_filter_value - 1,
-                value)
+                self.row_pos,
+                col_value,
+                self.row_pos,
+                col_value + col_count_filter_value - 1,
+                value,
+            )
             self.row_pos += 1
         self.row_pos += 2
 
@@ -146,8 +158,12 @@ class AbstractReportXslx(ReportXlsx):
         Columns are defined with `_get_report_columns` method.
         """
         self.sheet.merge_range(
-            self.row_pos, 0, self.row_pos, len(self.columns) - 1,
-            title, self.format_bold
+            self.row_pos,
+            0,
+            self.row_pos,
+            len(self.columns) - 1,
+            title,
+            self.format_bold,
         )
         self.row_pos += 1
 
@@ -156,8 +172,12 @@ class AbstractReportXslx(ReportXlsx):
         Columns are defined with `_get_report_columns` method.
         """
         for col_pos, column in self.columns.iteritems():
-            self.sheet.write(self.row_pos, col_pos, column['header'],
-                             self.format_header_center)
+            self.sheet.write(
+                self.row_pos,
+                col_pos,
+                column["header"],
+                self.format_header_center,
+            )
         self.row_pos += 1
 
     def write_line(self, line_object):
@@ -165,21 +185,21 @@ class AbstractReportXslx(ReportXlsx):
         Columns are defined with `_get_report_columns` method.
         """
         for col_pos, column in self.columns.iteritems():
-            value = line_object.get(column['field'], 0.0)
+            value = line_object.get(column["field"], 0.0)
             if not value:
                 value = 0.0
-            cell_type = column.get('type', 'string')
-            if cell_type == 'string':
-                self.sheet.write_string(self.row_pos, col_pos, value or '')
-            elif cell_type == 'float':
+            cell_type = column.get("type", "string")
+            if cell_type == "string":
+                self.sheet.write_string(self.row_pos, col_pos, value or "")
+            elif cell_type == "float":
                 self.sheet.write_number(
                     self.row_pos, col_pos, float(value), self.format_amount
                 )
-            elif cell_type == 'int':
+            elif cell_type == "int":
                 self.sheet.write_number(
                     self.row_pos, col_pos, int(value), self.format_int
                 )
-            elif cell_type == 'boolean':
+            elif cell_type == "boolean":
                 if value:
                     value_int = 1
                 else:
@@ -210,73 +230,73 @@ class AbstractReportXslx(ReportXlsx):
 
     def _get_report_name(self):
         """
-            Allow to define the report name.
-            Report name will be used as sheet name and as report title.
+        Allow to define the report name.
+        Report name will be used as sheet name and as report title.
 
-            :return: the report name
+        :return: the report name
         """
         raise NotImplementedError()
 
     def _get_report_columns(self, report, stock_field, valued):
         """
-            Allow to define the report columns
-            which will be used to generate report.
+        Allow to define the report columns
+        which will be used to generate report.
 
-            :return: the report columns as dict
+        :return: the report columns as dict
 
-            :Example:
+        :Example:
 
-            {
-                0: {'header': 'Simple column',
-                    'field': 'field_name_on_my_object',
-                    'width': 11},
-                1: {'header': 'Amount column',
-                     'field': 'field_name_on_my_object',
-                     'type': 'amount',
-                     'width': 14},
-            }
+        {
+            0: {'header': 'Simple column',
+                'field': 'field_name_on_my_object',
+                'width': 11},
+            1: {'header': 'Amount column',
+                 'field': 'field_name_on_my_object',
+                 'type': 'amount',
+                 'width': 14},
+        }
         """
         raise NotImplementedError()
 
     def _get_report_filters(self, report):
         """
-            :return: the report filters as list
+        :return: the report filters as list
 
-            :Example:
+        :Example:
 
-            [
-                ['first_filter_name', 'first_filter_value'],
-                ['second_filter_name', 'second_filter_value']
-            ]
+        [
+            ['first_filter_name', 'first_filter_value'],
+            ['second_filter_name', 'second_filter_value']
+        ]
         """
         raise NotImplementedError()
 
     def _get_col_count_filter_name(self):
         """
-            :return: the columns number used for filter names.
+        :return: the columns number used for filter names.
         """
         raise NotImplementedError()
 
     def _get_col_count_filter_value(self):
         """
-            :return: the columns number used for filter values.
+        :return: the columns number used for filter values.
         """
         raise NotImplementedError()
 
     def _get_col_pos_initial_balance_label(self):
         """
-            :return: the columns position used for initial balance label.
+        :return: the columns position used for initial balance label.
         """
         raise NotImplementedError()
 
     def _get_col_count_final_balance_name(self):
         """
-            :return: the columns number used for final balance name.
+        :return: the columns number used for final balance name.
         """
         raise NotImplementedError()
 
     def _get_col_pos_final_balance_label(self):
         """
-            :return: the columns position used for final balance label.
+        :return: the columns position used for final balance label.
         """
         raise NotImplementedError()
