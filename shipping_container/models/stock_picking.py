@@ -33,18 +33,18 @@ class StockPicking(models.Model):
     harbor_id = fields.Many2one("res.harbor", string="Harbor")
 
     @api.one
-    #TODO: Migrar no existe pack_operation_ids
-    #@api.depends("pack_operation_ids")
+    # TODO: Migrar no existe pack_operation_ids
+    # @api.depends("pack_operation_ids")
     def _compute_shipping_volume(self):
         volume = 0.000
         # ~ for packop in self.pack_operation_ids:
-            # ~ if packop.product_id and not packop.result_package_id:
-                # ~ volume += (
-                    # ~ packop.product_uom_id._compute_quantity(
-                        # ~ packop.product_qty, packop.product_id.uom_id
-                    # ~ )
-                    # ~ * packop.product_id.volume
-                # ~ )
+        # ~ if packop.product_id and not packop.result_package_id:
+        # ~ volume += (
+        # ~ packop.product_uom_id._compute_quantity(
+        # ~ packop.product_qty, packop.product_id.uom_id
+        # ~ )
+        # ~ * packop.product_id.volume
+        # ~ )
         self.shipping_volume = volume
 
     def write(self, vals):

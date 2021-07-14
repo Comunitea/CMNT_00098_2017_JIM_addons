@@ -137,8 +137,8 @@
 
         <record id="product_uom_form_view_sga" model="ir.ui.view">
             <field name="name">product.uom.form.view.sga</field>
-            <field name="model">product.uom</field>
-            <field name="inherit_id" ref="product.product_uom_form_view"/>
+            <field name="model">uom.uom</field>
+            <field name="inherit_id" ref="uom.product_uom_form_view"/>
             <field name="arch" type="xml">
                 <field name="name" position="after">
                     <field name="sga_uom_base_code"/>

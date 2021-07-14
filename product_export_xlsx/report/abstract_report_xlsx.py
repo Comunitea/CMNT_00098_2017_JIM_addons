@@ -4,9 +4,10 @@
 
 from odoo import models
 
+
 class ReportXlsxAbstract(models.AbstractModel):
-    _name = 'report.product_export_xlsx.abstract_xls'
-    _inherit = 'report.report_xlsx.abstract'
+    _name = "report.product_export_xlsx.abstract_xls"
+    _inherit = "report.report_xlsx.abstract"
 
     def __init__(self, pool, cr):
         # main sheet which will contains report

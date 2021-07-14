@@ -3,7 +3,7 @@
 
 {
     "name": "Purchase Advance Payment Forecast",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "author": "Comunitea",
     "website": "www.comunitea.com",
     "category": "Purchases",

@@ -1,7 +1,7 @@
 {
     "name": "JS PDF Last Page",
     "summary": "Permite añadir una última página HTML a los documentos PDF por tipo de informe y compañía",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "license": "AGPL-3",
     "author": "Jim Sports",
     "category": "Document Management",

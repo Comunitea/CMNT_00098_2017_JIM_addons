@@ -3,7 +3,7 @@
 
 {
     "name": "Export product to XLS",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "author": "Comunitea",
     "website": "http://www.comunitea.com",
     "category": "Stock / Product",

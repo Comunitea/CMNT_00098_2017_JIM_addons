@@ -2,8 +2,8 @@ from odoo import _, models
 
 
 class ProductWebXslx(models.AbstractModel):
-    _name = 'report.product_export_xlsx.product_web_xls'
-    _inherit = 'report.product_export_xlsx.abstract_xls'
+    _name = "report.product_export_xlsx.product_web_xls"
+    _inherit = "report.product_export_xlsx.abstract_xls"
 
     def _get_report_name(self):
         return _("Product web")

@@ -3,7 +3,7 @@
 {
     "name": "Custom import translates",
     "summary": "Import translate from csv",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "category": "Uncategorized",
     "website": "comunitea.com",
     "author": "Comunitea",

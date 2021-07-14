@@ -39,20 +39,20 @@ class StockPicking(models.Model):
 
 # TODO: Migrar, no existe el modelo stock_pack_operation
 # ~ class StockPackOperation(models.Model):
-    # ~ _inherit = "stock.pack.operation"
+# ~ _inherit = "stock.pack.operation"
 
-    # ~ @api.multi
-    # ~ def reset_op_qty_done(self):
-        # ~ for op in self.filtered(
-            # ~ lambda x: x.qty_done > 0.00
-            # ~ and x.picking_id.state not in ("done", "draft", "cancel")
-        # ~ ):
-            # ~ op.qty_done = 0.00
+# ~ @api.multi
+# ~ def reset_op_qty_done(self):
+# ~ for op in self.filtered(
+# ~ lambda x: x.qty_done > 0.00
+# ~ and x.picking_id.state not in ("done", "draft", "cancel")
+# ~ ):
+# ~ op.qty_done = 0.00
 
-    # ~ @api.multi
-    # ~ def op_qty_reserved_to_qty_done(self):
-        # ~ for op in self.filtered(
-            # ~ lambda x: x.qty_done == 0.00
-            # ~ and x.picking_id.state not in ("done", "draft", "cancel")
-        # ~ ):
-            # ~ op.qty_done = op.product_qty
+# ~ @api.multi
+# ~ def op_qty_reserved_to_qty_done(self):
+# ~ for op in self.filtered(
+# ~ lambda x: x.qty_done == 0.00
+# ~ and x.picking_id.state not in ("done", "draft", "cancel")
+# ~ ):
+# ~ op.qty_done = op.product_qty

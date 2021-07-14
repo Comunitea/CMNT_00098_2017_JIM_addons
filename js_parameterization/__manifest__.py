@@ -1,7 +1,7 @@
 {
     "name": "JS Parameterization",
     "summary": "Añade una pestaña de parametrización en los productos/variantes",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "license": "AGPL-3",
     "author": "Jim Sports",
     "category": "Inventory",

@@ -31,367 +31,367 @@ class ProcurementRule(models.Model):
         return res
 
 
-#TODO: Migrar, el modelo no existe ya. Pero quizás no se siga esta estrategia para el multicompany
+# TODO: Migrar, el modelo no existe ya. Pero quizás no se siga esta estrategia para el multicompany
 # ~ class ProcurementOrder(models.Model):
-    # ~ _inherit = "procurement.order"
+# ~ _inherit = "procurement.order"
 
-    # ~ move_dest_IC_id = fields.Many2one(
-        # ~ "stock.move",
-        # ~ "Destination Move IC",
-        # ~ copy=False,
-        # ~ index=True,
-        # ~ help="Optional: next IC stock move when " "chaining them",
-    # ~ )
-    # ~ purchase_line_IC = fields.Many2one(
-        # ~ "purchase.order.line", "Related purchase line", copy=False, index=True
-    # ~ )
-    # ~ no_product_company = fields.Boolean(
-        # ~ "No ejecutar abastecimineto " "multicompañia de producto"
-    # ~ )
+# ~ move_dest_IC_id = fields.Many2one(
+# ~ "stock.move",
+# ~ "Destination Move IC",
+# ~ copy=False,
+# ~ index=True,
+# ~ help="Optional: next IC stock move when " "chaining them",
+# ~ )
+# ~ purchase_line_IC = fields.Many2one(
+# ~ "purchase.order.line", "Related purchase line", copy=False, index=True
+# ~ )
+# ~ no_product_company = fields.Boolean(
+# ~ "No ejecutar abastecimineto " "multicompañia de producto"
+# ~ )
 
-    # ~ @api.model
-    # ~ def create(self, values):
-        # ~ if self.env.context.get("user_company"):
-            # ~ values.update({"company_id": self.env.context.get("user_company")})
-        # ~ return super(ProcurementOrder, self).create(values)
+# ~ @api.model
+# ~ def create(self, values):
+# ~ if self.env.context.get("user_company"):
+# ~ values.update({"company_id": self.env.context.get("user_company")})
+# ~ return super(ProcurementOrder, self).create(values)
 
-    # ~ def _get_stock_move_values(self):
-        # ~ vals = super(ProcurementOrder, self)._get_stock_move_values()
-        # ~ if vals["procure_method"] == "company":
-            # ~ if (
-                # ~ self.env["product.product"]
-                # ~ .browse(vals["product_id"])
-                # ~ .company_id.id
-                # ~ == vals["company_id"]
-            # ~ ):
-                # ~ vals["procure_method"] = "make_to_stock"
-            # ~ else:
-                # ~ vals["procure_method"] = "make_to_order"
-        # ~ vals["move_dest_IC_id"] = self.move_dest_IC_id.id
-        # ~ if self.purchase_line_IC:
-            # ~ ml_IC = self.env["stock.move"].search(
-                # ~ [("purchase_line_id", "=", self.purchase_line_IC.id)]
-            # ~ )
-            # ~ if ml_IC:
-                # ~ if len(ml_IC) > 1:
-                    # ~ for m in ml_IC:
-                        # ~ res = self.env["stock.move"].search(
-                            # ~ [("move_purchase_IC_id", "=", m.id)]
-                        # ~ )
-                        # ~ if not res:
-                            # ~ def_ml_IC = m
-                            # ~ break
-                # ~ else:
-                    # ~ def_ml_IC = ml_IC
-                # ~ vals["move_purchase_IC_id"] = def_ml_IC.id
+# ~ def _get_stock_move_values(self):
+# ~ vals = super(ProcurementOrder, self)._get_stock_move_values()
+# ~ if vals["procure_method"] == "company":
+# ~ if (
+# ~ self.env["product.product"]
+# ~ .browse(vals["product_id"])
+# ~ .company_id.id
+# ~ == vals["company_id"]
+# ~ ):
+# ~ vals["procure_method"] = "make_to_stock"
+# ~ else:
+# ~ vals["procure_method"] = "make_to_order"
+# ~ vals["move_dest_IC_id"] = self.move_dest_IC_id.id
+# ~ if self.purchase_line_IC:
+# ~ ml_IC = self.env["stock.move"].search(
+# ~ [("purchase_line_id", "=", self.purchase_line_IC.id)]
+# ~ )
+# ~ if ml_IC:
+# ~ if len(ml_IC) > 1:
+# ~ for m in ml_IC:
+# ~ res = self.env["stock.move"].search(
+# ~ [("move_purchase_IC_id", "=", m.id)]
+# ~ )
+# ~ if not res:
+# ~ def_ml_IC = m
+# ~ break
+# ~ else:
+# ~ def_ml_IC = ml_IC
+# ~ vals["move_purchase_IC_id"] = def_ml_IC.id
 
-        # ~ return vals
+# ~ return vals
 
-    # ~ @api.multi
-    # ~ def _check(self):
-        # ~ if self.rule_id and self.rule_id.action == "product_company":
-            # ~ # Si depende de la compañia pero es de la misma compañia es
-            # ~ # movimiento
-            # ~ if (
-                # ~ self.company_id.id == self.product_id.company_id.id
-                # ~ or self.company_id.no_ic
-                # ~ or self.product_id.no_ic
-                # ~ or self.no_product_company
-            # ~ ):
+# ~ @api.multi
+# ~ def _check(self):
+# ~ if self.rule_id and self.rule_id.action == "product_company":
+# ~ # Si depende de la compañia pero es de la misma compañia es
+# ~ # movimiento
+# ~ if (
+# ~ self.company_id.id == self.product_id.company_id.id
+# ~ or self.company_id.no_ic
+# ~ or self.product_id.no_ic
+# ~ or self.no_product_company
+# ~ ):
 
-                # ~ # In case Phantom BoM splits only into procurements
-                # ~ if not self.move_ids:
-                    # ~ return True
-                # ~ move_all_done_or_cancel = all(
-                    # ~ move.state in ["done", "cancel"] for move in self.move_ids
-                # ~ )
-                # ~ move_all_cancel = all(
-                    # ~ move.state == "cancel" for move in self.move_ids
-                # ~ )
-                # ~ if not move_all_done_or_cancel:
-                    # ~ return False
-                # ~ elif move_all_done_or_cancel and not move_all_cancel:
-                    # ~ return True
-                # ~ else:
-                    # ~ self.message_post(
-                        # ~ body=_(
-                            # ~ "All stock moves have been cancelled for this procurement."
-                        # ~ )
-                    # ~ )
-                    # ~ # TDE FIXME: strange that a check method actually modified the procurement...
-                    # ~ self.write({"state": "cancel"})
-                    # ~ return False
-            # ~ else:
-                # ~ # Lo comprueba como una compra...
-                # ~ if self.purchase_line_id:
-                    # ~ if not self.move_ids:
-                        # ~ return False
-                    # ~ return all(
-                        # ~ move.state in ("done", "cancel")
-                        # ~ for move in self.move_ids
-                    # ~ ) and any(move.state == "done" for move in self.move_ids)
-        # ~ return super(ProcurementOrder, self)._check()
+# ~ # In case Phantom BoM splits only into procurements
+# ~ if not self.move_ids:
+# ~ return True
+# ~ move_all_done_or_cancel = all(
+# ~ move.state in ["done", "cancel"] for move in self.move_ids
+# ~ )
+# ~ move_all_cancel = all(
+# ~ move.state == "cancel" for move in self.move_ids
+# ~ )
+# ~ if not move_all_done_or_cancel:
+# ~ return False
+# ~ elif move_all_done_or_cancel and not move_all_cancel:
+# ~ return True
+# ~ else:
+# ~ self.message_post(
+# ~ body=_(
+# ~ "All stock moves have been cancelled for this procurement."
+# ~ )
+# ~ )
+# ~ # TDE FIXME: strange that a check method actually modified the procurement...
+# ~ self.write({"state": "cancel"})
+# ~ return False
+# ~ else:
+# ~ # Lo comprueba como una compra...
+# ~ if self.purchase_line_id:
+# ~ if not self.move_ids:
+# ~ return False
+# ~ return all(
+# ~ move.state in ("done", "cancel")
+# ~ for move in self.move_ids
+# ~ ) and any(move.state == "done" for move in self.move_ids)
+# ~ return super(ProcurementOrder, self)._check()
 
-    # ~ @api.multi
-    # ~ def _run(self):
-        # ~ if self.rule_id and self.rule_id.action == "product_company":
-            # ~ if (
-                # ~ self.company_id.id == self.product_id.company_id.id
-                # ~ or self.company_id.no_ic
-                # ~ or self.product_id.no_ic
-                # ~ or self.no_product_company
-            # ~ ):
-                # ~ # get the product only with move
-                # ~ if not self.rule_id.location_src_id:
-                    # ~ self.message_post(body=_("No source location defined!"))
-                    # ~ return False
-                # ~ # create the move as SUPERUSER because the current user may not have the rights to do it (mto product launched by a sale for example)
-                # ~ move = (
-                    # ~ self.env["stock.move"]
-                    # ~ .sudo()
-                    # ~ .create(self._get_stock_move_values())
-                # ~ )
-                # ~ move.action_confirm()
-                # ~ return True
-            # ~ else:
-                # ~ # if product belongs to another compamy generate intercompany_buy
-                # ~ return self.make_intercompany_buy_po()
+# ~ @api.multi
+# ~ def _run(self):
+# ~ if self.rule_id and self.rule_id.action == "product_company":
+# ~ if (
+# ~ self.company_id.id == self.product_id.company_id.id
+# ~ or self.company_id.no_ic
+# ~ or self.product_id.no_ic
+# ~ or self.no_product_company
+# ~ ):
+# ~ # get the product only with move
+# ~ if not self.rule_id.location_src_id:
+# ~ self.message_post(body=_("No source location defined!"))
+# ~ return False
+# ~ # create the move as SUPERUSER because the current user may not have the rights to do it (mto product launched by a sale for example)
+# ~ move = (
+# ~ self.env["stock.move"]
+# ~ .sudo()
+# ~ .create(self._get_stock_move_values())
+# ~ )
+# ~ move.action_confirm()
+# ~ return True
+# ~ else:
+# ~ # if product belongs to another compamy generate intercompany_buy
+# ~ return self.make_intercompany_buy_po()
 
-        # ~ if (
-            # ~ self.rule_id
-            # ~ and self.rule_id.action == "intercompany_buy"
-            # ~ and not self.company_id.no_ic
-        # ~ ):
-            # ~ return self.po_or_ic_po()
+# ~ if (
+# ~ self.rule_id
+# ~ and self.rule_id.action == "intercompany_buy"
+# ~ and not self.company_id.no_ic
+# ~ ):
+# ~ return self.po_or_ic_po()
 
-        # ~ return super(ProcurementOrder, self)._run()
+# ~ return super(ProcurementOrder, self)._run()
 
-    # ~ @api.multi
-    # ~ def po_or_ic_po(self):
-        # ~ if self.company_id.id == self.product_id.company_id.id:
-            # ~ return self.make_po()
-        # ~ else:
-            # ~ return self.make_intercompany_buy_po()
+# ~ @api.multi
+# ~ def po_or_ic_po(self):
+# ~ if self.company_id.id == self.product_id.company_id.id:
+# ~ return self.make_po()
+# ~ else:
+# ~ return self.make_intercompany_buy_po()
 
-    # ~ @api.multi
-    # ~ def make_intercompany_buy_po(self):
-        # ~ """
-        # ~ COPY OF MAKE PO except buy:
-        # ~ * Partner id from prodcut company
-        # ~ * Price for intercomany_price of product.product
-        # ~ These changes are commented, the other is the original code
-        # ~ """
-        # ~ cache = {}
-        # ~ res = []
+# ~ @api.multi
+# ~ def make_intercompany_buy_po(self):
+# ~ """
+# ~ COPY OF MAKE PO except buy:
+# ~ * Partner id from prodcut company
+# ~ * Price for intercomany_price of product.product
+# ~ These changes are commented, the other is the original code
+# ~ """
+# ~ cache = {}
+# ~ res = []
 
-        # ~ for procurement in self:
-            # ~ if not procurement.product_id.company_id:
-                # ~ procurement.message_post(
-                    # ~ body=_(
-                        # ~ "No company to product %s. \
-                    # ~ Please set one to fix this procurement."
-                    # ~ )
-                    # ~ % (procurement.product_id.name)
-                # ~ )
-                # ~ continue
+# ~ for procurement in self:
+# ~ if not procurement.product_id.company_id:
+# ~ procurement.message_post(
+# ~ body=_(
+# ~ "No company to product %s. \
+# ~ Please set one to fix this procurement."
+# ~ )
+# ~ % (procurement.product_id.name)
+# ~ )
+# ~ continue
 
-            # ~ # CHANGED, GET PARTNER FROM PRODUCT COMPANY
-            # ~ partner = procurement.sudo().product_id.company_id.partner_id
+# ~ # CHANGED, GET PARTNER FROM PRODUCT COMPANY
+# ~ partner = procurement.sudo().product_id.company_id.partner_id
 
-            # ~ gpo = procurement.rule_id.group_propagation_option
-            # ~ group = (
-                # ~ (gpo == "fixed" and procurement.rule_id.group_id)
-                # ~ or (gpo == "propagate" and procurement.group_id)
-                # ~ or False
-            # ~ )
+# ~ gpo = procurement.rule_id.group_propagation_option
+# ~ group = (
+# ~ (gpo == "fixed" and procurement.rule_id.group_id)
+# ~ or (gpo == "propagate" and procurement.group_id)
+# ~ or False
+# ~ )
 
-            # ~ domain = (
-                # ~ ("partner_id", "=", partner.id),
-                # ~ ("state", "=", "draft"),
-                # ~ (
-                    # ~ "picking_type_id",
-                    # ~ "=",
-                    # ~ procurement.rule_id.ic_picking_type_id
-                    # ~ and procurement.rule_id.ic_picking_type_id.id
-                    # ~ or procurement.rule_id.picking_type_id.id,
-                # ~ ),
-                # ~ ("company_id", "=", procurement.company_id.id),
-                # ~ ("dest_address_id", "=", procurement.partner_dest_id.id),
-            # ~ )
-            # ~ if group:
-                # ~ domain += (("group_id", "=", group.id),)
+# ~ domain = (
+# ~ ("partner_id", "=", partner.id),
+# ~ ("state", "=", "draft"),
+# ~ (
+# ~ "picking_type_id",
+# ~ "=",
+# ~ procurement.rule_id.ic_picking_type_id
+# ~ and procurement.rule_id.ic_picking_type_id.id
+# ~ or procurement.rule_id.picking_type_id.id,
+# ~ ),
+# ~ ("company_id", "=", procurement.company_id.id),
+# ~ ("dest_address_id", "=", procurement.partner_dest_id.id),
+# ~ )
+# ~ if group:
+# ~ domain += (("group_id", "=", group.id),)
 
-            # ~ if domain in cache:
-                # ~ po = cache[domain]
-            # ~ else:
-                # ~ po = self.env["purchase.order"].search([dom for dom in domain])
-                # ~ po = po[0] if po else False
-                # ~ cache[domain] = po
-            # ~ auto_confirm = False
-            # ~ if not po:
-                # ~ vals = procurement._prepare_purchase_order(partner)
-                # ~ vals["intercompany"] = True
-                # ~ vals["picking_type_id"] = (
-                    # ~ procurement.rule_id.ic_picking_type_id
-                    # ~ and procurement.rule_id.ic_picking_type_id.id
-                    # ~ or procurement.rule_id.picking_type_id.id
-                # ~ )
-                # ~ po = self.env["purchase.order"].create(vals)
-                # ~ name = (
-                    # ~ procurement.group_id
-                    # ~ and (procurement.group_id.name + ":")
-                    # ~ or ""
-                # ~ ) + (
-                    # ~ procurement.name != "/"
-                    # ~ and procurement.name
-                    # ~ or procurement.move_dest_id.raw_material_production_id
-                    # ~ and procurement.move_dest_id.raw_material_production_id.name
-                    # ~ or ""
-                # ~ )
-                # ~ message = (
-                    # ~ _(
-                        # ~ "This purchase order has been created from: \
-                    # ~ <a href=# data-oe-model=procurement.order \
-                    # ~ data-oe-id=%d>%s</a>"
-                    # ~ )
-                    # ~ % (procurement.id, name)
-                # ~ )
-                # ~ po.message_post(body=message)
-                # ~ cache[domain] = po
+# ~ if domain in cache:
+# ~ po = cache[domain]
+# ~ else:
+# ~ po = self.env["purchase.order"].search([dom for dom in domain])
+# ~ po = po[0] if po else False
+# ~ cache[domain] = po
+# ~ auto_confirm = False
+# ~ if not po:
+# ~ vals = procurement._prepare_purchase_order(partner)
+# ~ vals["intercompany"] = True
+# ~ vals["picking_type_id"] = (
+# ~ procurement.rule_id.ic_picking_type_id
+# ~ and procurement.rule_id.ic_picking_type_id.id
+# ~ or procurement.rule_id.picking_type_id.id
+# ~ )
+# ~ po = self.env["purchase.order"].create(vals)
+# ~ name = (
+# ~ procurement.group_id
+# ~ and (procurement.group_id.name + ":")
+# ~ or ""
+# ~ ) + (
+# ~ procurement.name != "/"
+# ~ and procurement.name
+# ~ or procurement.move_dest_id.raw_material_production_id
+# ~ and procurement.move_dest_id.raw_material_production_id.name
+# ~ or ""
+# ~ )
+# ~ message = (
+# ~ _(
+# ~ "This purchase order has been created from: \
+# ~ <a href=# data-oe-model=procurement.order \
+# ~ data-oe-id=%d>%s</a>"
+# ~ )
+# ~ % (procurement.id, name)
+# ~ )
+# ~ po.message_post(body=message)
+# ~ cache[domain] = po
 
-            # ~ # auto_confirm=True
+# ~ # auto_confirm=True
 
-            # ~ elif not po.origin or procurement.origin not in po.origin.split(
-                # ~ ", "
-            # ~ ):
-                # ~ # Keep track of all procurements
-                # ~ if po.origin:
-                    # ~ if procurement.origin:
-                        # ~ po.write(
-                            # ~ {"origin": po.origin + ", " + procurement.origin}
-                        # ~ )
-                    # ~ else:
-                        # ~ po.write({"origin": po.origin})
-                # ~ else:
-                    # ~ po.write({"origin": procurement.origin})
-                # ~ name = (self.group_id and (self.group_id.name + ":") or "") + (
-                    # ~ self.name != "/"
-                    # ~ and self.name
-                    # ~ or self.move_dest_id.raw_material_production_id
-                    # ~ and self.move_dest_id.raw_material_production_id.name
-                    # ~ or ""
-                # ~ )
-                # ~ message = (
-                    # ~ _(
-                        # ~ "This purchase order has been created from: \
-                                    # ~ <a href=# data-oe-model=procurement.order \
-                                    # ~ data-oe-id=%d>%s</a>"
-                    # ~ )
-                    # ~ % (procurement.id, name)
-                # ~ )
-                # ~ po.message_post(body=message)
-            # ~ if po:
-                # ~ res += [procurement.id]
+# ~ elif not po.origin or procurement.origin not in po.origin.split(
+# ~ ", "
+# ~ ):
+# ~ # Keep track of all procurements
+# ~ if po.origin:
+# ~ if procurement.origin:
+# ~ po.write(
+# ~ {"origin": po.origin + ", " + procurement.origin}
+# ~ )
+# ~ else:
+# ~ po.write({"origin": po.origin})
+# ~ else:
+# ~ po.write({"origin": procurement.origin})
+# ~ name = (self.group_id and (self.group_id.name + ":") or "") + (
+# ~ self.name != "/"
+# ~ and self.name
+# ~ or self.move_dest_id.raw_material_production_id
+# ~ and self.move_dest_id.raw_material_production_id.name
+# ~ or ""
+# ~ )
+# ~ message = (
+# ~ _(
+# ~ "This purchase order has been created from: \
+# ~ <a href=# data-oe-model=procurement.order \
+# ~ data-oe-id=%d>%s</a>"
+# ~ )
+# ~ % (procurement.id, name)
+# ~ )
+# ~ po.message_post(body=message)
+# ~ if po:
+# ~ res += [procurement.id]
 
-            # ~ # # Create Line
-            # ~ # po_line = False
-            # ~ # for line in po.order_line:
-            # ~ #     if line.product_id == procurement.product_id and line.product_uom == procurement.product_id.uom_po_id:
-            # ~ #         procurement_uom_po_qty = procurement.product_uom.\
-            # ~ #             _compute_quantity(procurement.product_qty,
-            # ~ #                               procurement.product_id.uom_po_id)
-            # ~ #         # CHANGED, GET PRICE UNIT FROM NEW FIELD
-            # ~ #         intercompany_price = \
-            # ~ #             line.product_id.get_intercompany_price(
-            # ~ #                 po.company_id.id, po.partner_id.id)
-            # ~ #         #intercompany_price = line.product_id.intercompany_price
-            # ~ #         price_unit = self.env['account.tax'].\
-            # ~ #             _fix_tax_included_price(intercompany_price,
-            # ~ #                                     line.product_id.supplier_taxes_id,
-            # ~ #                                     line.taxes_id)
-            # ~ #
-            # ~ #         po_line = line.write({
-            # ~ #             'product_qty': line.product_qty + procurement_uom_po_qty,
-            # ~ #             'price_unit': price_unit,
-            # ~ #             'procurement_ids': [(4, procurement.id)]
-            # ~ #         })
-            # ~ #         break
-            # ~ # if not po_line:
-            # ~ # CHANGED, SUPPLIER BY PARTNER
-            # ~ vals = procurement._prepare_intercompany_purchase_line(po, partner)
-            # ~ # CHANGED, GET PRICE UNIT FROM NEW FIELD
-            # ~ prod = procurement.product_id
-            # ~ taxes = prod.supplier_taxes_id
-            # ~ fpos = po.fiscal_position_id
-            # ~ taxes_id = fpos.map_tax(taxes) if fpos else taxes
-            # ~ if taxes_id:
-                # ~ taxes_id = taxes_id.filtered(
-                    # ~ lambda x: x.company_id.id == po.company_id.id
-                # ~ )
-            # ~ vals["price_unit"] = self.env[
-                # ~ "account.tax"
-            # ~ ]._fix_tax_included_price(
-                # ~ prod.get_intercompany_price(
-                    # ~ po.company_id.id, po.partner_id.id
-                # ~ ),
-                # ~ prod.supplier_taxes_id,
-                # ~ taxes_id,
-            # ~ )
-            # ~ self.env["purchase.order.line"].create(vals)
+# ~ # # Create Line
+# ~ # po_line = False
+# ~ # for line in po.order_line:
+# ~ #     if line.product_id == procurement.product_id and line.product_uom == procurement.product_id.uom_po_id:
+# ~ #         procurement_uom_po_qty = procurement.product_uom.\
+# ~ #             _compute_quantity(procurement.product_qty,
+# ~ #                               procurement.product_id.uom_po_id)
+# ~ #         # CHANGED, GET PRICE UNIT FROM NEW FIELD
+# ~ #         intercompany_price = \
+# ~ #             line.product_id.get_intercompany_price(
+# ~ #                 po.company_id.id, po.partner_id.id)
+# ~ #         #intercompany_price = line.product_id.intercompany_price
+# ~ #         price_unit = self.env['account.tax'].\
+# ~ #             _fix_tax_included_price(intercompany_price,
+# ~ #                                     line.product_id.supplier_taxes_id,
+# ~ #                                     line.taxes_id)
+# ~ #
+# ~ #         po_line = line.write({
+# ~ #             'product_qty': line.product_qty + procurement_uom_po_qty,
+# ~ #             'price_unit': price_unit,
+# ~ #             'procurement_ids': [(4, procurement.id)]
+# ~ #         })
+# ~ #         break
+# ~ # if not po_line:
+# ~ # CHANGED, SUPPLIER BY PARTNER
+# ~ vals = procurement._prepare_intercompany_purchase_line(po, partner)
+# ~ # CHANGED, GET PRICE UNIT FROM NEW FIELD
+# ~ prod = procurement.product_id
+# ~ taxes = prod.supplier_taxes_id
+# ~ fpos = po.fiscal_position_id
+# ~ taxes_id = fpos.map_tax(taxes) if fpos else taxes
+# ~ if taxes_id:
+# ~ taxes_id = taxes_id.filtered(
+# ~ lambda x: x.company_id.id == po.company_id.id
+# ~ )
+# ~ vals["price_unit"] = self.env[
+# ~ "account.tax"
+# ~ ]._fix_tax_included_price(
+# ~ prod.get_intercompany_price(
+# ~ po.company_id.id, po.partner_id.id
+# ~ ),
+# ~ prod.supplier_taxes_id,
+# ~ taxes_id,
+# ~ )
+# ~ self.env["purchase.order.line"].create(vals)
 
-            # ~ # # CHANGED, AUTOMATIC CONFIRMATION
-            # ~ # if auto_confirm:
-            # ~ #     po.button_confirm()
-        # ~ return res
+# ~ # # CHANGED, AUTOMATIC CONFIRMATION
+# ~ # if auto_confirm:
+# ~ #     po.button_confirm()
+# ~ return res
 
-    # ~ @api.multi
-    # ~ def _prepare_intercompany_purchase_line(self, po, partner):
-        # ~ """
-        # ~ COPIED FROM _prepare_purchase_order_line method
-        # ~ * Removed seller
-        # ~ * Get intercompay price from product
-        # ~ """
-        # ~ self.ensure_one()
-        # ~ procurement_uom_po_qty = self.product_uom._compute_quantity(
-            # ~ self.product_qty, self.product_id.uom_po_id
-        # ~ )
+# ~ @api.multi
+# ~ def _prepare_intercompany_purchase_line(self, po, partner):
+# ~ """
+# ~ COPIED FROM _prepare_purchase_order_line method
+# ~ * Removed seller
+# ~ * Get intercompay price from product
+# ~ """
+# ~ self.ensure_one()
+# ~ procurement_uom_po_qty = self.product_uom._compute_quantity(
+# ~ self.product_qty, self.product_id.uom_po_id
+# ~ )
 
-        # ~ taxes = self.product_id.supplier_taxes_id
-        # ~ fpos = po.fiscal_position_id
-        # ~ taxes_id = fpos.map_tax(taxes) if fpos else taxes
-        # ~ if taxes_id:
-            # ~ taxes_id = taxes_id.filtered(
-                # ~ lambda x: x.company_id.id == self.company_id.id
-            # ~ )
+# ~ taxes = self.product_id.supplier_taxes_id
+# ~ fpos = po.fiscal_position_id
+# ~ taxes_id = fpos.map_tax(taxes) if fpos else taxes
+# ~ if taxes_id:
+# ~ taxes_id = taxes_id.filtered(
+# ~ lambda x: x.company_id.id == self.company_id.id
+# ~ )
 
-        # ~ price_unit = self.env["account.tax"]._fix_tax_included_price(
-            # ~ self.product_id.intercompany_price,
-            # ~ self.product_id.supplier_taxes_id,
-            # ~ taxes_id,
-        # ~ )
+# ~ price_unit = self.env["account.tax"]._fix_tax_included_price(
+# ~ self.product_id.intercompany_price,
+# ~ self.product_id.supplier_taxes_id,
+# ~ taxes_id,
+# ~ )
 
-        # ~ product_lang = self.product_id.with_context(
-            # ~ {
-                # ~ "lang": partner.lang,
-                # ~ "partner_id": partner.id,
-            # ~ }
-        # ~ )
-        # ~ name = product_lang.display_name
-        # ~ if product_lang.description_purchase:
-            # ~ name += "\n" + product_lang.description_purchase
+# ~ product_lang = self.product_id.with_context(
+# ~ {
+# ~ "lang": partner.lang,
+# ~ "partner_id": partner.id,
+# ~ }
+# ~ )
+# ~ name = product_lang.display_name
+# ~ if product_lang.description_purchase:
+# ~ name += "\n" + product_lang.description_purchase
 
-        # ~ date_planned = self.date_planned
-        # ~ return {
-            # ~ "name": name,
-            # ~ "product_qty": procurement_uom_po_qty,
-            # ~ "product_id": self.product_id.id,
-            # ~ "product_uom": self.product_id.uom_po_id.id,
-            # ~ "price_unit": price_unit,
-            # ~ "date_planned": date_planned,
-            # ~ "taxes_id": [(6, 0, taxes_id.ids)],
-            # ~ "procurement_ids": [(4, self.id)],
-            # ~ "order_id": po.id,
-        # ~ }
+# ~ date_planned = self.date_planned
+# ~ return {
+# ~ "name": name,
+# ~ "product_qty": procurement_uom_po_qty,
+# ~ "product_id": self.product_id.id,
+# ~ "product_uom": self.product_id.uom_po_id.id,
+# ~ "price_unit": price_unit,
+# ~ "date_planned": date_planned,
+# ~ "taxes_id": [(6, 0, taxes_id.ids)],
+# ~ "procurement_ids": [(4, self.id)],
+# ~ "order_id": po.id,
+# ~ }
 
 
 class MakeProcurement(models.TransientModel):

@@ -9,7 +9,7 @@ class WzdConfirmProcurement(models.TransientModel):
     _description = "Confirm procurement in canceled purchases"
 
     purchase_ids = fields.Many2many("purchase.order")
-    #TODO: Migrar, el modelo no existe ya. Pero quizás no se siga esta estrategia para el multicompany
+    # TODO: Migrar, el modelo no existe ya. Pero quizás no se siga esta estrategia para el multicompany
     # ~ procurement_ids = fields.Many2many("procurement.order")
 
     @api.model

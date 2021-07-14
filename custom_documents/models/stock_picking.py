@@ -38,7 +38,9 @@ class StockPicking(models.Model):
     def _compute_min_date_date(self):
         for pick in self:
             pick.min_date_date = (
-                pick.scheduled_date and pick.scheduled_date.split(" ")[0] or False
+                pick.scheduled_date
+                and pick.scheduled_date.split(" ")[0]
+                or False
             )
             if pick.date_done:
                 pick.date_done_date = pick.date_done.split(" ")[0]
@@ -227,101 +229,102 @@ class StockMove(models.Model):
             self.name = product.name_get()[0][1]
         return res
 
+
 # TODO: Migrar, no existe el modelo stock_pack_operation
 # ~ class StockPackOperation(models.Model):
-    # ~ _inherit = "stock.pack.operation"
+# ~ _inherit = "stock.pack.operation"
 
-    # ~ purchase_line = fields.Many2one(
-        # ~ comodel_name="purchase.order.line",
-        # ~ compute="_compute_purchase_order_line_fields",
-        # ~ string="Related order line",
-    # ~ )
-    # ~ purchase_tax_id = fields.Many2many(
-        # ~ comodel_name="account.tax",
-        # ~ compute="_compute_purchase_order_line_fields",
-        # ~ string="Taxes",
-    # ~ )
-    # ~ purchase_tax_description = fields.Char(
-        # ~ compute="_compute_purchase_order_line_fields", string="Tax Description"
-    # ~ )
-    # ~ purchase_price_unit = fields.Float(
-        # ~ compute="_compute_purchase_order_line_fields",
-        # ~ digits=dp.get_precision("Product Price"),
-        # ~ string="purchase price unit",
-    # ~ )
-    # ~ purchase_discount = fields.Float(
-        # ~ compute="_compute_purchase_order_line_fields",
-        # ~ digits=dp.get_precision("Discount"),
-        # ~ string="purchase discount (%)",
-    # ~ )
-    # ~ purchase_price_subtotal = fields.Float(
-        # ~ compute="_compute_purchase_order_line_fields", string="Price subtotal"
-    # ~ )
-    # ~ purchase_price_tax = fields.Float(
-        # ~ compute="_compute_purchase_order_line_fields", string="Taxes"
-    # ~ )
-    # ~ purchase_price_total = fields.Float(
-        # ~ compute="_compute_purchase_order_line_fields", string="Total"
-    # ~ )
-    # ~ qty_delivered = fields.Float(
-        # ~ "Delivered qty",
-        # ~ default=0.0,
-        # ~ digits=dp.get_precision("Product Unit of Measure"),
-        # ~ compute="_get_qty_delivered",
-    # ~ )
+# ~ purchase_line = fields.Many2one(
+# ~ comodel_name="purchase.order.line",
+# ~ compute="_compute_purchase_order_line_fields",
+# ~ string="Related order line",
+# ~ )
+# ~ purchase_tax_id = fields.Many2many(
+# ~ comodel_name="account.tax",
+# ~ compute="_compute_purchase_order_line_fields",
+# ~ string="Taxes",
+# ~ )
+# ~ purchase_tax_description = fields.Char(
+# ~ compute="_compute_purchase_order_line_fields", string="Tax Description"
+# ~ )
+# ~ purchase_price_unit = fields.Float(
+# ~ compute="_compute_purchase_order_line_fields",
+# ~ digits=dp.get_precision("Product Price"),
+# ~ string="purchase price unit",
+# ~ )
+# ~ purchase_discount = fields.Float(
+# ~ compute="_compute_purchase_order_line_fields",
+# ~ digits=dp.get_precision("Discount"),
+# ~ string="purchase discount (%)",
+# ~ )
+# ~ purchase_price_subtotal = fields.Float(
+# ~ compute="_compute_purchase_order_line_fields", string="Price subtotal"
+# ~ )
+# ~ purchase_price_tax = fields.Float(
+# ~ compute="_compute_purchase_order_line_fields", string="Taxes"
+# ~ )
+# ~ purchase_price_total = fields.Float(
+# ~ compute="_compute_purchase_order_line_fields", string="Total"
+# ~ )
+# ~ qty_delivered = fields.Float(
+# ~ "Delivered qty",
+# ~ default=0.0,
+# ~ digits=dp.get_precision("Product Unit of Measure"),
+# ~ compute="_get_qty_delivered",
+# ~ )
 
-    # ~ @api.multi
-    # ~ def _get_qty_delivered(self):
-        # ~ for operation in self:
-            # ~ operation.qty_delivered = (
-                # ~ operation.qty_done or operation.product_qty
-            # ~ )
+# ~ @api.multi
+# ~ def _get_qty_delivered(self):
+# ~ for operation in self:
+# ~ operation.qty_delivered = (
+# ~ operation.qty_done or operation.product_qty
+# ~ )
 
-    # ~ @api.multi
-    # ~ def _compute_purchase_order_line_fields(self):
-        # ~ for operation in self:
-            # ~ purchase_lines = operation.mapped(
-                # ~ "linked_move_operation_ids.move_id.purchase_line_id"
-            # ~ )
-            # ~ operation.update(operation.purchase_lines_values(purchase_lines))
+# ~ @api.multi
+# ~ def _compute_purchase_order_line_fields(self):
+# ~ for operation in self:
+# ~ purchase_lines = operation.mapped(
+# ~ "linked_move_operation_ids.move_id.purchase_line_id"
+# ~ )
+# ~ operation.update(operation.purchase_lines_values(purchase_lines))
 
-    # ~ @api.multi
-    # ~ def purchase_lines_values(self, purchase_lines):
-        # ~ if len(purchase_lines) <= 1:
-            # ~ price_unit = purchase_lines.price_unit
-            # ~ discount = 0.00
-        # ~ else:
-            # ~ price_unit = purchase_lines[0].price_unit
-            # ~ discount = 0.00
+# ~ @api.multi
+# ~ def purchase_lines_values(self, purchase_lines):
+# ~ if len(purchase_lines) <= 1:
+# ~ price_unit = purchase_lines.price_unit
+# ~ discount = 0.00
+# ~ else:
+# ~ price_unit = purchase_lines[0].price_unit
+# ~ discount = 0.00
 
-        # ~ purchase_line = purchase_lines[:1]
-        # ~ purchase_tax = purchase_line.taxes_id
-        # ~ taxes = purchase_tax.compute_all(
-            # ~ price_unit=price_unit,
-            # ~ currency=purchase_line.currency_id,
-            # ~ quantity=self.qty_delivered,
-            # ~ product=purchase_line.product_id,
-            # ~ partner=purchase_line.order_id.partner_id,
-        # ~ )
-        # ~ if purchase_line.company_id.tax_calculation_rounding_method == (
-            # ~ "round_globally"
-        # ~ ):
-            # ~ price_tax = sum(
-                # ~ t.get("amount", 0.0) for t in taxes.get("taxes", [])
-            # ~ )
-        # ~ else:
-            # ~ price_tax = taxes["total_included"] - taxes["total_excluded"]
-        # ~ val = {
-            # ~ "purchase_line": purchase_line,
-            # ~ "purchase_tax_id": purchase_tax,
-            # ~ "purchase_tax_description": ", ".join(
-                # ~ map(lambda x: (x.description or x.name), purchase_tax)
-            # ~ ),
-            # ~ "purchase_price_unit": price_unit,
-            # ~ "purchase_discount": discount,
-            # ~ "purchase_price_subtotal": taxes["total_excluded"],
-            # ~ "purchase_price_tax": price_tax,
-            # ~ "purchase_price_total": taxes["total_included"],
-        # ~ }
+# ~ purchase_line = purchase_lines[:1]
+# ~ purchase_tax = purchase_line.taxes_id
+# ~ taxes = purchase_tax.compute_all(
+# ~ price_unit=price_unit,
+# ~ currency=purchase_line.currency_id,
+# ~ quantity=self.qty_delivered,
+# ~ product=purchase_line.product_id,
+# ~ partner=purchase_line.order_id.partner_id,
+# ~ )
+# ~ if purchase_line.company_id.tax_calculation_rounding_method == (
+# ~ "round_globally"
+# ~ ):
+# ~ price_tax = sum(
+# ~ t.get("amount", 0.0) for t in taxes.get("taxes", [])
+# ~ )
+# ~ else:
+# ~ price_tax = taxes["total_included"] - taxes["total_excluded"]
+# ~ val = {
+# ~ "purchase_line": purchase_line,
+# ~ "purchase_tax_id": purchase_tax,
+# ~ "purchase_tax_description": ", ".join(
+# ~ map(lambda x: (x.description or x.name), purchase_tax)
+# ~ ),
+# ~ "purchase_price_unit": price_unit,
+# ~ "purchase_discount": discount,
+# ~ "purchase_price_subtotal": taxes["total_excluded"],
+# ~ "purchase_price_tax": price_tax,
+# ~ "purchase_price_total": taxes["total_included"],
+# ~ }
 
-        # ~ return val
+# ~ return val

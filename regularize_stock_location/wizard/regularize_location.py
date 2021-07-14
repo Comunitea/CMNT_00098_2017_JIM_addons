@@ -144,11 +144,13 @@ class WizRegularizeLocation(models.TransientModel):
 
         cont = len(quants)
         for quant in quants.filtered(lambda x: x.qty < 0):
-            print("{} - Quant para {}, qty {}".format(
-                cont,
-                quant.product_id.display_name,
-                quant.qty,
-            ))
+            print(
+                "{} - Quant para {}, qty {}".format(
+                    cont,
+                    quant.product_id.display_name,
+                    quant.qty,
+                )
+            )
             cont -= 1
             move_vals = self.env["stock.move"].new(
                 self.get_mov_vals(
@@ -165,11 +167,13 @@ class WizRegularizeLocation(models.TransientModel):
             neg_pick.move_lines.create(new_move_vals)
 
         for quant in quants.filtered(lambda x: x.qty > 0):
-            print("{} - Quant para {}, qty {}".format(
-                cont,
-                quant.product_id.display_name,
-                quant.qty,
-            ))
+            print(
+                "{} - Quant para {}, qty {}".format(
+                    cont,
+                    quant.product_id.display_name,
+                    quant.qty,
+                )
+            )
             cont -= 1
             move_vals = self.env["stock.move"].new(
                 self.get_mov_vals(

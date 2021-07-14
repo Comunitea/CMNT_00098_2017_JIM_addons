@@ -3,7 +3,7 @@
 
 {
     "name": "Account Forecast",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "depends": [
         "account",
         "purchase_advance_payment",

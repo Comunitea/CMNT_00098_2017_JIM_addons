@@ -17,23 +17,24 @@ class ProductPricelistItem(models.Model):
         help="Set archive to true to hide the maintenance request without deleting it.",
     )
 
-#TODO: Migrar, el modelo no existe ya. Pero quizás no se siga esta estrategia para el multicompany
+
+# TODO: Migrar, el modelo no existe ya. Pero quizás no se siga esta estrategia para el multicompany
 # ~ class ProcurementOrder(models.Model):
 
-    # ~ _inherit = "procurement.order"
+# ~ _inherit = "procurement.order"
 
-    # ~ @api.multi
-    # ~ def reconfirmed_procurement_order(self):
-        # ~ procs_to_cancel = self.filtered(lambda x: x.state == "cancel")
-        # ~ if not procs_to_cancel:
-            # ~ raise ValidationError(_("None procurement canceled"))
-        # ~ customer_procs_to_cancel = procs_to_cancel.filtered(
-            # ~ lambda x: x.location_id.usage in LOCATION_USAGES
-        # ~ )
-        # ~ if not customer_procs_to_cancel:
-            # ~ raise ValidationError(_("None procurement in customer location"))
-        # ~ for procurement in customer_procs_to_cancel:
-            # ~ procurement.reset_to_confirmed()
+# ~ @api.multi
+# ~ def reconfirmed_procurement_order(self):
+# ~ procs_to_cancel = self.filtered(lambda x: x.state == "cancel")
+# ~ if not procs_to_cancel:
+# ~ raise ValidationError(_("None procurement canceled"))
+# ~ customer_procs_to_cancel = procs_to_cancel.filtered(
+# ~ lambda x: x.location_id.usage in LOCATION_USAGES
+# ~ )
+# ~ if not customer_procs_to_cancel:
+# ~ raise ValidationError(_("None procurement in customer location"))
+# ~ for procurement in customer_procs_to_cancel:
+# ~ procurement.reset_to_confirmed()
 
-        # ~ for procurement in customer_procs_to_cancel:
-            # ~ procurement.run()
+# ~ for procurement in customer_procs_to_cancel:
+# ~ procurement.run()

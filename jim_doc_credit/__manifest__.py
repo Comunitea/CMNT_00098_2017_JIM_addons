@@ -3,7 +3,7 @@
 
 {
     "name": "Documentary credit",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "depends": [
         "purchase",
         "purchase_advance_payment",

@@ -3,14 +3,14 @@
 
 {
     "name": "Jim Sale",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "author": "Comunitea ",
     "category": "Custom",
     "license": "AGPL-3",
     "depends": [
         "sale_stock",
         "sales_team",
-        "sale_order_dates",
+        "sale",
         "delivery",
         "custom_sale_order_variant_mgmt",
         "jim_stock",

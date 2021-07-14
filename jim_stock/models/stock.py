@@ -101,16 +101,16 @@ class StockQuantPackage(models.Model):
 
     _inherit = "stock.quant.package"
 
-    #TODO: Migrar no existe childre_ids
-    #@api.depends("quant_ids", "children_ids")
+    # TODO: Migrar no existe childre_ids
+    # @api.depends("quant_ids", "children_ids")
     @api.depends("quant_ids")
     def _compute_volume(self):
         volume = 0
         for quant in self.quant_ids:
             volume += quant.qty * quant.product_id.volume
         # ~ for pack in self.children_ids:
-            # ~ pack._compute_volume()
-            # ~ volume += pack.volume
+        # ~ pack._compute_volume()
+        # ~ volume += pack.volume
         self.volume = volume
 
     @api.depends("height", "width", "length", "volume")

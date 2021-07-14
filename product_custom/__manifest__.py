@@ -3,7 +3,7 @@
 
 {
     "name": "Product customizations",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "depends": ["product_tags", "jim_stock"],
     "author": "Comunitea",
     "license": "AGPL-3",

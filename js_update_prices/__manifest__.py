@@ -4,7 +4,7 @@
     "name": "JS Update Prices (Sales)",
     "summary": "Permite actualizar los precios de los productos en los pedidos de venta",
     "website": "/js_update_prices",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "author": "Jim Sports",
     "data": ["views/layout.xml"],
     "category": "Inventory",

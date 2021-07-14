@@ -3,7 +3,7 @@
 
 {
     "name": "A3 invoice format import",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "depends": ["account_payment_partner", "account_invoice_tag"],
     "author": "Comunitea",
     "license": "AGPL-3",
