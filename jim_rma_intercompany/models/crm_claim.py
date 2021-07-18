@@ -72,7 +72,6 @@ class CrmClaim(models.Model):
         for claim in self:
             claim.stage_sequence = get_default(claim.stage_id)
 
-    @api.multi
     def _compute_amount(self):
         for claim in self:
             claim.amount = sum(
@@ -88,7 +87,7 @@ class CrmClaim(models.Model):
         Or sthrough rma ic claim
         """
 
-        picking_model = self.env["account.invoice"]
+        picking_model = self.env["account.move"]
         for claim in self:
             claim.invoice_ids = claim.invoice_id
 
@@ -103,7 +102,7 @@ class CrmClaim(models.Model):
         "crm.claim", "claim_id", "RMA Claim", copy=False
     )
     invoice_ids = fields.One2many(
-        "account.invoice",
+        "account.move",
         string="Refunds",
         compute=_get_invoice_ids,
         copy=False,

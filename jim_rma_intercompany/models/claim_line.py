@@ -9,7 +9,6 @@ class ClaimLine(models.Model):
 
     _inherit = "claim.line"
 
-    @api.multi
     def get_qty_done(self):
         for line in self:
             moves = self.picking_ids.mapped("move_lines").filtered(
@@ -39,7 +38,6 @@ class ClaimLine(models.Model):
         res = super(ClaimLine, self).create(vals)
         return res
 
-    @api.returns("stock.location")
     def get_destination_location(self, product_id, warehouse_id):
         """Compute and return the destination location to take
         for a return. Always take 'Supplier' one when return type different

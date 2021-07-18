@@ -43,7 +43,6 @@ class HarborPartnerProduct(models.Model):
         )
         return from_str
 
-    @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self._cr, "harbor_partner_product")
         self._cr.execute(

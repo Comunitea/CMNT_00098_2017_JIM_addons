@@ -18,7 +18,6 @@ class ClaimMakePicking(models.TransientModel):
 
     _inherit = "claim_make_picking.wizard"
 
-    @api.returns("stock.location")
     def _get_common_dest_location_from_line(self, lines):
 
         dest_loc = super(
@@ -28,7 +27,6 @@ class ClaimMakePicking(models.TransientModel):
             dest_loc = lines[0].claim_id.warehouse_id.lot_stock_id
         return dest_loc
 
-    @api.returns("res.partner")
     def _get_common_partner_from_line(self, lines):
         """If all the lines have the same warranty return partner return that,
         else return an empty recordset

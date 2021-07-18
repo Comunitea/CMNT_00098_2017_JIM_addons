@@ -33,7 +33,6 @@ class PurchaseManageVariant(models.TransientModel):
         )
         return super(PurchaseManageVariant, self)._onchange_product_tmpl_id()
 
-    @api.multi
     def button_transfer_to_order(self):
 
         res = super(PurchaseManageVariant, self).button_transfer_to_order()

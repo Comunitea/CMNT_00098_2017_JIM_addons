@@ -7,7 +7,6 @@ from odoo import models, fields, api, _
 class AccountPaymentOrder(models.Model):
     _inherit = "account.payment.order"
 
-    @api.multi
     def _prepare_move_line_offsetting_account(
         self, amount_company_currency, amount_payment_currency, bank_lines
     ):

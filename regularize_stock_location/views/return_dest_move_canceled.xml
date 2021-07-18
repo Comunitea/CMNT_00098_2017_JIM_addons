@@ -46,7 +46,6 @@
     <record id="act_tree_return_dest_move_cancelled" model="ir.actions.act_window">
         <field name="name">Done to cancel picks</field>
         <field name="res_model">done.to.cancel.picks</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="view_tree_return_dest_move_cancelled"/>
         <field name="search_id" ref="view_tree_return_dest_move_cancelled_search"/>

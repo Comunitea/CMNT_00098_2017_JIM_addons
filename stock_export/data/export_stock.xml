@@ -6,8 +6,8 @@
             <field name='interval_type'>minutes</field>
             <field name="numbercall">-1</field>
             <field name="active">True</field>
-            <field name="model">exportxml.object</field>
-            <field name="function">compute_product_ids</field>
-            <field name="args">()</field>
+            <field name="state">code</field>
+            <field name="model_id" ref="model_exportxml_object"/>
+            <field name="code">model.compute_product_ids()</field>
         </record>
 </odoo>

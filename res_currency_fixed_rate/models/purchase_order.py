@@ -8,7 +8,6 @@ class PurchaseOrder(models.Model):
 
     _inherit = "purchase.order"
 
-    @api.one
     def get_rate(self):
         self.order_exchange_rate = 0
         if self.company_id.currency_id and self.currency_id:

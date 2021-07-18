@@ -74,7 +74,6 @@ class StockPicking(models.Model):
             res["tipoVia_remitente"] = "CL"
         return res
 
-    @api.multi
     def action_done(self):
         create_date = self.force_date or time.strftime(
             DEFAULT_SERVER_DATETIME_FORMAT
@@ -82,7 +81,6 @@ class StockPicking(models.Model):
         self_date_context = self.with_context(create_date=create_date)
         return super(StockPicking, self_date_context).action_done()
 
-    @api.multi
     def do_transfer(self):
         create_date = self.force_date or time.strftime(
             DEFAULT_SERVER_DATETIME_FORMAT
@@ -165,7 +163,6 @@ class StockMove(models.Model):
             )
         return res
 
-    @api.multi
     def action_done(self):
         res = super(StockMove, self).action_done()
         date = self._context.get(

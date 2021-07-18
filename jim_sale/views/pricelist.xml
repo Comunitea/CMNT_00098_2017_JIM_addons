@@ -39,7 +39,6 @@
     <record id="product_pricelist_item_fixed_price_action" model="ir.actions.act_window">
         <field name="name">Fixed prices</field>
         <field name="res_model">product.pricelist.item</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="product_pricelist_item_tre_editable"/>
         <field name="search_view_id" ref="product_pricelist_item_view_search"/>

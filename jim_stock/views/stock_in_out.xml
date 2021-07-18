@@ -70,7 +70,6 @@
     <record id="stock_in_out_action" model="ir.actions.act_window">
         <field name="name">Stock in/out</field>
         <field name="res_model">stock.in.out</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="stock_in_out_view_tree"/>
         <field name="search_view_id" ref="stock_in_out_view_search"/>

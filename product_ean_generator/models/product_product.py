@@ -13,7 +13,6 @@ class ProductTemplate(models.Model):
 
     _inherit = "product.template"
 
-    @api.multi
     def asign_barcode(self):
         for template in self:
             template.product_variant_ids.asign_barcode()
@@ -57,7 +56,6 @@ class ProductProduct(models.Model):
         ean12 = sequence.next_by_id()
         return "%s%s" % (ean12, eanCheckDigit(str(ean12)))
 
-    @api.multi
     def asign_barcode(self):
         for product in self.filtered(lambda s: not s.barcode):
             product.barcode = product.next_barcode()

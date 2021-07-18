@@ -18,10 +18,9 @@
 
         <act_window name="Print product label"
             res_model="product.print.labels.from.purchase"
-            src_model="purchase.order"
+            binding_model="purchase.order"
             view_id="product_print_labels_from_purchase_form"
             view_mode="form"
             target="new"
-            key2="client_print_multi"
             id="product_print_labels_from_purchase_action"/>
 </odoo>

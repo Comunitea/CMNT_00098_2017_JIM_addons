@@ -5,7 +5,7 @@
     "name": "Fixed rate for res.currency",
     "description": """ Permit convert currency with fix rate if in context
                     """,
-    "version": "12.0.1.0.0",
+    "version": "13.0.1.0.0",
     "author": "Comunitea ",
     "category": "Currency",
     "license": "AGPL-3",

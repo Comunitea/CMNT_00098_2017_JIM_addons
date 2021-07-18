@@ -29,7 +29,6 @@
     <record id="sale_history_action" model="ir.actions.act_window">
         <field name="name">Product Sales History</field>
         <field name="res_model">sale.history</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,pivot</field>
         <field name="view_id" ref="sale_history_tree"/>
         <field name="search_view_id" ref="sale_history_view_search"/>

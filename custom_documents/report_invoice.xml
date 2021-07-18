@@ -5,7 +5,7 @@
     <report
         id="report_picking_grouped_invoice_action"
         string="Invoice grouped by picking"
-        model="account.invoice"
+        model="account.move"
         report_type="qweb-pdf"
         file="custom_documents.report_picking_grouped_invoice"
         name="custom_documents.report_picking_grouped_invoice"

@@ -3,7 +3,6 @@
      <record id="container_picking_tree_action" model="ir.actions.act_window">
         <field name="name">Stock moves</field>
         <field name="res_model">stock.move</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="stock.view_move_tree"/>
         <field name="search_view_id" ref="stock.view_move_search"/>
@@ -101,7 +100,6 @@
     <record model="ir.actions.act_window" id="action_shipping_container">
         <field name="name">Containers list</field>
         <field name="res_model">shipping.container</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="shipping_container_tree"/>
         <field name="search_view_id" ref="shipping_container_filter"/>
@@ -147,7 +145,6 @@
     <record model="ir.actions.act_window" id="action_shipping_container">
         <field name="name">Containers list</field>
         <field name="res_model">shipping.container</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="shipping_container_tree"/>
         <field name="search_view_id" ref="shipping_container_filter"/>
@@ -159,7 +156,6 @@
     <record model="ir.actions.act_window" id="action_shipping_container_type">
         <field name="name">Containers type list</field>
         <field name="res_model">shipping.container.type</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="shipping_container_type_tree"/>
     </record>

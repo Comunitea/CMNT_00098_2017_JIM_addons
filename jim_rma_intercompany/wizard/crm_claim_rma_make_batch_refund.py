@@ -114,7 +114,6 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
         }
         return vals
 
-    @api.multi
     def make_batch_refund(self):
         if self.company_id != self.env.user.company_id:
             raise exceptions.UserError(_("Not in %s" % self.company_id.name))
@@ -186,7 +185,6 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
 
         return new_invoice and new_invoice.open_this_invoice()
 
-    @api.multi
     def get_claim_line_qty_to_invoice(self, line):
         """Computes the returned quantity on rma claim lines, based on done stock moves related to its pickings"""
 

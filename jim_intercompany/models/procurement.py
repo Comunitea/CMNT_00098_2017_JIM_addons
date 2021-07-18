@@ -87,7 +87,6 @@ class ProcurementRule(models.Model):
 
 # ~ return vals
 
-# ~ @api.multi
 # ~ def _check(self):
 # ~ if self.rule_id and self.rule_id.action == "product_company":
 # ~ # Si depende de la compañia pero es de la misma compañia es
@@ -132,7 +131,6 @@ class ProcurementRule(models.Model):
 # ~ ) and any(move.state == "done" for move in self.move_ids)
 # ~ return super(ProcurementOrder, self)._check()
 
-# ~ @api.multi
 # ~ def _run(self):
 # ~ if self.rule_id and self.rule_id.action == "product_company":
 # ~ if (
@@ -166,14 +164,12 @@ class ProcurementRule(models.Model):
 
 # ~ return super(ProcurementOrder, self)._run()
 
-# ~ @api.multi
 # ~ def po_or_ic_po(self):
 # ~ if self.company_id.id == self.product_id.company_id.id:
 # ~ return self.make_po()
 # ~ else:
 # ~ return self.make_intercompany_buy_po()
 
-# ~ @api.multi
 # ~ def make_intercompany_buy_po(self):
 # ~ """
 # ~ COPY OF MAKE PO except buy:
@@ -344,7 +340,6 @@ class ProcurementRule(models.Model):
 # ~ #     po.button_confirm()
 # ~ return res
 
-# ~ @api.multi
 # ~ def _prepare_intercompany_purchase_line(self, po, partner):
 # ~ """
 # ~ COPIED FROM _prepare_purchase_order_line method
@@ -397,7 +392,6 @@ class ProcurementRule(models.Model):
 class MakeProcurement(models.TransientModel):
     _inherit = "make.procurement"
 
-    @api.multi
     def make_procurement(self):
         """ Creates procurement order for selected product. """
         return super(

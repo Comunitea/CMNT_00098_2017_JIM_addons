@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        
+
         <record id="b2b_item_out_1" model="b2b.item.out">
             <field name="sequence">1</field>
             <field name="active">False</field>
@@ -11,7 +11,7 @@
             <field name="model">product.attribute</field>
             <field name="description">Atributos de producto</field>
             <field name="code">fields_to_watch = (
-    'name', 
+    'name',
     'sequence',
     'is_color'
 )
@@ -37,7 +37,7 @@ def get_data(self, action):
             <field name="model">product.attribute.value</field>
             <field name="description">Valores de atributos</field>
             <field name="code">fields_to_watch = (
-    'name', 
+    'name',
     'sequence',
     'html_color',
     'public_image_name'
@@ -66,8 +66,8 @@ def get_data(self, action):
             <field name="model">product.brand</field>
             <field name="description">Marcas de productos</field>
             <field name="code">fields_to_watch = (
-    'name', 
-    'description', 
+    'name',
+    'description',
     'image'
 )
 
@@ -95,11 +95,11 @@ def get_data(self, action):
 
 def is_notifiable(self, action, vals):
     return True
-    
+
 def get_data(self, action):
     if b2b['crud_mode'] == 'delete':
         b2b['affected_products_ids'] = self.env['product.template'].search([('tag_ids', '=', self.id)]).ids
-        
+
     return {
         'jim_id': self.id,
         'name': self.get_field_translations('name'),
@@ -109,7 +109,7 @@ def get_data(self, action):
         # Está activa y activa para la web (y la categoría padre también)
         'active': bool(self.active and self.web and (not self.parent_id or (self.parent_id and self.parent_id.web)))
     }
-    
+
 def pos_data(self, action):
     if 'affected_products_ids' in b2b and b2b['crud_mode'] == 'delete' and not self.exists():
         for product in self.env['product.template'].browse(b2b['affected_products_ids']):
@@ -132,7 +132,7 @@ def is_notifiable(self, action, vals):
 def get_data(self, action):
     if b2b['crud_mode'] == 'delete':
         b2b['affected_products_ids'] = self.env['product.template'].search([('tag_ids', '=', self.id)]).ids
-    
+
     return {
         'jim_id': self.id,
         'name': self.get_field_translations('name'),
@@ -140,7 +140,7 @@ def get_data(self, action):
         'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None,
         'sequence': self.sequence
     }
-    
+
 def pos_data(self, action):
     if 'affected_products_ids' in b2b and b2b['crud_mode'] == 'delete' and not self.exists():
         for product in self.env['product.template'].browse(b2b['affected_products_ids']):
@@ -156,15 +156,15 @@ def pos_data(self, action):
             <field name="model">product.template</field>
             <field name="description">Productos</field>
             <field name="code">fields_to_watch = (
-    'name', 
-    'barcode', 
-    'description', 
-    'product_brand_id', 
-    'image', 
+    'name',
+    'barcode',
+    'description',
+    'product_brand_id',
+    'image',
     'tag_ids',
-    'product_brand_id', 
-    'public_categ_ids', 
-    'type', 
+    'product_brand_id',
+    'public_categ_ids',
+    'type',
     'company_id',
     'website_published',
     'weight',
@@ -185,7 +185,7 @@ def get_data(self, action):
         'reference': self.template_code or self.default_code,
         'ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
         'category_id': self.tag_ids.ids,
-        'web_category_id': self.public_categ_ids.ids, 
+        'web_category_id': self.public_categ_ids.ids,
         'brand_id': self.product_brand_id.id if self.product_brand_id else None,
         'description': self.get_field_translations('description'),
         'origin_country': self.origin_country_id.name if self.origin_country_id else None,
@@ -229,11 +229,11 @@ def pos_data(self, action):
             <field name="description">Variantes / Combinaciones</field>
             <field name="code">fields_to_watch = (
     'default_code',
-    'name', 
-    'barcode', 
-    'product_tmpl_id', 
-    'attribute_names', 
-    'attribute_value_ids', 
+    'name',
+    'barcode',
+    'product_tmpl_id',
+    'attribute_names',
+    'attribute_value_ids',
     'weight',
     'website_published',
     'product_size_width',
@@ -269,7 +269,7 @@ def get_data(self, action):
         'volume': float(self.volume),
         'default': bool(self.id == self.product_variant_id.id)
     } if len(self.attribute_value_ids) == 2 else dict()
-    
+
 def pos_data(self, action):
     # Creamos los datos relaccionados
     if b2b['crud_mode'] == 'create':
@@ -284,7 +284,7 @@ def pos_data(self, action):
         self.env['b2b.export'].b2b_pricelists_prices(templates_filter=[self.product_tmpl_id.id,], variant=self.id)
         self.env['b2b.export'].b2b_customers_prices(templates_filter=[self.product_tmpl_id.id,], variant=self.id)
         self.env['b2b.export'].b2b_products_stock(export_all=[self.product_tmpl_id.id,])
-        
+
     # Eliminamos la imágen relaccionada si procede
     if b2b['crud_mode'] == 'delete':
         for image in self.product_image_ids:
@@ -312,9 +312,9 @@ def related_to(self, action):
 def get_data(self, action):
     return {
         'jim_id': self.id,
-        'product_id': self.product_tmpl_id.id, 
-        'name': self.get_field_translations('name'), 
-        'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None, 
+        'product_id': self.product_tmpl_id.id,
+        'name': self.get_field_translations('name'),
+        'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None,
         'attributes': self.product_attributes_values.ids,
         'sequence': self.sequence
     }</field>
@@ -374,10 +374,10 @@ def get_data(self, action):
             <field name="model">stock.move</field>
             <field name="description">Previsión de abastecimiento</field>
             <field name="code">fields_to_watch = (
-    'purchase_line_id', 
+    'purchase_line_id',
     'company_id',
-    'product_id', 
-    'product_uom_qty', 
+    'product_id',
+    'product_uom_qty',
     'date_expected',
     'state'
 )
@@ -420,15 +420,15 @@ def get_data(self, action):
             <field name="description">Clientes</field>
             <field name="code">fields_to_watch = (
     'ref',
-    'name', 
-    'vat', 
-    'email', 
-    'type', 
+    'name',
+    'vat',
+    'email',
+    'type',
     'customer',
-    'parent_id', 
+    'parent_id',
     'is_company',
     'property_product_pricelist',
-    'vip_web_access', 
+    'vip_web_access',
     'active'
 )
 
@@ -479,17 +479,17 @@ def pos_data(self, action):
             <field name="model">res.partner</field>
             <field name="description">Direcciones de clientes</field>
             <field name="code">fields_to_watch = (
-    'name', 
-    'type', 
-    'parent_id', 
-    'street', 
-    'street2', 
-    'zip', 
-    'city', 
-    'state_id', 
+    'name',
+    'type',
+    'parent_id',
+    'street',
+    'street2',
+    'zip',
+    'city',
+    'state_id',
     'country_id',
-    'commercial_partner_id', 
-    'default_partner_by_type', 
+    'commercial_partner_id',
+    'default_partner_by_type',
     'active'
 )
 
@@ -506,15 +506,15 @@ def related_to(self, action):
 def get_data(self, action):
     return {
         'jim_id': self.id,
-        'customer_id': self.commercial_partner_id.id, 
-        'name': self.name if self.name else self.commercial_partner_id.name, 
-        'street': self.street, 
-        'street2': self.street2 or None, 
-        'zip': self.zip, 
-        'city': self.city, 
-        'state': self.state_id.name if self.state_id else None, 
-        'country': self.country_id.code if self.country_id else 'ES', 
-        'type': self.type, 
+        'customer_id': self.commercial_partner_id.id,
+        'name': self.name if self.name else self.commercial_partner_id.name,
+        'street': self.street,
+        'street2': self.street2 or None,
+        'zip': self.zip,
+        'city': self.city,
+        'state': self.state_id.name if self.state_id else None,
+        'country': self.country_id.code if self.country_id else 'ES',
+        'type': self.type,
         'default': self.default_partner_by_type
     }</field>
         </record>
@@ -525,13 +525,13 @@ def get_data(self, action):
             <field name="exclude_on_sync">False</field>
             <field name="sync_updates">False</field>
             <field name="name">invoice</field>
-            <field name="model">account.invoice</field>
+            <field name="model">account.move</field>
             <field name="description">Factura de venta o abono</field>
             <field name="code">fields_to_watch = (
-    'commercial_partner_id', 
-    'company_id', 
-    'number', 
-    'date_invoice', 
+    'commercial_partner_id',
+    'company_id',
+    'number',
+    'date_invoice',
     'amount_total',
     'state'
 )
@@ -542,11 +542,11 @@ def is_notifiable(self, action, vals):
         and self.type in ('out_invoice', 'out_refund') # Y es de tipo out_invoice o out_refund
         and self.state in ('open', 'paid') # Y el estado es abierta o pagada
         and self.date_invoice >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
-    
+
     if notifiable and b2b['crud_mode'] == 'update' and vals.get('state', 'open') != 'open' and len(vals.keys()) == 1:
         b2b['logger'].critical("------> [%s] FACTURA NOTIFICABLE PERO NO SE ENVIA CAMBIO DE ESTADO A: %s", self.id, vals.get('state'))
         notifiable = False
-        
+
     return notifiable
 
 def related_to(self, action):
@@ -554,23 +554,23 @@ def related_to(self, action):
 
 def get_data(self, action):
     doc_data = { 'jim_id': self.id }
-    
+
     # If not a delete mode
     if b2b['crud_mode'] != 'delete':
         # Obtenemos la moneda y posición
         currency = self.currency_id.symbol
         position = self.currency_id.position
-        
+
         # Actualizamos los datos
-        doc_data.update({ 
+        doc_data.update({
             'customer_id': self.commercial_partner_id.id,
             'company_id': self.company_id.id,
-            'name': self.number, 
-            'date': self.date_invoice, 
-            'total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
+            'name': self.number,
+            'date': self.date_invoice,
+            'total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
             'pdf': self.get_base64_report_pdf('custom_documents.report_picking_grouped_invoice')
         })
-        
+
     return doc_data</field>
         </record>
 
@@ -607,24 +607,24 @@ def related_to(self, action):
 
 def get_data(self, action):
     doc_data = { 'jim_id': self.id }
-    
+
     # If not a delete mode
     if b2b['crud_mode'] != 'delete':
         # Obtenemos la moneda y posición
         currency = self.orig_sale_id.pricelist_id.currency_id.symbol
         position = self.orig_sale_id.pricelist_id.currency_id.position
-        
+
         # Actualizamos los datos
-        doc_data.update({ 
+        doc_data.update({
             'customer_id': self.sale_id.partner_id.commercial_partner_id.id,
             'company_id': self.company_id.id,
             'name': self.name,
-            'date': self.date_done, 
-            'total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total), 
+            'date': self.date_done,
+            'total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
             'pdf': self.get_base64_report_pdf('stock.report_deliveryslip'),
             'seur_tracking': self.carrier_tracking_ref or None
         })
-        
+
     return doc_data</field>
         </record>
 
@@ -637,12 +637,12 @@ def get_data(self, action):
             <field name="model">sale.order</field>
             <field name="description">Pedido de venta</field>
             <field name="code">fields_to_watch = (
-    'partner_id', 
+    'partner_id',
     'company_id',
-    'name', 
-    'date_order', 
+    'name',
+    'date_order',
     'amount_total',
-    'origin', 
+    'origin',
     'state'
 )
 
@@ -650,40 +650,40 @@ def is_notifiable(self, action, vals):
     notifiable = (self.state not in ('draft', 'proforma') # Y el estado no es borrador, proforma o cancelado
         and self.partner_id.commercial_partner_id.is_notifiable_check() # Y el cliente es notificable
         and self.date_order >= b2b['min_docs_date']) # Y es posterior a la fecha mínima
-        
+
     # Sólo se notifican estados 'pending', 'sale' y 'cancel'
     new_state = vals.get('state')
     if notifiable and b2b['crud_mode'] == 'update' and len(vals.keys()) == 1 and vals.get('state') not in ('pending', 'sale', 'cancel'):
         b2b['logger'].critical("------> [%s] PEDIDO NOTIFICABLE PERO NO SE ENVIA CAMBIO DE ESTADO A: %s", self.id, new_state)
         notifiable = False
-        
+
     return notifiable
-    
+
 def related_to(self, action):
     return 'res.partner,%s' % self.partner_id.commercial_partner_id.id
 
 def get_data(self, action):
     doc_data = { 'jim_id': self.id, 'origin': self.origin or None }
-    
+
     # If not a delete mode
     if b2b['crud_mode'] != 'delete':
         # Obtenemos la moneda y posición
         currency = self.pricelist_id.currency_id.symbol
         position = self.pricelist_id.currency_id.position
-        
+
         # Actualizamos los datos
-        doc_data.update({ 
+        doc_data.update({
             'customer_id': self.partner_id.commercial_partner_id.id,
             'company_id': self.company_id.id,
-            'name': self.name, 
-            'date': self.date_order, 
+            'name': self.name,
+            'date': self.date_order,
             'total': str(self.amount_total) + currency if position == 'after' else currency + str(self.amount_total),
             'pdf': self.get_base64_report_pdf('sale.report_saleorder'),
             'state': self.state
         })
-        
+
     return doc_data
-    
+
 def pos_data(self, action):
     if b2b['crud_mode'] == 'delete':
         # Eliminamos los albaranes asociados
@@ -731,10 +731,10 @@ def get_data(self, action):
         'variant_id': self.product_id.id if self.product_id else None,
         'pricelist_id': self.pricelist_id.id,
         'qty': self.min_quantity if self.min_quantity > 0 else 1
-        
+
     }
     return list()
-    
+
 def pos_data(self, action):
     # Recuperar datos de línea
     item = b2b['actual_pricelist_item']

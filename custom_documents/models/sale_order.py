@@ -11,7 +11,6 @@ class SaleOrder(models.Model):
     neutral_document = fields.Boolean()
 
     # función para separar impuestos,luego la llamamos desde el pedido
-    @api.multi
     def _get_tax_amount_disaggregated(self):
         self.ensure_one()
         res = {}
@@ -50,7 +49,6 @@ class SaleOrder(models.Model):
                 order.partner_shipping_id.active = not vals["neutral_document"]
         return order
 
-    @api.multi
     def write(self, vals):
         super(SaleOrder, self).write(vals)
         if "neutral_document" in vals:
@@ -75,7 +73,6 @@ class SaleOrderLine(models.Model):
 
     name_report = fields.Text(compute="_compute_name_report")
 
-    @api.multi
     def _compute_name_report(self):
         for line in self:
             name_report = line.name
@@ -85,7 +82,6 @@ class SaleOrderLine(models.Model):
                 )
             line.name_report = name_report
 
-    @api.multi
     def _prepare_invoice_line(self, qty):
         res = super(SaleOrderLine, self)._prepare_invoice_line(qty)
         res["promotion_line"] = self.promotion_line

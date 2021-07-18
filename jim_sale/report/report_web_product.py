@@ -27,7 +27,7 @@ class ReportSaleLineJim(models.Model):
 
     def _select(self):
         select_str = """
-        select 
+        select
             pp.id as id,
             pp.id as product_id
         """
@@ -35,17 +35,16 @@ class ReportSaleLineJim(models.Model):
 
     def _from(self):
         from_str = """
-                product_product pp 
+                product_product pp
                 inner join product_template pt on pt.id = pp.product_tmpl_id
                 where pt.type='product'
                 """
         return from_str
 
-    @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         self.env.cr.execute(
-            """CREATE or REPLACE VIEW %s as 
+            """CREATE or REPLACE VIEW %s as
         (%s FROM %s)"""
             % (self._table, self._select(), self._from())
         )

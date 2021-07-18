@@ -8,9 +8,9 @@
 from odoo import fields, models, api
 
 
-class AccountInvoice(models.Model):
+class AccountMove(models.Model):
 
-    _inherit = "account.invoice"
+    _inherit = "account.move"
 
     def _get_claim_ids(self):
         for invoice in self:
@@ -47,7 +47,6 @@ class AccountInvoice(models.Model):
         }
         return res
 
-    @api.multi
     def unlink(self):
         claim_ids = self.env["crm.claim"]
         for invoice in self:

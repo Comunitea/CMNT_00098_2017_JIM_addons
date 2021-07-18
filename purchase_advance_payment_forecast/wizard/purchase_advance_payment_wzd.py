@@ -9,7 +9,6 @@ class AccountVoucherWizard(models.TransientModel):
 
     _inherit = "account.purchase.voucher.wizard"
 
-    @api.multi
     def make_advance_payment(self):
         """Create customer paylines and validates the payment"""
         ## Neceito dividir para heredar y añadir campos, así como poder evirar llamar a do_post si viene a True en context

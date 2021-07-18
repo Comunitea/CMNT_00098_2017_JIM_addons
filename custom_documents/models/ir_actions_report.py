@@ -15,7 +15,6 @@ class ReportCompanyAdvise(models.Model):
 
     _name = "report.company.advise"
 
-    @api.multi
     def compute_complete_name(self):
         for rca in self:
             rca.complete_name = "{}.{}".format(rca.model_id, rca.name)

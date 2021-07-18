@@ -5,11 +5,10 @@ from odoo import models, api
 from odoo.exceptions import AccessError
 
 
-class AccountInvoice(models.Model):
+class AccountMove(models.Model):
 
-    _inherit = "account.invoice"
+    _inherit = "account.move"
 
-    @api.multi
     def _add_supplier_to_product(self):
         # Add the partner in the supplier list of the product if the supplier
         # is not registered for this product. We limit to 10 the number of
@@ -80,16 +79,15 @@ class AccountInvoice(models.Model):
                 except AccessError:  # no write access rights -> just ignore
                     break
 
-    @api.multi
     def action_invoice_open(self):
-        res = super(AccountInvoice, self).action_invoice_open()
+        res = super().action_invoice_open()
         if self.type == "in_invoice":
             self._add_supplier_to_product()
         return res
 
     @api.model
     def create(self, vals):
-        res = super(AccountInvoice, self).create(vals)
+        res = super().create(vals)
         if res.early_payment_discount:
             res.button_compute_early_payment_disc()
         return res

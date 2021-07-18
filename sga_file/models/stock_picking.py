@@ -78,7 +78,6 @@ class StockPickingSGA(models.Model):
 
     _inherit = "stock.picking"
 
-    @api.multi
     def compute_sga_shipping_info(self):
 
         for pick in self:
@@ -219,7 +218,6 @@ class StockPickingSGA(models.Model):
             return True
         return False
 
-    @api.multi
     def write(self, vals):
         if "action_done_bool" in vals:
             for pick in self:
@@ -241,7 +239,6 @@ class StockPickingSGA(models.Model):
     def button_move_to_done(self):
         return self.move_to_done
 
-    @api.multi
     def move_to_done(self):
         picks = self.filtered(lambda x: x.sga_state != "NI")
         picks.write({"sga_state": "MT"})
@@ -249,7 +246,6 @@ class StockPickingSGA(models.Model):
     def button_move_to_NE(self):
         return self.move_to_NE
 
-    @api.multi
     def move_to_NE(self):
         sga_states_to_NE = ("PM", "EI", "EE", "MT", "MC", False)
         picks = self.filtered(
@@ -319,7 +315,6 @@ class StockPickingSGA(models.Model):
             raise ValidationError("No hay albaranes para enviar a Mecalux")
         return True
 
-    @api.multi
     def renum_operation_line_number(self):
         for pick in self:
             if pick.picking_type_id.sga_integrated:

@@ -47,7 +47,6 @@
     <record model="ir.actions.act_window" id="action_res_harbor">
         <field name="name">Harbors</field>
         <field name="res_model">res.harbor</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="res_harbor_tree"/>
         <field name="search_view_id" ref="res_harbor_filter"/>

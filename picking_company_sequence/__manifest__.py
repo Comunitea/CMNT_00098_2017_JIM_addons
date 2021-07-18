@@ -4,7 +4,7 @@
 
 {
     "name": "Stock picking company sequence",
-    "version": "12.0.1.0.0",
+    "version": "13.0.1.0.0",
     "author": "Comunitea, ",
     "category": "",
     "license": "AGPL-3",

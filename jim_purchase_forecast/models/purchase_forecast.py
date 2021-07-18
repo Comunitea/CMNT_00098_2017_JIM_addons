@@ -22,21 +22,18 @@ class PurchaseForecast(models.Model):
     tag_ids = fields.Many2many("product.tag", string="Product Tags")
     date = fields.Date("Calculation Date", readonly=True)
 
-    @api.multi
     def _get_lines_count(self):
         for forecast in self:
             self.lines_count = self.env["purchase.forecast.line"].search_count(
                 [("forecast_id", "=", self.id)]
             )
 
-    @api.multi
     def delete_forecast_lines(self):
         for forecast in self:
             domain = [("forecast_id", "=", forecast.id)]
             self.env["purchase.forecast.line"].search(domain).unlink()
         return
 
-    @api.multi
     def unlink(self):
         self.delete_forecast_lines()
         res = super(PurchaseForecast, self).unlink()
@@ -61,7 +58,6 @@ class PurchaseForecast(models.Model):
             demand = 0
         return demand
 
-    @api.multi
     def _query_product_tags(self):
         res = ("", {})
         if self.tag_ids:
@@ -78,7 +74,6 @@ class PurchaseForecast(models.Model):
             res = (query, params)
         return res
 
-    @api.multi
     def _query_product_category(self):
         res = ("", {})
         if self.category_ids:
@@ -92,7 +87,6 @@ class PurchaseForecast(models.Model):
             res = (query, params)
         return res
 
-    @api.multi
     def _query_product_seller(self):
         res = ("", {})
         if self.seller_id:
@@ -109,7 +103,6 @@ class PurchaseForecast(models.Model):
             res = (query, params)
         return res
 
-    @api.multi
     def _query_product_harbor(self):
         res = ("", {})
         if self.harbor_id:
@@ -128,7 +121,6 @@ class PurchaseForecast(models.Model):
             res = (query, params)
         return res
 
-    @api.multi
     def _get_products(self):
         self.ensure_one()
         # One query by filter
@@ -185,7 +177,6 @@ class PurchaseForecast(models.Model):
         product_ids = list(set(product_ids))
         return self.env["product.product"].browse(product_ids)
 
-    @api.multi
     def create_lines(self):
         self.ensure_one()
         self.delete_forecast_lines()
@@ -257,7 +248,6 @@ class PurchaseForecast(models.Model):
             self.env["purchase.forecast.line"].create(line_vals)
         return
 
-    @api.multi
     def show_lines(self):
         self.ensure_one()
         action = self.env.ref(
@@ -306,7 +296,6 @@ class PurchaseForecastLine(models.Model):
     harbor_id = fields.Many2one("res.harbor", "Harbor", readonly=True)
     harbor2_id = fields.Many2one("res.harbor", "Harbor 2", readonly=True)
 
-    @api.multi
     def open_form_view(self):
         self.ensure_one()
         action_name = "jim_purchase_forecast.action_forecast_lines"

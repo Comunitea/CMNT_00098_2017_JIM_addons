@@ -8,7 +8,6 @@ from odoo.exceptions import ValidationError
 class PurchaseOrderLine(models.Model):
     _inherit = "purchase.order.line"
 
-    @api.multi
     def _prepare_stock_moves(self, picking):
 
         if self._context.get("force_procurement", False):
@@ -22,7 +21,6 @@ class PurchaseOrderLine(models.Model):
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
-    @api.multi
     def button_confirm(self):
         # Si no viene desde el wzd
         if not "force_procurement" in self._context.keys():

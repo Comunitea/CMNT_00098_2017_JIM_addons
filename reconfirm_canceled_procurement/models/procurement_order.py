@@ -23,7 +23,6 @@ class ProductPricelistItem(models.Model):
 
 # ~ _inherit = "procurement.order"
 
-# ~ @api.multi
 # ~ def reconfirmed_procurement_order(self):
 # ~ procs_to_cancel = self.filtered(lambda x: x.state == "cancel")
 # ~ if not procs_to_cancel:

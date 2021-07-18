@@ -38,7 +38,6 @@ class SaleOrderLineTemplate(models.Model):
                 [x.price_subtotal for x in line.order_lines]
             )
 
-    @api.multi
     def unlink(self):
         if not self._context.get("unlink_product_line", False):
             ctx = self._context.copy()
@@ -46,7 +45,6 @@ class SaleOrderLineTemplate(models.Model):
             self.mapped("order_lines").with_context(ctx).unlink()
         return super(SaleOrderLineTemplate, self).unlink()
 
-    @api.multi
     def write(self, vals):
         for template in self:
             line_vals = vals.copy()
@@ -193,7 +191,6 @@ class SaleOrderLine(models.Model):
 
     _inherit = "sale.order.line"
 
-    @api.multi
     @api.depends("product_id")
     def _get_global_stock(self):
         for line in self:
@@ -298,7 +295,6 @@ class SaleOrderLine(models.Model):
             del res["warning"]
         return res
 
-    @api.multi
     def show_details(self):
         view_id = self.env.ref(
             "custom_sale_order_variant_mgmt.sale_order_line_custom_form_note"
@@ -316,12 +312,10 @@ class SaleOrderLine(models.Model):
             "context": self.env.context,
         }
 
-    @api.multi
     def _action_procurement_create(self):
         if self._name == "sale.order.line":
             return super(SaleOrderLine, self)._action_procurement_create()
 
-    @api.multi
     def unlink(self):
         templates = self.mapped("template_line")
         res = super(SaleOrderLine, self).unlink()
@@ -376,7 +370,6 @@ class SaleOrder(models.Model):
         for order in self:
             order.sale_order_line_count = len(order.order_line)
 
-    @api.multi
     def action_view_order_lines(self):
         action = self.env.ref(
             "custom_sale_order_variant_mgmt.sale_order_line_action"
@@ -387,7 +380,6 @@ class SaleOrder(models.Model):
         }
         return action
 
-    @api.multi
     def copy(self, default={}):
         return super(
             SaleOrder,

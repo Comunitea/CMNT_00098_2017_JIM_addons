@@ -72,7 +72,6 @@ class ProductTemplate(models.Model):
             template.product_size_depth = 0.0
             template.volume = 0.0
 
-    @api.one
     def _set_size(self):
         if len(self.product_variant_ids) == 1:
             self.product_variant_id.write(
@@ -83,7 +82,6 @@ class ProductTemplate(models.Model):
                 }
             )
 
-    @api.multi
     def _set_variant_discontinued(self, values):
         if "discontinued_product" in values:
             for record in self:
@@ -98,7 +96,6 @@ class ProductTemplate(models.Model):
         template._set_variant_discontinued(vals)
         return template
 
-    @api.multi
     def write(self, vals):
         self._set_variant_discontinued(vals)
         return super(ProductTemplate, self).write(vals)

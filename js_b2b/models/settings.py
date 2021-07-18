@@ -77,7 +77,6 @@ class B2BSettings(models.TransientModel):
             url += "/"
         return url
 
-    @api.multi
     def execute(self):
         # Check JSync URL
         if getattr(self, "url", False):
@@ -115,7 +114,6 @@ class B2BSettings(models.TransientModel):
             self.clear_caches()
         return True
 
-    @api.multi
     def set_params(self):
         self.ensure_one()
         for field_name, field_attrs in PARAMS.items():

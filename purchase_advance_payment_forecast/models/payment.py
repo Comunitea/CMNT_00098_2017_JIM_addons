@@ -12,7 +12,6 @@ class AccountPayment(models.Model):
         "account.move", "Forecast Move", readonly=True
     )
 
-    @api.multi
     def write(self, vals):
         res = super(AccountPayment, self).write(vals)
         for payment in self:

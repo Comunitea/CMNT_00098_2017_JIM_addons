@@ -185,7 +185,6 @@
         <field name="name">Parameterized Products</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">product.parameterization</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="parameterization_product_search_view"/>
     </record>
@@ -194,7 +193,6 @@
         <field name="name">Parameterization Values</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">js_parameterization.value</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="help" type="html">
             <p class="oe_view_nocontent_create">
@@ -247,7 +245,6 @@
         <field name="name">Parameterization Values</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">js_parameterization.value</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="search_view_id" ref="js_parameterization_values_search"/>
         <field name="help" type="html">

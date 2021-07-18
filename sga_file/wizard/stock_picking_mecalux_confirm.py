@@ -21,7 +21,6 @@ class StockMecaluxConfirm(models.TransientModel):
     # ~ res["pick_id"] = self._context.get("active_id", False)
     # ~ return res
 
-    @api.multi
     def process_force_and_send(self):
         self.ensure_one()
         self.pick_id.message_post(
@@ -38,7 +37,6 @@ class StockMecaluxConfirm(models.TransientModel):
         if self.state == "assigned":
             self.pick_id.new_mecalux_file()
 
-    @api.one
     def process_send(self):
         self.ensure_one()
         self.pick_id.message_post(
@@ -47,7 +45,6 @@ class StockMecaluxConfirm(models.TransientModel):
         )
         self.pick_id.new_mecalux_file(force=True)
 
-    @api.one
     def process_force(self):
         self.ensure_one()
         self.pick_id.message_post(

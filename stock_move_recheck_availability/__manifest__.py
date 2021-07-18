@@ -3,7 +3,7 @@
 
 {
     "name": "Stock move reheck avalibitlity.",
-    "version": "12.0.1.0.0",
+    "version": "13.0.1.0.0",
     "depends": ["stock"],
     "author": "Comunitea",
     "license": "AGPL-3",

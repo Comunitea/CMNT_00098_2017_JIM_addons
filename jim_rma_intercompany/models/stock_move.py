@@ -46,7 +46,6 @@ class StockPicking(models.Model):
         }
         return res
 
-    @api.multi
     def unlink(self):
         claim_ids = self.env["crm.claim"]
         for pick in self:

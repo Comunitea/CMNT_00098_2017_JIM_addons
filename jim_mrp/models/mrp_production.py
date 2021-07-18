@@ -35,7 +35,6 @@ class MrpProduction(models.Model):
     )
     note = fields.Text()
 
-    @api.multi
     def refresh_stock(self):
         for production in self:
             production.global_real_stock = (
@@ -69,7 +68,6 @@ class MrpProduction(models.Model):
             res.with_context(ctx).refresh_stock()
         return res
 
-    @api.multi
     def set_done_production(self):
         ctx = self._context.copy()
 

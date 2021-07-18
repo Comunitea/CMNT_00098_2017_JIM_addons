@@ -23,7 +23,6 @@
     <record id="acc_import_files" model="ir.actions.act_window">
         <field name="name">Import A3 Invoices</field>
         <field name="res_model">acc.import.files</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

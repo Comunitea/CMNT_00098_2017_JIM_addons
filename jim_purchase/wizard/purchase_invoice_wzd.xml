@@ -43,7 +43,6 @@
         <act_window name="Add to invoice order"
             res_model="purchase.invoice.wzd"
             view_mode="form"
-            view_type="form"
             target="new"
             id="action_add_purchase_invoice_wzd"
             groups="purchase.group_purchase_user"/>

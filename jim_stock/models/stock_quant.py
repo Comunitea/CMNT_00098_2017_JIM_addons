@@ -10,7 +10,6 @@ class StockQuant(models.Model):
 
     _inherit = "stock.quant"
 
-    @api.one
     def _quant_reconcile_negative(self, move):
         new_self = self.filtered(lambda x: not x.reservation_id)
         return super(StockQuant, new_self)._quant_reconcile_negative(move)

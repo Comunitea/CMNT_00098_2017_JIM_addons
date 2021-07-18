@@ -12,7 +12,6 @@ class ReportStockForecat(models.Model):
     in_qty = fields.Float(readonly=True, string="Incoming qty")
     real_qty = fields.Float(readonly=True, string="Real qty")
 
-    @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self._cr, "report_stock_forecast")
         self._cr.execute(

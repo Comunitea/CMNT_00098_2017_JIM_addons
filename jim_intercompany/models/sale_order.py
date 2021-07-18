@@ -51,7 +51,6 @@ class SaleOrder(models.Model):
     )
     mrp_productions_count = fields.Integer(compute="_compute_mrp_productions")
 
-    @api.one
     def _prepare_purchase_order_data(self, company, company_partner):
         """Generate purchase order values, from the SO (self)
         :param company_partner : the partner representing the company of the SO
@@ -76,7 +75,7 @@ class SaleOrder(models.Model):
         )
         if not picking_type_id:
             intercompany_uid = company.intercompany_user_id.id
-            picking_type_id = PurchaseOrder.sudo(
+            picking_type_id = PurchaseOrder.with_user(
                 intercompany_uid
             )._default_picking_type()
         res = {
@@ -117,7 +116,6 @@ class SaleOrder(models.Model):
             )
             order.mrp_productions_count = len(order.mrp_productions)
 
-    @api.multi
     def action_confirm(self):
         res = super(SaleOrder, self).action_confirm()
         if self.mapped("purchase_ids"):
@@ -128,7 +126,6 @@ class SaleOrder(models.Model):
 
         return res
 
-    @api.multi
     def action_cancel(self):
         ic_sales = (
             self.env["sale.order"]
@@ -156,7 +153,6 @@ class SaleOrder(models.Model):
 
         return res
 
-    @api.multi
     @api.depends("procurement_group_id")
     def _compute_purchase_ids(self):
         for order in self:
@@ -169,7 +165,6 @@ class SaleOrder(models.Model):
             )
             order.purchase_count = len(order.purchase_ids)
 
-    @api.multi
     @api.depends("procurement_group_id")
     def _compute_picking_ids(self):
         for order in self:
@@ -182,7 +177,6 @@ class SaleOrder(models.Model):
             )
             order.delivery_count = len(order.picking_ids)
 
-    @api.multi
     def action_view_purchase(self):
         """
         This function returns an action that display existing purchase orders
@@ -201,7 +195,6 @@ class SaleOrder(models.Model):
             action["res_id"] = purchases.id
         return action
 
-    @api.multi
     def action_view_productions(self):
         action = self.env.ref("mrp.mrp_production_action").read()[0]
 
@@ -215,7 +208,6 @@ class SaleOrder(models.Model):
             action["res_id"] = productions.id
         return action
 
-    @api.multi
     def write(self, vals):
         fpos_p = self.env["account.fiscal.position"].sudo()
         paymode_p = self.env["account.payment.mode"].sudo()

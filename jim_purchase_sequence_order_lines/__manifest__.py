@@ -3,7 +3,7 @@
 
 {
     "name": "Sequence en lineas de compras",
-    "version": "12.0.1.0.0",
+    "version": "13.0.1.0.0",
     "depends": ["purchase_order_variant_mgmt"],
     "author": "Comunitea",
     "license": "AGPL-3",

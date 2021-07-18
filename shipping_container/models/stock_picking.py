@@ -32,7 +32,6 @@ class StockPicking(models.Model):
     )
     harbor_id = fields.Many2one("res.harbor", string="Harbor")
 
-    @api.one
     # TODO: Migrar no existe pack_operation_ids
     # @api.depends("pack_operation_ids")
     def _compute_shipping_volume(self):

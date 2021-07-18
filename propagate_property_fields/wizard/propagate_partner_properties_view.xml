@@ -18,7 +18,7 @@
                               <li>Account Payable</li>
                               <li>Fiscal Position</li>
                               <li>Sale Priecelist</li>
-                            </ul>  
+                            </ul>
                     </group>
                     <footer>
                         <button name="do_propagate" string="Propagate" type="object" class="oe_stat_button"
@@ -29,14 +29,13 @@
             </field>
         </record>
 
-         <act_window id="propagate_partner_fields_action"
-             name="Propagate property fields"
-             key2="client_action_multi"
-             src_model="res.partner"
-             res_model="propagate.partner.properties"
-             view_mode="form"
-             view_type="form"
-             target="new"
-            />
-       
+        <act_window name="Propagate property fields"
+            res_model="propagate.partner.properties"
+            binding_model="res.partner"
+            view_mode="form"
+            binding_views="form"
+            target="new"
+            id="propagate_partner_fields_action"
+        />
+
 </odoo>

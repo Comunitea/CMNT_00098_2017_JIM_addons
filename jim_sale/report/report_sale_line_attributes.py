@@ -45,40 +45,40 @@ class ReportSaleLineJimAttributes(models.Model):
     date = fields.Datetime(string="Fecha", readonly=True)
 
     def _select(self):
-        select_str = """            
+        select_str = """
              SELECT min(l.id) as id,
                     l.product_id as product_id,
-                    sum(l.price_subtotal) as price_subtotal, 
+                    sum(l.price_subtotal) as price_subtotal,
                     sum(l.price_unit) as price_unit,
                     sum(l.product_uom_qty) as product_uom_qty,
                     l.company_id,
                     pp.default_code as product_code,
                     so.date_order as date,
-                    coalesce(nullif(pp.attribute_names,'') , 'Plantilla') as attribute_names, 
-                    case when split_part(pp.attribute_names, ', ',1) ilike '%Color%' 
-                    then split_part(pp.attribute_names, ', ',1) 
-                    else 
-                        case when split_part(pp.attribute_names, ', ',2) ilike '%Color%' 
+                    coalesce(nullif(pp.attribute_names,'') , 'Plantilla') as attribute_names,
+                    case when split_part(pp.attribute_names, ', ',1) ilike '%Color%'
+                    then split_part(pp.attribute_names, ', ',1)
+                    else
+                        case when split_part(pp.attribute_names, ', ',2) ilike '%Color%'
                             then split_part(pp.attribute_names, ', ',2)
                             else 'Sin valor'
                         end
                             end as color,
-                    case when split_part(pp.attribute_names, ', ',1) not ilike '%Color%' 
-                    then split_part(pp.attribute_names, ', ',1) 
-                    else 
-                        case when split_part(pp.attribute_names, ', ',2) not ilike '%Color%' 
+                    case when split_part(pp.attribute_names, ', ',1) not ilike '%Color%'
+                    then split_part(pp.attribute_names, ', ',1)
+                    else
+                        case when split_part(pp.attribute_names, ', ',2) not ilike '%Color%'
                             then split_part(pp.attribute_names, ', ',2)
                             else 'Sin Valor'
                         end
                             end as talla
-                    
-                                    
+
+
         """
         return select_str
 
     def _from(self):
         from_str = """ sale_order_line l
-                        left join sale_order so on l.order_id = so.id 
+                        left join sale_order so on l.order_id = so.id
                         left join product_product pp on pp.id = l.product_id
                         """
         return from_str
@@ -87,19 +87,18 @@ class ReportSaleLineJimAttributes(models.Model):
         group_by_str = """
             WHERE
                 so.state in ('sale', 'done') and l.id > 400000
-            GROUP BY 
+            GROUP BY
                    l.product_id,
                     l.company_id,
                     pp.display_name,
                     pp.default_code,
                     pp.attribute_names,
                     so.date_order
-                    
-                    
+
+
         """
         return group_by_str
 
-    @api.model_cr
     def init(self):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)

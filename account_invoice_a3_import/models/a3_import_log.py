@@ -44,7 +44,6 @@ class A3ImportLog(models.Model):
     )
     errors = fields.Text()
 
-    @api.multi
     def move_imported_files(self, importation_folder, process_folder):
         for doc in self:
             if doc.state == "imported":
@@ -189,7 +188,6 @@ class A3ImportLog(models.Model):
         else:
             return partner[0]
 
-    @api.multi
     def import_data(self, f):
         with_error = False
         with api.Environment.manage():

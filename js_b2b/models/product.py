@@ -31,12 +31,10 @@ class PublicImage(models.AbstractModel):
     _attr_image_model_field = "image"
     _attr_public_file_name = "public_image_name"
 
-    @api.multi
     def _ftp_save_base64(self, base64_str):
         self._ftp_delete_file()
         return ftp.save_base64(base64_str)
 
-    @api.multi
     def _ftp_delete_file(self):
         for record in self:
             # Delete old image
@@ -84,7 +82,6 @@ class PublicImage(models.AbstractModel):
             self._ftp_delete_file()
             return False
 
-    @api.multi
     def write(self, vals):
         resize = self.env.context.get("resize_img", True)
         new_image_name = None
@@ -113,7 +110,6 @@ class PublicImage(models.AbstractModel):
             ftp.delete_file(new_image_name)
             return False
 
-    @api.multi
     def unlink(self):
         for record in self:
             record_image_name = getattr(record, self._attr_public_file_name)
@@ -142,14 +138,12 @@ class ProductTemplate(models.Model):
     )
     public_image_name = fields.Char("Product Public Image Name")
 
-    @api.multi
     def has_valid_barcode(self, code_type=None, barcode=None):
         self.ensure_one()
         if barcode or self.barcode:
             return gtinv.is_valid_GTIN(barcode or self.barcode)
         return False
 
-    @api.multi
     def website_publish_button(self):
         self.ensure_one()
 
@@ -160,7 +154,6 @@ class ProductTemplate(models.Model):
 
         self.website_published = not self.website_published
 
-    @api.multi
     def create_variant_ids(self):
         res = super(ProductTemplate, self).create_variant_ids()
         # Publish new variants based on template
@@ -180,7 +173,6 @@ class ProductTemplate(models.Model):
                 tmpl_id.product_variant_ids[0].website_published = False
         return res
 
-    @api.multi
     def write(self, vals):
 
         results = list()
@@ -235,7 +227,6 @@ class ProductTemplate(models.Model):
 
         return all(results)
 
-    @api.multi
     def unlink(self):
         for record in self:
             default_image = record.public_image_name
@@ -252,7 +243,6 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    @api.one
     def _filter_variant_images(self):
         product_attrs = self.attribute_value_ids._ids
         self.product_image_ids = (
@@ -274,7 +264,6 @@ class ProductProduct(models.Model):
             )
         )
 
-    @api.one
     @api.depends("product_image_ids")
     def _compute_variant_cover(self):
         if self.product_image_ids:
@@ -294,14 +283,12 @@ class ProductProduct(models.Model):
         "Visible on Website", default=False, copy=False
     )
 
-    @api.multi
     def has_valid_barcode(self, code_type=None, barcode=None):
         self.ensure_one()
         if barcode or self.barcode:
             return gtinv.is_valid_GTIN(barcode or self.barcode)
         return False
 
-    @api.multi
     def website_publish_button(self):
         self.ensure_one()
 
@@ -325,7 +312,6 @@ class ProductProduct(models.Model):
         vals.update({"website_published": template.website_published})
         return super(ProductProduct, self).create(vals)
 
-    @api.multi
     def write(self, vals):
 
         # Check if variant can be published
@@ -371,7 +357,6 @@ class ProductProduct(models.Model):
 
         return super(ProductProduct, self).write(vals)
 
-    @api.multi
     def unlink(self):
         for record in self:
             linked_images_ids = self.product_image_ids.ids
@@ -413,7 +398,6 @@ class ProductTag(models.Model):
     sequence = fields.Integer(help="Gives the sequence order for tags")
     public_image_name = fields.Char("Tag Public File Name")
 
-    @api.one
     def unlink(self):
         if not self.child_ids:
             super(ProductTag, self).unlink()
@@ -448,7 +432,6 @@ class ProductAttributeValue(models.Model):
     )  # To check extension
     public_image_name = fields.Char("Color Public File Name")
 
-    @api.one
     @api.constrains("image_color_filename")
     def _check_filename(self):
         if self.image_color and self.image_color_filename:
@@ -487,7 +470,6 @@ class ProductPublicCategory(models.Model):
     )
     public_image_name = fields.Char("Category Public File Name")
 
-    @api.one
     @api.constrains("parent_id")
     def check_parent_id(self):
         if not self._check_recursion():
@@ -495,7 +477,6 @@ class ProductPublicCategory(models.Model):
                 _("Error! You cannot create recursive categories.")
             )
 
-    @api.multi
     def name_get(self):
         res = []
         for category in self:
@@ -507,7 +488,6 @@ class ProductPublicCategory(models.Model):
             res.append((category.id, " / ".join(reversed(names))))
         return res
 
-    @api.one
     def unlink(self):
         if not self.child_ids:
             super(ProductPublicCategory, self).unlink()
@@ -547,7 +527,6 @@ class ProductImage(models.Model):
         default=0, help="Gives the sequence order for images"
     )
 
-    @api.multi
     def on_one_product(self):
         self.ensure_one()
         only_one = True

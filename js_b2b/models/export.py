@@ -501,7 +501,6 @@ class B2BExport(models.Model):
 
     # ------------------------------------ OVERRIDES ------------------------------------
 
-    @api.multi
     def unlink(self):
         for record in self:
             resource_id = str(record.res_id)

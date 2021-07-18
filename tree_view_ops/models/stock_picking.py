@@ -7,7 +7,6 @@ from odoo import fields, models, api, _
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    @api.multi
     def action_open_view_split_ops(self):
         action = self.env.ref(
             "tree_view_ops.action_open_view_split_ops"
@@ -41,7 +40,6 @@ class StockPicking(models.Model):
 # ~ class StockPackOperation(models.Model):
 # ~ _inherit = "stock.pack.operation"
 
-# ~ @api.multi
 # ~ def reset_op_qty_done(self):
 # ~ for op in self.filtered(
 # ~ lambda x: x.qty_done > 0.00
@@ -49,7 +47,6 @@ class StockPicking(models.Model):
 # ~ ):
 # ~ op.qty_done = 0.00
 
-# ~ @api.multi
 # ~ def op_qty_reserved_to_qty_done(self):
 # ~ for op in self.filtered(
 # ~ lambda x: x.qty_done == 0.00

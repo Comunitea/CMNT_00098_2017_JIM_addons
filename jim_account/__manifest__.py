@@ -3,12 +3,15 @@
 
 {
     "name": "Jim Account",
-    "version": "12.0.1.0.0",
+    "version": "13.0.1.0.0",
     "author": "Comunitea ",
     "category": "Custom",
     "license": "AGPL-3",
-    "depends": ["account_banking_mandate", "account_invoice_refund_link",
-                "chained_discount_commercial_rules"],
+    "depends": [
+        "account_banking_mandate",
+        "account_invoice_refund_link",
+        "chained_discount_commercial_rules",
+    ],
     "contributors": [
         "Comunitea ",
         "Santi Argüeso <santi@comunitea.com>",

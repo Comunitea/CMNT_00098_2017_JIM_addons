@@ -4,25 +4,7 @@
 
 <odoo>
 
-    <!--record id="custom_documents_account_invoice_view" model="ir.ui.view">
-        <field name="name">account.invoice.form</field>
-        <field name="model">account.invoice</field>
-        <field name="inherit_id" ref="account.invoice_form"/>
-        <field name="arch" type="xml">
-            <field name="user_id" position="after">
-                <label for="global_discount_percentage"/>
-                <div>
-                    <field name="global_discount_percentage" class="oe_inline"/>
-                    <span>%</span>
-                </div>
-            </field>
-            <button name="action_invoice_open" position="after">
-                <button name="apply_global_discount_percentage" type="object" string="Apply global discount" states="draft"/>
-            </button>
-        </field>
-    </record-->
-
-    <record id="custom_documents_account_invoice_view" model="ir.ui.view">
+    <!--TODO: Migrar<record id="custom_documents_account_invoice_view" model="ir.ui.view">
         <field name="name">account.invoice.form</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_form"/>
@@ -31,7 +13,7 @@
                 <field name="notes" placeholder="Observaciones"/>
             </field>
         </field>
-    </record>
+    </record>-->
 
     <record id="acount_payment_mode_form_add_refund_warning" model="ir.ui.view">
         <field name="name">account.payment.mode.form</field>

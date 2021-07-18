@@ -9,7 +9,6 @@ class AccountPayment(models.Model):
 
     _inherit = "account.payment"
 
-    @api.one
     def get_rate(self):
         self.rate = 0
         if self.company_currency_id and self.currency_id:

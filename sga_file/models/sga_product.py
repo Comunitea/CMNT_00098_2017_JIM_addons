@@ -46,7 +46,6 @@ class SGAProductCategory(models.Model):
         for categ in self:
             categ.sga_state = "PA"
 
-    @api.multi
     def write(self, values):
 
         if values.get("code", False):
@@ -88,7 +87,6 @@ class SGAProductCategory(models.Model):
     def new_mecalux_file(self, operation="F"):
         return self.export_category_to_mecalux(self, operation=operation)
 
-    @api.multi
     def export_category_to_mecalux(self, operation=False):
 
         # No se exporta arbold e categorías a MEcalux
@@ -200,7 +198,6 @@ class SGAProductPackaging(models.Model):
             new_sga.product_tmpl_id.export_template_to_mecalux()
         return new_sga
 
-    @api.multi
     def write(self, vals):
         res_write = super(SGAProductPackaging, self).write(vals)
         # Si están asociados a templates ....
@@ -215,7 +212,6 @@ class SGAProductProduct(models.Model):
 
     _inherit = "product.product"
 
-    @api.multi
     def _get_sga_names(self):
         ctx = self._context.copy()
         # icp = self.env['ir.config_parameter']
@@ -255,11 +251,9 @@ class SGAProductProduct(models.Model):
     sga_desc_uom_base_code = fields.Char(related="uom_id.name")
     sga_warehouse_code = fields.Char(related="warehouse_id.code")
 
-    @api.multi
     def toggle_active(self):
         return super(SGAProductProduct, self).toggle_active()
 
-    @api.multi
     def write(self, values):
 
         if values.get("type", False):
@@ -290,7 +284,6 @@ class SGAProductProduct(models.Model):
             self.export_product_to_mecalux()
         return res
 
-    @api.multi
     def export_product_to_mecalux(self, operation="F"):
         res = self.new_mecalux_file(operation)
         return res
@@ -312,7 +305,6 @@ class SGAProductProduct(models.Model):
 
     # ~ return res
 
-    @api.multi
     def new_mecalux_file(self, operation=False):
 
         ids = self.check_mecalux_ok()
@@ -331,7 +323,6 @@ class SGAProductProduct(models.Model):
             self.filtered(lambda x: x.id in ids).write({"sga_state": "ER"})
             return False
 
-    @api.multi
     def check_mecalux_ok(self):
         ids = []
         for product in self:
@@ -353,7 +344,6 @@ class SGAProductProduct(models.Model):
                 ids.append(product.id)
         return ids
 
-    @api.multi
     def check_mecalux_stock(self):
         try:
             ids = [x.id for x in self]  # if x.type == 'product']
@@ -392,7 +382,6 @@ class SGAProductTemplate(models.Model):
     )
     sga_dst_code = fields.Char(related="sga_dst.code")
 
-    @api.one
     def _compute_sga_state(self):
         sga_state = "AC"
         for product in self.product_variant_ids:
@@ -403,15 +392,12 @@ class SGAProductTemplate(models.Model):
                 break
         self.sga_state = sga_state
 
-    @api.one
     def _set_sga_state(self):
         self.product_variant_ids.write({"sga_state": self.sga_state})
 
-    @api.multi
     def export_template_to_mecalux(self):
         return self.new_mecalux_file()
 
-    @api.multi
     def new_mecalux_file(self, operation=False):
         for template in self:
             template.product_variant_ids.new_mecalux_file()
@@ -440,7 +426,6 @@ class SGAProductTemplate(models.Model):
 
         return super(SGAProductTemplate, self).create(vals)
 
-    @api.multi
     def write(self, values):
         res = super(SGAProductTemplate, self).write(values)
         fields_to_check = (

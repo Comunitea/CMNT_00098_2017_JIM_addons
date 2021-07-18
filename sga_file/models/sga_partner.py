@@ -23,7 +23,6 @@ class ResPartnerSGA(models.Model):
         SGA_STATE, default="PA", help="Estado integracion con mecalux"
     )
 
-    @api.multi
     def write(self, values):
         fields_to_check = ("ref", "name", "display_name", "is_company")
         fields = sorted(list(set(values).intersection(set(fields_to_check))))
@@ -44,7 +43,6 @@ class ResPartnerSGA(models.Model):
             res.new_mecalux_file()
         return res
 
-    @api.multi
     def new_mecalux_file(self):
         try:
             ids = [x.id for x in self.filtered(lambda x: x.is_company)]

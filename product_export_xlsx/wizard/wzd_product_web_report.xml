@@ -35,7 +35,6 @@
     <record id="action_wizard_menu_web" model="ir.actions.act_window">
         <field name="name">Product web report (XLS)</field>
         <field name="res_model">wzd.product.web</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="view_id" ref="view_product_web_wzd"/>
         <field name="target">new</field>

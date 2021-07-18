@@ -18,7 +18,6 @@ class AccountPaymentOrder(models.Model):
         },
     )
 
-    @api.multi
     def generated2uploaded(self):
 
         for order in self:
@@ -30,7 +29,6 @@ class AccountPaymentOrder(models.Model):
         self.state = "uploaded"
         return True
 
-    @api.multi
     def _prepare_move(self, bank_lines=None):
         vals = super(AccountPaymentOrder, self)._prepare_move(bank_lines)
         vals["date"] = self.date_uploaded

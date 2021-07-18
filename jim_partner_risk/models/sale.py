@@ -8,7 +8,6 @@ import odoo.addons.decimal_precision as dp
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    @api.multi
     @api.depends("order_line.price_total_cancelled")
     def _compute_amount_cancelled(self):
         for order in self:
@@ -16,7 +15,6 @@ class SaleOrder(models.Model):
                 line.price_total_cancelled for line in order.order_line
             )
 
-    @api.multi
     def _get_default_cancelled_order_in_risk(self):
         cancelled_order_in_risk = (
             self.env["ir.config_parameter"].get_param(
@@ -37,7 +35,6 @@ class SaleOrder(models.Model):
         "Qty cancelled", compute="_get_default_cancelled_order_in_risk"
     )
 
-    @api.multi
     @api.depends(
         "state",
         "order_line.invoice_lines.invoice_id.amount_total",
@@ -57,7 +54,6 @@ class SaleOrder(models.Model):
         ):
             order.invoice_pending_amount -= order.price_total_cancelled
 
-    @api.multi
     def action_view_order_lines(self):
         action = super(SaleOrder, self).action_view_order_lines()
         action["context"]["cancelled_order_in_risk"] = (
@@ -72,7 +68,6 @@ class SaleOrder(models.Model):
 class SaleOrderLine(models.Model):
     _inherit = "sale.order.line"
 
-    @api.multi
     @api.depends("procurement_ids.move_ids.state", "cancelled_qty")
     def _compute_amount_cancelled(self):
         if self._table == "sale_order_line_template":
@@ -88,7 +83,6 @@ class SaleOrderLine(models.Model):
             )
             line.price_total_cancelled = taxes["total_included"]
 
-    @api.multi
     @api.depends("procurement_ids.move_ids.state")
     def _get_cancelled_qty(self):
         """Computes the delivered quantity on sale order lines, based on done stock moves related to its procurements"""

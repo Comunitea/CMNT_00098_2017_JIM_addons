@@ -74,22 +74,18 @@ class ConfigPathFiles(models.TransientModel):
         res["inventary_auto"] = icp.get_param("inventary_auto")
         return res
 
-    @api.multi
     def set_product_auto(self):
         icp = self.env["ir.config_parameter"]
         icp.set_param("product_auto", self.product_auto)
 
-    @api.multi
     def set_picking_auto(self):
         icp = self.env["ir.config_parameter"]
         icp.set_param("picking_auto", self.picking_auto)
 
-    @api.multi
     def set_inventary_auto(self):
         icp = self.env["ir.config_parameter"]
         icp.set_param("inventary_auto", self.inventary_auto)
 
-    @api.multi
     def set_path_files(self):
         import os
 
@@ -202,7 +198,6 @@ class MecaluxFile(models.Model):
                 "Solo puedes tener una version activa para coada codigo de fichero"
             )
 
-    @api.multi
     def write(self, vals):
         var_bytes = 0
         for var in self.sga_file_var_ids:
@@ -724,7 +719,6 @@ class MecaluxFileHeader(models.Model):
                     "Error al escribir los datos en %s" % new_sga_file.sga_file
                 )
 
-    @api.multi
     def check_sga_file(
         self, model, ids=[], code=False, create=True, version=False
     ):

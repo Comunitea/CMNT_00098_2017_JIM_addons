@@ -63,20 +63,7 @@
         </field>
     </record>
 
-    <!--record id="purchase_order_form_variant_mgmt_visible" model="ir.ui.view">
-        <field name="model">purchase.order</field>
-        <field name="inherit_id" ref="purchase_order_variant_mgmt.purchase_order_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//button[@name='%(purchase_order_variant_mgmt.action_purchase_manage_variant)d']" position="attributes">
-                <attribute name="states">draft,sent,purchase</attribute>
-            </xpath>
-            <xpath expr="//field[@name='order_line']//tree/button[@name='%(purchase_order_variant_mgmt.action_purchase_manage_variant)d']" position="attributes">
-                <attribute name="attrs">{'invisible': ['|', ('state', 'not in', ('draft', 'purchase', 'sent')), ('product_attribute_value_ids', '=', [])]}</attribute>
-            </xpath>
-        </field>
-    </record-->
-
-     <record id="account_invoice_add_purchase_wzd" model="ir.ui.view">
+     <!--TODo: Migrar<record id="account_invoice_add_purchase_wzd" model="ir.ui.view">
         <field name="name">account.invoice.add.purchase.wzd</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="purchase.view_invoice_supplier_purchase_form"/>
@@ -89,6 +76,6 @@
                 </div>
             </field>
         </field>
-     </record>
+     </record>-->
 
 </odoo>

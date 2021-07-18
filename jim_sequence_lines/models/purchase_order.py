@@ -33,11 +33,9 @@ class PurchaseOrderLine(models.Model):
         )
         return line
 
-    @api.multi
     def write(self, vals):
         return super(PurchaseOrderLine, self).write(vals)
 
-    @api.multi
     def _prepare_stock_moves(self, picking):
         res = super(PurchaseOrderLine, self)._prepare_stock_moves(picking)
         for val in res:
@@ -49,7 +47,6 @@ class PurchaseOrderLine(models.Model):
             )
         return res
 
-    @api.multi
     @api.onchange("template_sequence")
     def onchange_template_sequence(self):
         return
@@ -78,7 +75,6 @@ class PurchaseOrder(models.Model):
         for line in self.order_line:
             product_id = line.product_id
 
-    @api.multi
     @api.onchange("order_line")
     def onchange_template_sequence(self):
 

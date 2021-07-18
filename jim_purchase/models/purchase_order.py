@@ -18,7 +18,6 @@ class PurchaseOrderLine(models.Model):
                 line.line_volume = line.product_id.volume * line.product_qty
                 line.line_weight = line.product_id.weight * line.product_qty
 
-    @api.multi
     def get_same_product_purchase_line_ids(self):
         for pol in self:
             pol_ids = self.env["purchase.order.line"].search(
@@ -70,7 +69,6 @@ class PurchaseOrderLine(models.Model):
                         total -= move.product_uom_qty
             line.qty_received = total
 
-    @api.multi
     def show_line_info(self):
         # Comentado por si no vale la solucion
         # view_id = self.env.ref('jim_purchase.purchase_order_form_line_info').id
@@ -99,7 +97,6 @@ class PurchaseOrderLine(models.Model):
             self.price_unit = price_unit
             return res
 
-    @api.multi
     def _prepare_stock_moves_bis(self, picking):
         """Prepare the stock moves data for one order line. This function returns a list of
         dictionary ready to be used in stock.move's create()
@@ -158,7 +155,6 @@ class PurchaseOrder(models.Model):
                 }
             )
 
-    @api.multi
     def show_line_info(self):
         view_id = self.env.ref("jim_purchase.purchase_order_form_line_info").id
 
@@ -175,13 +171,11 @@ class PurchaseOrder(models.Model):
             "context": self.env.context,
         }
 
-    @api.multi
     def _add_supplier_to_product(self):
         # Evitamos añadir el proveedor al producto o cambiar el precio, se hace
         # en la factura
         pass
 
-    @api.multi
     def button_confirm(self):
         for order in self:
             if order.state not in ["draft", "sent"]:
@@ -196,7 +190,6 @@ class PurchaseOrder(models.Model):
             res["partner_id"] = self.group_id.partner_id.id
         return res
 
-    @api.multi
     def action_view_picking(self):
         ## Sobre escribo toda la función para que recupere todos los alabranes en vez no coger los cancelados
         pick_ids = self.env["stock.picking"]
@@ -231,9 +224,9 @@ class PurchaseOrder(models.Model):
             order.date_planned = min_date or order.date_order
 
 
-class AccountInvoice(models.Model):
+class AccountMove(models.Model):
 
-    _inherit = "account.invoice"
+    _inherit = "account.move"
 
     def action_add_purchase_invoice_wzd(self):
 
@@ -262,6 +255,5 @@ class AccountInvoice(models.Model):
             "nodestroy": True,
         }
 
-    @api.one
     def compute_amount(self):
         self._compute_amount()

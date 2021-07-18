@@ -76,7 +76,6 @@
     <record id="action_open_view_valued_stock_pack_op_tree" model="ir.actions.act_window">
         <field name="name">Valued operations</field>
         <field name="res_model">stock.pack.operation</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="view_valued_stock_pack_op_tree"/>
         <field name="search_id" ref="view_valued_ops_search"/>

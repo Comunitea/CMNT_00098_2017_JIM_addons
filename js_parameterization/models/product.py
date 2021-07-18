@@ -12,21 +12,18 @@ class ProductTemplate(models.Model):
         copy=False,
     )
 
-    @api.multi
     def get_parameterization(self):
         self.ensure_one()  # One record expected
         return self.env[constants.PRODUCT_PARAMETERIZATION].search(
             [("product_tmpl_id", "=", self.id)], limit=1
         )
 
-    @api.multi
     def create_parameterization(self, values=dict()):
         self.ensure_one()  # One record expected
         values.update({"product_tmpl_id": self.id})
         return self.env[constants.PRODUCT_PARAMETERIZATION].create(values)
 
     # public
-    @api.multi
     def compute_parameterization_percent(self):
         for record in self:
             parameterization_percent = 0  # Record parameterization percent
@@ -59,7 +56,6 @@ class ProductTemplate(models.Model):
             record.parameterization_percent_filled = parameterization_percent
 
     # public
-    @api.multi
     def parameterization_modal(self):
         self.ensure_one()  # One record expected
 

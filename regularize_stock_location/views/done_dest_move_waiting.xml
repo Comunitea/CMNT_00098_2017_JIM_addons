@@ -51,7 +51,6 @@
     <record id="act_tree_done_dest_move_waiting" model="ir.actions.act_window">
         <field name="name">Done to waiting moves</field>
         <field name="res_model">done.to.waiting.moves</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="view_tree_return_dest_move_waiting"/>
         <field name="search_id" ref="view_tree_done_dest_move_waiting_search"/>

@@ -108,7 +108,6 @@ class StockInventorySGA(models.Model):
 
     _inherit = "stock.inventory"
 
-    @api.multi
     def get_stock_query_from_mecalux(self):
 
         ids = self.env["sga.file"].process_sga_files(file_type="STO")
@@ -583,7 +582,6 @@ class StockInventorySGA(models.Model):
                 "Si quieres selccionar productos, debes hacerlo desde la vista tree de productos"
             )
 
-    @api.multi
     def action_done(self):
         ## sobre escribo la función para cambiar el signo en caso de pallatium
         if self.company_id.vat:

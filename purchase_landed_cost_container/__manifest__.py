@@ -3,7 +3,7 @@
 {
     "name": "Add containers to landed cost",
     "summary": "",
-    "version": "12.0.1.0.0",
+    "version": "13.0.1.0.0",
     "category": "Uncategorized",
     "website": "comunitea.com",
     "author": "Comunitea",

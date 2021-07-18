@@ -30,7 +30,6 @@
     <record id="act_check_all_mecalux_stock" model="ir.actions.act_window">
         <field name="name">Check stock (Mecalux)</field>
         <field name="res_model">wiz.check.mecalux.stock</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

@@ -36,14 +36,12 @@
     <record id="action_web_product_report_jim_01" model="ir.actions.act_window">
         <field name="name">Análisis productos en web</field>
         <field name="res_model">report.web.product.jim</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="view_web_product_report_tree"/>
         </record>-->
       <record id="action_web_product_report_jim_02" model="ir.actions.act_window">
         <field name="name">Análisis productos en web</field>
         <field name="res_model">product.product</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="view_web_product_tree"/>
         </record>

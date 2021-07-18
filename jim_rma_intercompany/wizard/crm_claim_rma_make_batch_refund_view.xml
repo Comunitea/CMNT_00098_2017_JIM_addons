@@ -45,7 +45,6 @@
      <!--record model="ir.actions.act_window" id="act_crm_claim_refunds_wzd">
         <field name="name">Claim Refunds</field>
         <field name="res_model">crm.claim.rma.make.batch.refund</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="crm_claim_rma_make_batch_refund"/>
          <field name="target">new</field>

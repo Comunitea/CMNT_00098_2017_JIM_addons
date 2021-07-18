@@ -12,7 +12,6 @@ _email_rfc822_validation = "[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?
 class MergePartner(models.TransientModel):
     _inherit = "base.partner.merge.automatic.wizard"
 
-    @api.multi
     def action_merge(self):
         packets = list()
 
@@ -42,7 +41,6 @@ class ResPartner(models.Model):
         string="VIP Webs Access",
     )
 
-    @api.multi
     def __check_vip_web_access_companies_pricelists(self, vals=dict()):
         if vals.get("vip_web_access", False):
             # Comprobar tarifa por compañía web
@@ -62,7 +60,6 @@ class ResPartner(models.Model):
                             % company.name
                         )
 
-    @api.multi
     def has_valid_emails(self):
         self.ensure_one()
 
@@ -79,7 +76,6 @@ class ResPartner(models.Model):
 
         return False
 
-    @api.multi
     def primary_email(self):
         self.ensure_one()
 

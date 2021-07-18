@@ -83,7 +83,6 @@ class StockPicking(models.Model):
                         delivery_date = next_date + timedelta(days=1)
                     pick.delivery_date = delivery_date
 
-    @api.multi
     def _compute_delivery_amount(self):
         for picking in self:
             delivery_line = picking.sale_id.order_line.filtered(
@@ -94,7 +93,6 @@ class StockPicking(models.Model):
             else:
                 picking.delivery_amount = 0.0
 
-    @api.multi
     def _compute_global_discount_amount(self):
         for picking in self:
             global_discount_lines = picking.sale_id.order_line.filtered(
@@ -109,7 +107,6 @@ class StockPicking(models.Model):
             else:
                 picking.global_discount_amount = 0.0
 
-    @api.multi
     def _compute_amount_all(self):
         res = super(StockPicking, self)._compute_amount_all()
         for pick in self:
@@ -191,7 +188,6 @@ class StockPicking(models.Model):
                 and not x.product_id.delivery_cost
             )
 
-    @api.multi
     def action_open_purchases_valued_ops(self):
         action = self.env.ref(
             "custom_documents.action_open_view_valued_stock_pack_op_tree"
@@ -208,7 +204,6 @@ class StockMove(models.Model):
 
     name_report = fields.Char(compute="_compute_name_report")
 
-    @api.multi
     def _compute_name_report(self):
         for line in self:
             name_report = line.name
@@ -273,14 +268,12 @@ class StockMove(models.Model):
 # ~ compute="_get_qty_delivered",
 # ~ )
 
-# ~ @api.multi
 # ~ def _get_qty_delivered(self):
 # ~ for operation in self:
 # ~ operation.qty_delivered = (
 # ~ operation.qty_done or operation.product_qty
 # ~ )
 
-# ~ @api.multi
 # ~ def _compute_purchase_order_line_fields(self):
 # ~ for operation in self:
 # ~ purchase_lines = operation.mapped(
@@ -288,7 +281,6 @@ class StockMove(models.Model):
 # ~ )
 # ~ operation.update(operation.purchase_lines_values(purchase_lines))
 
-# ~ @api.multi
 # ~ def purchase_lines_values(self, purchase_lines):
 # ~ if len(purchase_lines) <= 1:
 # ~ price_unit = purchase_lines.price_unit

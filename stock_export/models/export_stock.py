@@ -32,7 +32,6 @@ class ConfigPathFiles(models.TransientModel):
         )
         return res
 
-    @api.multi
     def set_last_call_export_xmlstock(self):
         icp = self.env["ir.config_parameter"]
         icp.set_param(
@@ -43,7 +42,6 @@ class ConfigPathFiles(models.TransientModel):
 class MrpBom(models.Model):
     _inherit = "mrp.bom"
 
-    @api.multi
     def insert_product_ids(self):
         product_ids = self.mapped("product_tmpl_id").mapped(
             "product_variant_ids"
@@ -58,13 +56,11 @@ class MrpBom(models.Model):
         bom.insert_product_ids()
         return bom
 
-    @api.multi
     def write(self, vals):
         bom = super(MrpBom, self).write(vals)
         self.insert_product_ids()
         return bom
 
-    @api.multi
     def unlink(self):
         self.insert_product_ids()
         return super(MrpBom, self).unlink()
@@ -83,7 +79,6 @@ class MrpBom(models.Model):
             cont += 1
         return to_add
 
-    @api.multi
     def export_related_bom_ids(self, table_product_ids):
 
         line_domain = [("product_id", "in", table_product_ids.ids)]
@@ -114,7 +109,6 @@ class MrpBomLine(models.Model):
 
     _inherit = "mrp.bom.line"
 
-    @api.multi
     def insert_product_ids(self):
         self.env["exportxml.object"].insert_product_ids(
             self.mapped("product_id"), self._name, bom=False
@@ -126,13 +120,11 @@ class MrpBomLine(models.Model):
         bom_line.insert_product_ids()
         return bom_line
 
-    @api.multi
     def write(self, vals):
         bom_line = super(MrpBomLine, self).write(vals)
         self.insert_product_ids()
         return bom_line
 
-    @api.multi
     def unlink(self):
         self.insert_product_ids()
         return super(MrpBomLine, self).unlink()
@@ -142,7 +134,6 @@ class StockLocation(models.Model):
 
     _inherit = "stock.location"
 
-    @api.multi
     def write(self, vals):
         res = super(StockLocation, self).write(vals)
         fields_to_check = ["location_id", "usage", "scrap_location", "deposit"]
@@ -168,12 +159,10 @@ class StockLocation(models.Model):
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    @api.multi
     def unlink(self):
         self.insert_product_ids()
         return super(SaleOrder, self).unlink()
 
-    @api.multi
     def insert_product_ids(self):
         return self.mapped("order_line").insert_product_ids()
 
@@ -181,12 +170,10 @@ class SaleOrder(models.Model):
 class PurchaseOrder(models.Model):
     _inherit = "purchase.order"
 
-    @api.multi
     def unlink(self):
         self.insert_product_ids()
         return super(PurchaseOrder, self).unlink()
 
-    @api.multi
     def insert_product_ids(self):
         return self.mapped("order_line").insert_product_ids()
 
@@ -194,7 +181,6 @@ class PurchaseOrder(models.Model):
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    @api.multi
     def unlink(self):
         self.mapped("move_lines").update_for_stock_export()
         return super(StockPicking, self).unlink()
@@ -203,7 +189,6 @@ class StockPicking(models.Model):
 class StockMove(models.Model):
     _inherit = "stock.move"
 
-    @api.multi
     def update_for_stock_export(self):
         if self:
             ## No se poq a veces entra con self vacío
@@ -218,7 +203,6 @@ class StockMove(models.Model):
             if to_unlink:
                 to_unlink.insert_product_ids()
 
-    @api.multi
     def unlink(self):
         self.update_for_stock_export()
         return super(StockMove, self).unlink()
@@ -267,7 +251,6 @@ class StockMove(models.Model):
 
         return product_ids
 
-    @api.multi
     def insert_product_ids(self, product_ids=False):
         if not product_ids:
             product_ids = self.mapped("product_id")
@@ -281,7 +264,6 @@ class StockMove(models.Model):
 class StockLocationRoute(models.Model):
     _inherit = "stock.location.route"
 
-    @api.multi
     def insert_product_ids(self):
         ##busco las líneas de venta que no tenga movimientos asignados. Si tienen movimientos ya no influye el cambio
         sol_domain = [
@@ -292,7 +274,6 @@ class StockLocationRoute(models.Model):
             self.env["sale.order.line"].search(sol_domain).insert_product_ids()
         )
 
-    @api.multi
     def write(self, vals):
         fields_to_check = ["no_stock", "virtual_type"]
         if any(field in vals.keys() for field in fields_to_check):
@@ -304,7 +285,6 @@ class PurchaseOrderLine(models.Model):
 
     _inherit = "purchase.order.line"
 
-    @api.multi
     def insert_product_ids(self):
         product_ids = self.mapped("product_id")
         if product_ids:
@@ -313,7 +293,6 @@ class PurchaseOrderLine(models.Model):
             )
         return product_ids
 
-    @api.multi
     def unlink(self):
         to_unlink = self.filtered(lambda x: x.state not in ("cancel", "draft"))
         if to_unlink:
@@ -329,7 +308,6 @@ class SaleOrderLine(models.Model):
 
     _inherit = "sale.order.line"
 
-    @api.multi
     def insert_product_ids(self):
         product_ids = self.mapped("product_id")
         if product_ids:
@@ -338,7 +316,6 @@ class SaleOrderLine(models.Model):
             )
         return product_ids
 
-    @api.multi
     def unlink(self):
         to_unlink = self.filtered(
             lambda x: not x.route_id.no_stock
@@ -675,7 +652,6 @@ class ProductProduct(models.Model):
 
     _inherit = "product.product"
 
-    @api.multi
     def insert_product_ids(self):
         if self:
             self.env["exportxml.object"].insert_product_ids(

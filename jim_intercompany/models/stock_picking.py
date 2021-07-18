@@ -17,7 +17,6 @@ class PickingType(models.Model):
         compute="_compute_picking_review_count"
     )
 
-    @api.multi
     def _compute_picking_review_count(self):
         # TDE TODO count picking can be done using previous two
         domain = [
@@ -46,7 +45,6 @@ class PickingType(models.Model):
         for record in self:
             record["count_picking_review"] = count.get(record.id, 0)
 
-    @api.multi
     def get_action_picking_tree_review(self):
         return self._get_action("jim_intercompany.action_picking_tree_review")
 
@@ -54,7 +52,6 @@ class PickingType(models.Model):
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    @api.multi
     def toggle_ready(self):
         """ Inverse the value of the field ``ready`` on the records in ``self``. """
         for record in self:
@@ -79,7 +76,6 @@ class StockPicking(models.Model):
         sale = sales.filtered(lambda x: x.auto_generated == False)
         return sale and sale[0] or False
 
-    @api.multi
     def _compute_orig_sale(self):
         for record in self:
             name = ""
@@ -118,7 +114,6 @@ class StockPicking(models.Model):
         vals["extra_move"] = True
         return vals
 
-    @api.multi
     def view_related_pickings(self):
         pickings = self.browse(self._context.get("active_ids", []))
         # action = self.env.ref('stock.do_view_pickings').read()[0]
@@ -130,7 +125,6 @@ class StockPicking(models.Model):
         ]
         return domain
 
-    @api.multi
     def action_cancel(self):
         for picking in self:
             if picking.picking_type_id.code == "outgoing":
@@ -231,7 +225,6 @@ class StockPicking(models.Model):
             pass
         return
 
-    @api.multi
     def do_transfer(self):
         user_id = self.env.user
         ctx = self._context.copy()
@@ -321,7 +314,6 @@ class StockPicking(models.Model):
                 new_moves.with_context(skip_check=True).action_confirm()
         return moves
 
-    @api.multi
     def check_received_qty(self):
         pass
 
@@ -439,7 +431,6 @@ class StockMove(models.Model):
             new_moves |= new_moves.propagate_new_moves()
         return new_moves
 
-    @api.multi
     def action_done(self):
         # Si el movimiento es una compra IC, comprobamos el estado del
         # move_dest_id y si ya está reservado, quietamos el
@@ -530,7 +521,6 @@ class StockMove(models.Model):
                     ):
                         move.move_dest_id.move_purchase_IC_id.sudo().force_assign()
 
-    @api.multi
     def action_cancel(self):
 
         for move in self:
@@ -569,7 +559,6 @@ class StockMove(models.Model):
         res = super(StockMove, self).action_cancel()
         return res
 
-    @api.multi
     def split(self, qty, restrict_lot_id=False, restrict_partner_id=False):
         """ Splits qty from move move into a new move"""
         self = self.with_prefetch()
@@ -607,6 +596,5 @@ class StockMove(models.Model):
 
         return new_move
 
-    @api.multi
     def force_assign(self):
         return super(StockMove, self).force_assign()

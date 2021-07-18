@@ -5,27 +5,28 @@ from odoo import models, fields, api
 from odoo.exceptions import UserError, ValidationError
 
 
-class AccountInvoiceLine(models.Model):
+class AccountMoveLine(models.Model):
 
-    _inherit = "account.invoice.line"
+    _inherit = "account.move.line"
 
     arancel_percentage = fields.Float()
-    arancel = fields.Float(compute="_compute_arancel", store=True)
+    #TODO: Migrar
+    # ~ arancel = fields.Float(compute="_compute_arancel", store=True)
 
-    @api.depends("price_subtotal", "quantity", "arancel_percentage")
-    def _compute_arancel(self):
-        for line in self:
-            if line.arancel_percentage:
-                line.arancel = (line.price_subtotal / line.quantity) * (
-                    line.arancel_percentage / 100
-                )
-            else:
-                line.arancel = 0
+    # ~ @api.depends("price_subtotal", "quantity", "arancel_percentage")
+    # ~ def _compute_arancel(self):
+        # ~ for line in self:
+            # ~ if line.arancel_percentage:
+                # ~ line.arancel = (line.price_subtotal / line.quantity) * (
+                    # ~ line.arancel_percentage / 100
+                # ~ )
+            # ~ else:
+                # ~ line.arancel = 0
 
     @api.model
     def create(self, vals):
-        res = super(AccountInvoiceLine, self).create(vals)
-        if res.invoice_id and res.invoice_id.state != "draft":
+        res = super().create(vals)
+        if res.move_id and res.move_id.state != "draft":
             raise UserError(
                 "Solo se pueden añadir lineas a facturas en "
                 "estado borrador. Descarte los cambios cancele "
@@ -35,8 +36,8 @@ class AccountInvoiceLine(models.Model):
         return res
 
 
-class AccountInvoice(models.Model):
+class AccountMove(models.Model):
 
-    _inherit = "account.invoice"
+    _inherit = "account.move"
 
     delivery_cost = fields.Float()

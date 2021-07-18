@@ -8,7 +8,6 @@ from .. import constants
 class ParameterizationField(models.TransientModel):
     _name = constants.PARAMETERIZATION_FIELDS
 
-    @api.multi
     def set_domain(self):
         view_id = self.env.ref(constants.PRODUCT_PARAM_FORM_ID)
         model_id = (
@@ -125,7 +124,6 @@ class ParameterizationField(models.TransientModel):
             ):
                 value.fields = [(3, id)]
 
-    @api.multi
     def send(self):
         selected_fields_list = self.parameterization_fields.mapped("name")
         for group, fields in self.parameterization_fields_get():

@@ -37,7 +37,6 @@ class WizardValuationHistory(models.TransientModel):
     valued = fields.Boolean()
     location_ids = fields.Many2many("stock.location", "locations")
 
-    @api.multi
     def open_product_web_report(self):
         self.ensure_one()
         domain = [("type", "!=", "service")]

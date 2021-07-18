@@ -11,7 +11,6 @@ class ResPartner(models.Model):
 
     default_partner_by_type = fields.Boolean("Default partner by type")
 
-    @api.multi
     @api.constrains("parent_id", "type", "default_partner_by_type")
     def _check_default_partner_by_type(self):
         """Ensure details are given if required."""
@@ -26,7 +25,6 @@ class ResPartner(models.Model):
                     _("Only one default by partner type for each child")
                 )
 
-    @api.multi
     def address_get(self, adr_pref=None):
         # for partner in self:
         #    partner.child_ids = partner.child_ids.sorted(key=lambda r: (r.type and -4 or 0) + (r.default_partner_by_type and -2 or 0) + (r.display_name and -1))

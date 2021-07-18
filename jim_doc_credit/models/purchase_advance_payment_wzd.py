@@ -10,7 +10,6 @@ class AccountVoucherWizard(models.TransientModel):
 
     _inherit = "account.purchase.voucher.wizard"
 
-    @api.multi
     def make_report_doc_credit(self):
         # todo revisar por Omar/Santi
         # necesito ponaer un flag aqui en el contexto, parra que al enviar a post no lo haga
@@ -61,7 +60,6 @@ class AccountPayment(models.Model):
         "account.fiscal.position", "Fiscal Position"
     )
 
-    @api.multi
     def create_doc_credit(self):
 
         report = self.env["report"].get_action(

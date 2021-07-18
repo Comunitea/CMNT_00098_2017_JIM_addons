@@ -7,7 +7,6 @@ class ProductPrinstLabelsFromPicking(models.TransientModel):
 
     _name = "product.print.labels.from.purchase"
 
-    @api.multi
     def print_label(self):
         self.ensure_one()
         datas = {

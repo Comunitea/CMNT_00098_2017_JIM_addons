@@ -21,7 +21,6 @@
     <record id="act_resolve_quant" model="ir.actions.act_window">
         <field name="name">Resolve quants</field>
         <field name="res_model">wiz.resolve.quant</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

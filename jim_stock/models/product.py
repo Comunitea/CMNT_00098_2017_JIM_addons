@@ -34,7 +34,6 @@ class ProductTemplate(models.Model):
         search="_search_global_avail_stock",
     )
 
-    @api.multi
     def _compute_global_stock(self):
         for template in self:
             global_real_stock = 0.0
@@ -104,7 +103,6 @@ class ProductProduct(models.Model):
         compute="_compute_global_stock",
     )
 
-    @api.multi
     def _calculate_globals(self):
         not_deposit_ids = (
             self.env["stock.location"]
@@ -324,7 +322,6 @@ class ProductProduct(models.Model):
         else:
             return super(ProductProduct, self)._get_domain_locations()
 
-    @api.multi
     def move_stock_import(
         self, location, qty, cost, date, company, in_out_type
     ):

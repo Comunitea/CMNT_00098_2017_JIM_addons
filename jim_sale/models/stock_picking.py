@@ -28,7 +28,6 @@ class StockPicking(models.Model):
             "type": "ir.actions.act_window",
         }
 
-    @api.multi
     def do_transfer(self):
         return super(StockPicking, self).do_transfer()
 
@@ -49,7 +48,6 @@ class StockPicking(models.Model):
                     else:
                         pack.unlink()
 
-    @api.multi
     def write(self, vals):
         if "partner_id" in vals:
             for order in self.filtered(lambda x: x.partner_id):

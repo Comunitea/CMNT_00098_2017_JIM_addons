@@ -8,7 +8,6 @@ class AccountMoveLine(models.Model):
 
     _inherit = "account.move.line"
 
-    @api.multi
     def get_mandate_scheme(self):
         for line in self:
             if line.mandate_id:
@@ -34,9 +33,9 @@ class AccountMoveLine(models.Model):
     )
 
 
-class AccountInvoice(models.Model):
+class AccountMove(models.Model):
 
-    _inherit = "account.invoice"
+    _inherit = "account.move"
 
     user_id = fields.Many2one(
         states={
@@ -45,35 +44,34 @@ class AccountInvoice(models.Model):
             "paid": [("readonly", False)],
         }
     )
-    invoice_line_ids = fields.One2many(readonly=False)
+    #TODO: Migrar
+    #invoice_line_ids = fields.One2many(readonly=False)
 
-    @api.multi
     def action_invoice_paid(self):
         super_invoices = self.filtered(lambda inv: inv.amount_total != 0)
-        return super(AccountInvoice, super_invoices).action_invoice_paid()
+        return super(AccountMove, super_invoices).action_invoice_paid()
 
 
-class AccountInvoiceLine(models.Model):
+class AccountMoveLine(models.Model):
 
-    _inherit = "account.invoice.line"
+    _inherit = "account.move.line"
 
-    # name = fields.Char(required=True, states={'open': [('readonly', True)]})
-    state = fields.Selection(
-        [
-            ("draft", "Draft"),
-            ("proforma", "Pro-forma"),
-            ("proforma2", "Pro-forma"),
-            ("open", "Open"),
-            ("paid", "Paid"),
-            ("cancel", "Cancelled"),
-        ],
-        related="invoice_id.state",
-    )
+    #TODO: Migrar
+    # ~ state = fields.Selection(
+        # ~ [
+            # ~ ("draft", "Draft"),
+            # ~ ("proforma", "Pro-forma"),
+            # ~ ("proforma2", "Pro-forma"),
+            # ~ ("open", "Open"),
+            # ~ ("paid", "Paid"),
+            # ~ ("cancel", "Cancelled"),
+        # ~ ],
+        # ~ related="invoice_id.state",
+    # ~ )
 
-    @api.multi
     def unlink(self):
         if any(self.filtered(lambda r: r.state in ("open", "paid"))):
             raise UserError(
                 _("No se pueden eliminar lineas de facturas abiertas")
             )
-        return super(AccountInvoiceLine, self).unlink()
+        return super().unlink()

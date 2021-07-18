@@ -206,7 +206,6 @@ records.export_category_to_mecalux()
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">sga.destination</field>
             <field name="view_mode">tree</field>
-            <field name="view_type">form</field>
 
         </record>
         <menuitem name ="Destinos"

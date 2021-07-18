@@ -14,7 +14,7 @@
                             <ul>
                               <li>Customer Taxes</li>
                               <li>Supplier Taxes</li>
-                            </ul>  
+                            </ul>
                     </group>
                     <footer>
                         <button name="do_propagate" string="Propagate" type="object" class="oe_stat_button"
@@ -27,12 +27,10 @@
 
          <act_window id="propagate_product_fields_action"
              name="Propagate property fields"
-             key2="client_action_multi"
-             src_model="product.template"
+             binding_model="product.template"
              res_model="propagate.product.properties"
              view_mode="form"
-             view_type="form"
              target="new"
             />
-       
+
 </odoo>

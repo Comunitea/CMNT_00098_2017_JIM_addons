@@ -32,9 +32,8 @@
 
         <act_window name="Add to purchase order"
             res_model="product.purchase.wizard"
-            src_model="product.product"
+            binding_model="product.product"
             view_mode="form"
-            view_type="form"
             target="new"
             id="action_add_product_purchase_line_wzd"
             groups="purchase.group_purchase_user"/>

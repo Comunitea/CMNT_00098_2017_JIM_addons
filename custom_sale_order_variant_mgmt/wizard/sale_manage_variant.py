@@ -8,7 +8,6 @@ from odoo.exceptions import ValidationError
 class SaleManageVariant(models.TransientModel):
     _inherit = "sale.manage.variant"
 
-    @api.multi
     def button_transfer_to_order(self):
         context = self.env.context
         record = self.env[context["active_model"]].browse(context["active_id"])
@@ -54,7 +53,6 @@ class SaleManageVariant(models.TransientModel):
             # Get total qty
             template.product_uom_qty = sum_qty
 
-    @api.multi
     @api.onchange("product_tmpl_id")
     def _onchange_product_tmpl_id(self):
 

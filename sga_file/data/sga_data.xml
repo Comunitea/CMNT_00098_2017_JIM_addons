@@ -11,9 +11,10 @@
             <field name="interval_type">days</field>
             <field name="numbercall">-1</field>
             <field eval="False" name="doall" />
-            <field eval="'sga.file'" name="model" />
-            <field eval="'archive_sga_files'" name="function" />
-            <field eval="'(False,)'" name="args" />
+            <field name="state">code</field>
+            <field name="model_id" ref="model_sga_file"/>
+            <field name="code">model.archive_sga_files(False)</field>
+        </record>
         </record>
         <record id="cron_process_sga_file" model="ir.cron">
             <field name="name">Process SGA files</field>
@@ -23,9 +24,9 @@
             <field name="interval_number">1</field>
             <field name="interval_type">minutes</field>
             <field name="numbercall">-1</field>
-            <field eval="False" name="doall" />
-            <field eval="'sga.file'" name="model" />
-            <field eval="'process_sga_files'" name="function" />
+            <field name="state">code</field>
+            <field name="model_id" ref="model_sga_file"/>
+            <field name="code">model.process_sga_files()</field>
         </record>
 
 

@@ -42,7 +42,6 @@ class DeliveryCarrierSGA(models.Model):
         for categ in self:
             categ.sga_state = "PA"
 
-    @api.multi
     def write(self, values):
         # return super(DeliveryCarrierSGA, self).write(values)
 
@@ -75,7 +74,6 @@ class DeliveryCarrierSGA(models.Model):
 
         return res
 
-    @api.multi
     def export_delivery_carrier_to_mecalux(self, operation=False):
         try:
             ids = [x.id for x in self]

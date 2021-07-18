@@ -44,7 +44,6 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
     template_code = fields.Char(related="product_tmpl_id.template_code")
 
-    @api.multi
     def write(self, vals):
         # Comprobamos si hay movimientos.
         if vals.get("default_code", False):
@@ -69,7 +68,6 @@ class ProductProduct(models.Model):
                 product.product_tmpl_id.default_code = vals["default_code"]
         return product
 
-    @api.multi
     @api.constrains("default_code", "type")
     def _check_unique_product_code(self):
         for product in self:
@@ -141,7 +139,6 @@ class ProductTemplate(models.Model):
                     0
                 ].default_code = tmpl_id.template_code
 
-    @api.multi
     def create_variant_ids(self):
         for tmpl_id in self:
             if (
@@ -163,7 +160,6 @@ class ProductTemplate(models.Model):
         for template in self:
             template.default_code = template.template_code or ""
 
-    @api.one
     def _set_default_code(self):
         self.template_code = self.default_code
         if self.product_variant_ids:
@@ -175,7 +171,6 @@ class ProductTemplate(models.Model):
             else:
                 self.set_product_product_default_code()
 
-    @api.multi
     @api.constrains("template_code", "type")
     def _check_unique_template_code(self):
         for template in self:

@@ -15,7 +15,6 @@ class SaleOrder(models.Model):
         default="no",
     )
 
-    @api.multi
     def action_confirm(self):
         res = super(SaleOrder, self).action_confirm()
         for order in self:

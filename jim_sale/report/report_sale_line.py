@@ -63,9 +63,9 @@ class ReportSaleLineJim(models.Model):
     size_id = fields.Many2one("product.attribute.value", "Size", readonly=True)
 
     def _select(self):
-        select_str = """            
+        select_str = """
              SELECT l.id as id,
-                    l.id as order_line_id, 
+                    l.id as order_line_id,
                     l.product_id as product_id,
                     l.price_subtotal,
                     l.price_unit,
@@ -80,40 +80,40 @@ class ReportSaleLineJim(models.Model):
                     so.user_id as user_id,
                     so.date_order as date,
                     so.id as order_id,
-                    
-                    CASE WHEN l.qty_delivered > 0 
+
+                    CASE WHEN l.qty_delivered > 0
                         THEN 'E'
                         ELSE 'NE'
                     END as line_delivered_state,
-                    CASE 
+                    CASE
                         WHEN l.qty_invoiced = 0 THEN 'NF'
                         WHEN l.qty_to_invoice = qty_delivered THEN 'F'
                         ELSE 'NF1'
                     END as line_invoice_state,
                      (SELECT pav.id FROM product_attribute_value pav INNER JOIN product_attribute_value_product_product_rel pavppr
-				on pavppr.product_attribute_value_id = pav.id
-				INNER JOIN  product_attribute pa on pav.attribute_id = pa.id 
-				WHERE pavppr.product_product_id = product_id and pa.is_color = True LIMIT 1)
-		        as color_id,
-			    (SELECT pav.id FROM product_attribute_value pav INNER JOIN product_attribute_value_product_product_rel pavppr
-				on pavppr.product_attribute_value_id = pav.id
-				INNER JOIN  product_attribute pa on pav.attribute_id = pa.id 
-				WHERE pavppr.product_product_id = product_id and pa.is_color = False LIMIT 1)
-		        as size_id
-                                                           
+                                on pavppr.product_attribute_value_id = pav.id
+                                INNER JOIN  product_attribute pa on pav.attribute_id = pa.id
+                                WHERE pavppr.product_product_id = product_id and pa.is_color = True LIMIT 1)
+                        as color_id,
+                            (SELECT pav.id FROM product_attribute_value pav INNER JOIN product_attribute_value_product_product_rel pavppr
+                                on pavppr.product_attribute_value_id = pav.id
+                                INNER JOIN  product_attribute pa on pav.attribute_id = pa.id
+                                WHERE pavppr.product_product_id = product_id and pa.is_color = False LIMIT 1)
+                        as size_id
+
         """
         return select_str
 
     def _from(self):
         from_str = """sale_order_line l
-                        left join sale_order so on l.order_id = so.id 
+                        left join sale_order so on l.order_id = so.id
                         left join product_product pp on pp.id = l.product_id
                         left join product_template pt on pp.product_tmpl_id = pt.id"""
         return from_str
 
     def _group_by(self):
         group_by_str = """
-            GROUP BY 
+            GROUP BY
                     l.id,
                     l.product_id,
                     pp.default_code,
@@ -123,14 +123,13 @@ class ReportSaleLineJim(models.Model):
                     so.user_id,
                     so.date_order,
                     so.id,
-                    color_id, 
+                    color_id,
                     size_id
-                    
-                    
+
+
         """
         return group_by_str
 
-    @api.model_cr
     def init(self):
         # self._table = sale_report
         tools.drop_view_if_exists(self.env.cr, self._table)

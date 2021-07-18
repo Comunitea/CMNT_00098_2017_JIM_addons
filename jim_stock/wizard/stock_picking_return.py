@@ -12,7 +12,6 @@ DOMAIN_LOCATION_ID = "['|', ('id', '=', original_location_id), '&', ('return_loc
 class StockPicking(models.Model):
     _inherit = "stock.picking"
 
-    @api.multi
     def copy(self, default=None):
 
         if self._context.get("return_picking", False) and self._context.get(
@@ -32,7 +31,6 @@ class StockMove(models.Model):
         "Returned quantity", digits=dp.get_precision("Product Unit of Measure")
     )
 
-    @api.multi
     def copy(self, default=None):
         if self._context.get("return_picking", False) and self._context.get(
             "picking_type_id", False
@@ -152,7 +150,6 @@ class StockReturnPicking(models.TransientModel):
             domain = []
         return {"domain": {"location_id": domain}}
 
-    @api.multi
     def _create_returns(self):
         # TDE FIXME: store it in the wizard, stupid
         # Sobre escribo todo para coger valores del formulario

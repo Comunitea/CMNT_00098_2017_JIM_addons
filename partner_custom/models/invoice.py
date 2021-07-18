@@ -4,9 +4,9 @@
 from odoo import models, fields
 
 
-class AccountInvoice(models.Model):
+class AccountMove(models.Model):
 
-    _inherit = "account.invoice"
+    _inherit = "account.move"
 
     invoice_in_paper = fields.Boolean(
         related="commercial_partner_id.invoice_in_paper", readonly=True

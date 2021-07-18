@@ -45,7 +45,6 @@
     <record id="act_tree_product_stock_company_rel" model="ir.actions.act_window">
         <field name="name">Stock x Company</field>
         <field name="res_model">product.stock.company.rel</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="view_tree_product_stock_company_rel"/>
         <field name="search_id" ref="view_tree_product_stock_company_rel_search"/>

@@ -6,7 +6,6 @@ from odoo import models, api
 class PropagateProductProperties(models.TransientModel):
     _name = "propagate.product.properties"
 
-    @api.multi
     def do_propagate(self):
         """
         No property fields propaged, only taxes.

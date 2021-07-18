@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
-        <record id="invoice_form_commercial_partner" model="ir.ui.view">
+        <!--TODO: Migrar<record id="invoice_form_commercial_partner" model="ir.ui.view">
             <field name="name">account.invoice.commercial.partner</field>
             <field name="model">account.invoice</field>
             <field name="inherit_id" ref="account_payment_partner.invoice_form"/>
@@ -25,7 +25,7 @@
                     <field name="commercial_partner_id" string="Invoice to"/>
                 </field>
             </field>
-        </record>
+        </record>-->
 
     </data>
 </odoo>

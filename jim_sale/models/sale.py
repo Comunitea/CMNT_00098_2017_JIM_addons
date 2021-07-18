@@ -11,7 +11,6 @@ from datetime import datetime, timedelta
 class SaleOrder(models.Model):
     _inherit = "sale.order"
 
-    @api.multi
     def _get_origin_sale(self):
         for order in self:
             for line in order.sudo().order_line:
@@ -143,7 +142,6 @@ class SaleOrder(models.Model):
         res = super(SaleOrder, self).create(vals)
         return res.id
 
-    @api.multi
     def action_invoice_create(self, grouped=False, final=False):
         invs = super(SaleOrder, self).action_invoice_create(grouped, final)
         self.env["account.invoice"].browse(
@@ -174,13 +172,11 @@ class SaleOrder(models.Model):
                 )
         return dict_warning
 
-    @api.multi
     def action_proforma(self):
         for order in self:
             order.state = "proforma"
         return True
 
-    @api.multi
     def action_confirm(self):
         """
         Avoid check risk in action confirm
@@ -219,7 +215,6 @@ class SaleOrder(models.Model):
                 )
         return exception_msg
 
-    @api.multi
     def action_lqdr_option(self):
         warning_msg = []
         for order in self:
@@ -275,21 +270,18 @@ class SaleOrder(models.Model):
                 return True
         return
 
-    @api.multi
     def action_lqdr_ok(self):
         for order in self:
             order.state = "pending"
             order.lqdr_state = "lqdr_si"
         return True
 
-    @api.multi
     def action_pending_ok(self):
         for order in self:
             order.set_requested_date()
             order.action_sale()
         return True
 
-    @api.multi
     def action_sale(self):
         for order in self:
             # confirmation_date = order.confirmation_date
@@ -320,7 +312,6 @@ class SaleOrder(models.Model):
             for line in self.order_line:
                 line.route_id = self.route_id
 
-    @api.multi
     def action_view_delivery(self):
         action = super(SaleOrder, self).action_view_delivery()
         # if 'domain' in action and action['domain']:
@@ -378,7 +369,6 @@ class SaleOrder(models.Model):
 
             self.requested_date = date_planned
 
-    @api.multi
     def write(self, vals):
         if "partner_shipping_id" in vals:
             for order in self.filtered(lambda x: x.partner_shipping_id):
@@ -406,7 +396,6 @@ class SaleOrder(models.Model):
                 order.message_post(body=message)
         return super(SaleOrder, self).write(vals)
 
-    @api.multi
     def check_sale_stock(self):
         self.ensure_one
         message = ""
@@ -453,7 +442,6 @@ class SaleOrderLine(models.Model):
 
     lqdr = fields.Boolean(related="product_id.lqdr", store=False)
 
-    @api.multi
     @api.onchange("product_id")
     def product_id_change(self):
         res = super(SaleOrderLine, self).product_id_change()
@@ -466,7 +454,6 @@ class SaleOrderLine(models.Model):
 
         return res
 
-    @api.multi
     def _get_display_price(self, product):
         res = super(SaleOrderLine, self)._get_display_price(product)
         # Search for specific prices in variants
@@ -480,7 +467,6 @@ class SaleOrderLine(models.Model):
             return customer_price
         return res
 
-    @api.multi
     def action_procurement_create(self):
 
         old_state = self.order_id.state
@@ -489,11 +475,9 @@ class SaleOrderLine(models.Model):
         self.order_id.state = old_state
         return new_procs
 
-    @api.multi
     def _action_procurement_create(self):
         return super(SaleOrderLine, self)._action_procurement_create()
 
-    @api.multi
     def _prepare_order_line_procurement(self, group_id=False):
 
         vals = super(SaleOrderLine, self)._prepare_order_line_procurement(
@@ -517,7 +501,6 @@ class SaleOrderLineTemplate(models.Model):
 
     lqdr = fields.Boolean(related="product_template.lqdr", store=False)
 
-    @api.multi
     def create_template_procurements(self):
         for line in self.order_lines:
             line.action_procurement_create()

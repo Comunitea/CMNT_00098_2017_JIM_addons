@@ -22,7 +22,6 @@ class ResPartner(models.Model):
         #    vals['customer'] = False
         return super(ResPartner, self).create(vals)
 
-    @api.multi
     def write(self, vals):
         # if vals.get('type', 'contact') == 'delivery':
         #    vals['customer'] = False
@@ -35,7 +34,6 @@ class ResPartner(models.Model):
             # partner.email_score = self.env['mail.tracking.email']. \
             #     email_score_from_email(partner.email)
 
-    @api.multi
     def _compute_opportunity_count(self):
         for partner in self:
             partner.opportunity_count = 0
@@ -48,13 +46,11 @@ class ResPartner(models.Model):
         for partner in self:
             partner.rules_count = 0
 
-    @api.multi
     def _journal_item_count(self):
         for partner in self:
             partner.journal_item_count = 0
             partner.contracts_count = 0
 
-    @api.multi
     def _purchase_invoice_count(self):
         PurchaseOrder = self.env["purchase.order"]
         Invoice = self.env["account.invoice"]

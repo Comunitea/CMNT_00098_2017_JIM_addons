@@ -58,7 +58,7 @@ class PurchaseInvoiceWzd(models.TransientModel):
         "purchase_invoice_id",
         string="Purchase orders",
     )
-    account_invoice_id = fields.Many2one("account.invoice")
+    account_invoice_id = fields.Many2one("account.move")
 
     @api.model
     def default_get(self, fields):

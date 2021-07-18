@@ -2,7 +2,7 @@
 <!-- © 2018 Comunitea
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
-    <record id="invoice_add_delivery_cost" model="ir.ui.view">
+    <!--TODO: Migrar<record id="invoice_add_delivery_cost" model="ir.ui.view">
         <field name="name">account.invoice.form</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_supplier_form"/>
@@ -14,5 +14,5 @@
                 <field name="arancel_percentage"/>
             </field>
         </field>
-    </record>
+    </record>-->
 </odoo>

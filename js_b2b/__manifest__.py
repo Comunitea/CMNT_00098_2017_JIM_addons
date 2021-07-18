@@ -1,7 +1,7 @@
 # © 2019 Jim Sports Group
 {
     "name": "JS B2B",
-    "version": "12.0.1.0.0",
+    "version": "13.0.1.0.0",
     "author": "Jim Sports",
     "category": "Connector",
     "website": "https://jimsports.com",

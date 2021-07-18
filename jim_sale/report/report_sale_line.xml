@@ -87,7 +87,6 @@
     <record id="action_order_line_report_jim_01" model="ir.actions.act_window">
         <field name="name">Sales Lines Analysis</field>
         <field name="res_model">report.sale.line.jim</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,pivot</field>
 
         </record>

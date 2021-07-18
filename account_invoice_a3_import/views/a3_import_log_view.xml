@@ -46,7 +46,6 @@
     <record model="ir.actions.act_window" id="action_a3_import_log">
         <field name="name">A3 Importation Log</field>
         <field name="res_model">a3.import.log</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
         <field name="view_id" ref="a3_import_log_tree"/>
         <field name="search_view_id" ref="a3_import_log_filter"/>

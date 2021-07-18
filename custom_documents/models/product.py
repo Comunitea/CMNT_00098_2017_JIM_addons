@@ -15,7 +15,6 @@ class ProductProduct(models.Model):
 
     _inherit = "product.product"
 
-    @api.one
     def _compute_partner_ref(self):
         for supplier_info in self.seller_ids:
             if supplier_info.name.id == self._context.get("partner_id"):
@@ -35,7 +34,6 @@ class ProductProduct(models.Model):
             product_name,
         )
 
-    @api.multi
     def name_get(self):
         """
         Se sobreescribe la funcion para que salga el nombre de la variante

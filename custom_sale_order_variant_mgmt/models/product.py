@@ -8,7 +8,6 @@ class ProductTemplate(models.Model):
 
     _inherit = "product.template"
 
-    @api.one
     @api.depends("attribute_line_ids")
     def _compute_product_attribute_count(self):
         self.product_attribute_count = len(self.attribute_line_ids)

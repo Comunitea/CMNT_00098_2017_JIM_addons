@@ -216,7 +216,7 @@
         name="custom_documents.custom_invoice_report_ean"
         file="custom_documents.custom_invoice_report_ean"
         report_type="qweb-pdf"
-        model="account.invoice"
+        model="account.move"
         string="Invoice with EAN"/>
 
     <record id="custom_documents.custom_invoice_report_ean_action" model="ir.actions.report">

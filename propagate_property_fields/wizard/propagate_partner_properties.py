@@ -6,7 +6,6 @@ from odoo import models, api
 class PropagatePartnerProperties(models.TransientModel):
     _name = "propagate.partner.properties"
 
-    @api.multi
     def do_propagate(self):
         t_partner = self.env["res.partner"]
 

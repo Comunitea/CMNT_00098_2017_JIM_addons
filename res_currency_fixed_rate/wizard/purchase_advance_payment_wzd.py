@@ -10,7 +10,6 @@ class AccountVoucherWizard(models.TransientModel):
 
     _inherit = "account.purchase.voucher.wizard"
 
-    @api.multi
     def make_advance_payment(self):
         # No quiero post
         ctx = dict(self._context.copy())

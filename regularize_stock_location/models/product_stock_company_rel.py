@@ -25,30 +25,29 @@ class ProductStockComapnyRel(models.Model):
 
     def _select(self):
         select_str = """
-        select 
-         row_number() OVER () AS id,        
+        select
+         row_number() OVER () AS id,
         sq.product_id as product_id,
         sum(sq.qty) as qty,
         min(pt.company_id) as product_company_id,
         sq.company_id as stock_company_id,
         sq.location_id as location_id,
-        (sq.company_id = min(pt.company_id)) as bool_company_id 
+        (sq.company_id = min(pt.company_id)) as bool_company_id
          """
 
         return select_str
 
     def _from(self):
         from_str = """
-       stock_quant sq 
+       stock_quant sq
         join product_product pp on pp.id = sq.product_id
         join product_template pt on pt.id = pp.product_tmpl_id
-        
+
         group by sq.product_id, sq.company_id, sq.location_id
         order by sq.product_id
         """
         return from_str
 
-    @api.model_cr
     def init(self):
         tools.drop_view_if_exists(self.env.cr, self._table)
         sql = """CREATE or REPLACE VIEW %s as (%s FROM %s)""" % (

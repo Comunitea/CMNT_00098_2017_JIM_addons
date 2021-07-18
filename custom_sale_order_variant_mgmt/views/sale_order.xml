@@ -77,7 +77,6 @@
         <record id="sale_order_line_action" model="ir.actions.act_window">
             <field name="name">Order lines</field>
             <field name="res_model">sale.order.line</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="sale_order_line_custom_tree"/>
             <field name="search_view_id" ref="sale.view_sales_order_line_filter"/>

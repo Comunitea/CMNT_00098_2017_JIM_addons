@@ -4,9 +4,9 @@
 from odoo import models, api, fields, _
 
 
-class AccountInvoice(models.Model):
+class AccountMove(models.Model):
 
-    _inherit = "account.invoice"
+    _inherit = "account.move"
 
     global_discount_amount = fields.Monetary(
         compute="_compute_global_discount_amount"
@@ -15,12 +15,10 @@ class AccountInvoice(models.Model):
     notes = fields.Text()
     show_associated = fields.Boolean(compute="_compute_show_associated")
 
-    @api.multi
     def compute_early_payment_lines(self):
-        res = super(AccountInvoice, self).compute_early_payment_lines()
+        res = super().compute_early_payment_lines()
         res.write({"promotion_line": True})
 
-    @api.multi
     def apply_global_discount_percentage(self):
         self.ensure_one()
         self.invoice_line_ids.filtered(lambda x: x.global_disc_line).unlink()
@@ -49,7 +47,6 @@ class AccountInvoice(models.Model):
 
         return True
 
-    @api.multi
     def _compute_global_discount_amount(self):
         for invoice in self:
             global_discount_lines = invoice.invoice_line_ids.filtered(
@@ -62,7 +59,6 @@ class AccountInvoice(models.Model):
             else:
                 invoice.global_discount_amount = 0.0
 
-    @api.multi
     def _compute_show_associated(self):
         def _get_parent_company(partner):
             if not partner.is_company and partner.parent_id:
@@ -83,15 +79,14 @@ class AccountInvoice(models.Model):
                 invoice.show_associated = False
 
 
-class AccountInvoiceLine(models.Model):
+class AccountMoveLine(models.Model):
 
-    _inherit = "account.invoice.line"
+    _inherit = "account.move.line"
 
     name_report = fields.Char(compute="_compute_name_report")
     promotion_line = fields.Boolean("Rule Line")
     global_disc_line = fields.Boolean()
 
-    @api.multi
     def _compute_name_report(self):
         for line in self:
             name_report = line.name
@@ -101,7 +96,6 @@ class AccountInvoiceLine(models.Model):
                 )
             line.name_report = name_report
 
-    @api.multi
     def get_custom_qty_price(self, qty):
         self.ensure_one()
         currency = self.invoice_id and self.invoice_id.currency_id or None

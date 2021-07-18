@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="invoice_tree_add_in_paper" model="ir.ui.view">
+    <!--TODO: Migrar<record id="invoice_tree_add_in_paper" model="ir.ui.view">
         <field name="name">account.invoice.tree.add_in_paper</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_tree"/>
@@ -32,6 +32,6 @@
                 <filter name="in_paper" domain="[('invoice_in_paper','=',True)]" string="In Paper"/>
             </filter>
         </field>
-    </record>
+    </record>-->
 
 </odoo>

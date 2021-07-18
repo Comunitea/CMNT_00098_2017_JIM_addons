@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="vview_account_invoice_report_search_attributes" model="ir.ui.view">
+    <!--TODO: Migrar<record id="vview_account_invoice_report_search_attributes" model="ir.ui.view">
         <field name="name">account.invoice.report.attributes.search</field>
         <field name="model">account.invoice.report</field>
         <field name="inherit_id" ref="account.view_account_invoice_report_search"/>
@@ -12,6 +12,6 @@
                 <field name="size_id"/>
             </field>
         </field>
-    </record>
+    </record>-->
 
 </odoo>

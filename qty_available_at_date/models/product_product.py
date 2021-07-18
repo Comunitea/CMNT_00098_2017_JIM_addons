@@ -10,7 +10,6 @@ class ProductProduct(models.Model):
 
     at_date = fields.Date("Stock a fecha", store=False)
 
-    @api.multi
     def _compute_quantities_dict(
         self, lot_id, owner_id, package_id, from_date=False, to_date=False
     ):

@@ -6,7 +6,6 @@ from odoo import api, models
 class AccImportFiles(models.TransientModel):
     _name = "acc.import.files"
 
-    @api.multi
     def acc_import_files(self):
         self.ensure_one()
         self.env["a3.import.log"].sudo().import_files()

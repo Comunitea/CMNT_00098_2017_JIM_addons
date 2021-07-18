@@ -113,7 +113,6 @@ class BaseB2B(models.AbstractModel):
             result.append((value.company_id, result_item))
         return result
 
-    @api.multi
     def on_jsync(self):
         """
         Checks if record is alredy on JSync
@@ -127,7 +126,6 @@ class BaseB2B(models.AbstractModel):
         )
         return export_found.id if export_found else False
 
-    @api.multi
     def is_notifiable_check(self, mode="create", vals=None):
         """
         Notifiable config items
@@ -199,7 +197,6 @@ class BaseB2B(models.AbstractModel):
         # All notifiable items
         return items_dict
 
-    @api.multi
     def b2b_record(
         self,
         mode,
@@ -330,7 +327,6 @@ class BaseB2B(models.AbstractModel):
 
     # ------------------------------------ OVERRIDES ------------------------------------
 
-    @api.multi
     def get_metadata(self):
         """
         Sets B2B Notifiable data on system metadata debug modal
@@ -362,7 +358,6 @@ class BaseB2B(models.AbstractModel):
             item.b2b_record("create")
         return item
 
-    @api.multi
     def write(self, vals):
         """
         Overwrite to call B2B write actions
@@ -379,7 +374,6 @@ class BaseB2B(models.AbstractModel):
                 )
         return True
 
-    @api.multi
     def unlink(self):
         """
         Overwrite to call B2B unlink actions
@@ -395,7 +389,6 @@ class BaseB2B(models.AbstractModel):
                     packet.send(notify=True)
         return True
 
-    @api.multi
     def delete_link(self):
         for record in self:
             link = self.env["b2b.export"].search(

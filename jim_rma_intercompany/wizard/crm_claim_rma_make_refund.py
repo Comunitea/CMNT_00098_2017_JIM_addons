@@ -10,7 +10,6 @@ class CrmClaimRmaMakeRefund(models.TransientModel):
 
     ic_refunds = fields.Boolean("IC refunds", default=True)
 
-    @api.multi
     def make_refund(self):
 
         self.ensure_one()

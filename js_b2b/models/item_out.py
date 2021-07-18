@@ -82,12 +82,10 @@ class B2bItemsOut(models.Model):
         help="Send updates if the date of the last modification is greater than the date of the last submission",
     )
 
-    @api.multi
     def toggle_updates(self):
         self.ensure_one()
         self.sync_updates = not self.sync_updates
 
-    @api.multi
     def get_models(self):
         """
         Get item models list
@@ -163,7 +161,6 @@ class B2bItemsOut(models.Model):
         # Devolvemos la variable b2b
         return b2b
 
-    @api.one
     def sync_item(self, user_notify=False):
         """
         Sync all model records
@@ -327,7 +324,6 @@ class B2bItemsOut(models.Model):
         item.__check_code()
         return item
 
-    @api.multi
     def write(self, vals):
         """
         Check model & code on write

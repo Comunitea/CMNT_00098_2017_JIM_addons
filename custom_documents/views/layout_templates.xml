@@ -22,7 +22,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
         </t>
         <t t-if="o._name == 'sale.order'" t-call="custom_documents.custom_layout_header_sale"/>
         <t t-if="o._name == 'stock.picking'" t-call="custom_documents.custom_layout_header_picking"/>
-        <t t-if="o._name == 'account.invoice'" t-call="custom_documents.custom_layout_header_invoce"/>
+        <t t-if="o._name == 'account.move'" t-call="custom_documents.custom_layout_header_invoce"/>
         <t t-if="o._name == 'purchase.order'" t-call="custom_documents.custom_layout_header_purchase"/>
         <t t-raw="0"/>
         <t t-call="custom_documents.custom_layout_footer"/>
@@ -509,7 +509,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
     <template id="custom_layout_footer">
         <div class="footer">
-            <t t-if="o._name == 'account.invoice'">
+            <t t-if="o._name == 'account.move'">
                 <div class="col-xs-1" t-if="o.company_id.iso_logo">
                     <img t-att-src="'data:image/png;base64,%s' % o.company_id.iso_logo" style="height: 50px;"/>
                 </div>
@@ -519,7 +519,7 @@ License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
                 </div>
 
             </t>
-            <t t-if="o._name != 'account.invoice' and o._name != 'purchase.order'">
+            <t t-if="o._name != 'account.move' and o._name != 'purchase.order'">
                 <div class="text-center">
                     <!--para que non aparezca o pe con etiquetas html usar t-raw-->
                     <span t-raw="company.qweb_footer"/>

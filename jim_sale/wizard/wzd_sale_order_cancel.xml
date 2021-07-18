@@ -36,7 +36,6 @@
         <act_window name="Cancel venta (Super)"
             res_model="wzd.sale.order.cancel"
             view_mode="form"
-            view_type="form"
             id="action_wzd_sale_order_cancel"
             groups="purchase.group_purchase_user"/>
     </data>

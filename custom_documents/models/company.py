@@ -21,7 +21,6 @@ class ResCompany(models.Model):
     )
     class_page = fields.Char(compute="compute_class_page")
 
-    @api.multi
     def compute_class_page(self):
         for company_id in self:
             company_id.class_page = (

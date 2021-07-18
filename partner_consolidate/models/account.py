@@ -3,11 +3,10 @@
 from odoo import api, models, fields
 
 
-class AccountInvoice(models.Model):
+class AccountMove(models.Model):
 
-    _inherit = "account.invoice"
+    _inherit = "account.move"
 
-    @api.multi
     @api.depends("partner_id", "partner_id.consolidate")
     def _get_commercial_partner(self):
 
@@ -15,7 +14,7 @@ class AccountInvoice(models.Model):
             if inv.state and inv.state != "draft":
                 self._cr.execute(
                     """SELECT commercial_partner_id
-                                    FROM account_invoice
+                                    FROM account_move
                                     WHERE id = %s"""
                     % str(inv.id)
                 )

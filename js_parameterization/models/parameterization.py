@@ -71,7 +71,6 @@ class ParameterizationValue(models.Model):
         return True
 
     # override
-    @api.multi
     def write(self, values):
         for record in self:
             old_fields = record.fields.ids
@@ -523,7 +522,6 @@ class ProductParameterization(models.Model):
         domain=[("fields.name", "=", "raqueta_tenis_mesa_calidad")],
     )
 
-    @api.multi
     def name_get(self):
         res = list()
         for record in self:
@@ -651,7 +649,6 @@ class ProductParameterization(models.Model):
         parameterization_vals = parameterization_dict.values()
         return parameterization_vals.count([]) == len(parameterization_vals)
 
-    @api.multi
     def template_fields_reset(self, values):
         self.ensure_one()
         view_id = self.env.ref(constants.PRODUCT_PARAM_FORM_ID)
@@ -682,7 +679,6 @@ class ProductParameterization(models.Model):
 
         return values
 
-    @api.multi
     def go_to_product(self):
         self.ensure_one()  # One record expected
         return {  # Go to product form
@@ -702,7 +698,6 @@ class ProductParameterization(models.Model):
         return param
 
     # override
-    @api.multi
     def write(self, values):
         for record in self:
             values = record.template_fields_reset(values)
@@ -711,7 +706,6 @@ class ProductParameterization(models.Model):
         return True
 
     # override
-    @api.multi
     def unlink(self):
         product_tmpl_ids = self.mapped("product_tmpl_id").ids
         if super(ProductParameterization, self).unlink():

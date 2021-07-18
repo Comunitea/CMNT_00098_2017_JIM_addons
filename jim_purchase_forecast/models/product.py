@@ -15,7 +15,6 @@ class ProductProduct(models.Model):
     demand = fields.Float("Demand", readonly=True)
     purchase = fields.Float("Recommended purchase", readonly=True)
 
-    @api.multi
     def _get_qty_current_year(self):
         self.ensure_one()
         qty = 0
@@ -52,7 +51,6 @@ class ProductProduct(models.Model):
                 qty2 = 0
         return qty2
 
-    @api.multi
     def _get_sales(self):
         self.ensure_one()
         # query = """
@@ -75,7 +73,6 @@ class ProductProduct(models.Model):
         # return 0
         return self.global_real_stock - self.web_global_stock
 
-    @api.multi
     def get_dates(self, num_years_ago=0, stock_months=4):
         def check(day, month):
             if day == "31" and month in ["04", "06", "09", "11"]:
@@ -102,7 +99,6 @@ class ProductProduct(models.Model):
         date_end = str(year_future) + "-" + month_future + "-" + day_future
         return date_start, date_end
 
-    @api.multi
     def _get_qty_year_ago(self, num_years_ago=0, stock_months=4):
         self.ensure_one()
         qty = 0
@@ -156,7 +152,6 @@ class ProductProduct(models.Model):
                 qty2 = 0
         return qty + qty2
 
-    @api.multi
     def _get_incoming_stock_months(self, stock_months=4):
         """
         Get purchase qty in stock motns range
@@ -188,7 +183,6 @@ class ProductProduct(models.Model):
                 qty = 0
         return qty
 
-    @api.multi
     def _get_incoming_remaining(self, stock_months=4):
         """
         Get purchase out of stock moths range
@@ -220,7 +214,6 @@ class ProductProduct(models.Model):
                 qty = 0
         return qty
 
-    @api.multi
     def _get_pending_purchase(self):
         """
         Get purchase out of stock moths range
@@ -244,7 +237,6 @@ class ProductProduct(models.Model):
                 qty = 0
         return qty
 
-    @api.multi
     def _get_related_purchase_id(self):
         """
         Get purchase out of stock moths range
@@ -268,7 +260,6 @@ class ProductProduct(models.Model):
                 po_id = False
         return po_id
 
-    @api.multi
     def _get_related_picking_id(self):
         """
         Get purchase out of stock moths range
@@ -296,7 +287,6 @@ class ProductProduct(models.Model):
                 picking_id = pick_id
         return picking_id
 
-    @api.multi
     def _get_forecast_line_vals(self, stock_months=4):
         self.ensure_one()
         ventas = self._get_sales()
@@ -319,7 +309,6 @@ class ProductProduct(models.Model):
         }
         return vals
 
-    @api.multi
     def _get_demand(self, line_vals):
         # least-squares solution to a linear matrix equation.
         # if not float_is_zero(line_vals['year5_ago'], precision_digits=2) :
@@ -358,7 +347,6 @@ class ProductProduct(models.Model):
             demand = 0
         return demand
 
-    @api.multi
     def _get_purchase(self, demand, line_vals):
         ventas = line_vals["sales"]
         incoming_months = line_vals["incoming_months"]
@@ -367,11 +355,9 @@ class ProductProduct(models.Model):
         )
         return purchase if purchase > 0 else 0
 
-    @api.multi
     def get_all_forecast(self):
         self.search([("type", "=", "product")]).get_purchase_forecast()
 
-    @api.multi
     def get_purchase_forecast(self):
         for product in self:
             line_vals = product._get_forecast_line_vals()

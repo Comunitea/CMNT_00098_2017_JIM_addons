@@ -66,7 +66,6 @@
         <record id="action_customer_prices_tmpl2" model="ir.actions.act_window">
             <field name="name">Customer Prices</field>
             <field name="res_model">customer.price</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('product_id','=',False)]</field>
             <field name="context">{'search_default_product_tmpl_id': active_id}</field>
@@ -83,7 +82,6 @@
         <record id="action_customer_prices_variant2" model="ir.actions.act_window">
             <field name="name">Customer Prices</field>
             <field name="res_model">customer.price</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('product_tmpl_id','=',False)]</field>
             <field name="context">{'search_default_product_id': active_id}</field>
@@ -101,7 +99,6 @@
         <record id="action_customer_prices_tmpl" model="ir.actions.act_window">
             <field name="name">Customer Prices</field>
             <field name="res_model">customer.price</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('product_id','=',False)]</field>
             <field name="context">{}</field>
@@ -130,7 +127,6 @@
         <record id="action_customer_prices_variant" model="ir.actions.act_window">
             <field name="name">Customer Prices</field>
             <field name="res_model">customer.price</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
             <field name="domain">[('product_tmpl_id','=',False)]</field>
             <field name="context">{}</field>

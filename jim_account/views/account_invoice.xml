@@ -5,7 +5,7 @@
 
     <!-- Campo refund_invoice_id visible en facturas rectificativas -->
 
-    <record id="account_invoice_refund_invoice_id" model="ir.ui.view">
+    <!--TODO: Migrar<record id="account_invoice_refund_invoice_id" model="ir.ui.view">
         <field name="name">account.invoice.form_refund</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account_invoice_refund_link.view_customer_account_invoice_add_refunds_details_form"/>
@@ -73,18 +73,6 @@
         </field>
     </record>
 
-    <!--record id="account_invoice_form_fix_readonly" model="ir.ui.view">
-        <field name="name">account.invoice.form</field>
-        <field name="model">account.invoice</field>
-        <field name="inherit_id" ref="account.invoice_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='invoice_line_ids']" position="attributes">
-               <attribute name="attrs">{'readonly': [('state', 'in', ('open', 'paid', 'cancel'))]}</attribute>
-            </xpath>
-
-        </field>
-    </record-->
-
     <record id="account_invoice_form_fix_readonly" model="ir.ui.view">
         <field name="name">account.invoice.form</field>
         <field name="model">account.invoice</field>
@@ -127,6 +115,6 @@
                <attribute name="attrs">{'readonly': [('state', 'in', ('open', 'paid', 'cancel'))]}</attribute>
             </xpath>
         </field>
-    </record>
+    </record>-->
 
 </odoo>

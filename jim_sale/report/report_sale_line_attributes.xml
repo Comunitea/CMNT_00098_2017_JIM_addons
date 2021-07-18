@@ -91,7 +91,6 @@
     <record id="action_order_line_report_jim_01_attributes" model="ir.actions.act_window">
         <field name="name">Ventas por variantes</field>
         <field name="res_model">report.sale.line.jim.attributes</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,pivot</field>
 
         </record>

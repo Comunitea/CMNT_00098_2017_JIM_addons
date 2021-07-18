@@ -9,7 +9,6 @@ class ApplyGlobalDiscount(models.TransientModel):
 
     discount = fields.Float("Discount(%)")
 
-    @api.multi
     def apply_discount(self):
         self.ensure_one()
         if not self._context.get("active_model"):

@@ -46,9 +46,8 @@
 
         <act_window name="Add to container"
             res_model="container.picking.wizard"
-            src_model="shipping.container"
+            binding_model="shipping.container"
             view_mode="form"
-            view_type="form"
             target="new"
             id="action_add_container_picking_wzd"
             groups="purchase.group_purchase_user"/>

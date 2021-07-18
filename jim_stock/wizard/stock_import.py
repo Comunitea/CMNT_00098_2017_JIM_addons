@@ -15,7 +15,6 @@ class JimStockImport(models.TransientModel):
     import_file = fields.Binary("File to import", required=True)
     type = fields.Selection((("in", "In"), ("out", "Out")), required=True)
 
-    @api.multi
     def import_stock(self):
         file = base64.b64decode(self.import_file)
         data = xlrd.open_workbook(file_contents=StringIO.StringIO(file).read())

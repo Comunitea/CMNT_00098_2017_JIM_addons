@@ -29,7 +29,6 @@ class ProductTemplate(models.Model):
         print("NOT FOUND [%s]!" % route, response.status_code)
         return False
 
-    @api.multi
     def js_download_images(self, images_url=URL, resize=False):
         img = None
         self.ensure_one()
@@ -112,7 +111,6 @@ class ProductTemplate(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    @api.multi
     def js_download_images(self):
         self.ensure_one()
         # Llamamos a la función del template para que no dé error desde product.product

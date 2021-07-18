@@ -26,15 +26,12 @@ class ShippingContainer(models.Model):
 
     _name = "shipping.container"
 
-    @api.one
     def _get_moves(self):
         self.move_ids_count = len(self.move_ids)
 
-    @api.one
     def _get_partners(self):
         self.partner_ids = self.picking_ids.partner_id
 
-    @api.multi
     def _available_volume(self):
         for container in self:
             volume = container.shipping_container_type_id.volume
@@ -87,7 +84,6 @@ class ShippingContainer(models.Model):
         ("name_uniq", "unique(name)", "Container name must be unique")
     ]
 
-    @api.multi
     def action_view_move_ids(self):
         action = self.env.ref(
             "shipping_container.container_picking_tree_action"
@@ -104,7 +100,6 @@ class ShippingContainer(models.Model):
     def set_loading(self):
         self.state = "loading"
 
-    @api.multi
     def write(self, vals):
         if vals.get("date_expected", False):
             for container in self:

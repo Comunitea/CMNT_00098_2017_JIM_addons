@@ -33,11 +33,9 @@
 
         <act_window name="Add to purchase order"
             res_model="forecast.purchase.wizard"
-            src_model="purchase.forecast.line"
+            binding_model="purchase.forecast.line"
             view_mode="form"
-            view_type="form"
             target="new"
-            key2="client_action_multi"
             id="action_add_forecast_purchase_line_wzd"
             groups="purchase.group_purchase_user"/>
 

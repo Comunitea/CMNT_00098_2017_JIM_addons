@@ -49,7 +49,6 @@ records.get_stock_query_from_mecalux()
             <field name="name">Inventory Issues</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">stock.inventory.issue</field>
-            <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
         </record>
         <menuitem action="action_stock_inventory_issue_tree" id="menu_stock_inventory_issue_action"

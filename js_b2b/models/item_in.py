@@ -231,7 +231,6 @@ class B2bItemsIn(models.Model):
         item.__check_code()
         return item
 
-    @api.multi
     def write(self, vals):
 
         """

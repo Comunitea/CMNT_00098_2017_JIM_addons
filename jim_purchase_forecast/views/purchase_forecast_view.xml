@@ -62,7 +62,6 @@
     <record id="action_purchase_forecast" model="ir.actions.act_window">
         <field name="name">Purchase Forecast</field>
         <field name="res_model">purchase.forecast</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 
@@ -180,7 +179,6 @@
      <record id="action_forecast_lines" model="ir.actions.act_window">
             <field name="name">Purchase Forecast Lines</field>
             <field name="res_model">purchase.forecast.line</field>
-            <field name="view_type">form</field>
     </record>
 
 <!--      <menuitem name="Purchase Forecast Lines" id="menu_purchase_forecast_lines"

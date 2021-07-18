@@ -6,7 +6,6 @@ from odoo import fields, models, api
 class ProductTemplate(models.Model):
     _inherit = "product.template"
 
-    @api.multi
     def _get_customer_prices_count(self):
         for tmpl in self:
             tmpl.customer_prices_count = len(tmpl.customer_tmpl_prices)
@@ -30,7 +29,6 @@ class ProductPricelist(models.Model):
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    @api.multi
     def _sales_count(self):
         r = {}
         domain = [
@@ -57,7 +55,6 @@ class ProductProduct(models.Model):
             product.sales_count = r.get(product.id, 0)
         return r
 
-    @api.multi
     def _get_customer_prices_count(self):
         for prod in self:
             prod.customer_prices_count = len(prod.customer_product_prices)

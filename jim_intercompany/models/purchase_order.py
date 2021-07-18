@@ -12,7 +12,6 @@ class purchase_order(models.Model):
         string="Intercompany Purchase Order", copy=False
     )
 
-    @api.multi
     def _get_destination_location(self):
         self.ensure_one()
         id = super(purchase_order, self)._get_destination_location()
@@ -27,7 +26,6 @@ class purchase_order(models.Model):
             return id
 
     # Se hereda para
-    @api.one
     def _prepare_sale_order_data(
         self, name, partner, company, direct_delivery_address
     ):

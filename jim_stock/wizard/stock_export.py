@@ -15,7 +15,6 @@ class JimStockExport(models.TransientModel):
     name = fields.Char("File Name", readonly=True)
     file = fields.Binary()
 
-    @api.multi
     def export_stock(self):
         file_data = StringIO()
         workbook = xlsxwriter.Workbook(file_data)

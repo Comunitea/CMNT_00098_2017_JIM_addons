@@ -14,14 +14,12 @@ class SaleOrder(models.Model):
     delivery_note = fields.Text("Delivery note")
     work_to_do = fields.Text("Mrp note")
 
-    @api.multi
     def action_sale(self):
         res = super(SaleOrder, self).action_sale()
         for order in self:
             order.write_notes(["outgoing", "internal", "mrp_operation"])
         return res
 
-    @api.multi
     def write_notes(self, picks):
         def write_note_type(type, field):
             picks = pick_ids.filtered(lambda x: x.picking_type_id.code == type)
@@ -42,21 +40,17 @@ class SaleOrder(models.Model):
             if "mrp_production" in picks:
                 write_note_type("outgoing", "work_to_do")
 
-    @api.multi
     def write_delivery_note(self):
         for order in self:
             order.write_notes("outgoing")
 
-    @api.multi
     def write_pick_note(self):
         for order in self:
             order.write_notes("internal")
 
-    @api.multi
     def write_work_to_do(self):
         for order in self:
             order.write_notes("mrp_operation")
 
-    @api.multi
     def write_invoice_note(self):
         return

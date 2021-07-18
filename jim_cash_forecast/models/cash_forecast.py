@@ -70,14 +70,12 @@ class CashForecast(models.Model):
         "cash.forecast.line", "forecast_id", readonly=True, copy=False
     )
 
-    @api.multi
     def delete_forecast_lines(self):
         for forecast in self:
             domain = [("forecast_id", "=", forecast.id)]
             self.env["cash.forecast.line"].search(domain).unlink()
         return
 
-    @api.multi
     def unlink(self):
         self.delete_forecast_lines()
         res = super(CashForecast, self).unlink()
@@ -108,7 +106,6 @@ class CashForecast(models.Model):
         res = self.env.cr.fetchall()
         return res[0][2]
 
-    @api.multi
     def _get_move_line_domain(
         self, type, date_start, date_end, received_issued=False
     ):
@@ -204,7 +201,6 @@ class CashForecast(models.Model):
         }
         return vals
 
-    @api.multi
     def create_lines(self):
         self.ensure_one()
         self.delete_forecast_lines()
@@ -232,7 +228,6 @@ class CashForecast(models.Model):
             prev_line = self.env["cash.forecast.line"].create(line_vals)
         return
 
-    @api.multi
     @api.depends("previous_input_ids")
     def _compute_previous_inputs(self):
         for forecast in self:
@@ -240,7 +235,6 @@ class CashForecast(models.Model):
                 forecast.previous_input_ids.mapped("amount_residual")
             )
 
-    @api.multi
     @api.depends("previous_output_ids")
     def _compute_previous_outputs(self):
         for forecast in self:
@@ -248,7 +242,6 @@ class CashForecast(models.Model):
                 forecast.previous_output_ids.mapped("amount_residual")
             )
 
-    @api.multi
     @api.depends("previous_outputs", "previous_inputs")
     def _compute_previous_balance(self):
         for forecast in self:

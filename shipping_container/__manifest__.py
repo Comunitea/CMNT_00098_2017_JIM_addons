@@ -3,7 +3,7 @@
 
 {
     "name": "Shipping Container",
-    "version": "12.0.1.0.0",
+    "version": "13.0.1.0.0",
     "author": "Comunitea ",
     "category": "Custom",
     "license": "AGPL-3",

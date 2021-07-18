@@ -17,13 +17,11 @@ class WzdConfirmProcurement(models.TransientModel):
         res = super(WzdConfirmProcurement, self).default_get(fields)
         return res
 
-    @api.multi
     def reconfirm_procurement(self):
         ctx = self._context.copy()
         ctx.update(force_procurement=True)
         self.purchase_ids.with_context(ctx).button_confirm()
 
-    @api.multi
     def not_reconfirm_procurement(self):
         ctx = self._context.copy()
         ctx.update(force_procurement=False)

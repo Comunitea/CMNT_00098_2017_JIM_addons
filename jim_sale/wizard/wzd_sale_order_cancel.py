@@ -8,7 +8,6 @@ class WzdSaleOrderCancel(models.TransientModel):
     _name = "wzd.sale.order.cancel"
     _description = "Cancelar Orden de venta"
 
-    @api.one
     def _get_picks(self):
         self.picking_ids = self.sale_id.picking_ids
 
@@ -23,7 +22,6 @@ class WzdSaleOrderCancel(models.TransientModel):
         res = super(WzdSaleOrderCancel, self).default_get(fields)
         return res
 
-    @api.one
     def cancel_all(self):
         self.sale_id.action_cancel()
         return {

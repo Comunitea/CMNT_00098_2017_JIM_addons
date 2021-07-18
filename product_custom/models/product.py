@@ -69,7 +69,6 @@ class ProductProduct(models.Model):
     #''     'The reference must be unique'),
     #'']
 
-    @api.multi
     @api.constrains("default_code", "type")
     def _check_company(self):
         for product in self:

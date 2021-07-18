@@ -70,7 +70,6 @@
     <record id="action_cash_forecast" model="ir.actions.act_window">
         <field name="name">Cash Forecast</field>
         <field name="res_model">cash.forecast</field>
-        <field name="view_type">form</field>
         <field name="view_mode">tree,form</field>
     </record>
 

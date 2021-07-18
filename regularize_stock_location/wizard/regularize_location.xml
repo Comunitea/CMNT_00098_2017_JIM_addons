@@ -39,7 +39,6 @@
     <record id="act_regularize_location" model="ir.actions.act_window">
         <field name="name">Regularize location</field>
         <field name="res_model">wiz.regularize.location</field>
-        <field name="view_type">form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

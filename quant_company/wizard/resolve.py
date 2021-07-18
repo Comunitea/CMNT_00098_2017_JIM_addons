@@ -6,7 +6,6 @@ from odoo import api, models
 class WizResolveQuant(models.TransientModel):
     _name = "wiz.resolve.quant"
 
-    @api.multi
     def resolve(self):
         self.ensure_one()
         self.env["stock.quant"].sudo().soluciona()

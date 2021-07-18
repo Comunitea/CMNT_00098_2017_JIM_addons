@@ -16,7 +16,6 @@ class PickingManageVariant(models.TransientModel):
         comodel_name="picking.manage.variant.line", string="Variant Lines"
     )
 
-    @api.multi
     def onchange(self, values, field_name, field_onchange):  # pragma: no cover
         if "variant_line_ids" in field_onchange:
             for sub in (
@@ -75,7 +74,6 @@ class PickingManageVariant(models.TransientModel):
                 )
         self.variant_line_ids = lines
 
-    @api.multi
     def button_transfer_to_order(self):
         context = self.env.context
         record = self.env[context["active_model"]].browse(context["active_id"])

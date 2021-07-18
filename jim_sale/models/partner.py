@@ -46,14 +46,12 @@ class ResPartner(models.Model):
         res.check_state_id()
         return res
 
-    @api.multi
     def write(self, vals):
         res = super(ResPartner, self).write(vals)
         for partner in self:
             partner.check_state_id()
         return res
 
-    @api.multi
     def check_state_id(self):
 
         for partner in self:

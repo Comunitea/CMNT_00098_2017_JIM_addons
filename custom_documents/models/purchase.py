@@ -16,7 +16,6 @@ class PurchaseOrderLine(models.Model):
         for purchase in self:
             purchase.date_planned_date = purchase.date_planned.split(" ")[0]
 
-    @api.multi
     def _compute_name_report(self):
         for line in self:
             name_report = line.name

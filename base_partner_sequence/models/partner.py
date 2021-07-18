@@ -29,7 +29,6 @@ class ResPartner(models.Model):
 
     _inherit = "res.partner"
 
-    @api.multi
     def _get_next_ref(self, vals=None):
         return self.env["ir.sequence"].next_by_code("res.partner")
 
@@ -39,14 +38,12 @@ class ResPartner(models.Model):
             vals["ref"] = self._get_next_ref(vals=vals)
         return super(ResPartner, self).create(vals)
 
-    @api.multi
     def copy(self, default=None):
         default = default or {}
         if self._needsRef():
             default["ref"] = self._get_next_ref()
         return super(ResPartner, self).copy(default)
 
-    @api.multi
     def write(self, vals):
         for partner in self:
             if (
@@ -59,7 +56,6 @@ class ResPartner(models.Model):
             super(ResPartner, partner).write(vals)
         return True
 
-    @api.multi
     def write(self, vals):
         for partner in self:
             vals_ref = vals.copy()
@@ -72,7 +68,6 @@ class ResPartner(models.Model):
             super(ResPartner, partner).write(vals_ref)
         return True
 
-    @api.multi
     def _needsRef(self, vals=None):
         """
         Checks whether a sequence value should be assigned to a partner's 'ref'
