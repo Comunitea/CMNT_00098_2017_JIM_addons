@@ -17,7 +17,7 @@
                 <field name="name"/>
                 <field name="harbor_id"/>
                 <field name="state"/>
-		        <field name="date_expected"/>
+                        <field name="date_expected"/>
 
             </tree>
         </field>
@@ -90,8 +90,8 @@
                 <field name="harbor_id"/>
                 <field name="state"/>
                 <group expand="0" name="group_by" string="Group By">
-                    <filter string="Harbor" context="{'group_by': 'harbor_id'}"/>
-                    <filter string="State" context="{'group_by': 'state'}"/>
+                    <filter string="Harbor" name="harbor" context="{'group_by': 'harbor_id'}"/>
+                    <filter string="State" name="state" context="{'group_by': 'state'}"/>
                 </group>
            </search>
         </field>
@@ -117,7 +117,7 @@
                 <field name="volume"/>
                 <field name="length"/>
                 <field name="width"/>
-		        <field name="height"/>
+                        <field name="height"/>
             </tree>
         </field>
     </record>
@@ -135,7 +135,7 @@
                         <group>
                             <field name="length"/>
                             <field name="width"/>
-		                    <field name="height"/>
+                                    <field name="height"/>
                         </group>
                     </group>
                 </sheet>

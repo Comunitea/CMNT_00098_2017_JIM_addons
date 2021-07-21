@@ -141,7 +141,7 @@
                             <field name="incoming_months"/>
                             <field name="incoming_remaining"/>
                             <field name="related_picking_id"/>
-                           
+
                         </group>
                         <group>
                             <field name="pending_purchase"/>
@@ -160,17 +160,17 @@
                 <field name="product_id"/>
                 <field name="seller_id"/>
                 <separator />
-                <filter
+                <filter name="recommended_purchase"
                         string="Recommended purchase"
                         domain="[('purchase','>',0)]"
                         help="Recommnded purchase >0"/>
                 <filter
-                        string="To Buy"
+                        string="To Buy" name="to_buy"
                         domain="[('to_buy','>',0)]"
                         help="To Buy >0"/>
                 <group expand="0" string="Group By">
-                        <filter string="Seller" domain="[]" context="{'group_by':'seller_id'}"/>
-                        <filter string="Harbor" domain="[]" context="{'group_by':'harbor_id'}"/>
+                        <filter string="Seller" name="seller" domain="[]" context="{'group_by':'seller_id'}"/>
+                        <filter string="Harbor" name="harbor" domain="[]" context="{'group_by':'harbor_id'}"/>
                     </group>
             </search>
         </field>

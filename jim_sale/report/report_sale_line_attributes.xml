@@ -73,16 +73,10 @@
                 <group expand="1" string="Group By">
                     <filter string="Variante" name="group_attribute_names" context="{'group_by':'attribute_names'}"/>
                     <filter string="Color" name="group_color" context="{'group_by':'color'}"/>
-                    <filter string="Talla" name="group_color" context="{'group_by':'talla'}"/>
+                    <filter string="Talla" name="group_talla" context="{'group_by':'talla'}"/>
 
                     <separator/>
-                    <!--filter string="Comercial" name="User" context="{'group_by':'user_id'}"/>
-                    <filter string="Cliente" name="Customer" context="{'group_by':'partner_id'}"/-->
-                    <!--filter name="status" string="Status" context="{'group_by':'state'}"/-->
-                    <!--filter name="group_template_code" string="Plantilla" context="{'group_by':'template_code'}"/-->
-
-                    <separator/>
-                    <filter string="Meses" context="{'group_by':'date:month'}" help="Agrupado por meses"/>
+                    <filter string="Meses" name="months" context="{'group_by':'date:month'}" help="Agrupado por meses"/>
 
                 </group>
             </search>

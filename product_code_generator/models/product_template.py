@@ -12,31 +12,32 @@ class ProductAttribute(models.Model):
     is_color = fields.Boolean("Represents a color")
 
 
-class ProductAttributeValue(models.Model):
+#TODO: Migrar, no existe el modelo product.attribute.value
+# ~ class ProductAttributeValue(models.Model):
 
-    _inherit = "product.attribute.value"
+    # ~ _inherit = "product.attribute.value"
 
-    code = fields.Char(
-        "Code", help="Code number for this variant", required=True
-    )
-    legacy_code = fields.Char("Legacy Code")
-    is_color = fields.Boolean(
-        "Represents a color", related="attribute_id.is_color", readonly=True
-    )
-    sequence = fields.Integer(
-        "Sequence",
-        help="Determine the display order",
-        readonly=True,
-        default=0,
-    )
+    # ~ code = fields.Char(
+        # ~ "Code", help="Code number for this variant", required=True
+    # ~ )
+    # ~ legacy_code = fields.Char("Legacy Code")
+    # ~ is_color = fields.Boolean(
+        # ~ "Represents a color", related="attribute_id.is_color", readonly=True
+    # ~ )
+    # ~ sequence = fields.Integer(
+        # ~ "Sequence",
+        # ~ help="Determine the display order",
+        # ~ readonly=True,
+        # ~ default=0,
+    # ~ )
 
-    _sql_constraints = [
-        (
-            "attribute_code_unique",
-            "unique(code, attribute_id)",
-            "Code must be unique per attribute!",
-        ),
-    ]
+    # ~ _sql_constraints = [
+        # ~ (
+            # ~ "attribute_code_unique",
+            # ~ "unique(code, attribute_id)",
+            # ~ "Code must be unique per attribute!",
+        # ~ ),
+    # ~ ]
 
 
 class ProductProduct(models.Model):

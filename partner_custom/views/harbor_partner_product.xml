@@ -8,7 +8,7 @@
             <tree string="Product by harbor">
                 <field name="harbor_id"/>
                 <field name="partner_id"/>
-		        <field name="product_name"/>
+                        <field name="product_name"/>
                 <field name="default_code"/>
                 <field name="price"/>
             </tree>
@@ -25,8 +25,8 @@
                 <field name="product_tmpl_id"/>
                 <field name="harbor_id"/>
                 <group expand="0" name="group_by" string="Group By">
-                    <filter string="Harbor" context="{'group_by': 'harbor_id'}"/>
-                    <filter string="Partner" context="{'group_by': 'partner_id'}"/>
+                    <filter string="Harbor" name="harbor" context="{'group_by': 'harbor_id'}"/>
+                    <filter string="Partner" name="partner" context="{'group_by': 'partner_id'}"/>
                 </group>
            </search>
         </field>

@@ -13,9 +13,9 @@
                    <button name="set_as_default" string="Por defecto" type="object" icon="fa-indent" class="oe_inline" ></button>
                </div>
             </field>
-            <xpath expr="//kanban/field[@name='customer']" position="after">
+            <!--TODO: MIgrar no hay customer<xpath expr="//kanban/field[@name='customer']" position="after">
                <field name="default_partner_by_type"/>
-            </xpath>
+            </xpath>-->
             <xpath expr="//div[contains(@class, 'oe_kanban_details')]" position="inside">
                 <t t-if="record.default_partner_by_type.raw_value === true">
                     <i class="fa fa-star"/>

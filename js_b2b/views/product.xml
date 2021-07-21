@@ -120,7 +120,7 @@
                 <sheet>
                     <div id="product_img_form">
                         <field name="image" widget="image" class="oe_avatar" required="1"/>
-                        
+
                         <div class="oe_title">
                             <field name="id" invisible="1"/>
                             <div invisible="context.get('default_product_tmpl_id', False)">
@@ -135,7 +135,7 @@
                             <label class="oe_edit_only" for="product_attributes_values" string="Attributes Applied"/>
                             <div><field name="product_attributes_values" widget="many2many_tags" options="{ 'no_create_edit':True, 'no_quick_create': True }" readonly="not context.get('default_product_tmpl_id', False)"/></div>
                         </div>
-                        
+
                         <div class="clearfix"></div>
                     </div>
                 </sheet>
@@ -163,7 +163,7 @@
         <field name="inherit_id" ref="product_tags.product_tag_form"/>
         <field name="arch" type="xml">
             <field name="parent_id" position="replace"/>
-            
+
             <xpath expr="./group[2]" position="after">
                 <group>
                     <field name="child_ids" widget="one2many_list" mode="tree">
@@ -195,7 +195,7 @@
     </record>
 
     <!-- Product Attributes -->
-    <record id="variants_tree_view_b2b" model="ir.ui.view">
+    <!--TODO: Migrar<record id="variants_tree_view_b2b" model="ir.ui.view">
         <field name="name">product.attribute.value.tree.b2b</field>
         <field name="model">product.attribute.value</field>
         <field name="inherit_id" ref="product.variants_tree_view"/>
@@ -207,7 +207,7 @@
                 <field name="image_color" filename="image_color_filename" class="oe_avatar" options="{'size': [62, 62]}" attrs="{'invisible':[('is_color', '!=', True)]}"/>
             </tree>
         </field>
-    </record>
+    </record>-->
 
     <!-- Product Public Categories -->
     <record id="product_public_category_form_view_b2b" model="ir.ui.view">

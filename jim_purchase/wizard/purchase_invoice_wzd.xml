@@ -40,11 +40,12 @@
             </field>
         </record>
 
-        <act_window name="Add to invoice order"
-            res_model="purchase.invoice.wzd"
-            view_mode="form"
-            target="new"
-            id="action_add_purchase_invoice_wzd"
-            groups="purchase.group_purchase_user"/>
+        <record id="action_add_purchase_invoice_wzd" model="ir.actions.act_window">
+                <field name="name">Add to invoice order</field>
+                <field name="res_model">purchase.invoice.wzd</field>
+                <field name="view_mode">form</field>
+                <field name="target">new</field>
+                <field name="groups">purchase.group_purchase_user</field>
+        </record>
 
 </odoo>

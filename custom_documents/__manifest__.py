@@ -3,7 +3,7 @@
 {
     "name": "Custom documents",
     "summary": "Report customizations",
-    "version": "13.0.1.0.0",
+    "version": "14.0.1.0.0",
     "category": "Uncategorized",
     "website": "comunitea.com",
     "author": "Comunitea",

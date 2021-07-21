@@ -22,11 +22,12 @@
             </field>
         </record>
 
-        <act_window name="Apply global discount"
-            res_model="apply.global.discount"
-            view_id="apply_global_discount_form"
-            view_mode="form"
-            target="new"
-            id="apply_global_discount_action"/>
+        <record id="apply_global_discount_action" model="ir.actions.act_window">
+                <field name="name">Apply global discount</field>
+                <field name="res_model">apply.global.discount</field>
+                <field name="view_id">apply_global_discount_form</field>
+                <field name="view_mode">form</field>
+                <field name="target">new</field>
+        </record>
 
 </odoo>

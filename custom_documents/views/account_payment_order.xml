@@ -111,13 +111,13 @@
         </t>
     </template>
 
-    <report
-        id="account_payment_order_report"
-        name="custom_documents.account_payment_order_report_document"
-        file="custom_documents.account_payment_order_report_document"
-        report_type="qweb-pdf"
-        model="account.payment.order"
-        string="Listado"/>
+    <record id="account_payment_order_report" model="ir.actions.report">
+        <field name="report_name">custom_documents.account_payment_order_report_document</field>
+        <field name="file">custom_documents.account_payment_order_report_document</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="model">account.payment.order</field>
+        <field name="name">Listado</field>
+    </record>
 
     <record id="custom_documents.account_payment_order_report" model="ir.actions.report">
         <field name="paperformat_id" ref="picking_paperformat_euro" />

@@ -37,7 +37,7 @@
                 <field name="name"/>
                 <field name="state"/>
                 <group expand="0" name="group_by" string="Group By">
-                    <filter string="State" context="{'group_by': 'state'}"/>
+                    <filter name="state" string="State" context="{'group_by': 'state'}"/>
                 </group>
            </search>
         </field>
@@ -54,5 +54,5 @@
     <menuitem name="Log" parent="base.menu_custom" id="audit_log_menu" sequence="800"/>
 
     <menuitem name="A3 Importation Log" parent="audit_log_menu" action="action_a3_import_log" id="a3_import_log_menu"/>
-    
+
 </odoo>

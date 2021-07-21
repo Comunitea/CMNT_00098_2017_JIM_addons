@@ -16,11 +16,12 @@
             </field>
         </record>
 
-        <act_window name="Print product label"
-            res_model="product.print.labels.from.purchase"
-            binding_model="purchase.order"
-            view_id="product_print_labels_from_purchase_form"
-            view_mode="form"
-            target="new"
-            id="product_print_labels_from_purchase_action"/>
+        <record id="product_print_labels_from_purchase_action" model="ir.actions.act_window">
+                <field name="name">Print product label</field>
+                <field name="res_model">product.print.labels.from.purchase</field>
+                <field name="binding_model_id" ref="purchase.model_purchase_order/>
+                <field name="view_id">product_print_labels_from_purchase_form</field>
+                <field name="view_mode">form</field>
+                <field name="target">new</field>
+        </record>
 </odoo>

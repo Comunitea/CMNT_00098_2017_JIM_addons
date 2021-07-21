@@ -120,7 +120,7 @@
             </xpath>
 
             <xpath expr="//field[@name='picking_ids']" position="replace">
-               
+
                 <field name="picking_ids" readonly="1">
                 <tree decoration-muted="state == 'cancel'"
                       decoration-success="state == 'done' and returned_picking_id == False"
@@ -191,7 +191,7 @@
                 <filter string="Invoiced" name="invoiced"
                         domain="['|', ('refund_line_id','!=',False),('invoice_line_id','!=',False)]"
                         separator="1" help="Invoiced claim lines"/>
-                <filter string="To Invoiced" name="invoiced"
+                <filter string="To Invoiced" name="to_invoice"
                         domain="[('state','=','treated'), ('refund_line_id','=',False), ('invoice_line_id','=',False)]"
                         separator="1" help="Claim lines to invoice"/>
                 <separator orientation="vertical"/>

@@ -63,13 +63,13 @@
             sequence="2"/-->
 
 
-     <act_window
-            id="act_crm_claim_batch_refunds"
-            name="Batch Refunds"
-            res_model="crm.claim.rma.make.batch.refund"
-            key2="client_action_multi"
-            view_id ="crm_claim_rma_make_batch_refund"
-            multi="True"
-            target="new"
-            src_model="crm.claim"/>
+     <record id="act_crm_claim_batch_refunds" model="ir.actions.act_window">
+          <field name="name">Batch Refunds</field>
+          <field name="res_model">crm.claim.rma.make.batch.refund</field>
+          <field name="key2">client_action_multi</field>
+          <field name="view_id">crm_claim_rma_make_batch_refund</field>
+          <field name="multi">True</field>
+          <field name="target">new</field>
+          <field name="binding_model_id" ref="crm.model_crm_claim"/>
+     </record>
 </odoo>

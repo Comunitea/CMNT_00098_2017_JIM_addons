@@ -27,7 +27,7 @@
                         <field name="property_account_position_id"/>
                 </field>
                 <xpath expr="//separator[last()]" position="after">
-                    <filter string="Fiscal position" domain="[]" context="{'group_by': 'property_account_position_id'}"/>
+                    <filter string="Fiscal position" name="fiscal_position" domain="[]" context="{'group_by': 'property_account_position_id'}"/>
                 </xpath>
             </field>
         </record>

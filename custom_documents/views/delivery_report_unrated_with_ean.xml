@@ -115,13 +115,13 @@
 
     </template>
 
-    <report
-        id="report_delivery_report_unrated_with_ean"
-        name="custom_documents.custom_delivery_report_unrated_with_ean"
-        file="custom_documents.custom_delivery_report_unrated_with_ean"
-        report_type="qweb-pdf"
-        model="stock.picking"
-        string="Albarán sin valorar EAN"/>
+    <record id="report_delivery_report_unrated_with_ean" model="ir.actions.report">
+        <field name="report_name">custom_documents.custom_delivery_report_unrated_with_ean</field>
+        <field name="file">custom_documents.custom_delivery_report_unrated_with_ean</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="model">stock.picking</field>
+        <field name="name">Albar&#225;n sin valorar EAN</field>
+    </record>
 
     <record id="custom_documents.report_delivery_report_unrated_with_ean" model="ir.actions.report">
         <field name="paperformat_id" ref="picking_paperformat_euro" />

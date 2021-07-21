@@ -25,12 +25,12 @@
             </field>
         </record>
 
-         <act_window id="propagate_product_fields_action"
-             name="Propagate property fields"
-             binding_model="product.template"
-             res_model="propagate.product.properties"
-             view_mode="form"
-             target="new"
-            />
+         <record id="propagate_product_fields_action" model="ir.actions.act_window">
+                  <field name="name">Propagate property fields</field>
+                  <field name="binding_model_id" ref="product.model_product_template"/>
+                  <field name="res_model">propagate.product.properties</field>
+                  <field name="view_mode">form</field>
+                  <field name="target">new</field>
+         </record>
 
 </odoo>

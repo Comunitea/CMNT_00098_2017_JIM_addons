@@ -29,12 +29,12 @@
                     <filter name="partner_id" string="Partner" filter_domain="[('partner_id','ilike', self)]"/>
                     <separator/>
                     <group expand="0" string="Group By">
-                        <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
-                        <filter string="Partner" domain="[]" context="{'group_by':'partner_id'}"/>
-                        <filter string="Picking type" domain="[]" context="{'group_by':'picking_type_id'}"/>
-                        <filter string="Act location" domain="[]" context="{'group_by':'act_loc_id'}"/>
-                        <filter string="Next location" domain="[]" context="{'group_by':'next_loc_id'}"/>
-                        <filter string="Orig location" domain="[]" context="{'group_by':'orig_location_id'}"/>
+                        <filter name="company" string="Company" domain="[]" context="{'group_by':'company_id'}"/>
+                        <filter name="partner" string="Partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter name="pick_type" string="Picking type" domain="[]" context="{'group_by':'picking_type_id'}"/>
+                        <filter name="act_loc" string="Act location" domain="[]" context="{'group_by':'act_loc_id'}"/>
+                        <filter name="next_loc" string="Next location" domain="[]" context="{'group_by':'next_loc_id'}"/>
+                        <filter name="orig_loc" string="Orig location" domain="[]" context="{'group_by':'orig_location_id'}"/>
 
 
                     </group>

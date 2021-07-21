@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<odoo>
-    <data noupdate="1">
+<odoo noupdate="1">
 
         <record id="cron_archive_sga_file" model="ir.cron">
             <field name="name">Archive SGA files</field>
@@ -15,7 +14,7 @@
             <field name="model_id" ref="model_sga_file"/>
             <field name="code">model.archive_sga_files(False)</field>
         </record>
-        </record>
+
         <record id="cron_process_sga_file" model="ir.cron">
             <field name="name">Process SGA files</field>
             <field eval="False" name="active" />
@@ -54,5 +53,5 @@
         <field name="implied_ids" eval="[(4, ref('stock.group_stock_manager'))]"/>
         <field name="users" eval="[(4, ref('base.user_root'))]"/>
     </record>
-    </data>
+
 </odoo>

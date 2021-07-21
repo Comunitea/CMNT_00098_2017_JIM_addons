@@ -26,12 +26,13 @@
         </field>
     </record>
 
-    <act_window name="Export stock"
-        res_model="jim.stock.export"
-        view_id="jim_stock_export_form"
-        view_mode="form"
-        target="new"
-        id="jim_stock_export_action"/>
+    <record id="jim_stock_export_action" model="ir.actions.act_window">
+        <field name="name">Export stock</field>
+        <field name="res_model">jim.stock.export</field>
+        <field name="view_id">jim_stock_export_form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
 
     <menuitem name="Export stock" parent="stock.menu_stock_inventory_control"
               action="jim_stock_export_action"

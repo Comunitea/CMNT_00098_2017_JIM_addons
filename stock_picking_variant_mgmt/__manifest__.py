@@ -5,7 +5,7 @@
     "name": "Handle easily multiple variants on pickings",
     "summary": "Handle the addition/removal of multiple variants from "
     "product template into the stock picking",
-    "version": "13.0.1.0.0",
+    "version": "14.0.1.0.0",
     "author": "Tecnativa, Comunitea, " "Odoo Community Association (OCA)",
     "category": "Purchase",
     "license": "AGPL-3",

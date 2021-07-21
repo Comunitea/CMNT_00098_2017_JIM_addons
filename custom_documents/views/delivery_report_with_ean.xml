@@ -196,13 +196,13 @@
         </t>
     </template>
 
-    <report
-        id="custom_delivery_report_ean_action"
-        name="custom_documents.custom_delivery_report_ean"
-        file="custom_documents.custom_delivery_report_ean"
-        report_type="qweb-pdf"
-        model="stock.picking"
-        string="Delivery order with EAN"/>
+    <record id="custom_delivery_report_ean_action" model="ir.actions.report">
+        <field name="report_name">custom_documents.custom_delivery_report_ean</field>
+        <field name="file">custom_documents.custom_delivery_report_ean</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="model">stock.picking</field>
+        <field name="name">Delivery order with EAN</field>
+    </record>
 
     <record id="custom_documents.custom_delivery_report_ean_action" model="ir.actions.report">
         <field name="paperformat_id" ref="sale_paperformat_euro" />

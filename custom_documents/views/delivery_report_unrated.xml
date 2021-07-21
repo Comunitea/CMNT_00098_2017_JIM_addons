@@ -108,13 +108,13 @@
 
     </template>
 
-    <report
-        id="report_delivery_report_unrated"
-        name="custom_documents.custom_delivery_report_unrated"
-        file="custom_documents.custom_delivery_report_unrated"
-        report_type="qweb-pdf"
-        model="stock.picking"
-        string="Albarán sin valorar"/>
+    <record id="report_delivery_report_unrated" model="ir.actions.report">
+        <field name="report_name">custom_documents.custom_delivery_report_unrated</field>
+        <field name="file">custom_documents.custom_delivery_report_unrated</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="model">stock.picking</field>
+        <field name="name">Albar&#225;n sin valorar</field>
+    </record>
 
     <record id="custom_documents.report_delivery_report_unrated" model="ir.actions.report">
         <field name="paperformat_id" ref="picking_paperformat_euro" />

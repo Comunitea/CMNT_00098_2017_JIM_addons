@@ -34,13 +34,13 @@
                     <filter name="product_id" string="Product" filter_domain="[('product_id','ilike', self)]"/>
                     <separator/>
                     <group expand="0" string="Group By">
-                        <filter string="Company" domain="[]" context="{'group_by':'company_id'}"/>
-                        <filter string="Picking" domain="[]" context="{'group_by':'picking_done_id'}"/>
-                        <filter string="Partner" domain="[]" context="{'group_by':'partner_id'}"/>
-                        <filter string="Picking type" domain="[]" context="{'group_by':'picking_type_id'}"/>
-                        <filter string="Act location" domain="[]" context="{'group_by':'act_loc_id'}"/>
-                        <filter string="Next location" domain="[]" context="{'group_by':'next_loc_id'}"/>
-                        <filter string="Orig location" domain="[]" context="{'group_by':'orig_location_id'}"/>
+                        <filter string="Company" name="company" domain="[]" context="{'group_by':'company_id'}"/>
+                        <filter string="Picking" name="picking" domain="[]" context="{'group_by':'picking_done_id'}"/>
+                        <filter string="Partner" name="partner" domain="[]" context="{'group_by':'partner_id'}"/>
+                        <filter string="Picking type" name="pick_type" domain="[]" context="{'group_by':'picking_type_id'}"/>
+                        <filter string="Act location" name="act_loc" domain="[]" context="{'group_by':'act_loc_id'}"/>
+                        <filter string="Next location" name="next_loc" domain="[]" context="{'group_by':'next_loc_id'}"/>
+                        <filter string="Orig location" name="orig_loc" domain="[]" context="{'group_by':'orig_location_id'}"/>
 
                     </group>
 

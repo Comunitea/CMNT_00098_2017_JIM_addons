@@ -119,8 +119,9 @@ class PickingManageVariantLine(models.TransientModel):
         comodel_name="product.product", string="Variant", readonly=True
     )
     disabled = fields.Boolean()
-    value_x = fields.Many2one(comodel_name="product.attribute.value")
-    value_y = fields.Many2one(comodel_name="product.attribute.value")
+    #TODO: Migrar, no existe el modelo product.attribute.value
+    # ~ value_x = fields.Many2one(comodel_name="product.attribute.value")
+    # ~ value_y = fields.Many2one(comodel_name="product.attribute.value")
     product_qty = fields.Float(
         string="Quantity", digits=dp.get_precision("Product UoS")
     )

@@ -78,7 +78,7 @@
                     <filter name="group_template_code" string="Plantilla" context="{'group_by':'template_code'}"/>
 
                     <separator/>
-                    <filter string="Meses" context="{'group_by':'date:month'}" help="Agrupado por meses"/>
+                    <filter string="Meses" name="months" context="{'group_by':'date:month'}" help="Agrupado por meses"/>
 
                 </group>
             </search>

@@ -4,7 +4,7 @@
 
 {
     "name": "Modulo JIM Sports SGA - Odoo",
-    "version": "13.0.1.0.0",
+    "version": "14.0.1.0.0",
     "author": "Comunitea, ",
     "category": "",
     "license": "AGPL-3",

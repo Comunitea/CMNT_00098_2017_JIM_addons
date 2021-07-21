@@ -4,12 +4,13 @@
 
 <odoo>
 
-     <report id="company_advise_report"
-            model="res.company"
-            string="Página de condiciones"
-            report_type="qweb-pdf"
-            name="custom_documents.company_advise"
-            menu="True"/>
+     <record id="company_advise_report" model="ir.actions.report">
+          <field name="model">res.company</field>
+          <field name="name">P&#225;gina de condiciones</field>
+          <field name="report_type">qweb-pdf</field>
+          <field name="report_name">custom_documents.company_advise</field>
+          <field name="menu">True</field>
+     </record>
 
 
     <record id="res_company_add_qweb_footer" model="ir.ui.view">

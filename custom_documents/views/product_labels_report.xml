@@ -109,21 +109,21 @@
         </t>
     </template>
 
-    <report
-        id="report_product_label"
-        name="custom_documents.product_from_product_label_report"
-        file="custom_documents.product_label_report"
-        report_type="qweb-pdf"
-        model="product.product"
-        string="Etiquetas JIM"/>
+    <record id="report_product_label" model="ir.actions.report">
+        <field name="report_name">custom_documents.product_from_product_label_report</field>
+        <field name="file">custom_documents.product_label_report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="model">product.product</field>
+        <field name="name">Etiquetas JIM</field>
+    </record>
 
-    <report
-        id="report_product_label_neutral"
-        name="custom_documents.product_label_neutral"
-        file="custom_documents.product_label_report_neutral"
-        report_type="qweb-pdf"
-        model="product.product"
-        string="Etiquetas neutrales"/>
+    <record id="report_product_label_neutral" model="ir.actions.report">
+        <field name="report_name">custom_documents.product_label_neutral</field>
+        <field name="file">custom_documents.product_label_report_neutral</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="model">product.product</field>
+        <field name="name">Etiquetas neutrales</field>
+    </record>
 
     <record id="custom_documents.report_product_label" model="ir.actions.report">
         <field name="paperformat_id" ref="product_labels_paperformat_euro" />
@@ -133,21 +133,21 @@
         <field name="paperformat_id" ref="product_labels_paperformat_euro" />
     </record>
 
-    <report
-        id="report_product_label_from_purchase"
-        name="custom_documents.product_from_purchase_label_report"
-        file="custom_documents.product_label_report"
-        report_type="qweb-pdf"
-        model="purchase.order"
-        string="Etiquetas para compras"/>
+    <record id="report_product_label_from_purchase" model="ir.actions.report">
+        <field name="report_name">custom_documents.product_from_purchase_label_report</field>
+        <field name="file">custom_documents.product_label_report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="model">purchase.order</field>
+        <field name="name">Etiquetas para compras</field>
+    </record>
 
-    <report
-        id="report_product_label_from_sale"
-        name="custom_documents.product_from_sale_label_report"
-        file="custom_documents.product_label_report"
-        report_type="qweb-pdf"
-        model="sale.order"
-        string="Etiquetas para ventas"/>
+    <record id="report_product_label_from_sale" model="ir.actions.report">
+        <field name="report_name">custom_documents.product_from_sale_label_report</field>
+        <field name="file">custom_documents.product_label_report</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="model">sale.order</field>
+        <field name="name">Etiquetas para ventas</field>
+    </record>
 
 
     <record id="custom_documents.report_product_label_from_purchase" model="ir.actions.report">

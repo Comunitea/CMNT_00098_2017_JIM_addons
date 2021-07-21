@@ -11,7 +11,7 @@
     "author": "Miguel Ángel García",
     "website": "http://miguel-angel-garcia.com",
     "category": "Administration",
-    "version": "13.0.1.0.0",
+    "version": "14.0.1.0.0",
     "depends": ["product"],
     "data": [
         "views/views.xml",

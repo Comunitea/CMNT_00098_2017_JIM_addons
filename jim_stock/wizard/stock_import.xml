@@ -22,12 +22,13 @@
         </field>
     </record>
 
-    <act_window name="Import stock"
-        res_model="jim.stock.import"
-        view_id="jim_stock_import_form"
-        view_mode="form"
-        target="new"
-        id="jim_stock_import_action"/>
+    <record id="jim_stock_import_action" model="ir.actions.act_window">
+        <field name="name">Import stock</field>
+        <field name="res_model">jim.stock.import</field>
+        <field name="view_id">jim_stock_import_form</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
 
     <menuitem name="Import stock" parent="stock.menu_stock_inventory_control"
               action="jim_stock_import_action"

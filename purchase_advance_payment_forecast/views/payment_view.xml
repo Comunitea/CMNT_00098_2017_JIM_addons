@@ -51,8 +51,7 @@
         <field name="arch" type="xml">
             <search string="Search Payments">
 
-                <filter icon="terp-go-today"
-                        string="Overdue"
+                <filter name="overdue" string="Overdue"
                         domain="[('date_maturity','&lt;',time.strftime('%%Y-%%m-%%d'))]"
                         help="Overdue forecasts" name="overdue"/>
                 <separator orientation="vertical"/>
@@ -64,15 +63,12 @@
                 <field name="amount_residual_currency"/>
                 <group expand="0" string="Group By...">
                     <filter string="Partner"
-                            icon="terp-partner"
-                            domain="[]"
+                            domain="[]" name="partner"
                             context="{'group_by':'partner_id'}"/>
-                    <filter string="Due Date"
-                            icon="terp-go-month"
+                    <filter string="Due Date" name="due_date"
                             domain="[]"
                             context="{'group_by':'date_maturity:day'}"/>
-                    <filter string="Month"
-                            icon="terp-go-month"
+                    <filter string="Month" name="month"
                             domain="[]"
                             context="{'group_by':'date_maturity'}"/>
                </group>

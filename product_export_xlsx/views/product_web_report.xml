@@ -31,7 +31,7 @@
           <filter name="web_ok" string="Mostrar en web" domain="[('web','=',True)]"/>
           <filter name="web_no_ok" string="Ocultados en web" domain="[('web','=',False)]"/>
           <group expand="0" string="Group By">
-            <filter string="Tag" context="{'group_by':'tag_names'}"/>
+            <filter name="tag" string="Tag" context="{'group_by':'tag_names'}"/>
           </group>
         </search>
       </field>

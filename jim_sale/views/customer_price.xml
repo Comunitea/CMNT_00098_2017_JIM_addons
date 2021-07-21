@@ -55,9 +55,9 @@
 <!--                     <filter string="Templates" name="templates" domain="[('product_id','=',False)]"/>
                     <filter string="Variants" name="inactive" domain="[('product_tmpl_id','=',False)]"/> -->
                     <group expand="0" string="Group By">
-                        <filter string="Customer" domain="[]" context="{'group_by':'parent_id'}"/>
-                        <filter string="Template" domain="[]" context="{'group_by':'product_tmpl_id'}"/>
-                        <filter string="Variant" domain="[]" context="{'group_by':'product_id'}"/>
+                        <filter string="Customer" name="customer" domain="[]" context="{'group_by':'parent_id'}"/>
+                        <filter string="Template" name="template" domain="[]" context="{'group_by':'product_tmpl_id'}"/>
+                        <filter string="Variant" name="variant" domain="[]" context="{'group_by':'product_id'}"/>
                     </group>
                 </search>
              </field>

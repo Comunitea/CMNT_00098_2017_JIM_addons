@@ -193,7 +193,7 @@ class ProductTemplate(models.Model):
                         + _("does not have tags.")
                     )
                 # if not product.public_categ_ids:
-                # 	raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
+                #       raise ValidationError(_(base_product_publish_error) + _('does not have web categories.'))
                 if barcode and not product.has_valid_barcode(barcode=barcode):
                     raise ValidationError(
                         _(base_product_publish_error)
@@ -408,38 +408,38 @@ class ProductTag(models.Model):
 
 ####################### ATRIBUTOS #######################
 
+#TODO: Migrar, no existe el modelo product.attribute.value
+# ~ class ProductAttributeValue(models.Model):
+    # ~ _name = "product.attribute.value"
+    # ~ _inherit = ["product.attribute.value", "b2b.image"]
 
-class ProductAttributeValue(models.Model):
-    _name = "product.attribute.value"
-    _inherit = ["product.attribute.value", "b2b.image"]
+    # ~ # PublicImage params
+    # ~ _attr_image_model_field = "image_color"
+    # ~ _max_public_file_size = (None, 62)
 
-    # PublicImage params
-    _attr_image_model_field = "image_color"
-    _max_public_file_size = (None, 62)
+    # ~ is_color = fields.Boolean(related="attribute_id.is_color", store=False)
+    # ~ html_color = fields.Char(
+        # ~ string="HTML Color",
+        # ~ oldname="color",
+        # ~ help="Here you can set a specific HTML color index (e.g. #ff0000) to display the color on the website if the attibute type is 'Color'.",
+    # ~ )
+    # ~ image_color = fields.Binary(
+        # ~ attachment=True,
+        # ~ help="This field holds the image used as thumbnail for the attribute colors, limited to 62px.",
+    # ~ )
+    # ~ image_color_filename = fields.Char(
+        # ~ string="Color Image Name"
+    # ~ )  # To check extension
+    # ~ public_image_name = fields.Char("Color Public File Name")
 
-    is_color = fields.Boolean(related="attribute_id.is_color", store=False)
-    html_color = fields.Char(
-        string="HTML Color",
-        oldname="color",
-        help="Here you can set a specific HTML color index (e.g. #ff0000) to display the color on the website if the attibute type is 'Color'.",
-    )
-    image_color = fields.Binary(
-        attachment=True,
-        help="This field holds the image used as thumbnail for the attribute colors, limited to 62px.",
-    )
-    image_color_filename = fields.Char(
-        string="Color Image Name"
-    )  # To check extension
-    public_image_name = fields.Char("Color Public File Name")
-
-    @api.constrains("image_color_filename")
-    def _check_filename(self):
-        if self.image_color and self.image_color_filename:
-            # Check the file's extension
-            tmp = self.image_color_filename.split(".")
-            ext = tmp[len(tmp) - 1]
-            if ext != "jpg":
-                raise ValidationError(_("The image must be a jpg file"))
+    # ~ @api.constrains("image_color_filename")
+    # ~ def _check_filename(self):
+        # ~ if self.image_color and self.image_color_filename:
+            # ~ # Check the file's extension
+            # ~ tmp = self.image_color_filename.split(".")
+            # ~ ext = tmp[len(tmp) - 1]
+            # ~ if ext != "jpg":
+                # ~ raise ValidationError(_("The image must be a jpg file"))
 
 
 ####################### CATEGORÍA WEB #######################
@@ -518,11 +518,12 @@ class ProductImage(models.Model):
     product_tmpl_id = fields.Many2one(
         "product.template", string="Related Product", copy=True
     )
-    product_attributes_values = fields.Many2many(
-        "product.attribute.value",
-        relation="product_image_rel",
-        domain=_default_attributes_domain,
-    )
+    #TODO: Migrar, no existe el modelo product.attribute.value
+    # ~ product_attributes_values = fields.Many2many(
+        # ~ "product.attribute.value",
+        # ~ relation="product_image_rel",
+        # ~ domain=_default_attributes_domain,
+    # ~ )
     sequence = fields.Integer(
         default=0, help="Gives the sequence order for images"
     )

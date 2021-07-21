@@ -29,13 +29,13 @@
             </field>
         </record>
 
-        <act_window name="Propagate property fields"
-            res_model="propagate.partner.properties"
-            binding_model="res.partner"
-            view_mode="form"
-            binding_views="form"
-            target="new"
-            id="propagate_partner_fields_action"
-        />
+        <record id="propagate_partner_fields_action" model="ir.actions.act_window">
+                <field name="name">Propagate property fields</field>
+                <field name="res_model">propagate.partner.properties</field>
+                <field name="binding_model_id" ref="base.model_res_partner"/>
+                <field name="view_mode">form</field>
+                <field name="binding_view_types">form</field>
+                <field name="target">new</field>
+        </record>
 
 </odoo>

@@ -44,12 +44,13 @@
             </field>
         </record>
 
-        <act_window name="Add to container"
-            res_model="container.picking.wizard"
-            binding_model="shipping.container"
-            view_mode="form"
-            target="new"
-            id="action_add_container_picking_wzd"
-            groups="purchase.group_purchase_user"/>
+        <record id="action_add_container_picking_wzd" model="ir.actions.act_window">
+                <field name="name">Add to container</field>
+                <field name="res_model">container.picking.wizard</field>
+                <field name="binding_model_id" ref="model_shipping_container"/>
+                <field name="view_mode">form</field>
+                <field name="target">new</field>
+                <field name="groups">purchase.group_purchase_user</field>
+        </record>
 
 </odoo>

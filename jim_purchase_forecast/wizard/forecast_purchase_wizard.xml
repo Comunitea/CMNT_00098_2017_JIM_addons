@@ -31,12 +31,13 @@
             </field>
         </record>
 
-        <act_window name="Add to purchase order"
-            res_model="forecast.purchase.wizard"
-            binding_model="purchase.forecast.line"
-            view_mode="form"
-            target="new"
-            id="action_add_forecast_purchase_line_wzd"
-            groups="purchase.group_purchase_user"/>
+        <record id="action_add_forecast_purchase_line_wzd" model="ir.actions.act_window">
+                <field name="name">Add to purchase order</field>
+                <field name="res_model">forecast.purchase.wizard</field>
+                <field name="binding_model_id" ref="model_purchase_forecast_line"/>
+                <field name="view_mode">form</field>
+                <field name="target">new</field>
+                <field name="groups">purchase.group_purchase_user</field>
+        </record>
 
 </odoo>

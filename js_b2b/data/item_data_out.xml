@@ -28,7 +28,7 @@ def get_data(self, action):
     }</field>
         </record>
 
-        <record id="b2b_item_out_2" model="b2b.item.out">
+        <!--TODO: Migrar<record id="b2b_item_out_2" model="b2b.item.out">
             <field name="sequence">2</field>
             <field name="active">False</field>
             <field name="exclude_on_sync">False</field>
@@ -81,7 +81,7 @@ def get_data(self, action):
         'description': self.get_field_translations('description'),
         'image': b2b['images_base'] + self.public_image_name if self.public_image_name else None
     }</field>
-        </record>
+        </record>-->
 
         <record id="b2b_item_out_4" model="b2b.item.out">
             <field name="sequence">4</field>

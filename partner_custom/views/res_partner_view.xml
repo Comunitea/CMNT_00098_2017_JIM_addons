@@ -9,15 +9,16 @@
             <group name="purchase" position="inside">
                 <field name="harbor_ids" widget="many2many_tags" options="{'no_create_edit': True}"/>
             </group>
-            <field name="user_id" position="after">
+            <xpath expr="//page[@name='sales_purchases']//field[@name='user_id']" position="after">
                 <field name="web_password"/>
                 <field name="invoice_in_paper"/>
-            </field>
-            <!--field name="company_id" position="after">
-                <field name="propietary"/>
-            </field-->
+            </xpath>
             <field name="lang" position="before">
                 <field name="default_contact_person"/>
+            </field>
+            <field name="is_company" position="after">
+                <field name="customer_rank" invisible="1"/>
+                <field name="supplier_rank" invisible="1"/>
             </field>
             <field name="ref" position="replace"/>
             <field name="lang" position="after">
@@ -32,9 +33,9 @@
             <field name="email" position="attributes">
                 <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
             </field>
-            <field name="company_id" position="attributes">
+            <xpath expr="//group[@name='misc']//field[@name='company_id']" position="attributes">
                 <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
-            </field>
+            </xpath>
             <field name="street" position="attributes">
                 <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
             </field>
@@ -42,13 +43,10 @@
                 <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
             </field>
             <field name="city" position="attributes">
-                <attribute name="attrs">{'required': True}</attribute>
+                <attribute name="required">True</attribute>
             </field>
             <field name="zip" position="attributes">
                 <attribute name="attrs">{'required': [('is_company', '=', True)]}</attribute>
-            </field>
-            <field name="property_account_position_id" position="attributes">
-                <attribute name="attrs">{'required': [('is_company', '=', True),('customer', '=', True)]}</attribute>
             </field>
             <xpath expr="//field[@name='child_ids']/form//field[@name='street']" position="attributes">
                 <attribute name="attrs">{'required': [('type', 'in', ['invoice', 'delivery'])]}</attribute>
@@ -72,16 +70,19 @@
         <field name="arch" type="xml">
             <field name="property_payment_term_id" position="attributes">
                 <attribute name="widget">many2one</attribute>
-                <attribute name="attrs">{'required': [('is_company', '=', True),('customer', '=', True)]}</attribute>
+                <attribute name="attrs">{'required': [('is_company', '=', True),('customer_rank', '>', 0)]}</attribute>
+            </field>
+             <field name="property_account_position_id" position="attributes">
+                <attribute name="attrs">{'required': [('is_company', '=', True),('customer_rank', '>', 0)]}</attribute>
             </field>
             <field name="customer_payment_mode_id" position="attributes">
-                <attribute name="attrs">{'required': [('is_company', '=', True),('customer', '=', True)]}</attribute>
+                <attribute name="attrs">{'required': [('is_company', '=', True),('customer_rank', '>', 0)]}</attribute>
             </field>
             <field name="property_supplier_payment_term_id" position="attributes">
-                <attribute name="attrs">{'required': [('is_company', '=', True),('supplier', '=', True)]}</attribute>
+                <attribute name="attrs">{'required': [('is_company', '=', True),('supplier_rank', '>', 0)]}</attribute>
             </field>
             <field name="supplier_payment_mode_id" position="attributes">
-                <attribute name="attrs">{'required': [('is_company', '=', True),('supplier', '=', True)]}</attribute>
+                <attribute name="attrs">{'required': [('is_company', '=', True),('supplier_rank', '>', 0)]}</attribute>
             </field>
         </field>
     </record>
@@ -92,7 +93,7 @@
         <field name="inherit_id" ref="product.view_partner_property_form"/>
         <field name="arch" type="xml">
             <field name="property_product_pricelist" position="attributes">
-                <attribute name="attrs">{'required': [('is_company', '=', True),('customer', '=', True)]}</attribute>
+                <attribute name="attrs">{'required': [('is_company', '=', True),('customer_rank', '>', 0)]}</attribute>
             </field>
         </field>
     </record>

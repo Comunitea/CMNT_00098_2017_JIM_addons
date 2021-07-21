@@ -159,11 +159,11 @@ class CrmClaim(models.Model):
         if self.partner_id and (
             (
                 self.claim_type.type == "customer"
-                and not self.partner_id.customer
+                and not self.partner_id.customer_rank > 0
             )
             or (
                 self.claim_type.type == "supplier"
-                and not self.partner_id.supplier
+                and not self.partner_id.supplier_rank > 0
             )
         ):
             self.email_from = self.partner_id.email

@@ -3,7 +3,7 @@
 
 {
     "name": "Product Stock At Date",
-    "version": "13.0.1.0.0",
+    "version": "14.0.1.0.0",
     "category": "Custom",
     "license": "AGPL-3",
     "author": "Comunitea, ",

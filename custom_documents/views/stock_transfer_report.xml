@@ -136,13 +136,13 @@
 
     <delete id="stock.action_report_picking" model="ir.actions.report"/>
 
-    <report
-        id="stock_transfer_report"
-        name="custom_documents.stock_transfer_report_document"
-        file="custom_documents.stock_transfer_report_document"
-        report_type="qweb-pdf"
-        model="stock.picking"
-        string="Traslado"/>
+    <record id="stock_transfer_report" model="ir.actions.report">
+        <field name="report_name">custom_documents.stock_transfer_report_document</field>
+        <field name="file">custom_documents.stock_transfer_report_document</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="model">stock.picking</field>
+        <field name="name">Traslado</field>
+    </record>
 
     <record id="custom_documents.stock_transfer_report" model="ir.actions.report">
         <field name="paperformat_id" ref="picking_paperformat_euro" />
