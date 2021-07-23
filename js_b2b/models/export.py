@@ -283,7 +283,31 @@ class B2BExport(models.Model):
 		stock = list()
 
 		try:
-			stock = self.env['exportxml.object'].compute_product_ids(all=export_all, from_time=from_date, limit=test_limit, inc=1000)
+
+			# Si se filtra por una lista de plantillas y/o variante sacamos el
+			# stock actual sin usar el módulo de Comunitea, desde la última actualización
+			# no funciona filtrar las plantillas con el parámetro "all"
+			if templates_filter and type(templates_filter) in (list, tuple):
+
+				def add_stock(product):
+					stock.append({
+						'variant_id': product.id if product.attribute_names else None,
+						'product_id': product.product_tmpl_id.id,
+						'stock': product.web_global_stock
+					})
+
+				Product = self.env['product.product'].with_context(active_test=False)
+
+				if variant:
+					product = Product.browse(variant)
+					if product.website_published and product.attribute_names:
+						add_stock(product)
+				else:
+					for product in Product.search([('type', '=', 'product'), ('website_published', '=', True), ('product_tmpl_id', 'in', templates_filter)]):
+						add_stock(product)
+			else:
+				stock = self.env['exportxml.object'].compute_product_ids(all=export_all, from_time=from_date, limit=test_limit, inc=1000)
+
 		except Exception as e:
 			_logger.exception('[b2b_products_stock] ERROR EN EL BUCLE!')
 		finally:
