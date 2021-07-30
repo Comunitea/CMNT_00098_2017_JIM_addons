@@ -178,7 +178,7 @@ class ProductTemplate(models.Model):
         results = list()
 
         for product in self:
-            tag_ids = vals.get("tags_ids", product.tag_ids)
+            tag_ids = vals.get("categ_ids", product.categ_ids)
             barcode = vals.get("barcode", product.barcode)
             ptype = vals.get("type", product.type)
 
@@ -244,7 +244,7 @@ class ProductProduct(models.Model):
     _inherit = "product.product"
 
     def _filter_variant_images(self):
-        product_attrs = self.attribute_value_ids._ids
+        product_attrs = self.product_template_attribute_value_ids._ids
         self.product_image_ids = (
             self.env["product.image"]
             .search(
@@ -316,7 +316,7 @@ class ProductProduct(models.Model):
 
         # Check if variant can be published
         for variant in self:
-            tag_ids = vals.get("tags_ids", variant.tag_ids)
+            tag_ids = vals.get("categ_ids", variant.categ_ids)
             barcode = vals.get("barcode", variant.barcode)
             ptype = vals.get("type", variant.type)
 
@@ -383,24 +383,24 @@ class ProductBrand(models.Model):
 ####################### ETIQUETA (CATEGORÍA) #######################
 
 
-class ProductTag(models.Model):
-    _name = "product.tag"
-    _inherit = ["product.tag", "b2b.image"]
+class ProductCategory(models.Model):
+    _name = "product.category"
+    _inherit = ["product.category", "b2b.image"]
     _order = "sequence, parent_left"
 
     # PublicImage params
     _attr_image_model_field = "image"
     _max_public_file_size = (1280, None)
 
-    child_ids = fields.One2many(
+    child_id = fields.One2many(
         domain=["|", ("active", "=", True), ("active", "=", False)]
     )
     sequence = fields.Integer(help="Gives the sequence order for tags")
     public_image_name = fields.Char("Tag Public File Name")
 
     def unlink(self):
-        if not self.child_ids:
-            super(ProductTag, self).unlink()
+        if not self.child_id:
+            super().unlink()
         else:
             raise ValidationError(_("Delete child tags first!"))
         return True
@@ -534,7 +534,7 @@ class ProductImage(models.Model):
         variants_published = self.product_tmpl_id.product_variant_ids.filtered(
             lambda x: x.website_published == True
         )
-        for attr_id in variants_published.mapped("attribute_value_ids").ids:
+        for attr_id in variants_published.mapped("product_template_attribute_value_ids").ids:
             on_images_counter = self.env["product.image"].search_count(
                 [("product_attributes_values", "=", attr_id)]
             )

@@ -24,7 +24,7 @@
                                     <p>Ref.: <span t-field="product.default_code"/> </p>
                                     <p>Desc.: <span t-field="product.name"/> </p>
                                     <p>
-                                        <t t-foreach="product.attribute_value_ids" t-as="attribute_value">
+                                        <t t-foreach="product.product_template_attribute_value_ids" t-as="attribute_value">
                                             <t t-if="attribute_value.attribute_id.is_color">Color</t> <t t-if="not attribute_value.attribute_id.is_color">Talla</t>: <span t-field="attribute_value.name"/>
                                         </t>
                                     </p>
@@ -78,7 +78,7 @@
                                     <p>Ref.: <span t-field="product.default_code"/> </p>
                                     <p>Desc.: <span t-field="product.name"/> </p>
                                     <p>
-                                        <t t-foreach="product.attribute_value_ids" t-as="attribute_value">
+                                        <t t-foreach="product.product_template_attribute_value_ids" t-as="attribute_value">
                                             <t t-if="attribute_value.attribute_id.is_color">Color</t>
                                             <t t-if="not attribute_value.attribute_id.is_color">Talla</t>: <span t-field="attribute_value.name"/>
                                         </t>

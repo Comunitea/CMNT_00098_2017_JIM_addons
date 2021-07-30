@@ -27,9 +27,9 @@ class StockPicking(models.Model):
         default=lambda self: self.env.user.company_id.partner_id.id,
         states={},
     )
-    observations = fields.Text(related="sale_id.observations")
+    observations = fields.Text(related="sale_id.note")
     purchase_date_order = fields.Datetime(related="purchase_id.date_order")
-    confirmation_date = fields.Datetime(related="sale_id.confirmation_date")
+    confirmation_date = fields.Datetime(related="sale_id.date_order")
     returned_picking_id = fields.Many2one("stock.picking")
     force_date = fields.Datetime("Forzar fecha de entrada")
 

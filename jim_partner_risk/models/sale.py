@@ -2,7 +2,6 @@
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
 from odoo import _, api, fields, models
-import odoo.addons.decimal_precision as dp
 
 
 class SaleOrder(models.Model):
@@ -117,7 +116,7 @@ class SaleOrderLine(models.Model):
     cancelled_qty = fields.Float(
         "Cancelled Quantity",
         compute="_get_cancelled_qty",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         store=True,
     )
 
@@ -130,5 +129,5 @@ class SaleOrderLineTemplate(models.Model):
     )
     cancelled_qty = fields.Float(
         "Cancelled Quantity",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
     )

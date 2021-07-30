@@ -6,7 +6,7 @@
         <field name="model">account.invoice.report</field>
         <field name="inherit_id" ref="account.view_account_invoice_report_search"/>
         <field name="arch" type="xml">
-            <field name="categ_id" position="after">
+            <field name="product_categ_id" position="after">
                 <field name="active_category" filter_domain="[('active_category', '=', True)]"/>
             </field>
 

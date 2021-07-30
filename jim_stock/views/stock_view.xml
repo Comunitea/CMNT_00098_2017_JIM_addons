@@ -6,26 +6,29 @@
             <field name="model">stock.quant.package</field>
             <field name="inherit_id" ref="delivery.view_quant_package_weight_form"/>
             <field name="arch" type="xml">
-
-                <xpath expr="//field[@name='shipping_weight']" position="replace">
-
-                </xpath>
+                <xpath expr="//label[@for='shipping_weight']" position="replace"/>
+                <xpath expr="//div[@name='Shipping Weight']" position="replace"/>
             </field>
         </record>
+
         <record id="view_quant_package_volume_form" model="ir.ui.view">
             <field name="name">stock.quant.package.volume.form</field>
             <field name="model">stock.quant.package</field>
             <field name="inherit_id" ref="stock.view_quant_package_form"/>
             <field name="arch" type="xml">
-
-                <xpath expr="//notebook" position="inside">
-                    <page string="Weight and volume">
+                <field name="quant_ids" position="after">
+                    <group string="Weight and volume">
                         <field name="packaging_id_code" invisible="1"/>
                         <div>
                             <group>
                                 <group>
                                     <field name="volume" />
-                                    <field name="shipping_weight"/>
+                                    <label for="shipping_weight"/>
+                                    <div class="o_row" name="Shipping Weight">
+                                        <field name="shipping_weight"/>
+                                        <span><field name="weight_uom_name"/></span>
+                                        <span class="text-muted">(computed: <field name="weight" nolabel="1"/></span><span class="text-muted"><field name="weight_uom_name" nolabel="1"/>)</span>
+                                    </div>
                                     <field name="shipping_volume"/>
                                 </group>
                                 <group>
@@ -36,8 +39,8 @@
 
                             </group>
                             </div>
-                       </page>
-                   </xpath>
+                       </group>
+                   </field>
             </field>
         </record>
         <record id="view_location_form_deposit" model="ir.ui.view" >
@@ -59,10 +62,9 @@
                 <field name="carrier_id" position="attributes">
                     <attribute name="attrs"></attribute>
                 </field>
-                <field name="number_of_packages" position="replace">
+                <field name="delivery_type" position="after">
                     <field name="pick_packages"/>
                     <field name="pick_weight"/>
-                    <field name="number_of_packages" invisible="1"/>
 
                 </field>
                 <field name="shipping_weight" position="attributes">
@@ -77,23 +79,20 @@
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
-                <field name="partner_id" position="attributes">
-                    <attribute name="attrs"></attribute>
-                </field>
-                <xpath expr="//field[@name='min_date']"  position="after">
+                <xpath expr="//field[@name='date_deadline']"  position="before">
                     <field name="sale_id" invisible="1"/>
+                    <field name="purchase_id" invisible="1"/>
                     <field name="purchase_date_order" attrs="{'invisible': [('purchase_id', '=', False)]}"/>
                     <field name="force_date" attrs="{'invisible': [('purchase_id', '=', False)]}"/>
                     <field name="confirmation_date" attrs="{'invisible': [('sale_id', '=', False)]}"/>
                 </xpath>
-                <field name="pack_operation_product_ids" position="after">
+                <page name="operations" position="inside">
                     <group string="Observations" attrs="{'invisible': [('sale_id', '=', False)]}">
                         <field name="observations" nolabel="1"/>
                     </group>
-                </field>
-                 <xpath expr="//field[@name='min_date']" position="replace">
-                    <field name="min_date" attrs="{'invisible': [('state', '==', 'done')]}"/>
-                    <field name="date_done" states="done"/>
+                </page>
+                 <xpath expr="//field[@name='scheduled_date']" position="attributes">
+                     <attribute name="attrs">{'required': [('id', '!=', False)], 'invisible': [('state', '=', 'done')]}</attribute>
                 </xpath>
 
 
@@ -104,39 +103,24 @@
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//field[@name='pack_operation_product_ids']/tree" position="attributes">
-                    <attribute name="decoration-danger">ordered_qty &gt; qty_done or qty_done == 0</attribute>
-                    <attribute name="decoration-info">qty_done > ordered_qty</attribute>
-                    <attribute name="decoration-success">qty_done == ordered_qty</attribute>
-                    <attribute name="decoration-bf">qty_done &lt; ordered_qty or qty_done == 0</attribute>
+                <xpath expr="//field[@name='move_ids_without_package']/tree" position="attributes">
+                    <attribute name="decoration-danger">state != 'done' and (product_uom_qty > quantity_done or quantity_done == 0)</attribute>
+                    <attribute name="decoration-info">state != 'done' and  quantity_done > product_uom_qty</attribute>
+                    <attribute name="decoration-success">quantity_done == product_uom_qty</attribute>
                 </xpath>
-
-
             </field>
         </record>
+
         <record id="view_move_picking_tree_colors" model="ir.ui.view">
             <field name="name">view.move.picking.tree.colors</field>
             <field name="model">stock.move</field>
-            <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+            <field name="inherit_id" ref="stock.view_picking_move_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//tree" position="attributes">
                     <attribute name="decoration-success">reserved_availability == product_uom_qty</attribute>
-                    <attribute name="decoration-info">product_uom_qty>0 and state=='done'</attribute>
-                    <attribute name="decoration-bf">reserved_availability &lt; product_uom_qty</attribute>
                     <attribute name="decoration-danger">(reserved_availability &lt; product_uom_qty) and state != 'done'</attribute>
-                    <attribute name="decoration-info">(reserved_availability &lt; product_uom_qty) and state == 'assigned'</attribute>
+                    <attribute name="decoration-info">(reserved_availability &lt; product_uom_qty) and state != 'done'</attribute>
                 </xpath>
-
-                <xpath expr="//field[@name='remaining_qty']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='availability']" position="attributes">
-                    <attribute name="invisible">1</attribute>
-                </xpath>
-                <xpath expr="//field[@name='reserved_availability']" position="attributes">
-                    <attribute name="invisible">0</attribute>
-                </xpath>
-
             </field>
         </record>
         <menuitem id="menu_stock_scrips" name="Utilidades" parent="stock.menu_stock_config_settings" sequence="14"/>

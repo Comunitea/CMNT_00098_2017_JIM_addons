@@ -243,7 +243,6 @@ class SaleOrder(models.Model):
             else:
                 order.state = "pending"
             date_order = fields.Datetime.now()
-            order.confirmation_date = date_order
             order.date_order = date_order
             if (
                 order.partner_id.sale_warn_msg

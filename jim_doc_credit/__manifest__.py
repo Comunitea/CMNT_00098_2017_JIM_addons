@@ -5,7 +5,7 @@
     "name": "Documentary credit",
     "version": "14.0.1.0.0",
     "depends": [
-        "purchase",
+        "purchase_stock",
         "purchase_advance_payment",
         "res_currency_fixed_rate",
         "shipping_container",

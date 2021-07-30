@@ -13,7 +13,7 @@
                     <field name="company_id"/>
                     <field name="tag_names"/>
                 </field>
-                <field name="attribute_value_ids" position="replace">
+                <field name="product_template_attribute_value_ids" position="replace">
                     <field name="attribute_names"/>
                 </field>
                 <field name="price" position="attributes">
@@ -26,7 +26,7 @@
             </field>
         </record>
 
-        <record model="ir.ui.view" id="product_packaging_form_view_compute_dimensions">
+        <!--TODO: Migrar<record model="ir.ui.view" id="product_packaging_form_view_compute_dimensions">
             <field name="name">product.packaging.form.compute.dimension</field>
             <field name="model">product.packaging</field>
             <field name="inherit_id" ref="product.product_packaging_form_view"/>
@@ -38,7 +38,7 @@
                     </div>
                 </xpath>
             </field>
-        </record>
+        </record>-->
          <record model="ir.ui.view" id="product_packagin_tree_apply_dimens">
             <field name="name">product.packaging.apply_dimensions</field>
             <field name="model">product.packaging</field>
@@ -112,9 +112,20 @@
         <record id="product_template_form_inherit_req_field" model="ir.ui.view">
             <field name="name">product.template.view.form</field>
             <field name="model">product.template</field>
-            <field name="inherit_id" ref="product_tags.product_template_form_inherit"/>
+            <field name="inherit_id" ref="product_multi_category.product_template_only_form_view_add_categids"/>
             <field name="arch" type="xml">
-                <field name="tag_ids" position="attributes">
+                <field name="categ_ids" position="attributes">
+                    <attribute name="attrs">{'required': [('type', '!=', 'service')]}</attribute>
+                </field>
+            </field>
+        </record>
+
+        <record id="product_product_form_inherit_req_field" model="ir.ui.view">
+            <field name="name">product.product.view.form</field>
+            <field name="model">product.product</field>
+            <field name="inherit_id" ref="product_multi_category.product_normal_form_view_add_categids"/>
+            <field name="arch" type="xml">
+                <field name="categ_ids" position="attributes">
                     <attribute name="attrs">{'required': [('type', '!=', 'service')]}</attribute>
                 </field>
             </field>
@@ -125,7 +136,7 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="product.product_template_kanban_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//ul/li/field[@name='lst_price']/.." position="attributes">
+                <xpath expr="//div[@name='product_lst_price']" position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>
@@ -135,7 +146,7 @@
             <field name="model">product.product</field>
             <field name="inherit_id" ref="product.product_kanban_view"/>
             <field name="arch" type="xml">
-                <xpath expr="//ul/li/field[@name='lst_price']/.." position="attributes">
+                <xpath expr="//field[@name='lst_price']/../.." position="attributes">
                     <attribute name="invisible">1</attribute>
                 </xpath>
             </field>

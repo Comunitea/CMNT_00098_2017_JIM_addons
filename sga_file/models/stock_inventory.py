@@ -4,7 +4,6 @@
 
 
 from odoo import fields, models, api, _
-from odoo.addons import decimal_precision as dp
 from odoo.exceptions import UserError, ValidationError
 from datetime import datetime
 
@@ -68,13 +67,13 @@ class StockInventoryLineSGA(models.Model):
     from_sga = fields.Boolean("From mecalux", default=False)
     stock_mecalux = fields.Float(
         "Global stock (Mecalux)",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         readonly=True,
     )
     global_qty = fields.Float(
         "Global stock (Odoo)",
         compute="_compute_global_qty",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         readonly=True,
         store=True,
     )

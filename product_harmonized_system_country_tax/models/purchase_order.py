@@ -1,14 +1,13 @@
 # © 2016 Comunitea
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import api, fields, models, _
-import odoo.addons.decimal_precision as dp
 
 
 class PurchaseOrderLine(models.Model):
 
     _inherit = "purchase.order.line"
 
-    hscode_tax = fields.Float("Tax", digits=dp.get_precision("Product Price"))
+    hscode_tax = fields.Float("Tax", digits="Product Price")
 
     @api.onchange("product_id")
     def onchange_product_id(self):

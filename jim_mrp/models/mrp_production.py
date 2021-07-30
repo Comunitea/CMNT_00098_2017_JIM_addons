@@ -1,7 +1,6 @@
 # © 2016 Comunitea
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import api, fields, models, _
-import odoo.addons.decimal_precision as dp
 from odoo.exceptions import ValidationError
 
 
@@ -25,13 +24,13 @@ class MrpProduction(models.Model):
 
     global_real_stock = fields.Float(
         "Global Real Stock",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         help="Real stock in all companies.",
     )
     web_global_stock = fields.Float(
         "Web stock",
         readonly=True,
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
     )
     note = fields.Text()
 
@@ -92,13 +91,13 @@ class StockMove(models.Model):
 
     global_real_stock = fields.Float(
         "Global Real Stock",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         help="Real stock in all companies.",
     )
     web_global_stock = fields.Float(
         "Web stock",
         readonly=True,
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
     )
 
 

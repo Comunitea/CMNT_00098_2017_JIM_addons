@@ -14,7 +14,6 @@
         "delivery",
         "custom_sale_order_variant_mgmt",
         "jim_stock",
-        "sale_order_batch_confirm",
         "telesale",
         "sale_early_payment_discount",
         "web_tree_many2one_clickable",

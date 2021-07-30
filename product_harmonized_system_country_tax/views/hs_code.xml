@@ -6,7 +6,7 @@
         <field name="model">hs.code</field>
         <field name="inherit_id" ref="product_harmonized_system.hs_code_view_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//group[@name='product-tmpl']" position="after">
+            <xpath expr="//group[@name='main']" position="after">
                  <group name="country-taxes" string="Country Taxes">
                     <field name="country_tax_ids" nolabel="1">
                         <tree>

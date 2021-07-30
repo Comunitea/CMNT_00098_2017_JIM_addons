@@ -89,7 +89,7 @@ class SaleManageVariant(models.TransientModel):
                 if value_y:
                     values += value_y
                 product = template.product_variant_ids.filtered(
-                    lambda x: not (values - x.attribute_value_ids)
+                    lambda x: not (values - x.product_template_attribute_value_ids)
                 )[:1]
                 order_line = sale_order.order_line.filtered(
                     lambda x: x.product_id == product

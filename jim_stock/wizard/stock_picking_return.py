@@ -3,7 +3,6 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 
 from odoo import api, fields, models, _
-from odoo.addons import decimal_precision as dp
 from odoo.exceptions import UserError
 
 DOMAIN_LOCATION_ID = "['|', ('id', '=', original_location_id), '&', ('return_location', '=', True), ('id', 'child_of', parent_location_id)]"
@@ -28,7 +27,7 @@ class StockMove(models.Model):
     _inherit = "stock.move"
 
     returned_qty = fields.Float(
-        "Returned quantity", digits=dp.get_precision("Product Unit of Measure")
+        "Returned quantity", digits="Product Unit of Measure"
     )
 
     def copy(self, default=None):
@@ -45,14 +44,14 @@ class StockReturnPickingLine(models.TransientModel):
     _inherit = "stock.return.picking.line"
 
     qty_done = fields.Float(
-        "Quantity done", digits=dp.get_precision("Product Unit of Measure")
+        "Quantity done", digits="Product Unit of Measure"
     )
     ordered_qty = fields.Float(
-        "Ordered quantity", digits=dp.get_precision("Product Unit of Measure")
+        "Ordered quantity", digits="Product Unit of Measure"
     )
     quantity = fields.Float(
         "Quantity available",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         required=True,
     )
     description = fields.Char("Producto")

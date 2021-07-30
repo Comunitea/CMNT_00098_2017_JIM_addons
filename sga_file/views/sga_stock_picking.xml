@@ -102,9 +102,9 @@ records.new_mecalux_file()
                     <!--<field name="sga_state" attrs="{'invisib1le': [('sga_state', '=', 'NI')], 'readonly': '1'}"/>-->
                 </field>
 
-                <xpath expr="//field[@name='pack_operation_product_ids']/tree/field[@name='package_id']" position="before">
+                <!--TODO: Migrar<xpath expr="//field[@name='pack_operation_product_ids']/tree/field[@name='package_id']" position="before">
                     <field name="id" groups="sga_file.group_sga_file_debug"/>
-                </xpath>
+                </xpath>-->
             </field>
         </record>
         <!--view_picking_withcarrier_out_form-->
@@ -147,17 +147,17 @@ records.new_mecalux_file()
                     <filter string="Mecalux status" name="mecalux_status" domain="[]" context="{'group_by':'sga_state'}"/>
                 </xpath>
                 <xpath expr="//filter[@name='late']" position="after">
-                    <filter name="last_72h" string="Last 72h" domain="[('min_date','&gt;', (context_today() - datetime.timedelta(days=3)).strftime('%Y-%m-%d') )]"/>
-                    <filter name="next_24h" string="Next 24h" domain="[('min_date','&lt;', (context_today() + datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d') )]"/>
-                    <filter name="next_week" string="Next Week" domain="[('min_date','&lt;', (context_today() + datetime.timedelta(weeks=1)).strftime('%%Y-%%m-%%d') )]"/>
-                    <filter name="next_two_week" string="Next 15 days" domain="[('min_date','&lt;', (context_today() + datetime.timedelta(days=15)).strftime('%%Y-%%m-%%d') )]"/>
+                    <filter name="last_72h" string="Last 72h" domain="[('scheduled_date','&gt;', (context_today() - datetime.timedelta(days=3)).strftime('%Y-%m-%d') )]"/>
+                    <filter name="next_24h" string="Next 24h" domain="[('scheduled_date','&lt;', (context_today() + datetime.timedelta(days=1)).strftime('%%Y-%%m-%%d') )]"/>
+                    <filter name="next_week" string="Next Week" domain="[('scheduled_date','&lt;', (context_today() + datetime.timedelta(weeks=1)).strftime('%%Y-%%m-%%d') )]"/>
+                    <filter name="next_two_week" string="Next 15 days" domain="[('scheduled_date','&lt;', (context_today() + datetime.timedelta(days=15)).strftime('%%Y-%%m-%%d') )]"/>
                 </xpath>
             </field>
         </record>
         <record id="view_move_picking_tree_debug" model="ir.ui.view">
             <field name="name">view.move.picking.tree.debug</field>
             <field name="model">stock.move</field>
-            <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+            <field name="inherit_id" ref="stock.view_picking_move_tree"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='state']" position="after">
                     <field name="move_dest_id" groups="sga_file.group_sga_file_debug"/>

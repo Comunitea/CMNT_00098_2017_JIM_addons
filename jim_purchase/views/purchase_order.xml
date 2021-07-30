@@ -9,40 +9,26 @@
             <xpath expr="//field[@name='order_line']/tree/field[@name='product_uom']" position="after">
                 <field name="line_volume"/>
                 <field name="line_weight"/>
-                <!--<button name="show_line_info" string="Info" type="object" icon="fa-pencil" />-->
             </xpath>
             <xpath expr="//field[@name='order_line']/tree/field[@name='date_planned']" position="after">
                 <field name="web_global_stock"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']/tree/field[@name='company_id']" position="replace">
-                <field name="company_id" invisible="1"/>
-            </xpath>
-            <xpath expr="//field[@name='order_line']/form/sheet/group/group/field[@name='price_unit']" position="after">
+            <xpath expr="//field[@name='order_line']/form//field[@name='price_unit']" position="after">
                 <field name="line_volume"/>
                 <field name="line_weight"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']/form/sheet/notebook/page/field[@name='name']" position="after">
+            <xpath expr="//field[@name='order_line']/form//field[@name='name']" position="after">
                 <label for="line_info"/>
                 <field name="line_info"/>
-            </xpath>
-            <xpath expr="//field[@name='order_line']/form/sheet/notebook/page/field[@name='name']" position="before">
-                <field name="state" invisible="1"/>
-                <label for="name"/>
-            </xpath>
-             <xpath expr="//field[@name='order_line']/tree" position="attributes">
-                <attribute name="editable" />
             </xpath>
             <xpath expr="//field[@name='amount_total']" position="after">
                 <field name="order_volume"/>
                 <field name="order_weight"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']/tree" position="attributes">
-                <attribute name="editable">bottom</attribute>
-            </xpath>
             <xpath expr="//field[@name='origin']" position="after">
                 <field name="expediente" />
             </xpath>
-            <xpath expr="//page/field[@name='name']/.." position="after">
+            <xpath expr="//notebook" position="inside">
                 <page string="Histórico">
                     <field name="purchase_order_line_ids"/>
                 </page>

@@ -25,7 +25,7 @@
         </record>
 
         <record id="account.action_account_payments_payable" model="ir.actions.act_window">
-            <field name="context">{'default_payment_type': 'outbound', 'default_partner_type': 'supplier', 'readonly_by_pass': True}</field>
+            <field name="context">{'default_payment_type': 'outbound', 'default_partner_type': 'supplier', 'force_save': True}</field>
         </record>
 
 </odoo>

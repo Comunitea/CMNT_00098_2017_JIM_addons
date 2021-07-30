@@ -2,13 +2,13 @@
 <odoo>
   <data>
 
-    <report
+    <!--TODo: Migrar<report
         id="product_product_action_report_xlsx"
         model="product.product"
         string="Product report xl"
         report_type="xlsx"
         name="product_export_xlsx.product_web_xls"
-        file="product_export_xlsx.product_web_xls"/>
+        file="product_export_xlsx.product_web_xls"/>-->
 
   </data>
 </odoo>

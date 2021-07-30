@@ -19,7 +19,6 @@ class PurchaseForecast(models.Model):
         "res.partner", "Seller", domain=[("supplier", "=", True)]
     )
     harbor_id = fields.Many2one("res.harbor", "Harbor")
-    tag_ids = fields.Many2many("product.tag", string="Product Tags")
     date = fields.Date("Calculation Date", readonly=True)
 
     def _get_lines_count(self):
@@ -58,22 +57,6 @@ class PurchaseForecast(models.Model):
             demand = 0
         return demand
 
-    def _query_product_tags(self):
-        res = ("", {})
-        if self.tag_ids:
-            # Los campos tag_id y product_id de la tabla de relación tienen
-            # los nombres cambiados
-            query = """
-                    SELECT pp.id
-                    FROM product_product pp
-                    INNER JOIN product_product_tag_rel pptl ON 
-                    pptl.tag_id = pp.product_tmpl_id
-                    WHERE pptl.product_id in %(tag_ids)s
-                """
-            params = {"tag_ids": tuple(self.tag_ids.ids)}
-            res = (query, params)
-        return res
-
     def _query_product_category(self):
         res = ("", {})
         if self.category_ids:
@@ -81,7 +64,10 @@ class PurchaseForecast(models.Model):
                 SELECT pp.id
                 FROM product_product pp
                 INNER JOIN product_template pt on pt.id = pp.product_tmpl_id
-                WHERE pt.categ_id in %(categ_ids)s
+                LEFT JOIN product_categ_rel pptl ON
+                pptl.product_id = pt.id
+                WHERE pt.categ_id in %(categ_ids)s or
+                pptl.categ_id in %(categ_ids)s
             """
             params = {"categ_ids": tuple(self.category_ids.ids)}
             res = (query, params)
@@ -127,7 +113,6 @@ class PurchaseForecast(models.Model):
         query_category, map1 = self._query_product_category()
         query_seller, map2 = self._query_product_seller()
         query_harbor, map3 = self._query_product_harbor()
-        query_tags, map4 = self._query_product_tags()
 
         # Mmaking union of existing queries if exist
         intersect_separator = "\nINTERSECT\n"
@@ -144,11 +129,6 @@ class PurchaseForecast(models.Model):
             if product_query:
                 separator = intersect_separator
             product_query += separator + query_harbor
-        if query_tags:
-            separator = ""
-            if product_query:
-                separator = intersect_separator
-            product_query += separator + query_tags
 
         if not product_query:
             raise exceptions.UserError(

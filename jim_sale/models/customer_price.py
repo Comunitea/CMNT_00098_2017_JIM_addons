@@ -1,7 +1,6 @@
 # © 2016 Comunitea - Javier Colmenero <javier@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import api, fields, models
-import odoo.addons.decimal_precision as dp
 import time
 
 
@@ -17,7 +16,7 @@ class CustomerPrice(models.Model):
     price = fields.Float(
         "Price",
         default=0.0,
-        digits=dp.get_precision("Product Price"),
+        digits="Product Price",
         required=True,
         help="The price to purchase a product",
     )

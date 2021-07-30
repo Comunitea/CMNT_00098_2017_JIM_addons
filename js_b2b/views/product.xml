@@ -157,16 +157,14 @@
     </record>
 
     <!-- Product Categories -->
-    <record id="view_product_tag_form_b2b" model="ir.ui.view">
-        <field name="name">product.tag.view.form.b2b</field>
-        <field name="model">product.tag</field>
-        <field name="inherit_id" ref="product_tags.product_tag_form"/>
+    <record id="view_product_category_form_b2b" model="ir.ui.view">
+        <field name="name">product.category.view.form.b2b</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
         <field name="arch" type="xml">
-            <field name="parent_id" position="replace"/>
-
-            <xpath expr="./group[2]" position="after">
+            <xpath expr="//group[@name='first']" position="after">
                 <group>
-                    <field name="child_ids" widget="one2many_list" mode="tree">
+                    <field name="child_id" widget="one2many_list" mode="tree">
                         <tree decoration-success="active == True and web == True">
                             <field name="sequence" widget="handle"/>
                             <field name="name"/>
@@ -180,9 +178,9 @@
     </record>
 
     <record id="product_category_tree_view_b2b" model="ir.ui.view">
-        <field name="name">product.tag.tree.b2b</field>
-        <field name="model">product.tag</field>
-        <field name="inherit_id" ref="product_tags.product_tag_tree"/>
+        <field name="name">product.category.tree.b2b</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_list_view"/>
         <field name="arch" type="xml">
             <field name="display_name" position="before">
                 <field name="sequence" widget="handle"/>

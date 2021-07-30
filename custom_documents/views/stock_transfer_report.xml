@@ -48,7 +48,7 @@
                         <tr>
                             <td><span t-field="o.name"/></td>
                             <td><span t-field="o.state"/></td>
-                            <td><span t-field="o.min_date"/></td>
+                            <td><span t-field="o.scheduled_date"/></td>
                             <td><span t-field="o.location_id"/></td>
                             <td><span t-field="o.location_dest_id"/></td>
                             <td><span t-field="o.create_uid.name"/></td>

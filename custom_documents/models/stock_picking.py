@@ -4,7 +4,6 @@
 from odoo import models, fields, api
 from datetime import timedelta
 from pytz import timezone
-from odoo.addons import decimal_precision as dp
 
 
 class StockPicking(models.Model):
@@ -244,12 +243,12 @@ class StockMove(models.Model):
 # ~ )
 # ~ purchase_price_unit = fields.Float(
 # ~ compute="_compute_purchase_order_line_fields",
-# ~ digits=dp.get_precision("Product Price"),
+# ~ digits="Product Price",
 # ~ string="purchase price unit",
 # ~ )
 # ~ purchase_discount = fields.Float(
 # ~ compute="_compute_purchase_order_line_fields",
-# ~ digits=dp.get_precision("Discount"),
+# ~ digits="Discount",
 # ~ string="purchase discount (%)",
 # ~ )
 # ~ purchase_price_subtotal = fields.Float(
@@ -264,7 +263,7 @@ class StockMove(models.Model):
 # ~ qty_delivered = fields.Float(
 # ~ "Delivered qty",
 # ~ default=0.0,
-# ~ digits=dp.get_precision("Product Unit of Measure"),
+# ~ digits="Product Unit of Measure",
 # ~ compute="_get_qty_delivered",
 # ~ )
 

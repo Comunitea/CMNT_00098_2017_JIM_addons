@@ -26,12 +26,12 @@ class SaleOrderLine(models.Model):
     @api.model
     def create(self, vals):
         line = super(SaleOrderLine, self).create(vals)
-        if not line.product_id.attribute_value_ids:
+        if not line.product_id.product_template_attribute_value_ids:
             line.sequence = line.template_sequence
         else:
             new_sequence = 0
             cent = 100
-            for value in line.product_id.attribute_value_ids:
+            for value in line.product_id.product_template_attribute_value_ids:
                 if value.attribute_id.is_color:
                     new_sequence += value.id * ORDER_LINE_INC
                 else:

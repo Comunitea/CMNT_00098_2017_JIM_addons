@@ -14,7 +14,7 @@ class ProductProduct(models.Model):
         new_sequence = 0
         for product in self:
             new_sequence = sequence_origin * ORDER_LINE_INC * ORDER_LINE_INC
-            for value in product.attribute_value_ids:
+            for value in product.product_template_attribute_value_ids:
                 if value.is_color:
                     new_sequence += value.sequence * ORDER_LINE_INC
                 else:

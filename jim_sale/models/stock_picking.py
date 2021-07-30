@@ -7,7 +7,7 @@ class StockPicking(models.Model):
     _inherit = "stock.picking"
 
     scheduled_order = fields.Boolean("Scheduled Order")
-    confirmation_date = fields.Datetime(related="sale_id.confirmation_date")
+    confirmation_date = fields.Datetime(related="sale_id.date_order")
 
     def show_packs_in_pick(self):
         ids = []

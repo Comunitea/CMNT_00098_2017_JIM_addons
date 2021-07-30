@@ -31,18 +31,17 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="stock.product_template_form_view_procurement_button"/>
             <field name="arch" type="xml">
-                <button name="%(stock.action_stock_level_forecast_report_template)d" position="replace">
-                    <button type="action"
-                            name="%(stock.action_stock_level_forecast_report_template)d"
+                <button name="action_product_tmpl_forecast_report" position="replace">
+                    <button type="object"
+                            name="action_product_tmpl_forecast_report"
                             attrs="{'invisible':[('type', '!=', 'product')]}"
-                            class="oe_stat_button" icon="fa-building-o">
-                            <div class="o_form_field o_stat_info">
-                                <span class="o_stat_value"><field name="global_available_stock" widget="integer"/>
-                                    <!-- <span attrs="{'invisible':[('outgoing_qty', '=', 0),('incoming_qty','=',0)]}" groups="base.group_no_one">
-                                        (-<field name="outgoing_qty" widget="integer"/>+<field name="incoming_qty" widget="integer"/>)
-                                    </span> -->
+                            context="{'default_product_tmpl_id': id}"
+                            class="oe_stat_button" icon="fa-cubes">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_value">
+                                    <field name="global_available_stock" widget="statinfo" nolabel="1" class="mr4"/>
+                                    <field name="uom_name"/>
                                 </span>
-                                <span class="o_stat_text">Forecasted</span>
                             </div>
                         </button>
                 </button>
@@ -54,23 +53,19 @@
             <field name="model">product.product</field>
             <field name="inherit_id" ref="stock.view_stock_product_tree"/>
             <field name="arch" type="xml">
-                <tree position="attributes">
-                    <attribute name="decoration-danger">global_available_stock&lt;0</attribute>
-                    <attribute name="decoration-info">global_available_stock&gt;=0</attribute>
-                </tree>
-
                 <field name="qty_available" position="attributes">
-                    <attribute name="invisible">0</attribute>q
+                    <attribute name="decoration-danger">global_available_stock&lt;0</attribute>
+                    <attribute name="decoration-warning">global_available_stock==0</attribute>
                     <attribute name="string">Stock real por compañia</attribute>
                     <attribute name="groups">jim_stock.group_stock_lqdr</attribute>
                 </field>
 
                 <field name="qty_available" position="after">
-                    <field name="global_real_stock"/>
+                    <field name="global_real_stock" optional="show" decoration-danger="global_available_stock &lt; 0" decoration-warning="global_available_stock == 0"/>
                 </field>
 
                 <field name="virtual_available" position="replace">
-                    <field name="global_available_stock"/>
+                    <field name="global_available_stock" optional="show" decoration-danger="global_available_stock &lt; 0" decoration-warning="global_available_stock == 0"/>
                 </field>
             </field>
         </record>
@@ -81,15 +76,11 @@
             <field name="model">product.template</field>
             <field name="inherit_id" ref="stock.view_stock_product_template_tree"/>
             <field name="arch" type="xml">
-                <tree position="attributes">
-                    <attribute name="decoration-danger">global_available_stock&lt;0</attribute>
-                    <attribute name="decoration-info">global_available_stock&gt;=0</attribute>
-                </tree>
                 <field name="qty_available" position="replace">
-                    <field name="global_real_stock"/>
+                    <field name="global_real_stock" optional="show" decoration-danger="global_real_stock &lt; 0"/>
                 </field>
                 <field name="virtual_available" position="replace">
-                    <field name="global_available_stock"/>
+                    <field name="global_available_stock" optional="show" decoration-danger="global_available_stock &lt; 0" decoration-bf="1"/>
                 </field>
             </field>
         </record>
@@ -101,9 +92,6 @@
             <field name="arch" type="xml">
                 <filter name="real_stock_available" position="attributes">
                     <attribute name="domain">[('global_real_stock','&gt;',0)]</attribute>
-                </filter>
-                <filter name="real_stock_exhausted" position="attributes">
-                    <attribute name="domain">[('global_real_stock','&lt;=',0),('type','not in',('service', 'consu'))]</attribute>
                 </filter>
                 <filter name="real_stock_negative" position="attributes">
                     <attribute name="domain">[('global_real_stock','&lt;',0)]</attribute>

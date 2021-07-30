@@ -3,8 +3,6 @@
 
 from odoo import fields, models, _
 
-import odoo.addons.decimal_precision as dp
-
 
 class HSCodeCountryTax(models.Model):
     _name = "hs.code.country.tax"
@@ -17,7 +15,7 @@ class HSCodeCountryTax(models.Model):
     )
 
     tax = fields.Float(
-        "Tax", required=True, digits=dp.get_precision("Product Price")
+        "Tax", required=True, digits="Product Price"
     )
     hs_code_id = fields.Many2one("hs.code", string="HS Code")
 

@@ -119,7 +119,7 @@ class ProductTemplate(models.Model):
                 for att in product_id.attribute_line_ids.sorted(
                     key=lambda r: r.attribute_id.sequence
                 ):
-                    seq = product_id.attribute_value_ids.filtered(
+                    seq = product_id.product_template_attribute_value_ids.filtered(
                         lambda r: r.attribute_id == att.attribute_id
                     )
                     seq_code = seq.code

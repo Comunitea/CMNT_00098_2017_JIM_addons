@@ -14,7 +14,6 @@ class WizCheckMecaluxStock(models.TransientModel):
     location_id = fields.Many2one(
         "stock.location", string="Location to regularize"
     )
-    tag_ids = fields.Many2one("product.tag")
     categ_ids = fields.Many2one("product.category")
     zero_qty = fields.Boolean("Zero qty")
     no_zero_qty = fields.Boolean("No zero qty")
@@ -33,10 +32,6 @@ class WizCheckMecaluxStock(models.TransientModel):
         )
         if not_product:
             product_ids -= not_product
-        if self.tag_ids:
-            product_ids = product_ids.filtered(
-                lambda x: self.tag_ids in x.tag_ids
-            )
         ids = product_ids.sorted(lambda x: x.id).ids
         new_sga_file = sga_file_obj.check_sga_file(
             "product.product", ids, code="PST"

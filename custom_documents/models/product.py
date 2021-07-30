@@ -23,7 +23,7 @@ class ProductProduct(models.Model):
             variable_attributes = self.attribute_line_ids.mapped(
                 "attribute_id"
             )
-            variant = self.attribute_value_ids._variant_name(
+            variant = self.product_template_attribute_value_ids._variant_name(
                 variable_attributes
             )
             product_name = (
@@ -73,7 +73,7 @@ class ProductProduct(models.Model):
             variable_attributes = product.attribute_line_ids.mapped(
                 "attribute_id"
             )
-            variant = product.attribute_value_ids._variant_name(
+            variant = product.product_template_attribute_value_ids._variant_name(
                 variable_attributes
             )
             name = (

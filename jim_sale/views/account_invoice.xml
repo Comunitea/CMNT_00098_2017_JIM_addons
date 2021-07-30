@@ -3,7 +3,7 @@
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 
 <odoo>
-    <record id="invoice_form_add_apply_discount" model="ir.ui.view">
+    <!--TODO: Migrar<record id="invoice_form_add_apply_discount" model="ir.ui.view">
         <field name="name">account.invoice.form</field>
         <field name="model">account.invoice</field>
         <field name="inherit_id" ref="account.invoice_form"/>
@@ -12,5 +12,5 @@
                 <button name="%(jim_sale.apply_global_discount_action)d" states="draft,sent" string="Apply discount to all lines" type="action" />
             </button>
         </field>
-    </record>
+    </record>-->
 </odoo>

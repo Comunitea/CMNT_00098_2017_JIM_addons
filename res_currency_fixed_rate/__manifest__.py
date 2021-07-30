@@ -13,7 +13,6 @@
         "account",
         "jim_purchase",
         "purchase_advance_payment",
-        "web_readonly_bypass",
     ],
     "contributors": [
         "Comunitea ",

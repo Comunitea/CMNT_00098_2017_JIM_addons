@@ -1,7 +1,6 @@
 # © 2016 Comunitea - Javier Colmenero <javier@comunitea.com>
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import fields, models, api, _
-from odoo.addons import decimal_precision as dp
 from odoo.exceptions import UserError
 from odoo.addons.stock.models.product import OPERATORS
 
@@ -22,14 +21,14 @@ class ProductTemplate(models.Model):
     global_real_stock = fields.Float(
         "Global Real Stock",
         compute="_compute_global_stock",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         help="Real stock in all companies.",
         search="_search_global_real_stock",
     )
     global_available_stock = fields.Float(
         "Global Available Stock",
         compute="_compute_global_stock",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         help="Real stock minus outgoing " " in all companies.",
         search="_search_global_avail_stock",
     )
@@ -85,21 +84,21 @@ class ProductProduct(models.Model):
     global_real_stock = fields.Float(
         "Global Real Stock",
         compute="_compute_global_stock",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         help="Real stock in all companies.",
         search="_search_global_real_stock",
     )
     global_available_stock = fields.Float(
         "Global Available Stock",
         compute="_compute_global_stock",
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         help="Real stock minus outgoing " " in all companies.",
         search="_search_global_avail_stock",
     )
     web_global_stock = fields.Float(
         "Web stock",
         readonly=True,
-        digits=dp.get_precision("Product Unit of Measure"),
+        digits="Product Unit of Measure",
         compute="_compute_global_stock",
     )
 

@@ -89,7 +89,7 @@ def get_data(self, action):
             <field name="exclude_on_sync">False</field>
             <field name="sync_updates">False</field>
             <field name="name">category</field>
-            <field name="model">product.tag</field>
+            <field name="model">product.category</field>
             <field name="description">Categorías de producto</field>
             <field name="code">fields_to_watch = ('id', 'name', 'parent_id', 'public_image_name', 'sequence', 'active', 'web')
 
@@ -98,7 +98,7 @@ def is_notifiable(self, action, vals):
 
 def get_data(self, action):
     if b2b['crud_mode'] == 'delete':
-        b2b['affected_products_ids'] = self.env['product.template'].search([('tag_ids', '=', self.id)]).ids
+        b2b['affected_products_ids'] = self.env['product.template'].search([('categ_ids', 'in', [self.id])]).ids
 
     return {
         'jim_id': self.id,
@@ -113,7 +113,7 @@ def get_data(self, action):
 def pos_data(self, action):
     if 'affected_products_ids' in b2b and b2b['crud_mode'] == 'delete' and not self.exists():
         for product in self.env['product.template'].browse(b2b['affected_products_ids']):
-            product.tag_ids = product.tag_ids.ids</field>
+            product.categ_ids = product.categ_ids.ids</field>
         </record>
 
         <record id="b2b_item_out_5" model="b2b.item.out">
@@ -233,7 +233,7 @@ def pos_data(self, action):
     'barcode',
     'product_tmpl_id',
     'attribute_names',
-    'attribute_value_ids',
+    'product_template_attribute_value_ids',
     'weight',
     'website_published',
     'product_size_width',
@@ -250,7 +250,7 @@ def related_to(self, action):
     return 'product.template,%s' % self.product_tmpl_id.id
 
 def pre_data(self, action, vals):
-    if action == 'update' and len(self.attribute_value_ids) != 2:
+    if action == 'update' and len(self.product_template_attribute_value_ids) != 2:
         # Comprobar si se deben notificar cambios en campos de la variante para la plantilla (related)
         items_to_send = self.product_tmpl_id.is_notifiable_check('update', vals)
         self.product_tmpl_id.b2b_record('update', vals, conf_items_before=items_to_send)
@@ -260,7 +260,7 @@ def get_data(self, action):
         'jim_id': self.id,
         'product_id': self.product_tmpl_id.id,
         'reference': self.default_code,
-        'attribute_value': self.attribute_value_ids.ids,
+        'attribute_value': self.product_template_attribute_value_ids.ids,
         'ean13': self.barcode if self.barcode and self.has_valid_barcode() else None,
         'weight': float(self.weight),
         'width': float(self.product_size_width),
@@ -268,7 +268,7 @@ def get_data(self, action):
         'length': float(self.product_size_depth),
         'volume': float(self.volume),
         'default': bool(self.id == self.product_variant_id.id)
-    } if len(self.attribute_value_ids) == 2 else dict()
+    } if len(self.product_template_attribute_value_ids) == 2 else dict()
 
 def pos_data(self, action):
     # Creamos los datos relaccionados

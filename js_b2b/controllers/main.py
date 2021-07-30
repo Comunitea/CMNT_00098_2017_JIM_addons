@@ -105,8 +105,8 @@ class B2bController(http.Controller):
                 product_must_be_published = bool(
                     product.active
                     and product.type == "product"
-                    and product.tag_ids
-                    and 50 not in product.tag_ids.ids
+                    and product.categ_ids
+                    and 109 not in product.categ_ids.mapped('legacy_code')
                     and product.sale_ok
                     and product.default_code
                     and product.default_code.find("False") == -1
@@ -194,16 +194,16 @@ class B2bController(http.Controller):
             )
 
             return """
-				<h2>JESIE TO B2B SYNC</h2>
-				<hr/>
-				<h2>PRODUCTOS</h2>
-				<p>PUBLICAR: %s</p>
-				<p>ELIMINAR: %s</p>
-				<h2>VARIANTES</h2>
-				<p>PUBLICAR: %s</p>
-				<p>ELIMINAR: %s</p>
-				<pre>%s</pre>
-			""" % (
+                                <h2>JESIE TO B2B SYNC</h2>
+                                <hr/>
+                                <h2>PRODUCTOS</h2>
+                                <p>PUBLICAR: %s</p>
+                                <p>ELIMINAR: %s</p>
+                                <h2>VARIANTES</h2>
+                                <p>PUBLICAR: %s</p>
+                                <p>ELIMINAR: %s</p>
+                                <pre>%s</pre>
+                        """ % (
                 products_to_publish,
                 products_to_unpublish,
                 variants_to_publish,

@@ -86,11 +86,6 @@
                 <field name="orig_sale_id" readonly="1"/>
 
             </field>
-            <!--<xpath expr="//field[@name='pack_operation_product_ids']/tree" position="attributes">
-                <attribute name="colors">green:ordered_qty&lt;product_qty;red:ordered_qty&gt;product_qty
-                </attribute>
-            </xpath>
-            !-->
             <field name="origin" position="replace">
                     <label for="origin"/>
                     <div>
@@ -132,14 +127,13 @@ if records:
         <record id="view_stock_move_color" model="ir.ui.view">
         <field name="name">view.stock.move.color</field>
         <field name="model">stock.move</field>
-        <field name="inherit_id" ref="stock.view_move_picking_tree"/>
+        <field name="inherit_id" ref="stock.view_picking_move_tree"/>
         <field name="arch" type="xml">
             <field name="state" position="after">
                 <field name="extra_move" invisible="True"/>
             </field>
             <xpath expr="//tree" position="attributes">
-                <attribute name="colors">red:state =='cancel';green:extra_move == True
-                </attribute>
+                <attribute name="danger-info">extra_move == True</attribute>
             </xpath>
         </field>
         </record>

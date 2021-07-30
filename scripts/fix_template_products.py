@@ -160,12 +160,12 @@ class FixTemplateProduct(object):
                     templ_attributes[att['attribute_id']] = [att['value_ids'], att['id']]
             try:
                 for prod in tmpl_data[0]['product_variant_ids']:
-                    prod_data = self.read('product.product', prod, ['attribute_value_ids'])
-                    if not prod_data[0]['attribute_value_ids']:
+                    prod_data = self.read('product.product', prod, ['product_template_attribute_value_ids'])
+                    if not prod_data[0]['product_template_attribute_value_ids']:
                         if len(tmpl_data[0]['product_variant_ids']) > 1:
                             self.unlink('product.product', prod)
                     else:
-                        for val in prod_data[0]['attribute_value_ids']:
+                        for val in prod_data[0]['product_template_attribute_value_ids']:
                             att_data = self.read('product.attribute.value',
                                                  val, ['attribute_id'])
                             if att_data[0]['attribute_id'] in templ_attributes and val not in templ_attributes[att_data[0]['attribute_id']][0]:

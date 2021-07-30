@@ -28,15 +28,15 @@ class ProductTemplate(models.Model):
     web = fields.Boolean("Web", compute="_compute_web_state", store=True)
     list_price = fields.Float(default=0.0)
 
-    @api.depends("tag_ids", "tag_ids.web")
+    @api.depends("categ_ids", "categ_ids.web")
     def _compute_web_state(self):
         for template in self:
-            template.web = any(x.web for x in template.tag_ids)
+            template.web = any(x.web for x in template.categ_ids)
 
-    @api.depends("tag_ids")
+    @api.depends("categ_ids")
     def _compute_tag_names(self):
         for product in self:
-            product.tag_names = ", ".join(x.name for x in product.tag_ids)
+            product.tag_names = ", ".join(x.name for x in product.categ_ids)
 
 
 class ProductProduct(models.Model):
@@ -103,7 +103,7 @@ class ProductProduct(models.Model):
                         )
                     )
 
-    @api.depends("force_web", "tag_ids", "product_tmpl_id.web")
+    @api.depends("force_web", "product_tmpl_id.web")
     def _compute_web_state(self):
         for product in self:
             if product.force_web == "yes":
@@ -113,11 +113,11 @@ class ProductProduct(models.Model):
             elif product.force_web == "tags":
                 product.web = product.product_tmpl_id.web
 
-    @api.depends("attribute_value_ids")
+    @api.depends("product_template_attribute_value_ids")
     def _compute_attribute_names(self):
         for product in self:
             product.attribute_names = ", ".join(
-                x.name_get()[0][1] for x in product.attribute_value_ids
+                x.name_get()[0][1] for x in product.product_template_attribute_value_ids
             )
 
 
@@ -146,14 +146,11 @@ class ProductAttribute(models.Model):
     legacy_code = fields.Char("Legacy code", size=18)
 
 
-class ProductTag(models.Model):
-    _inherit = "product.tag"
-
-    legacy_code = fields.Char("Legacy code", size=18)
-
-
 class ProductCategory(models.Model):
 
     _inherit = "product.category"
 
     active = fields.Boolean(default=True)
+    legacy_code = fields.Char("Legacy code", size=18)
+    web = fields.Boolean("Web", default=True)
+    image = fields.Binary('Image', attachment=True)

@@ -9,7 +9,7 @@
             <xpath expr="//field[@name='order_line']/tree/field[@name='taxes_id']" position="after">
                 <field name="hscode_tax"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']/form/sheet/group/group/field[@name='taxes_id']" position="after">
+            <xpath expr="//field[@name='order_line']/form//field[@name='taxes_id']" position="after">
                 <field name="hscode_tax"/>
             </xpath>
 

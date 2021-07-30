@@ -25,7 +25,6 @@
     <record id="jim_stock_import_action" model="ir.actions.act_window">
         <field name="name">Import stock</field>
         <field name="res_model">jim.stock.import</field>
-        <field name="view_id">jim_stock_import_form</field>
         <field name="view_mode">form</field>
         <field name="target">new</field>
     </record>

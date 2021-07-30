@@ -120,7 +120,7 @@ class ProductTemplate(models.Model):
                             ].browse(y)
 
                         product = template.product_variant_ids.filtered(
-                            lambda x: not (values - x.attribute_value_ids)
+                            lambda x: not (values - x.product_template_attribute_value_ids)
                         )[:1]
 
                         result["str_table"][x][y].update(

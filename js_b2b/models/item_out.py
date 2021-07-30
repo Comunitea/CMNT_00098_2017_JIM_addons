@@ -42,7 +42,7 @@ class B2bItemsOut(models.Model):
                 'name': self.get_field_translations('name'),
                 'category_id': self.categ_id.id if self.categ_id else None
             }
-	""",
+        """,
         flags=re.M,
     ).strip()
 
@@ -215,7 +215,7 @@ class B2bItemsOut(models.Model):
             elif model in (
                 "product.template",
                 "product.product",
-                "product.tag",
+                "product.category",
             ):
                 # Todos los registros (activos e inactivos)
                 only_active = False
@@ -296,12 +296,12 @@ class B2bItemsOut(models.Model):
             self.env.user.notify_info(
                 _(
                     "Synchronizing <b>%s</b><br/> \
-				<ul> \
-					<li>Total: %s</li> \
-					<li>Create: %s</li> \
-					<li>Update: %s</li> \
-					<li>Delete: %s</li> \
-				</ul>"
+                                <ul> \
+                                        <li>Total: %s</li> \
+                                        <li>Create: %s</li> \
+                                        <li>Update: %s</li> \
+                                        <li>Delete: %s</li> \
+                                </ul>"
                 )
                 % (
                     self.name,

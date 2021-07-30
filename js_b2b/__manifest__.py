@@ -17,7 +17,7 @@
         "sale",
         "product",
         "product_brand",
-        "product_tags",
+        "product_multi_category",
         "jim_sale",
         "base_technical_features",
         #'jim_addons',

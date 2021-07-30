@@ -12,13 +12,14 @@
         "sale",
         "purchase",
         "account_financial_report",
+        "sale_force_invoiced",
+        #"purchase_force_invoiced" TODO: Migrar a 14
     ],
     "contributors": [
         "Comunitea ",
         "Santi Argüeso <santi@comunitea.com>",
     ],
     "data": [
-        "views/sale_order.xml",
         "views/purchase_order.xml",
     ],
     "installable": True,

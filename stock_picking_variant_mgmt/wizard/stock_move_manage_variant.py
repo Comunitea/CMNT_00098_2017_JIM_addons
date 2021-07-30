@@ -2,7 +2,6 @@
 # Copyright 2017 Kiko Sánchez <kiko@comunitea.com>
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-import odoo.addons.decimal_precision as dp
 from odoo import api, models, fields
 
 
@@ -54,7 +53,7 @@ class PickingManageVariant(models.TransientModel):
                 if value_y:
                     values += value_y
                 product = template.product_variant_ids.filtered(
-                    lambda x: not (values - x.attribute_value_ids)
+                    lambda x: not (values - x.product_template_attribute_value_ids)
                 )[:1]
                 move_line = stock_picking.move_lines.filtered(
                     lambda x: x.product_id == product
@@ -123,5 +122,5 @@ class PickingManageVariantLine(models.TransientModel):
     # ~ value_x = fields.Many2one(comodel_name="product.attribute.value")
     # ~ value_y = fields.Many2one(comodel_name="product.attribute.value")
     product_qty = fields.Float(
-        string="Quantity", digits=dp.get_precision("Product UoS")
+        string="Quantity", digits="Product UoS"
     )

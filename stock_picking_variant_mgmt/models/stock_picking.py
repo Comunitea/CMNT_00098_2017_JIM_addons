@@ -15,6 +15,6 @@ class StockMove(models.Model):
     #TODO: Migrar, no existe el modelo product.attribute.value
     # ~ product_attribute_value_ids = fields.Many2many(
         # ~ comodel_name="product.attribute.value",
-        # ~ related="product_id.attribute_value_ids",
+        # ~ related="product_id.product_template_attribute_value_ids",
         # ~ readonly=True,
     # ~ )

@@ -5,5 +5,5 @@ class AccountInvoiceReport(models.Model):
     _inherit = "account.invoice.report"
 
     active_category = fields.Boolean(
-        related="categ_id.active", string="Active (category)"
+        related="product_categ_id.active", string="Active (category)"
     )

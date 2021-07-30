@@ -12,7 +12,7 @@
                 <div>
                     <field name="hide_exc" invisible="1"/>
 
-                <field name="currency_id" class="oe_inline"/>
+                <field name="currency_id" class="oe_inline" groups="base.group_multi_currency" force_save="1"/>
 
                 <label for="order_exchange_rate" string="E. rate"
                     attrs="{'invisible': [('hide_exc','=',False)]}"/>

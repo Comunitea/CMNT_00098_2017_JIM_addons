@@ -8,9 +8,8 @@
     "category": "Custom",
     "license": "AGPL-3",
     "depends": [
-        "purchase",
+        "purchase_stock",
         "delivery",
-        "stock",
         "product_custom",
         "product_code_generator",
     ],
