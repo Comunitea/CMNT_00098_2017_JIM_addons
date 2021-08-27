@@ -1,5 +1,0 @@
-id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
-access_js_parameterization_value,js_parameterization.value,model_js_parameterization_value,group_manage_parameterization,1,1,1,1
-access_js_product_parameterization,product.template.parameterization,model_product_parameterization,group_manage_parameterization,1,1,1,1
-access_js_parameterization_value_public,js_parameterization.value,model_js_parameterization_value,base.group_user,1,0,0,0
-access_js_product_parameterization_public,product.template.parameterization,model_product_parameterization,base.group_user,1,0,0,0

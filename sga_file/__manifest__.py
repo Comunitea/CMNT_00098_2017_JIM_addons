@@ -17,9 +17,9 @@
         "delivery",
         "product_custom",
         "product_code_generator",
-        "commercial_rules",
         "custom_documents",
         "jim_intercompany",
+        "js_addons"
     ],
     "contributors": [
         "Comunitea",

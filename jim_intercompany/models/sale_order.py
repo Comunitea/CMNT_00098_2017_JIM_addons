@@ -257,8 +257,8 @@ class SaleOrder(models.Model):
                         vals["pricelist_id"] = pricelist.id
 
                 if "company_id" in vals:
-                    vals["name"] = self.env["ir.sequence"].with_context(
-                        force_company=vals["company_id"]
+                    vals["name"] = self.env["ir.sequence"].with_company(
+                        vals["company_id"]
                     ).next_by_code("sale.order") or _("New")
 
                 # Search taxes lines in new company

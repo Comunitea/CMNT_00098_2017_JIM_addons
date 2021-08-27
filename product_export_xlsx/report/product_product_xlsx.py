@@ -18,7 +18,7 @@ from odoo import _, models
             # ~ 2: {"header": _("Tags"), "field": "tag_names", "width": 50},
             # ~ 3: {
                 # ~ "header": _("Web"),
-                # ~ "field": "web",
+                # ~ "field": "website_published",
                 # ~ "width": 10,
                 # ~ "type": "boolean",
             # ~ },

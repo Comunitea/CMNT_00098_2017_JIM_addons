@@ -14,10 +14,6 @@ class CrmClaimRmaMakeRefund(models.TransientModel):
 
         self.ensure_one()
         claim = self.env["crm.claim"].browse(self._context.get("claim_id"))
-        ctx = self._context.copy()
-        ctx.update(
-            force_company=claim.company_id.id, company_id=claim.company_id.id
-        )
         lines_to_invoice = claim.claim_line_ids.filtered(
             lambda x: not x.refund_line_id
         )
@@ -25,14 +21,17 @@ class CrmClaimRmaMakeRefund(models.TransientModel):
             raise exceptions.UserError(_("Nothing to invoice"))
 
         if claim.ic:
-            invoice_obj = self.env["account.invoice"].sudo().with_context(ctx)
+            invoice_obj = self.env["account.invoice"].sudo().\
+                with_company(claim.company_id.id)
             invoice_line_obj = (
-                self.env["account.invoice.line"].sudo().with_context(ctx)
+                self.env["account.invoice.line"].sudo().
+                with_company(claim.company_id.id)
             )
         else:
-            invoice_obj = self.env["account.invoice"].with_context(ctx)
-            invoice_line_obj = self.env["account.invoice.line"].with_context(
-                ctx
+            invoice_obj = self.env["account.invoice"].\
+                with_company(claim.company_id.id)
+            invoice_line_obj = self.env["account.invoice.line"].with_company(
+                claim.company_id.id
             )
 
         if claim.claim_type.name == "Customer":

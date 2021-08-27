@@ -22,7 +22,7 @@ class ReportSaleLineJim(models.Model):
     tag_names = fields.Char(
         related="product_id.tag_names", string="Etiqueta", readonly=True
     )
-    web = fields.Boolean(related="product_id.web")
+    web = fields.Boolean(related="product_id.website_published")
     web_global_stock = fields.Float(related="product_id.web_global_stock")
 
     def _select(self):

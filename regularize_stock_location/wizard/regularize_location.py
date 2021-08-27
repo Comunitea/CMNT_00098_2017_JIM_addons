@@ -106,7 +106,7 @@ class WizRegularizeLocation(models.TransientModel):
             "name": "Inventories",
             "view_type": "form",
             "view_mode": "tree,form",
-            "domain": unicode([("id", "in", inventory.ids)]),
+            "domain": [("id", "in", inventory.ids)],
             "res_model": "stock.inventory",
             "res_id": inventory.id,
             "type": "ir.actions.act_window",

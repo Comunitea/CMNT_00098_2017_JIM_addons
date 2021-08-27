@@ -147,7 +147,7 @@ class ProductProduct(models.Model):
         global_real_stock = qty_available_d
 
         moves_v_domain = [
-            ("procurement_id.sale_line_id.route_id.virtual_type", "=", True),
+            ("sale_line_id.route_id.virtual_type", "=", True),
             (
                 "state",
                 "in",
@@ -175,11 +175,10 @@ class ProductProduct(models.Model):
         company_available_stock = dict([(x.id, 0) for x in self])
         if company_ids:
             for company in company_ids:
-                ctx.update({"force_company": company})
                 company_available = dict(
                     [
                         (p["id"], p["qty_available"])
-                        for p in self.with_context(ctx)
+                        for p in self.with_company(company).with_context(ctx)
                         .sudo()
                         .read(["qty_available"])
                     ]
@@ -187,7 +186,7 @@ class ProductProduct(models.Model):
                 company_outgoing = dict(
                     [
                         (p["id"], p["outgoing_qty"])
-                        for p in self.with_context(ctx)
+                        for p in self.with_company(company).with_context(ctx)
                         .sudo()
                         .read(["outgoing_qty"])
                     ]

@@ -7,3 +7,9 @@ class AccountPaymentTerm(models.Model):
     _inherit = "account.payment.term"
 
     prepayment = fields.Boolean("Advance Payment")
+
+
+class GlobalDiscount(models.Model):
+    _inherit = "global.discount"
+
+    payment_term_id = fields.Many2one("account.payment.term", "Payment Term")

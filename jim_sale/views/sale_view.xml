@@ -27,20 +27,12 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.view_order_form"/>
             <field name="arch" type="xml">
-                <xpath expr="//button[@name='recalculate_prices']" position="before">
+                <!--Migrar<xpath expr="//button[@name='recalculate_prices']" position="before">
                      <button name="check_sale_stock"
                                 string="Actualizar stocks"
                                 attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"
                                 type="object" colspan="4" class="btn-default"/>
-                </xpath>
-                <!--field name="order_line" position="after">
-                    <div class="btn-group">
-                        <button name="check_sale_stock"q
-                                string="Actualizar stocks"
-                                attrs="{'invisible': [('state', 'in', ['sale', 'done', 'cancel'])]}"
-                                type="object" colspan="4" class="btn-default"/>
-                    </div>
-                </field-->
+                </xpath>-->
                 <field name="state" position="attributes">
                     <attribute name="statusbar_visible">draft,sent,lqdr,pending,progress,sale</attribute>
                 </field>
@@ -48,20 +40,15 @@
                     <field name="lqdr_state" attrs="{'invisible': [('state', '!=', 'lqdr')]}" groups="jim_stock.group_stock_lqdr"/>
                 </field>
                 <!-- Add button to pass to lqdr or pending state -->
-                <button name="print_quotation" position="after">
+                <button name="action_cancel" position="before">
                     <button name="action_proforma" states="draft,sent" string="Proforma" class="o_sale_confirm" type="object" />
                     <button name="action_lqdr_option" states="draft,sent,proforma" string="Confirm Sale" class="o_sale_confirm" type="object" />
                     <button name="action_lqdr_ok" states="lqdr" string="LQDR Review Done" groups="jim_stock.group_stock_lqdr" class="o_sale_confirm" type="object" />
                     <button name="action_pending_ok" states="pending" string="Pending Done" groups="jim_stock.group_stock_lqdr,jim_stock.group_stock_review" class="o_sale_confirm" type="object" />
                     <button name="action_cancel_wzd" states="done,sale" string="Cancelar" groups="jim_sale.group_sale_supercancel"  type="object" />
-                    <button name="%(jim_sale.apply_global_discount_action)d" states="draft,sent" string="Apply discount to all lines" type="action" />
                     <!--button name="action_lqdr_done" states="progress_lqdr" string="LQDR Done" class="o_sale_confirm" type="object" /-->
                 </button>
 
-                <!-- Change action_confirm button, only visible in pending state -->
-                <!--xpath expr="//button[@name='action_confirm'][1]" position="attributes">
-                    <attribute name="states">pending</attribute>
-                </xpath-->
                 <!-- Invisible button in action_confirm -->
                 <xpath expr="//button[@name='action_confirm'][2]" position="attributes">
                     <attribute name="invisible">1</attribute>
@@ -90,12 +77,12 @@
                      <!--field name="partner_id" domain="[('is_company','=',True), ('customer','=', True)]" context="{'search_default_customer':1, 'show_address': 1}" options='{"always_reload": True}'/-->
                 </xpath>
 
-                <xpath expr="//field[@name='carrier_id']" position="attributes">
+                <!--TODO: Migrar<xpath expr="//field[@name='carrier_id']" position="attributes">
                     <attribute name="invisible">1</attribute>
-                </xpath>
+                </xpath>-->
 
                 <!-- Cambios en visibilidad de campos de fechas -->
-                <xpath expr="//field[@name='confirmation_date']" position="attributes">
+                <!--Migrar<xpath expr="//field[@name='confirmation_date']" position="attributes">
                     <attribute name="attrs">{'invisible': [('state','!=','sale')]}</attribute>
                 </xpath>
                  <xpath expr="//field[@name='date_order']" position="attributes">
@@ -103,7 +90,7 @@
                 </xpath>
                 <xpath expr="//field[@name='validity_date']" position="attributes">
                     <attribute name="attrs">{'invisible': [('validity_date', '!=', ''), ('state','not in ',('draft','sent'))]}</attribute>
-                </xpath>
+                </xpath>-->
 
             </field>
         </record>
@@ -113,7 +100,7 @@
             <field name="model">sale.order</field>
             <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
             <field name="arch" type="xml">
-                <filter name="sales" position="after">
+                <filter name="my_sale_orders_filter" position="after">
                     <filter string="LQDR order" name="lqdr" domain="[('state','=','lqdr')]"/>
                     <filter string="Pending Approval" name="pending_approval" domain="[('state','=','pending')]"/>
                     <filter string="Scheduled Order" name="scheduled_order" domain="[('scheduled_order','=',True)]"/>
@@ -128,7 +115,7 @@
             <field name="inherit_id" ref="sale.view_sales_order_filter"/>
             <field name="arch" type="xml">
                 <filter name="my_sale_orders_filter" position="after">
-                     <filter name="scheduled_order" name="scheduled_order" string="Scheduled Order" domain="[('scheduled_order', '=' , True)]"/>
+                     <filter name="scheduled_order" string="Scheduled Order" domain="[('scheduled_order', '=' , True)]"/>
                 </filter>
             </field>
         </record>
@@ -163,9 +150,11 @@
             <field name="inherit_id" ref="sale_stock.view_order_form_inherit_sale_stock"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='order_line']/form/group/group/field[@name='price_unit']" position="before">
+                    <field name="global_available_stock"/>
                     <field name="lqdr" />
                 </xpath>
                 <xpath expr="//field[@name='order_line']/tree/field[@name='price_unit']" position="before">
+                    <field name="global_available_stock"/>
                     <field name="lqdr" />
                 </xpath>
             </field>
@@ -204,13 +193,13 @@
                  <xpath expr="//field[@name='commitment_date']" position="replace">
 
                 </xpath>
-                <xpath expr="//field[@name='requested_date']" position="replace">
+                <!--Migrar<xpath expr="//field[@name='requested_date']" position="replace">
                     <field name="confirmation_date"/>
-                </xpath>
+                </xpath>-->
             </field>
         </record>
 
-         <record id="sale_order_line_custom_tree_lqdr" model="ir.ui.view">
+         <!--TODO: Migrar<record id="sale_order_line_custom_tree_lqdr" model="ir.ui.view">
             <field name="name">sale.order.view.line.custom.lqdr</field>
             <field name="model">sale.order.line</field>
             <field name="inherit_id" ref="custom_sale_order_variant_mgmt.sale_order_line_custom_tree"/>
@@ -219,26 +208,6 @@
                     <field name="lqdr" />
                 </xpath>
             </field>
-        </record>
-
-        <record id="sale_order_variants_lqdr" model="ir.ui.view">
-            <field name="name">sale.order.variants.lqdr</field>
-            <field name="model">sale.order</field>
-            <field name="inherit_id" ref="custom_sale_order_variant_mgmt.sale_order_variants"/>
-            <field name="arch" type="xml">
-                <xpath expr="//field[@name='template_lines']/tree/field[@name='route_id']" position="before">
-                    <field name="lqdr" />
-                </xpath>
-                <xpath expr="//field[@name='template_lines']/tree/field[@name='price_subtotal']" position="after">
-                    <button name="create_template_procurements"
-                                    type="object"
-                                    icon="fa-truck"
-                                    class="oe_edit_only"
-                                    groups="jim_stock.group_stock_lqdr"
-                                    states="lqdr,pending"/>
-                </xpath>
-
-            </field>
-        </record>
+        </record>-->
     </data>
 </odoo>

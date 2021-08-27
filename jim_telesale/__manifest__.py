@@ -10,7 +10,6 @@
     "depends": [
         "jim_sale",
         "jim_stock",
-        "chained_discount_commercial_rules",
         "telesale_manage_variants",
         "custom_documents",
         "partner_custom",
@@ -22,7 +21,6 @@
         "static/src/xml/order_history_template.xml",
         "static/src/xml/popups_template.xml",
         "static/src/xml/customer_list_template.xml",
-        "static/src/xml/product_catalog_template.xml",
     ],
     "installable": True,
 }

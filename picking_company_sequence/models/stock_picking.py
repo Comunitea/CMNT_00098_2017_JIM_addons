@@ -27,7 +27,7 @@ class StockPicking(models.Model):
         ):
             picking_type_id = (
                 self.env["stock.picking.type"]
-                .with_context(force_company=vals["company_id"])
+                .with_company(vals["company_id"])
                 .browse(vals["picking_type_id"])[0]
             )
             property_sequence = (

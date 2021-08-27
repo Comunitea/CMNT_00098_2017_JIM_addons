@@ -4,4 +4,4 @@
 from . import res_config
 from . import purchase_order
 from . import product_product
-from . import purchase_manage_variant
+#TODO: Migrarfrom . import purchase_manage_variant

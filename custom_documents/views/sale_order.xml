@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-     <record id="sale_order_add_custom_fields" model="ir.ui.view">
-        <field name="name">sale_order_add_custom_fields</field>
-        <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sale.view_order_form"/>
-        <field name="arch" type="xml">
-            <xpath expr="//field[@name='origin']" position="before">
-                <field name="neutral_document"/>
-            </xpath>
-        </field>
-    </record>
-
      <record id="sale_order_add_separator_internal_notes" model="ir.ui.view">
         <field name="name">sale_order_add_separator_internal_notes</field>
         <field name="model">sale.order</field>

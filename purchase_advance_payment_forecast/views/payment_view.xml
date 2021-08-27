@@ -8,10 +8,10 @@
         <field name="model">account.payment</field>
         <field name="inherit_id" ref="account.view_account_payment_form"/>
         <field name="arch" type="xml">
-            <field name="communication" position="after">
+            <field name="partner_bank_id" position="after">
                     <field name="forecast_move_id" readonly="1"/>
             </field>
-             <button name="post" position="before">
+             <button name="action_post" position="before">
                     <button name="create_forecast_entry" string="Create Forecast"
                         type="object" groups="account.group_account_invoice" attrs="{'invisible': ['|', ('state', 'not in', ('draft',)),('forecast_move_id', '!=', False)]}"/>
                 </button>

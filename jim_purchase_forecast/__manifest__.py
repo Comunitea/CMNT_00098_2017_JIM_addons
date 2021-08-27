@@ -12,7 +12,7 @@
         "purchase_advance_payment",
         "jim_sale",
         "jim_stock",
-        "product_multi_category"
+        "js_addons"
     ],
     "contributors": [
         "Comunitea ",

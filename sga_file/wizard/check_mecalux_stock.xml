@@ -10,6 +10,7 @@
                     <p>This are filters if you don't need all references</p>
                 <group>
                     <field name="categ_ids"/>
+                    <field name="tag_ids"/>
 
                     <field name="zero_qty"/>
                     <field name="no_zero_qty"/>

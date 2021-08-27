@@ -2,7 +2,7 @@
 <!-- © 2017 Comunitea
      License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl). -->
 <odoo>
-    <record id="product_pricelist_item_tre_editable" model="ir.ui.view">
+    <!--TODO: Migrar<record id="product_pricelist_item_tre_editable" model="ir.ui.view">
         <field name="name">product.pricelist.item.tree.editable</field>
         <field name="model">product.pricelist.item</field>
         <field name="type">tree</field>
@@ -19,7 +19,7 @@
                 <field name="fixed_price"/>
             </tree>
         </field>
-    </record>
+    </record>-->
 
 
     <record id="product_pricelist_item_view_search" model="ir.ui.view">
@@ -36,7 +36,7 @@
         </field>
     </record>
 
-    <record id="product_pricelist_item_fixed_price_action" model="ir.actions.act_window">
+    <!--TODO: Migrar<record id="product_pricelist_item_fixed_price_action" model="ir.actions.act_window">
         <field name="name">Fixed prices</field>
         <field name="res_model">product.pricelist.item</field>
         <field name="view_mode">tree,form</field>
@@ -47,6 +47,6 @@
 
     <menuitem name="Fixed prices" parent="sale.menu_product_pricelist_main"
               action="product_pricelist_item_fixed_price_action"
-              id="product_pricelist_item_fixed_price_menu"/>
+              id="product_pricelist_item_fixed_price_menu"/>-->
 
 </odoo>

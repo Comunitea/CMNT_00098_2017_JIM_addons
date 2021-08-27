@@ -117,14 +117,12 @@ class CrmClaimRmaMakeBatchRefund(models.TransientModel):
     def make_batch_refund(self):
         if self.company_id != self.env.user.company_id:
             raise exceptions.UserError(_("Not in %s" % self.company_id.name))
-        ctx = self._context.copy()
-        ctx.update(
-            force_company=self.company_id.id, company_id=self.company_id.id
-        )
 
         lines_to_invoice = self.claim_line_ids
-        invoice_obj = self.env["account.invoice"].with_context(ctx)
-        invoice_line_obj = self.env["account.invoice.line"].with_context(ctx)
+        invoice_obj = self.env["account.invoice"].\
+            with_company(self.company_id.id)
+        invoice_line_obj = self.env["account.invoice.line"].\
+            with_company(self.company_id.id)
         if self.claim_ids[0].claim_type.type == "supplier":
             type = "in_refund"
             move_field = "move_out_id"

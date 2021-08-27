@@ -62,8 +62,6 @@ class MrpProduction(models.Model):
     def create(self, values):
         res = super(MrpProduction, self).create(values)
         if values.get("product_id"):
-            ctx = dict(self._context)
-            ctx.pop("force_company", False)
             res.with_context(ctx).refresh_stock()
         return res
 

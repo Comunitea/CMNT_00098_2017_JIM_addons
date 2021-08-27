@@ -4,7 +4,7 @@
 {
     "name": "Sequence en lineas de compras",
     "version": "14.0.1.0.0",
-    "depends": ["purchase_order_variant_mgmt"],
+    "depends": ["purchase_product_matrix"],
     "author": "Comunitea",
     "license": "AGPL-3",
     "summary": """Sequencias en compras""",

@@ -31,8 +31,8 @@ class PropagatePartnerProperties(models.TransientModel):
         for partner in partner_objs:
             for company in company_objs:
                 # property_payment_term_id
-                ctx = {"force_company": company.id}
-                partner2 = t_partner.with_context(ctx).browse(partner.id)
+                partner2 = t_partner.with_company(company.id).\
+                    browse(partner.id)
                 eval_dic = {"partner": partner}
 
                 # SHARED objects between companies

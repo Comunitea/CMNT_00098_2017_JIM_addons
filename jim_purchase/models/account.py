@@ -84,10 +84,3 @@ class AccountMove(models.Model):
         if self.type == "in_invoice":
             self._add_supplier_to_product()
         return res
-
-    @api.model
-    def create(self, vals):
-        res = super().create(vals)
-        if res.early_payment_discount:
-            res.button_compute_early_payment_disc()
-        return res

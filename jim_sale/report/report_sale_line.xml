@@ -21,7 +21,7 @@
 
         </field>
     </record>>
-    <record id="view_order_line_report_tree" model="ir.ui.view">
+    <!--TODO:Migrar<record id="view_order_line_report_tree" model="ir.ui.view">
         <field name="name">report.sale.line.jim.tree</field>
         <field name="model">report.sale.line.jim</field>
         <field name="arch" type="xml">
@@ -94,5 +94,5 @@
 
     <menuitem name="Ventas x Producto x Cliente" action="action_order_line_report_jim_01"
               id="menu_report_product_sale_lines_id"
-              parent="sales_team.menu_sale_report" />
+              parent="sales_team.menu_sale_report" />-->
 </odoo>

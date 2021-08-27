@@ -8,8 +8,8 @@ class PurchaseConfigSettings(models.TransientModel):
 
     group_reorder_purchase_line = fields.Selection(
         [
-            (0, "NOT Allow reorder by sequence template"),
-            (1, "Allow reorder by sequence template"),
+            ('0', "NOT Allow reorder by sequence template"),
+            ('1', "Allow reorder by sequence template"),
         ],
         "Template sequence reorder",
         implied_group="jim_purchase_sequence_order_lines.group_reorder_purchase_line",

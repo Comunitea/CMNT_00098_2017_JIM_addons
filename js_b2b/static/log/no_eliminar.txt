@@ -1,1 +1,0 @@
-No eliminar este directorio, de otra forma dará error

@@ -6,13 +6,13 @@ from odoo import _, api, fields, models
 
 class SaleOrder(models.Model):
     _inherit = "sale.order"
-
-    @api.depends("order_line.price_total_cancelled")
-    def _compute_amount_cancelled(self):
-        for order in self:
-            order.price_total_cancelled = sum(
-                line.price_total_cancelled for line in order.order_line
-            )
+    #TODO: Migrar
+    # ~ @api.depends("order_line.price_total_cancelled")
+    # ~ def _compute_amount_cancelled(self):
+        # ~ for order in self:
+            # ~ order.price_total_cancelled = sum(
+                # ~ line.price_total_cancelled for line in order.order_line
+            # ~ )
 
     def _get_default_cancelled_order_in_risk(self):
         cancelled_order_in_risk = (
@@ -24,12 +24,13 @@ class SaleOrder(models.Model):
         for order in self:
             order.cancelled_order_in_risk = cancelled_order_in_risk
 
-    price_total_cancelled = fields.Monetary(
-        compute="_compute_amount_cancelled",
-        string="Cancelled amount",
-        readonly=True,
-        store=True,
-    )
+    #TODO: Migrar
+    # ~ price_total_cancelled = fields.Monetary(
+        # ~ compute="_compute_amount_cancelled",
+        # ~ string="Cancelled amount",
+        # ~ readonly=True,
+        # ~ store=True,
+    # ~ )
     cancelled_order_in_risk = fields.Boolean(
         "Qty cancelled", compute="_get_default_cancelled_order_in_risk"
     )
@@ -63,71 +64,59 @@ class SaleOrder(models.Model):
         )
         return action
 
+#ToDO: Migrar
+# ~ class SaleOrderLine(models.Model):
+    # ~ _inherit = "sale.order.line"
 
-class SaleOrderLine(models.Model):
-    _inherit = "sale.order.line"
+    # ~ @api.depends("procurement_ids.move_ids.state", "cancelled_qty")
+    # ~ def _compute_amount_cancelled(self):
+        # ~ if self._table == "sale_order_line_template":
+            # ~ return
+        # ~ for line in self:
+            # ~ price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
+            # ~ taxes = line.tax_id.compute_all(
+                # ~ price,
+                # ~ line.order_id.currency_id,
+                # ~ line.cancelled_qty,
+                # ~ product=line.product_id,
+                # ~ partner=line.order_id.partner_shipping_id,
+            # ~ )
+            # ~ line.price_total_cancelled = taxes["total_included"]
 
-    @api.depends("procurement_ids.move_ids.state", "cancelled_qty")
-    def _compute_amount_cancelled(self):
-        if self._table == "sale_order_line_template":
-            return
-        for line in self:
-            price = line.price_unit * (1 - (line.discount or 0.0) / 100.0)
-            taxes = line.tax_id.compute_all(
-                price,
-                line.order_id.currency_id,
-                line.cancelled_qty,
-                product=line.product_id,
-                partner=line.order_id.partner_shipping_id,
-            )
-            line.price_total_cancelled = taxes["total_included"]
+    # ~ @api.depends("procurement_ids.move_ids.state")
+    # ~ def _get_cancelled_qty(self):
+        # ~ """Computes the delivered quantity on sale order lines, based on done stock moves related to its procurements"""
+        # ~ if self._table == "sale_order_line_template":
+            # ~ return
 
-    @api.depends("procurement_ids.move_ids.state")
-    def _get_cancelled_qty(self):
-        """Computes the delivered quantity on sale order lines, based on done stock moves related to its procurements"""
-        if self._table == "sale_order_line_template":
-            return
+        # ~ for line in self:
+            # ~ qty = 0.00
+            # ~ for move in line.procurement_ids.mapped("move_ids").filtered(
+                # ~ lambda r: r.state == "cancel" and not r.scrapped
+            # ~ ):
+                # ~ if move.location_dest_id.usage == "customer":
+                    # ~ if not move.origin_returned_move_id:
+                        # ~ qty += move.product_uom._compute_quantity(
+                            # ~ move.product_uom_qty, line.product_uom
+                        # ~ )
+                # ~ elif (
+                    # ~ move.location_dest_id.usage != "customer"
+                    # ~ and move.to_refund_so
+                # ~ ):
+                    # ~ qty -= move.product_uom._compute_quantity(
+                        # ~ move.product_uom_qty, line.product_uom
+                    # ~ )
+                # ~ line.cancelled_qty = qty
 
-        for line in self:
-            qty = 0.00
-            for move in line.procurement_ids.mapped("move_ids").filtered(
-                lambda r: r.state == "cancel" and not r.scrapped
-            ):
-                if move.location_dest_id.usage == "customer":
-                    if not move.origin_returned_move_id:
-                        qty += move.product_uom._compute_quantity(
-                            move.product_uom_qty, line.product_uom
-                        )
-                elif (
-                    move.location_dest_id.usage != "customer"
-                    and move.to_refund_so
-                ):
-                    qty -= move.product_uom._compute_quantity(
-                        move.product_uom_qty, line.product_uom
-                    )
-                line.cancelled_qty = qty
-
-    price_total_cancelled = fields.Monetary(
-        compute="_compute_amount_cancelled",
-        string="Cancelled amount",
-        readonly=True,
-        store=True,
-    )
-    cancelled_qty = fields.Float(
-        "Cancelled Quantity",
-        compute="_get_cancelled_qty",
-        digits="Product Unit of Measure",
-        store=True,
-    )
-
-
-class SaleOrderLineTemplate(models.Model):
-    _inherit = "sale.order.line.template"
-
-    price_total_cancelled = fields.Monetary(
-        string="Total (without cancelled)", readonly=True
-    )
-    cancelled_qty = fields.Float(
-        "Cancelled Quantity",
-        digits="Product Unit of Measure",
-    )
+    # ~ price_total_cancelled = fields.Monetary(
+        # ~ compute="_compute_amount_cancelled",
+        # ~ string="Cancelled amount",
+        # ~ readonly=True,
+        # ~ store=True,
+    # ~ )
+    # ~ cancelled_qty = fields.Float(
+        # ~ "Cancelled Quantity",
+        # ~ compute="_get_cancelled_qty",
+        # ~ digits="Product Unit of Measure",
+        # ~ store=True,
+    # ~ )

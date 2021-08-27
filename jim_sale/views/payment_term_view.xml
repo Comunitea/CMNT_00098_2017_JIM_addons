@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data>
 
     <record id="view_payment_term_prepayment_form" model="ir.ui.view">
         <field name="name">account.payment.term.prepayment.form</field>
@@ -13,6 +12,25 @@
         </field>
     </record>
 
+    <record id="global_discount_view_tree_add_term" model="ir.ui.view">
+        <field name="model">global.discount</field>
+        <field name="inherit_id" ref="base_global_discount.global_discount_view_tree"/>
+        <field name="arch" type="xml">
+            <field name="discount_scope" position="after">
+                <field name="payment_term_id"/>
+            </field>
+        </field>
+    </record>
 
-    </data>
+    <record id="global_discount_view_form_add_term" model="ir.ui.view">
+        <field name="model">global.discount</field>
+        <field name="inherit_id" ref="base_global_discount.global_discount_view_form"/>
+        <field name="arch" type="xml">
+            <field name="discount_scope" position="after">
+                <field name="payment_term_id"/>
+            </field>
+        </field>
+    </record>
+
+
 </odoo>

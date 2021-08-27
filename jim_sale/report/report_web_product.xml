@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <odoo>
 
-    <record id="view_web_product_tree" model="ir.ui.view">
+    <!--TODO: Migrar<record id="view_web_product_tree" model="ir.ui.view">
         <field name="name">web.product.jim.tree</field>
         <field name="model">product.product</field>
         <field name="arch" type="xml">
@@ -15,7 +15,7 @@
             </tree>
 
         </field>
-    </record>
+    </record>-->
 
     <record id="view_web_product_report_tree" model="ir.ui.view">
         <field name="name">report.web.product.jim.tree</field>
@@ -38,8 +38,8 @@
         <field name="res_model">report.web.product.jim</field>
         <field name="view_mode">tree</field>
         <field name="view_id" ref="view_web_product_report_tree"/>
-        </record>-->
-      <record id="action_web_product_report_jim_02" model="ir.actions.act_window">
+        </record>
+      <!--TODO: Migrar<record id="action_web_product_report_jim_02" model="ir.actions.act_window">
         <field name="name">Análisis productos en web</field>
         <field name="res_model">product.product</field>
         <field name="view_mode">tree</field>
@@ -48,6 +48,6 @@
 
     <menuitem name="Productos en web" action="action_web_product_report_jim_02"
               id="menu_report_product_web_id"
-              parent="sales_team.menu_sale_report" />
+              parent="sales_team.menu_sale_report" />-->
 
 </odoo>

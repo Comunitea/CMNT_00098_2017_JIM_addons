@@ -5,50 +5,50 @@ from odoo import models, fields, api, _
 import odoo.addons.decimal_precision as dp
 from odoo.exceptions import UserError, ValidationError
 
+#TODO: Migrar, no existe el modelo
+# ~ class AccountVoucherWizard(models.TransientModel):
 
-class AccountVoucherWizard(models.TransientModel):
+    # ~ _inherit = "account.purchase.voucher.wizard"
 
-    _inherit = "account.purchase.voucher.wizard"
+    # ~ def make_report_doc_credit(self):
+        # ~ # todo revisar por Omar/Santi
+        # ~ # necesito ponaer un flag aqui en el contexto, parra que al enviar a post no lo haga
 
-    def make_report_doc_credit(self):
-        # todo revisar por Omar/Santi
-        # necesito ponaer un flag aqui en el contexto, parra que al enviar a post no lo haga
+        # ~ purchase_obj = self.env["purchase.order"]
+        # ~ purchase_ids = self.env.context.get("active_ids", [])
+        # ~ if purchase_ids:
+            # ~ purchase_id = purchase_ids[0]
+            # ~ purchase = purchase_obj.browse(purchase_id)
 
-        purchase_obj = self.env["purchase.order"]
-        purchase_ids = self.env.context.get("active_ids", [])
-        if purchase_ids:
-            purchase_id = purchase_ids[0]
-            purchase = purchase_obj.browse(purchase_id)
+        # ~ fields_to_check = (
+            # ~ "proforma_invoice_ref",
+            # ~ "proforma_invoice_date",
+            # ~ "limit_expedition_date",
+            # ~ "mail_confirm_packing_list",
+            # ~ "partner_bank_contact_id",
+            # ~ "incoterm_id",
+            # ~ "doc_credit_bank_id",
+            # ~ "harbor_id",
+        # ~ )
+        # ~ for field in fields_to_check:
+            # ~ if purchase[field] == False:
+                # ~ raise ValidationError(
+                    # ~ "You must fill this fields\n%s" % str(fields_to_check)
+                # ~ )
 
-        fields_to_check = (
-            "proforma_invoice_ref",
-            "proforma_invoice_date",
-            "limit_expedition_date",
-            "mail_confirm_packing_list",
-            "partner_bank_contact_id",
-            "incoterm_id",
-            "doc_credit_bank_id",
-            "harbor_id",
-        )
-        for field in fields_to_check:
-            if purchase[field] == False:
-                raise ValidationError(
-                    "You must fill this fields\n%s" % str(fields_to_check)
-                )
+        # ~ self = self.with_context(not_payment_post=True)
+        # ~ res = super(AccountVoucherWizard, self).make_advance_payment()
 
-        self = self.with_context(not_payment_post=True)
-        res = super(AccountVoucherWizard, self).make_advance_payment()
-
-        payment_obj = self.env["account.payment"]
-        payment = payment_obj.search(
-            [("purchase_id", "=", purchase_id)], limit=1, order="id desc"
-        )
-        purchase.expire_credit_letter_date = self.date
-        report = payment.create_doc_credit()
-        payment.write(
-            {"doc_credit": "Documentary credit :" + str(payment.id) + ".pdf"}
-        )
-        return res
+        # ~ payment_obj = self.env["account.payment"]
+        # ~ payment = payment_obj.search(
+            # ~ [("purchase_id", "=", purchase_id)], limit=1, order="id desc"
+        # ~ )
+        # ~ purchase.expire_credit_letter_date = self.date
+        # ~ report = payment.create_doc_credit()
+        # ~ payment.write(
+            # ~ {"doc_credit": "Documentary credit :" + str(payment.id) + ".pdf"}
+        # ~ )
+        # ~ return res
 
 
 class AccountPayment(models.Model):

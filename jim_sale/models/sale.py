@@ -45,7 +45,8 @@ class SaleOrder(models.Model):
         track_visibility="always",
         domain=[("is_company", "=", True)],
     )
-    chanel = fields.Selection(selection_add=[("web", "WEB")])
+    chanel = fields.Selection([('erp', 'ERP'), ('telesale', 'Telesale'),
+                               ("web", "WEB")], "Channel")
     work_to_do = fields.Text("Trabajo a realizar")
     route_id = fields.Many2one(
         "stock.location.route",
@@ -91,44 +92,29 @@ class SaleOrder(models.Model):
         )
         # Descuento financiero
         commercial_partner = partner.commercial_partner_id
-        early_payment_discount = 0
-        if not partner.property_payment_term_id:
-            early_discs = commercial_partner.early_payment_discount_ids
-            if early_discs:
-                early_payment_discount = early_discs[0].early_payment_discount
-
-        else:
-            early_discs = (
-                commercial_partner.early_payment_discount_ids.filtered(
-                    lambda x: x.payment_term_id == self.payment_term_id
-                )
-            )
-            if early_discs:
-                early_payment_discount = early_discs[0].early_payment_discount
-            else:
-                early_discs = commercial_partner.early_payment_discount_ids
-                if early_discs:
-                    early_payment_discount = early_discs[
-                        0
-                    ].early_payment_discount
-                else:
-                    early_discs = self.env[
-                        "account.early.payment.discount"
-                    ].search(
-                        [
-                            ("partner_id", "=", False),
-                            (
-                                "payment_term_id",
-                                "=",
-                                partner.property_payment_term_id.id,
-                            ),
-                        ]
-                    )
-                    if early_discs:
-                        early_payment_discount = early_discs[
-                            0
-                        ].early_payment_discount
-        vals.update({"early_payment_discount": early_payment_discount})
+        if partner.property_payment_term_id and \
+                (partner.customer_global_discount_ids.
+                 filtered(lambda x: x.payment_term_id == partner.
+                          property_payment_term_id)
+                 or commercial_partner.customer_global_discount_ids.
+                 filtered(lambda x: x.payment_term_id == partner.
+                          property_payment_term_id)):
+            vals['global_discount_ids'] = \
+                [(6, 0, (partner.customer_global_discount_ids.
+                         filtered(lambda x: x.payment_term_id == partner.
+                                  property_payment_term_id).ids
+                         or commercial_partner.customer_global_discount_ids.
+                         filtered(lambda x: x.payment_term_id == partner.
+                                  property_payment_term_id).ids))]
+        elif partner.customer_global_discount_ids.\
+                filtered(lambda x: not x.payment_term_id) or \
+                commercial_partner.customer_global_discount_ids.\
+                filtered(lambda x: not x.payment_term_id):
+            vals['global_discount_ids'] = \
+                [(6, 0, (partner.customer_global_discount_ids.
+                         filtered(lambda x: not x.payment_term_id).ids or
+                         commercial_partner.customer_global_discount_ids.
+                         filtered(lambda x: not x.payment_term_id).ids))]
 
         for line in vals["order_line"]:
             dict_line = line[2]
@@ -141,13 +127,6 @@ class SaleOrder(models.Model):
             dict_line.update({"lqdr": lqdr})
         res = super(SaleOrder, self).create(vals)
         return res.id
-
-    def action_invoice_create(self, grouped=False, final=False):
-        invs = super(SaleOrder, self).action_invoice_create(grouped, final)
-        self.env["account.invoice"].browse(
-            invs
-        ).button_compute_early_payment_disc()
-        return invs
 
     @api.onchange("partner_id")
     def onchange_partner_id_warning(self):
@@ -172,6 +151,50 @@ class SaleOrder(models.Model):
                 )
         return dict_warning
 
+    @api.onchange("partner_id")
+    def onchange_partner_id(self):
+        """se traer los descuentos globales de la forma de pago y cliente o
+           los del cliente sin forma de pago"""
+        super().onchange_partner_id()
+        if self.payment_term_id and \
+            (self.partner_id.customer_global_discount_ids.
+             filtered(lambda x: x.payment_term_id == self.payment_term_id)
+             or self.partner_id.commercial_partner_id.
+             customer_global_discount_ids.
+             filtered(lambda x: x.payment_term_id == self.payment_term_id)):
+            self.global_discount_ids = (
+                self.partner_id.customer_global_discount_ids.
+                filtered(lambda x: x.payment_term_id == self.payment_term_id)
+                or self.partner_id.commercial_partner_id.
+                customer_global_discount_ids.
+                filtered(lambda x: x.payment_term_id == self.payment_term_id)
+            )
+        elif self.partner_id.customer_global_discount_ids.\
+                filtered(lambda x: not x.payment_term_id) or self.partner_id.\
+                commercial_partner_id.customer_global_discount_ids.\
+                filtered(lambda x: not x.payment_term_id):
+            self.global_discount_ids = (
+                self.partner_id.customer_global_discount_ids.
+                filtered(lambda x: not x.payment_term_id) or self.partner_id.
+                commercial_partner_id.customer_global_discount_ids.
+                filtered(lambda x: not x.payment_term_id))
+
+    @api.onchange('payment_term_id')
+    def onchange_payment_term(self):
+        if self.payment_term_id and \
+            (self.partner_id.customer_global_discount_ids.
+             filtered(lambda x: x.payment_term_id == self.payment_term_id)
+             or self.partner_id.commercial_partner_id.
+             customer_global_discount_ids.
+             filtered(lambda x: x.payment_term_id == self.payment_term_id)):
+            self.global_discount_ids = (
+                self.partner_id.customer_global_discount_ids.
+                filtered(lambda x: x.payment_term_id == self.payment_term_id)
+                or self.partner_id.commercial_partner_id.
+                customer_global_discount_ids.
+                filtered(lambda x: x.payment_term_id == self.payment_term_id)
+            )
+
     def action_proforma(self):
         for order in self:
             order.state = "proforma"
@@ -183,8 +206,9 @@ class SaleOrder(models.Model):
         """
         ctx = self._context.copy()
         for order in self:
-            ctx.update(bypass_risk=True, force_company=order.company_id.id)
-            super(SaleOrder, order.with_context(ctx)).action_confirm()
+            ctx.update(bypass_risk=True)
+            super(SaleOrder, order.with_company(order.company_id.id).
+                  with_context(ctx)).action_confirm()
             order.picking_ids.write({"scheduled_order": order.scheduled_order})
         return True
 
@@ -438,6 +462,8 @@ class SaleOrderLine(models.Model):
             ("cancel", "Cancelled"),
         ]
     )
+    global_available_stock = fields.\
+         Float(related="product_id.web_global_stock", store=True)
 
     lqdr = fields.Boolean(related="product_id.lqdr", store=False)
 
@@ -492,42 +518,3 @@ class SaleOrderLine(models.Model):
                 }
             )
         return vals
-
-
-class SaleOrderLineTemplate(models.Model):
-
-    _inherit = "sale.order.line.template"
-
-    lqdr = fields.Boolean(related="product_template.lqdr", store=False)
-
-    def create_template_procurements(self):
-        for line in self.order_lines:
-            line.action_procurement_create()
-
-        return {"type": "ir.actions.client", "tag": "reload"}
-
-    @api.depends("invoice_lines.invoice_id.state", "invoice_lines.quantity")
-    def _get_invoice_qty(self):
-        """
-        Compute the quantity invoiced. If case of a refund, the quantity invoiced is decreased. Note
-        that this is the case only if the refund is generated from the SO and that is intentional: if
-        a refund made would automatically decrease the invoiced quantity, then there is a risk of reinvoicing
-        it automatically, which may not be wanted at all. That's why the refund has to be created from the SO
-        """
-        return False
-
-    @api.depends(
-        "qty_invoiced", "qty_delivered", "product_uom_qty", "order_id.state"
-    )
-    def _get_to_invoice_qty(self):
-        return False
-
-    @api.depends(
-        "state",
-        "product_uom_qty",
-        "qty_delivered",
-        "qty_to_invoice",
-        "qty_invoiced",
-    )
-    def _compute_invoice_status(self):
-        return False

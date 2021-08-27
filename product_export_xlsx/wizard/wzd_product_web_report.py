@@ -84,7 +84,7 @@ class WizardValuationHistory(models.TransientModel):
             "display_name",
             "default_code",
             "tag_names",
-            "web",
+            "website_published",
             self.stock_field,
             "standard_price",
         )
@@ -100,7 +100,7 @@ class WizardValuationHistory(models.TransientModel):
                 self.env.cr.execute(
                     """SELECT
                 tb3.product_id AS producto,
-                SUM(quantity_imp) AS CantidadTotal, SUM(price_subtotal_imp) AS 
+                SUM(quantity_imp) AS CantidadTotal, SUM(price_subtotal_imp) AS
                 ImporteTotal,
                 CASE
                 WHEN sum(quantity_imp) = 0 THEN NULL
@@ -116,35 +116,35 @@ class WizardValuationHistory(models.TransientModel):
                 END AS PorcentajeArancel,
                 AVG(delivery) as delivery, AVG(price_unit) as price_unit,
                 count(tb3.line_id) as num_lineas
-            
+
             FROM(
              SELECT *
-		        FROM(
+                        FROM(
                         SELECT ROW_NUMBER() OVER (PARTITION BY product_id ORDER BY date_invoice DESC) AS ordered, *
                         FROM(
-                            SELECT ai.date_invoice, il.product_id, 
+                            SELECT ai.date_invoice, il.product_id,
                             il.price_unit * (
-                            ai.amount_untaxed_signed/ai.amount_untaxed) as price_unit, 
+                            ai.amount_untaxed_signed/ai.amount_untaxed) as price_unit,
                             il.quantity as quantity_imp, il.price_subtotal *
-                            (ai.amount_untaxed_signed/ai.amount_untaxed) as 
-                            price_subtotal_imp, 
+                            (ai.amount_untaxed_signed/ai.amount_untaxed) as
+                            price_subtotal_imp,
                             il.arancel_percentage,  il.arancel * (ai.amount_untaxed_signed/ai.amount_untaxed),
-			                il.arancel * (ai.amount_untaxed_signed/ai.amount_untaxed) * il.quantity AS arancel_linea, 
-			                il.arancel_percentage * il.quantity AS arancel_percentage_linea,
+                                        il.arancel * (ai.amount_untaxed_signed/ai.amount_untaxed) * il.quantity AS arancel_linea,
+                                        il.arancel_percentage * il.quantity AS arancel_percentage_linea,
                             CASE
                                 WHEN ai.amount_untaxed = 0 THEN NULL
                                 WHEN il.quantity = 0 THEN NULL
                                 ELSE ((il.price_subtotal / ai.amount_untaxed) * ai.delivery_cost) / il.quantity
                             END AS delivery,
-                            
+
                             il.id as line_id
                             FROM account_invoice_line il
                                 JOIN product_product pp ON il.product_id = pp.id
                                 JOIN account_invoice ai ON il.invoice_id = ai.id
                                 JOIN res_partner rp ON ai.partner_id = rp.id
                                 JOIN res_country rc ON rp.country_id = rc.id
-                            WHERE pp.default_code != 'LM' 
-                                and ai.amount_untaxed != 0 
+                            WHERE pp.default_code != 'LM'
+                                and ai.amount_untaxed != 0
                                 and pp.id in {0} and ai.date_invoice <= '{1}'
                                 and ai.company_id = {2}
                                 and ai.type = 'in_invoice'
@@ -152,9 +152,9 @@ class WizardValuationHistory(models.TransientModel):
                     ) tb2
                     WHERE tb2.ordered <= 3
 
-                ) tb3 
-                
-               
+                ) tb3
+
+
                 GROUP BY producto
                 ORDER BY producto""".format(
                         tuple(new_dict.keys()),

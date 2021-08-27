@@ -28,7 +28,7 @@
             <xpath expr="//field[@name='origin']" position="after">
                 <field name="expediente" />
             </xpath>
-            <xpath expr="//notebook" position="inside">
+            <xpath expr="//field[@name='order_line']//notebook" position="inside">
                 <page string="Histórico">
                     <field name="purchase_order_line_ids"/>
                 </page>

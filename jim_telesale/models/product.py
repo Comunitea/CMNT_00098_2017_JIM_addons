@@ -61,9 +61,3 @@ class ProductProduct(models.Model):
     @api.model
     def _get_stock_field(self):
         return "global_available_stock"
-
-    @api.model
-    def _get_line_discount(self, line):
-        res = super(ProductProduct, self)._get_line_discount(line)
-        res = line.chained_discount
-        return res

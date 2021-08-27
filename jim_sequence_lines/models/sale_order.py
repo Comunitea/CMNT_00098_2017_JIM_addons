@@ -9,11 +9,6 @@ from odoo.exceptions import AccessError, UserError, ValidationError
 ORDER_LINE_INC = 1000
 
 
-class SaleOrderLineTemplate(models.Model):
-    _inherit = "sale.order.line.template"
-    _order = "order_id, layout_category_id, sequence, id"
-
-
 class SaleOrderLine(models.Model):
 
     _inherit = "sale.order.line"

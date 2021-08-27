@@ -7,7 +7,6 @@
     "depends": [
         "purchase_stock",
         "purchase_advance_payment",
-        "res_currency_fixed_rate",
         "shipping_container",
     ],
     "author": "Comunitea",

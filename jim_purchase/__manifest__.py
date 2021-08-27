@@ -9,10 +9,10 @@
     "license": "AGPL-3",
     "depends": [
         "purchase_advance_payment",
-        "purchase_order_variant_mgmt",
+        "purchase_product_matrix",
         "jim_stock",
-        "purchase_early_payment_discount",
-        "sale_early_payment_discount",
+        "purchase_global_discount",
+        "sale_global_discount",
     ],
     "contributors": [
         "Comunitea ",

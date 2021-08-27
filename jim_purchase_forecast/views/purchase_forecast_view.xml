@@ -13,6 +13,7 @@
                 <field name="stock_months"/>
                 <field name="seller_id"/>
                 <field name="harbor_id"/>
+                <field name="tag_ids"/>
             </tree>
         </field>
     </record>
@@ -41,6 +42,7 @@
                             <field name="category_ids" widget="many2many_tags"/>
                             <field name="seller_id"/>
                             <field name="harbor_id"/>
+                            <field name="tag_ids" widget="many2many_tags"/>
                         </group>
                     </group>
                 </sheet>

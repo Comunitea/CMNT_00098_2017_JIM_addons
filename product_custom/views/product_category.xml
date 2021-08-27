@@ -20,4 +20,24 @@
             </field>
         </field>
     </record>
+
+    <record id="view_product_category_form_b2b" model="ir.ui.view">
+        <field name="name">product.category.view.form.b2b</field>
+        <field name="model">product.category</field>
+        <field name="inherit_id" ref="product.product_category_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//group[@name='first']" position="after">
+                <group>
+                    <field name="child_id" widget="one2many_list" mode="tree">
+                        <tree decoration-success="active == True and web == True">
+                            <field name="sequence" widget="handle"/>
+                            <field name="name"/>
+                            <field name="active"/>
+                            <field name="web"/>
+                        </tree>
+                    </field>
+                </group>
+            </xpath>
+        </field>
+    </record>
 </odoo>

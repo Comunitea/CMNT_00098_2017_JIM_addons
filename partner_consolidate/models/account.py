@@ -23,8 +23,8 @@ class AccountMove(models.Model):
                     inv.commercial_partner_id = old_value[0][0]
                 continue
 
-            partner_in_company = inv.partner_id.with_context(
-                force_company=inv.company_id.id
+            partner_in_company = inv.partner_id.with_ccompany(
+                inv.company_id.id
             )
             if partner_in_company.consolidate and partner_in_company.parent_id:
                 commercial_partner_id = (

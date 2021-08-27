@@ -33,7 +33,6 @@ class SaleOrder(models.Model):
             vals.update({"route_id": product_obj.route_ids[0].id})
         vals.update(
             {
-                "chained_discount": line.get("chained_discount", "0.00"),
                 "name": line.get("description", ""),
                 "note": line.get("note", ""),
             }
@@ -53,7 +52,6 @@ class SaleOrder(models.Model):
             {
                 "name": line.get("description", ""),
                 "note": line.get("note", ""),
-                "chained_discount": line.get("chained_discount", "0.00"),
             }
         )
         return vals
@@ -67,7 +65,6 @@ class SaleOrder(models.Model):
         product_obj = t_product.browse(line["product_id"])
         if product_obj.route_ids:
             vals.update({"route_id": product_obj.route_ids[0].id})
-        vals.update({"chained_discount": line.get("chained_discount", "0.00")})
         return vals
 
     @api.model
@@ -84,7 +81,7 @@ class SaleOrder(models.Model):
                 "partner_id": partner_id,
                 "date_order": time.strftime("%Y-%m-%d"),
                 "pricelist_id": partner.property_product_pricelist.id,
-                "early_payment_discount": res["early_payment_discount"],
+                #TODO: Migrar a sale_global_discount"early_payment_discount": res["early_payment_discount"],
             }
         )
         res2 = order.onchange_partner_id_warning()
@@ -109,7 +106,7 @@ class SaleOrder(models.Model):
         vals = {
             "neutral_document": order.get("neutral", False),
             "scheduled_order": order.get("scheduled_order", False),
-            "early_payment_discount": order.get("epd", False),
+            #TODO: Migrar a sale_global_discount"early_payment_discount": order.get("epd", False),
         }
         res.update(vals)
         return res
@@ -137,7 +134,6 @@ class SaleOrderLine(models.Model):
             res.update(
                 {
                     "global_available_stock": stock,
-                    "chained_discount": str(res.get("discount", 0.0)),
                 }
             )
         return res

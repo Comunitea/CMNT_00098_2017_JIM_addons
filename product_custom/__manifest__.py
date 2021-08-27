@@ -4,7 +4,7 @@
 {
     "name": "Product customizations",
     "version": "14.0.1.0.0",
-    "depends": ["product_multi_category", "jim_stock"],
+    "depends": ["jim_stock", "js_addons", "product_dimension"],
     "author": "Comunitea",
     "license": "AGPL-3",
     "summary": """Several customizations on product models""",

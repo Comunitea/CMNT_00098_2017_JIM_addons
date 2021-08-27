@@ -213,11 +213,9 @@ class CrmClaim(models.Model):
                     "ic": True,
                     "pick": True,
                 }
-                ctx = self._context.copy()
-                ctx.update({"force_company": company_icp.id})
                 claim_icp = (
                     self.env["crm.claim"]
-                    .with_context()
+                    .with_company(company_icp.id)
                     .create(new_rma_ICP_vals)
                 )
 
@@ -235,11 +233,9 @@ class CrmClaim(models.Model):
                     "ic": True,
                     "pick": True,
                 }
-                ctx = self._context.copy()
-                ctx.update({"force_company": company_icc.id})
                 claim_icc = (
                     self.env["crm.claim"]
-                    .with_context()
+                    .with_company(company_icc.id)
                     .create(new_rma_ICC_vals)
                 )
 
@@ -394,19 +390,14 @@ class CrmClaim(models.Model):
         }
 
     def create_rma_pick(self, wh, type, moves):
-        if self.env.user.company_id == self.company_id:
-            ctx = False
-        else:
-            ctx = self._context.copy()
-            ctx.update({"force_company": self.company_id.id})
         pick_vals = self.RMA_to_stock_pick_vals(
             wh, type, moves[0].location_dest_id
         )
-        if ctx:
+        if self.env.user.company_id != self.company_id:
             pick = (
                 self.env["stock.picking"]
                 .sudo()
-                .with_context(ctx)
+                .with_company(self.company_id.id)
                 .create(pick_vals)
             )
         else:
@@ -414,11 +405,11 @@ class CrmClaim(models.Model):
 
         for move in moves:
             move_vals = self.RMA_to_stock_pick_line_vals(pick, move)
-            if ctx:
+            if self.env.user.company_id == self.company_id:
                 stock_move = (
                     self.env["stock.move"]
                     .sudo()
-                    .with_context(ctx)
+                    .with_company(self.company_id.id)
                     .create(move_vals)
                 )
             else:
@@ -498,7 +489,6 @@ class CrmClaim(models.Model):
             {
                 "picking_type": "in",
                 "product_return": True,
-                "force_company": self.company_id.id,
                 "company_id": self.company_id.id,
                 "partner_id": self.partner_id.id,
                 "active_id": self.id,
@@ -507,7 +497,8 @@ class CrmClaim(models.Model):
         )
 
         new_wzd = (
-            self.env["claim_make_picking.wizard"].with_context(ctx).create({})
+            self.env["claim_make_picking.wizard"].
+            with_company(self.company_id.id).with_context(ctx).create({})
         )
         if location_dest_id:
             new_wzd.claim_line_dest_location_id = location_dest_id

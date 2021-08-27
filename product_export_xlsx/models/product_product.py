@@ -15,7 +15,7 @@ class ProductProduct(models.Model):
         return [
             "display_name",
             "default_code",
-            "web",
+            "website_published",
             "tag_names",
             "web_global_stock",
         ]

@@ -10,8 +10,7 @@
           <field name="display_name" readonly="1"/>
           <field name="default_code" readonly="1"/>
           <field name="tag_names" readonly="1"/>
-          <field name="web"/>
-          <field name="force_web"/>
+          <field name="website_published"/>
           <field name="global_real_stock" readonly="1"/>
         </tree>
       </field>
@@ -23,13 +22,13 @@
       <field name="priority">20</field>
       <field name="arch" type="xml">
         <search string="Search Product">
-          <field name="web"/>
+          <field name="website_published"/>
           <field name="tag_names"/>
           <field name="display_name"/>
           <separator/>
           <filter name="with_stock" string="Con stock" domain="[('global_real_stock','>',0.00)]"/>
-          <filter name="web_ok" string="Mostrar en web" domain="[('product_tmpl_id.web','=',True)]"/>
-          <filter name="web_no_ok" string="Ocultados en web" domain="[('product_tmpl_id.web','=',False)]"/>
+          <filter name="web_ok" string="Mostrar en web" domain="[('product_tmpl_id.website_published','=',True)]"/>
+          <filter name="web_no_ok" string="Ocultados en web" domain="[('product_tmpl_id.website_published','=',False)]"/>
           <group expand="0" string="Group By">
             <filter string="Tag" name="tag" context="{'group_by':'tag_names'}"/>
           </group>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
 
-        <record id="view_account_purchase_voucher_wizard_doc_credit" model="ir.ui.view">
+        <!--TODO: Migrar<record id="view_account_purchase_voucher_wizard_doc_credit" model="ir.ui.view">
             <field name="name">Advance Purchase Payment Doc Credit</field>
             <field name="model">account.purchase.voucher.wizard</field>
             <field name="inherit_id" ref="purchase_advance_payment.view_account_purchase_voucher_wizard"/>
@@ -11,5 +11,5 @@
                     <button name="make_report_doc_credit" string="Make doc credit report" type="object" class="btn-primary"/>
                 </xpath>
             </field>
-        </record>
+        </record>-->
 </odoo>

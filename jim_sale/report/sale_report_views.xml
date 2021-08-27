@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
-    <record id="view_order_product_search_attributes" model="ir.ui.view">
+    <!--TODO: Migrar<record id="view_order_product_search_attributes" model="ir.ui.view">
         <field name="name">sale.report.attributes.search</field>
         <field name="model">sale.report</field>
         <field name="inherit_id" ref="sale.view_order_product_search"/>
@@ -12,6 +12,6 @@
                 <field name="size_id"/>
             </field>
         </field>
-    </record>
+    </record>-->
 
 </odoo>

@@ -10,7 +10,6 @@
     "depends": [
         "account_banking_mandate",
         "account_invoice_refund_link",
-        "chained_discount_commercial_rules",
     ],
     "contributors": [
         "Comunitea ",
@@ -20,7 +19,6 @@
         "views/account_move.xml",
         "views/account_banking_mandate.xml",
         "views/account_invoice.xml",
-        "views/res_partner.xml",
     ],
     "installable": True,
 }

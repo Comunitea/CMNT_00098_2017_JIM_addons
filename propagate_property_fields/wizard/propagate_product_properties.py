@@ -29,8 +29,7 @@ class PropagateProductProperties(models.TransientModel):
                 tax_records = eval(field_eval, eval_dic)
                 new_tax_ids = list(tax_records._ids)
                 for company in company_objs:
-                    ctx = {"force_company": company.id}
-                    product2 = t_product.with_context(ctx).browse(product.id)
+                    product2 = t_product.with_company(company.id).browse(product.id)
 
                     if tax_records:
                         domain = [
