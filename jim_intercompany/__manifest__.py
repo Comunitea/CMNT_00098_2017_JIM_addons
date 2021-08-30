@@ -12,7 +12,7 @@
         "stock",
         "purchase",
         "sale_stock",
-        "inter_company_rules",
+        "purchase_sale_inter_company",
         "mrp",
     ],
     "contributors": [

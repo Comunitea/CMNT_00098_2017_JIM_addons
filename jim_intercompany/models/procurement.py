@@ -2,33 +2,33 @@
 # License AGPL-3 - See http://www.gnu.org/licenses/agpl-3.0.html
 from odoo import fields, models, api, _
 
+# TODO: Migrar, el modelo no existe ya. Pero quizás no se siga esta estrategia para el multicompany
+# ~ class ProcurementRule(models.Model):
+    # ~ """ Pull rules """
 
-class ProcurementRule(models.Model):
-    """ Pull rules """
+    # ~ _inherit = "procurement.rule"
 
-    _inherit = "procurement.rule"
+    # ~ procure_method = fields.Selection(
+        # ~ selection_add=[("company", "According to Product Company")]
+    # ~ )
+    # ~ ic_picking_type_id = fields.Many2one(
+        # ~ "stock.picking.type",
+        # ~ "IC Picking Type ",
+        # ~ required=False,
+        # ~ help="Picking Type for Intercompany purchase, ...",
+    # ~ )
 
-    procure_method = fields.Selection(
-        selection_add=[("company", "According to Product Company")]
-    )
-    ic_picking_type_id = fields.Many2one(
-        "stock.picking.type",
-        "IC Picking Type ",
-        required=False,
-        help="Picking Type for Intercompany purchase, ...",
-    )
-
-    @api.model
-    def _get_action(self):
-        res = super(ProcurementRule, self)._get_action()
-        res.append(("intercompany_buy", _("Intercompany Buy")))
-        res.append(
-            (
-                "product_company",
-                _("Intercompany Buy or Move According to Product Company"),
-            )
-        )
-        return res
+    # ~ @api.model
+    # ~ def _get_action(self):
+        # ~ res = super(ProcurementRule, self)._get_action()
+        # ~ res.append(("intercompany_buy", _("Intercompany Buy")))
+        # ~ res.append(
+            # ~ (
+                # ~ "product_company",
+                # ~ _("Intercompany Buy or Move According to Product Company"),
+            # ~ )
+        # ~ )
+        # ~ return res
 
 
 # TODO: Migrar, el modelo no existe ya. Pero quizás no se siga esta estrategia para el multicompany
@@ -389,12 +389,13 @@ class ProcurementRule(models.Model):
 # ~ }
 
 
-class MakeProcurement(models.TransientModel):
-    _inherit = "make.procurement"
+# TODO: Migrar, el modelo no existe ya. Pero quizás no se siga esta estrategia para el multicompany
+# ~ class MakeProcurement(models.TransientModel):
+    # ~ _inherit = "make.procurement"
 
-    def make_procurement(self):
-        """ Creates procurement order for selected product. """
-        return super(
-            MakeProcurement,
-            self.with_context(user_company=self.env.user.company_id.id),
-        ).make_procurement()
+    # ~ def make_procurement(self):
+        # ~ """ Creates procurement order for selected product. """
+        # ~ return super(
+            # ~ MakeProcurement,
+            # ~ self.with_context(user_company=self.env.user.company_id.id),
+        # ~ ).make_procurement()

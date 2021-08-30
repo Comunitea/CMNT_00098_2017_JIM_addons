@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-        <record id="view_sga_config_settings" model="ir.ui.view">
+       <!--TODO: MIgrar a res.config.settings" <record id="view_sga_config_settings" model="ir.ui.view">
             <field name="name">sga.stock.config.settings</field>
             <field name="model">stock.config.settings</field>
             <field name="inherit_id" ref="stock.view_stock_config_settings"/>
@@ -38,7 +38,7 @@
                     </group>
                 </xpath>
             </field>
-        </record>
+        </record>-->
 
         <menuitem id="menu_sga_mecalux" name="Sga Mecalux" parent="stock.menu_stock_config_settings" groups="group_sga_file_manager"
             sequence="25" />

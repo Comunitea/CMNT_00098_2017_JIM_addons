@@ -143,12 +143,13 @@ class SGAProductPackaging(models.Model):
 
     _inherit = "product.packaging"
 
-    ul_type = fields.Selection(selection_add=[("sga", "Mecalux")])
+    #TODO: Migrar no existen los campos
+    # ~ ul_type = fields.Selection(selection_add=[("sga", "Mecalux")])
 
-    sga_uom_base_code = fields.Char(
-        related="product_tmpl_id.uom_id.sga_uom_base_code"
-    )
-    sga_desc_uom_base_code = fields.Char(related="product_tmpl_id.uom_id.name")
+    # ~ sga_uom_base_code = fields.Char(
+        # ~ related="product_tmpl_id.uom_id.sga_uom_base_code"
+    # ~ )
+    # ~ sga_desc_uom_base_code = fields.Char(related="product_tmpl_id.uom_id.name")
     sga_complete_percent = fields.Integer(
         "SGA complete percent",
         default=1,

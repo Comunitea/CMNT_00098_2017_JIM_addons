@@ -26,7 +26,7 @@ ODOO_WRITE_FOLDER = "temp"
 
 class ConfigPathFiles(models.TransientModel):
 
-    _inherit = "stock.config.settings"
+    _inherit = "res.config.settings"
 
     path_files = fields.Char(
         "Files Path",
