@@ -52,8 +52,11 @@ class PublicImage(models.AbstractModel):
 				img = self._resize_large_image(vals[self._attr_image_model_field]) if resize else vals[self._attr_image_model_field]
 				vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: self._ftp_save_base64(img) })
 			return super(PublicImage, self).create(vals)
-		except:
-			self._ftp_delete_file()
+		except Exception:
+			if vals.get(self._attr_image_model_field):
+				# Solo eliminamos la imágen si se estaba
+				# estableciendo en ese momento
+				self._ftp_delete_file()
 			return False
 
 	@api.multi
@@ -70,10 +73,12 @@ class PublicImage(models.AbstractModel):
 				new_image_name = self._ftp_save_base64(img) 
 				vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: new_image_name })
 			return super(PublicImage, self).write(vals)
-		except:
-			ftp.delete_file(new_image_name)
+		except Exception:
+			if vals.get(self._attr_image_model_field):
+				# Solo eliminamos la imágen si se estaba
+				# estableciendo en ese momento
+				ftp.delete_file(new_image_name)
 			return False
-
 
 	@api.multi
 	def unlink(self):
@@ -272,7 +277,6 @@ class ProductTag(models.Model):
 	_order = "sequence, parent_left"
 
 	# PublicImage params
-	_attr_image_model_field = 'image'
 	_max_public_file_size = (1280, None)
 
 	child_ids = fields.One2many(domain=['|', ('active', '=', True), ('active', '=', False)])
