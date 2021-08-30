@@ -59,7 +59,7 @@ def _redundant_check(filename):
 		_logger.error('Redundant Check Error: %s', e)
 	return False
 
-def save_file(filename, settings=None):
+def save_file(filename, settings):
 	"""
 	Save local file on FTP server
 	:param filename: String, file name
@@ -79,7 +79,7 @@ def save_file(filename, settings=None):
 			_logger.error('File Error: %s', e)
 	return False
 
-def save_base64(base64_str, settings=None):
+def save_base64(base64_str, settings):
 	"""
 	Save decoded base64 on FTP server
 	:param filename_without_ext: String, file name
@@ -103,7 +103,7 @@ def save_base64(base64_str, settings=None):
 			_logger.error('Bytes Error: %s', e)
 	return False
 
-def delete_file(filename, settings=None):
+def delete_file(filename, settings):
 	"""
 	Delete file from FTP server
 	:param filename: String, file name
