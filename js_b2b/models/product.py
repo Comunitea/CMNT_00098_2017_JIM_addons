@@ -25,17 +25,20 @@ class PublicImage(models.AbstractModel):
 	_attr_public_file_name = 'public_image_name'
 
 	@api.multi
-	def _ftp_save_base64(self, base64_str):
+	def _ftp_save_base64(self, settings, base64_str):
+		self.ensure_one()
 		self._ftp_delete_file()
-		return ftp.save_base64(base64_str)
+		return ftp.save_base64(base64_str, settings)
 
 	@api.multi
-	def _ftp_delete_file(self):
-		for record in self:
-			# Delete old image
-			if hasattr(record, self._attr_public_file_name) and getattr(record, self._attr_public_file_name):
-				file_name = getattr(record, self._attr_public_file_name)
-				ftp.delete_file(file_name)
+	def _ftp_delete_file(self, settings, name=None):
+		self.ensure_one()
+		# Delete old image
+		if name:
+			return ftp.delete_file(name, settings)
+		elif hasattr(self, self._attr_public_file_name) and getattr(self, self._attr_public_file_name):
+			file_name = getattr(self, self._attr_public_file_name)
+			return ftp.delete_file(file_name, settings)
 		return False
 
 	def _resize_large_image(self, base64_str=None):
@@ -46,46 +49,60 @@ class PublicImage(models.AbstractModel):
 	@api.model
 	def create(self, vals):
 		resize = self.env.context.get('resize_img', True)
+		new_image = vals.get(self._attr_image_model_field)
 
-		try:
-			if vals.get(self._attr_image_model_field):
-				img = self._resize_large_image(vals[self._attr_image_model_field]) if resize else vals[self._attr_image_model_field]
-				vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: self._ftp_save_base64(img) })
-			return super(PublicImage, self).create(vals)
-		except Exception:
-			if vals.get(self._attr_image_model_field):
-				# Solo eliminamos la imágen si se estaba
-				# estableciendo en ese momento
-				self._ftp_delete_file()
-			return False
+		if new_image:
+			# Si hay que guardar la imágen como es una para cada producto
+			# hay que procesar los registros por separado y guardar una copia
+			# en el servidor FTP ¡no vale meterlos todos con una consulta!
+			settings = self.env['b2b.settings'].get_default_params(fields=['server', 'user', 'password'])
+			for record in self:
+				try:
+					img = self._resize_large_image(new_image) if resize else new_image
+					vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: record._ftp_save_base64(settings, img) })
+					return super(PublicImage, record).create(vals)
+				except Exception:
+					record._ftp_delete_file(settings)
+					return False
+
+		return super(PublicImage, self).create(vals)
 
 	@api.multi
 	def write(self, vals):
 		resize = self.env.context.get('resize_img', True)
+		new_image = vals.get(self._attr_image_model_field)
 		new_image_name = None
 
-		try:
-			if vals.get(self._attr_image_model_field) == False:
-				self._ftp_delete_file()
-				vals.update({ self._attr_public_file_name: None })
-			elif vals.get(self._attr_image_model_field):
-				img = self._resize_large_image(vals[self._attr_image_model_field]) if resize else vals[self._attr_image_model_field]
-				new_image_name = self._ftp_save_base64(img) 
-				vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: new_image_name })
-			return super(PublicImage, self).write(vals)
-		except Exception:
-			if vals.get(self._attr_image_model_field):
-				# Solo eliminamos la imágen si se estaba
-				# estableciendo en ese momento
-				ftp.delete_file(new_image_name)
-			return False
+		if new_image or new_image is False:
+			# Si hay que guardar la imágen como es una para cada producto
+			# hay que procesar los registros por separado y guardar una copia
+			# en el servidor FTP ¡no vale actualizarlos todos con una consulta!
+			settings = self.env['b2b.settings'].get_default_params(fields=['server', 'user', 'password'])
+			for record in self:
+				try:
+					if new_image is False:
+						record._ftp_delete_file()
+						vals.update({ self._attr_public_file_name: False })
+					else:
+						img = self._resize_large_image(new_image) if resize else new_image
+						new_image_name = record._ftp_save_base64(settings, img)
+						vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: new_image_name })
+					return super(PublicImage, record).write(vals)
+				except Exception:
+					if new_image_name:
+						record._ftp_delete_file(settings, new_image_name)
+					return False
+
+		return super(PublicImage, self).write(vals)
 
 	@api.multi
 	def unlink(self):
+		# Para eliminar la imágen del FTP también hay
+		# que procesar los registros de forma individual
+		settings = self.env['b2b.settings'].get_default_params(fields=['server', 'user', 'password'])
 		for record in self:
-			record_image_name = getattr(record, self._attr_public_file_name)
 			if super(PublicImage, record).unlink():
-				ftp.delete_file(record_image_name)
+				record._ftp_delete_file(settings)
 		return True
 
 ####################### PRODUCTO #######################
