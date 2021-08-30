@@ -18,7 +18,7 @@ _debug_level = 1 # 1 Low or 2 High
 #  |__|    |_| |__|     |__|__|_____|_____|__|  |_____|__|__|
 #
 
-def _ftp_connect(settings=None):
+def _ftp_connect(settings):
 	"""
 	FTP TLS Connection from settings
 	"""
@@ -68,13 +68,11 @@ def save_file(filename, settings=None):
 	if filename:
 		try:
 			ftps = _ftp_connect(settings)
-			file = open(filename, 'rb')
-			ftps.storbinary('STOR ' + filename, file)
-			file.close() # Free file memory
-			ftps.quit()
-			# Check if file exits
-			# This should not be needed but sometimes wrong images are saved
-			if _redundant_check(filename):
+			if ftps:
+				file = open(filename, 'rb')
+				ftps.storbinary('STOR ' + filename, file)
+				file.close() # Free file memory
+				ftps.quit()
 				_logger.info('File [%s] saved!', filename)
 				return True
 		except (all_errors, Exception) as e:
@@ -94,13 +92,11 @@ def save_base64(base64_str, settings=None):
 	if filename and bytestream:
 		try:
 			ftps = _ftp_connect(settings)
-			file = io.BytesIO(bytestream)
-			ftps.storbinary('STOR ' + filename, file)
-			file.close() # Free file memory
-			ftps.quit()
-			# Check if file exits
-			# This should not be needed but sometimes wrong images are saved
-			if _redundant_check(filename):
+			if ftps:
+				file = io.BytesIO(bytestream)
+				ftps.storbinary('STOR ' + filename, file)
+				file.close() # Free file memory
+				ftps.quit()
 				_logger.info('File stream [%s] saved!', filename)
 				return filename
 		except (all_errors, Exception) as e:
@@ -116,10 +112,11 @@ def delete_file(filename, settings=None):
 	if filename:
 		try:
 			ftps = _ftp_connect(settings)
-			ftps.delete(filename)
-			ftps.quit()
-			_logger.info('File [%s] deleted!', filename)
-			return True
+			if ftps:
+				ftps.delete(filename)
+				ftps.quit()
+				_logger.info('File [%s] deleted!', filename)
+				return True
 		except all_errors as e:
 			_logger.error('Delete Error: %s', e)
 	return False
