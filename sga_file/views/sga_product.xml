@@ -89,7 +89,7 @@
                 </xpath>
             </field>
         </record>
-        <record model="ir.ui.view" id="sga_product_packaging_form_view">
+        <!--TODO: Migrar<record model="ir.ui.view" id="sga_product_packaging_form_view">
             <field name="name">sga.product.packaging.form</field>
             <field name="model">product.packaging</field>
             <field name="inherit_id" ref="product.product_packaging_form_view"/>
@@ -123,7 +123,7 @@
             </field>
 
 
-        </record>
+        </record>-->
         <record model="ir.ui.view" id="sga_product_packaging_tree">
             <field name="name">sga.product.packaging.tree</field>
             <field name="model">product.packaging</field>

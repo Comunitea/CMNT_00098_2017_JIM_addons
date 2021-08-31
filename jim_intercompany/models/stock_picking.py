@@ -58,7 +58,7 @@ class StockPicking(models.Model):
             record.ready = not record.ready
 
     def _get_ic_sale(self, sales):
-        sale = sales.filtered(lambda x: x.auto_generated == True)
+        sale = sales.filtered(lambda x: x.auto_purchase_order_id)
         ic_purchase = (
             self.env["purchase.order"]
             .sudo()
@@ -73,7 +73,7 @@ class StockPicking(models.Model):
                 )
             ]
         )
-        sale = sales.filtered(lambda x: x.auto_generated == False)
+        sale = sales.filtered(lambda x: not x.auto_purchase_order_id)
         return sale and sale[0] or False
 
     def _compute_orig_sale(self):
@@ -85,7 +85,7 @@ class StockPicking(models.Model):
                 sales = self.env["sale.order"].search(
                     [("procurement_group_id", "=", record.group_id.id)]
                 )
-                sale = sales.filtered(lambda x: x.auto_generated == False)
+                sale = sales.filtered(lambda x: not x.auto_purchase_order_id)
                 if sale:
                     sale = sale[0]
                 elif sales:
@@ -174,12 +174,14 @@ class StockPicking(models.Model):
             if (
                 move.move_dest_id.picking_id.sale_id
                 and not move.picking_id.purchase_id.intercompany
-                and not move.move_dest_id.picking_id.sale_id.auto_generated
+                and not move.move_dest_id.picking_id.sale_id.
+                auto_purchase_order_id
             ):
                 next_pick = move.move_dest_id.picking_id
             elif (
                 move.move_dest_IC_id.id
-                and not move.move_dest_IC_id.picking_id.sale_id.auto_generated
+                and not move.move_dest_IC_id.picking_id.sale_id.
+                auto_purchase_order_id
             ):
                 next_pick = move.move_dest_IC_id.picking_id
         return next_pick
@@ -240,7 +242,7 @@ class StockPicking(models.Model):
             )
             for picking in ic_sale.picking_ids.filtered(
                 lambda x: x.location_dest_id.usage == "customer"
-                and x.sale_id.auto_generated
+                and x.sale_id.auto_purchase_order_id
                 and x.state not in ["done", "cancel"]
             ):
                 # self.intercompany_picking_process(picking)
@@ -409,7 +411,8 @@ class StockMove(models.Model):
 
             if (
                 product_move.move_dest_IC_id
-                and product_move.move_dest_id.picking_id.sale_id.auto_generated
+                and product_move.move_dest_id.picking_id.sale_id.
+                auto_purchase_order_id
             ):
                 picking = product_move.move_dest_IC_id.picking_id
                 vals = move.prepare_propagate_vals(
@@ -454,7 +457,7 @@ class StockMove(models.Model):
         # miro si el albaran de destino viene de una venta autogenerada > ICOP de Preparación a ICC
         previous_IC_sale = moves_done.mapped(
             "move_dest_id.picking_id.sale_id"
-        ).auto_generated
+        ).auto_purchase_order_id
 
         # Busco albarán de salida
         pick_dest_IC = moves_done.mapped("move_dest_IC_id.picking_id")
@@ -485,7 +488,7 @@ class StockMove(models.Model):
     def propagate_assign_IC_old(self):
 
         previous_IC_sale = self.mapped(
-            "move_dest_id.picking_id.sale_id.auto_generated"
+            "move_dest_id.picking_id.sale_id.auto_purchase_order_id"
         )
 
         # pick_purchase_IC = self.filtered(lambda x: x.state=='done').mapped(
@@ -525,7 +528,8 @@ class StockMove(models.Model):
 
         for move in self:
             previous_IC_sale = (
-                move.move_dest_id.picking_id.sale_id.auto_generated or False
+                move.move_dest_id.picking_id.sale_id.auto_purchase_order_id or
+                False
             )
             if move.sudo().move_dest_IC_id and previous_IC_sale:
                 if move.propagate:
@@ -570,7 +574,8 @@ class StockMove(models.Model):
         self.browse(new_move).write({"ordered_qty": 0})
         # Es previo a la venta IC?
         previous_IC_sale = (
-            self.move_dest_id.picking_id.sale_id.auto_generated or False
+            self.move_dest_id.picking_id.sale_id.auto_purchase_order_id or
+            False
         )
         # Propagamos el split al movimiento de salida final
         # if new_move and previous_IC_sale and self.sudo().move_dest_IC_id:

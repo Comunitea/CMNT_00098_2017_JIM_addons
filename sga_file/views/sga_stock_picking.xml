@@ -56,7 +56,7 @@ records.new_mecalux_file()
                 </field>
             </field>
         </record>
-        <record model="ir.ui.view" id="view_picking_form_sga">
+        <!--TODO: Migrar<record model="ir.ui.view" id="view_picking_form_sga">
             <field name="name">view.picking.form.sga</field>
             <field name="model">stock.picking</field>
             <field name="inherit_id" ref="stock.view_picking_form"/>
@@ -99,14 +99,13 @@ records.new_mecalux_file()
                     <field name="shipping_city" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
                     <field name="shipping_partner_name" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
                     <field name="account_code" attrs="{'invisible': [('sga_integrated','=', False)]}"/>
-                    <!--<field name="sga_state" attrs="{'invisib1le': [('sga_state', '=', 'NI')], 'readonly': '1'}"/>-->
                 </field>
 
-                <!--TODO: Migrar<xpath expr="//field[@name='pack_operation_product_ids']/tree/field[@name='package_id']" position="before">
+                <xpath expr="//field[@name='pack_operation_product_ids']/tree/field[@name='package_id']" position="before">
                     <field name="id" groups="sga_file.group_sga_file_debug"/>
-                </xpath>-->
+                </xpath>
             </field>
-        </record>
+        </record>-->
         <!--view_picking_withcarrier_out_form-->
 
 
@@ -154,7 +153,7 @@ records.new_mecalux_file()
                 </xpath>
             </field>
         </record>
-        <record id="view_move_picking_tree_debug" model="ir.ui.view">
+        <!--TODO: Migrar<record id="view_move_picking_tree_debug" model="ir.ui.view">
             <field name="name">view.move.picking.tree.debug</field>
             <field name="model">stock.move</field>
             <field name="inherit_id" ref="stock.view_picking_move_tree"/>
@@ -182,7 +181,7 @@ records.new_mecalux_file()
                     <field name="move_purchase_IC_id" groups="sga_file.group_sga_file_debug"/>
                 </field>
             </field>
-        </record>
+        </record>-->
 
         <record id="view_picking_withcarrier_out_form_edit_carrier_id" model="ir.ui.view">
             <field name="name">stock.picking_withcarrier.form.view_carrier_id_editable</field>

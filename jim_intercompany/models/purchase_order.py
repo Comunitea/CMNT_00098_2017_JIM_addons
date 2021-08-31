@@ -59,7 +59,6 @@ class purchase_order(models.Model):
             "date_order": self.date_order,
             "fiscal_position_id": partner.property_account_position_id.id,
             "user_id": False,
-            "auto_generated": True,
             "auto_purchase_order_id": self.id,
             "partner_shipping_id": direct_delivery_address
             or partner_addr["delivery"],

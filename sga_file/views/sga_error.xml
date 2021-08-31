@@ -12,7 +12,7 @@ records.confirm_ack()
             </field>
         </record>
 
-        <record id="model_sgafile__error_form_view" model="ir.ui.view">
+        <record id="sgafile__error_form_view" model="ir.ui.view">
             <field name="name">sgavar.file.error.form.view</field>
             <field name="model">sga.file.error</field>
             <field name="arch" type="xml">
@@ -46,11 +46,11 @@ records.confirm_ack()
             </field>
         </record>
 
-        <record id="model_sgafile_error_tree_view" model="ir.ui.view">
+        <record id="sgafile_error_tree_view" model="ir.ui.view">
             <field name="name">sga.file.error.tree.view</field>
             <field name="model">sga.file.error</field>
             <field name="arch" type="xml">
-                <tree editable="false" create="false"
+                <tree edit="false" create="false"
                 decoration-success="ack== True"
                 decoration-danger="ack== False">
 
