@@ -23,7 +23,7 @@
             </tree>
         </field>
     </record>
-    <record id="view_tree_done_dest_move_waiting_search" model="ir.ui.view">
+    <!--TODO: Migrar<record id="view_tree_done_dest_move_waiting_search" model="ir.ui.view">
             <field name="name">done.tree.dest.move.waiting.search</field>
             <field name="model">done.to.waiting.moves</field>
             <field name="arch" type="xml">
@@ -59,7 +59,7 @@
     <menuitem id="tree_done_dest_move_waiting_menu"
               name="Done to waiting moves"
               parent="jim_stock.menu_stock_scrips"
-              action="act_tree_done_dest_move_waiting"/>
+              action="act_tree_done_dest_move_waiting"/>-->
 
         <record id="stock_picking_set_hide_done_to_waiting_moves" model="ir.actions.server">
             <field name="name">Hide in list</field>

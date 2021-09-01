@@ -28,7 +28,7 @@ class ProductStockComapnyRel(models.Model):
         select
          row_number() OVER () AS id,
         sq.product_id as product_id,
-        sum(sq.qty) as qty,
+        sum(sq.quantity) as qty,
         min(pt.company_id) as product_company_id,
         sq.company_id as stock_company_id,
         sq.location_id as location_id,

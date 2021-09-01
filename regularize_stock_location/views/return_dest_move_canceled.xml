@@ -19,7 +19,7 @@
             </tree>
         </field>
     </record>
-    <record id="view_tree_return_dest_move_cancelled_search" model="ir.ui.view">
+    <!--TODO: Migrar<record id="view_tree_return_dest_move_cancelled_search" model="ir.ui.view">
             <field name="name">teturn.tree.dest.move.cancelled.search</field>
             <field name="model">done.to.cancel.picks</field>
             <field name="arch" type="xml">
@@ -54,7 +54,7 @@
     <menuitem id="tree_return_dest_move_cancelled_menu"
               name="Done to cancel picks"
               parent="jim_stock.menu_stock_scrips"
-              action="act_tree_return_dest_move_cancelled"/>
+              action="act_tree_return_dest_move_cancelled"/>-->
 
     <record id="stock_picking_set_hide_done_to_cancel" model="ir.actions.server">
             <field name="name">Hide in list</field>

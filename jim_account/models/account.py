@@ -10,13 +10,15 @@ class AccountMoveLine(models.Model):
 
     def get_mandate_scheme(self):
         for line in self:
-            if line.mandate_id:
-                line.scheme = line.mandate_id.scheme
+            if line.move_id.mandate_id:
+                line.scheme = line.move_id.mandate_id.scheme
+            else:
+                line.scheme = False
 
     @api.model
     def _mandate_scheme_search(self, operator, operand):
 
-        moves = self.search([("mandate_id.scheme", operator, operand)])
+        moves = self.search([("move_id.mandate_id.scheme", operator, operand)])
         return [("id", "in", moves.mapped("id"))]
 
     scheme = fields.Selection(

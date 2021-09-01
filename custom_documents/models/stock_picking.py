@@ -87,76 +87,77 @@ class StockPicking(models.Model):
             # ~ else:
             picking.global_discount_amount = 0.0
 
-    def _compute_amount_all(self):
-        res = super(StockPicking, self)._compute_amount_all()
-        for pick in self:
-            if pick.sale_id:
-                delivery_line = pick.sale_id.order_line.filtered(
-                    lambda x: x.product_id.delivery_cost
-                )
-                global_discount_lines = pick.sale_id.order_line
-                if delivery_line:
-                    amount_untaxed = (
-                        sum(
-                            pick.pack_operation_ids.mapped(
-                                "sale_price_subtotal"
-                            )
-                        )
-                        + delivery_line[0].price_subtotal
-                        + sum(global_discount_lines.mapped("price_subtotal"))
-                        + sum(pick.sale_services.mapped("price_subtotal"))
-                    )
-                    amount_tax = (
-                        sum(pick.pack_operation_ids.mapped("sale_price_tax"))
-                        + delivery_line[0].price_tax
-                        + sum(global_discount_lines.mapped("price_tax"))
-                        + sum(pick.sale_services.mapped("price_tax"))
-                    )
-                    pick.update(
-                        {
-                            "amount_untaxed": amount_untaxed,
-                            "amount_tax": amount_tax,
-                            "amount_total": amount_untaxed + amount_tax,
-                        }
-                    )
-                else:
-                    amount_untaxed = (
-                        sum(
-                            pick.pack_operation_ids.mapped(
-                                "sale_price_subtotal"
-                            )
-                        )
-                        + sum(global_discount_lines.mapped("price_subtotal"))
-                        + sum(pick.sale_services.mapped("price_subtotal"))
-                    )
-                    amount_tax = (
-                        sum(pick.pack_operation_ids.mapped("sale_price_tax"))
-                        + sum(global_discount_lines.mapped("price_tax"))
-                        + sum(pick.sale_services.mapped("price_tax"))
-                    )
-                    pick.update(
-                        {
-                            "amount_untaxed": amount_untaxed,
-                            "amount_tax": amount_tax,
-                            "amount_total": amount_untaxed + amount_tax,
-                        }
-                    )
-            elif pick.purchase_id:
+    #TODO: Migrar de ser necesario
+    # ~ def _compute_amount_all(self):
+        # ~ res = super(StockPicking, self)._compute_amount_all()
+        # ~ for pick in self:
+            # ~ if pick.sale_id:
+                # ~ delivery_line = pick.sale_id.order_line.filtered(
+                    # ~ lambda x: x.product_id.delivery_cost
+                # ~ )
+                # ~ global_discount_lines = pick.sale_id.order_line
+                # ~ if delivery_line:
+                    # ~ amount_untaxed = (
+                        # ~ sum(
+                            # ~ pick.pack_operation_ids.mapped(
+                                # ~ "sale_price_subtotal"
+                            # ~ )
+                        # ~ )
+                        # ~ + delivery_line[0].price_subtotal
+                        # ~ + sum(global_discount_lines.mapped("price_subtotal"))
+                        # ~ + sum(pick.sale_services.mapped("price_subtotal"))
+                    # ~ )
+                    # ~ amount_tax = (
+                        # ~ sum(pick.pack_operation_ids.mapped("sale_price_tax"))
+                        # ~ + delivery_line[0].price_tax
+                        # ~ + sum(global_discount_lines.mapped("price_tax"))
+                        # ~ + sum(pick.sale_services.mapped("price_tax"))
+                    # ~ )
+                    # ~ pick.update(
+                        # ~ {
+                            # ~ "amount_untaxed": amount_untaxed,
+                            # ~ "amount_tax": amount_tax,
+                            # ~ "amount_total": amount_untaxed + amount_tax,
+                        # ~ }
+                    # ~ )
+                # ~ else:
+                    # ~ amount_untaxed = (
+                        # ~ sum(
+                            # ~ pick.pack_operation_ids.mapped(
+                                # ~ "sale_price_subtotal"
+                            # ~ )
+                        # ~ )
+                        # ~ + sum(global_discount_lines.mapped("price_subtotal"))
+                        # ~ + sum(pick.sale_services.mapped("price_subtotal"))
+                    # ~ )
+                    # ~ amount_tax = (
+                        # ~ sum(pick.pack_operation_ids.mapped("sale_price_tax"))
+                        # ~ + sum(global_discount_lines.mapped("price_tax"))
+                        # ~ + sum(pick.sale_services.mapped("price_tax"))
+                    # ~ )
+                    # ~ pick.update(
+                        # ~ {
+                            # ~ "amount_untaxed": amount_untaxed,
+                            # ~ "amount_tax": amount_tax,
+                            # ~ "amount_total": amount_untaxed + amount_tax,
+                        # ~ }
+                    # ~ )
+            # ~ elif pick.purchase_id:
 
-                amount_tax = sum(
-                    pick.pack_operation_ids.mapped("purchase_price_tax")
-                )
-                amount_total = sum(
-                    pick.pack_operation_ids.mapped("purchase_price_total")
-                )
-                val = {
-                    "amount_untaxed": amount_total - amount_tax,
-                    "amount_tax": amount_tax,
-                    "amount_total": amount_total,
-                }
+                # ~ amount_tax = sum(
+                    # ~ pick.pack_operation_ids.mapped("purchase_price_tax")
+                # ~ )
+                # ~ amount_total = sum(
+                    # ~ pick.pack_operation_ids.mapped("purchase_price_total")
+                # ~ )
+                # ~ val = {
+                    # ~ "amount_untaxed": amount_total - amount_tax,
+                    # ~ "amount_tax": amount_tax,
+                    # ~ "amount_total": amount_total,
+                # ~ }
 
-                pick.update(val)
-        return res
+                # ~ pick.update(val)
+        # ~ return res
 
     @api.depends("sale_id")
     def _compute_sale_services(self):

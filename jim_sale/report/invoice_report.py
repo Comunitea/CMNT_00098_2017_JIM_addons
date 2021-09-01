@@ -32,17 +32,9 @@ class AccountInvoiceReport(models.Model):
                                 # ~ INNER JOIN  product_attribute pa on pav.attribute_id = pa.id
                                 # ~ WHERE pavppr.product_product_id = product_id and pa.is_color = False LIMIT 1)
                  # ~ as size_id,
-                 + """, sub.ref as ref,
-                 sub.commercial_partner_ref as commercial_partner_ref
+                 + """, ai_partner.ref || ' - ' || ai_partner.name as ref,
+                 partner.ref || ' - ' || partner.name as commercial_partner_ref
                         """
-        )
-        return res
-
-    def _sub_select(self):
-        res = super(AccountInvoiceReport, self)._sub_select()
-        res = (
-            res
-            + """,  partner.ref || ' - ' || partner.name as commercial_partner_ref, ai_partner.ref || ' - ' || ai_partner.name as ref """
         )
         return res
 
@@ -50,7 +42,7 @@ class AccountInvoiceReport(models.Model):
         res = super(AccountInvoiceReport, self)._from()
         res = (
             res
-            + """ join res_partner ai_partner on ai.partner_id = ai_partner.id """
+            + """ join res_partner ai_partner on move.partner_id = ai_partner.id """
         )
         return res
 

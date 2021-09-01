@@ -108,21 +108,6 @@ records.new_mecalux_file()
         </record>-->
         <!--view_picking_withcarrier_out_form-->
 
-
-        <record model="ir.ui.view" id="vpicktree_non_create">
-            <field name="name">view.picking.tree.non.create</field>
-            <field name="model">stock.picking</field>
-            <field name="inherit_id" ref="stock.vpicktree"/>
-            <field name="arch" type="xml">
-
-                <xpath expr="//tree" position="attributes">
-                    <attribute name="create">0</attribute>
-                </xpath>
-
-
-            </field>
-        </record>
-
         <record id="view_pickingtype_filter_sga" model="ir.ui.view">
             <field name="name">stock.picking.type.filter.sga</field>
             <field name="model">stock.picking.type</field>

@@ -89,7 +89,6 @@ class SaleOrder(models.Model):
             "company_id": company.id,
             "fiscal_position_id": company_partner.property_account_position_id.id,
             "payment_term_id": company_partner.property_supplier_payment_term_id.id,
-            "auto_generated": True,
             "auto_sale_order_id": self.id,
             "partner_ref": self.name,
         }

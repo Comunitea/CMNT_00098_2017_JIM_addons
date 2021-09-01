@@ -14,7 +14,7 @@
             </tree>
         </field>
     </record>
-    <record id="view_tree_product_stock_company_rel_search" model="ir.ui.view">
+    <!--TODO: Migrar<record id="view_tree_product_stock_company_rel_search" model="ir.ui.view">
             <field name="name">product.stock.company.rel.search</field>
             <field name="model">product.stock.company.rel</field>
             <field name="arch" type="xml">
@@ -47,6 +47,6 @@
     <menuitem id="tree_product_stock_company_rel_menu"
               name="Stock x company x product"
               parent="jim_stock.menu_stock_scrips"
-              action="act_tree_product_stock_company_rel"/>
+              action="act_tree_product_stock_company_rel"/>-->
 
 </odoo>

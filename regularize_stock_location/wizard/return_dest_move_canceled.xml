@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <odoo>
-    <record id="view_return_dest_move_cancelled" model="ir.ui.view">
+    <!--TODO: Migrar<record id="view_return_dest_move_cancelled" model="ir.ui.view">
         <field name="name">wiz_return_dest_move_cancelled_form</field>
         <field name="model">wiz.return.dest.move.cancelled</field>
         <field name="arch" type="xml">
@@ -50,6 +50,6 @@
         <field name="target">new</field>
     </record>
 
-    <menuitem id="return_dest_move_cancelled_menu" name="Wzd Done moves to cancel dest" parent="jim_stock.menu_stock_scrips" sequence="17" action="act_return_dest_move_cancelled"/>
+    <menuitem id="return_dest_move_cancelled_menu" name="Wzd Done moves to cancel dest" parent="jim_stock.menu_stock_scrips" sequence="17" action="act_return_dest_move_cancelled"/>-->
 
 </odoo>
