@@ -10,7 +10,7 @@ import io
 import imghdr
 
 _logger = logging.getLogger(__name__)
-_debug_level = 1 # 1 Low or 2 High
+_debug_level = False # 1 Low or 2 High
 
 #   _____ _____ _____    _____ _____ __    _____ _____ _____
 #  |   __|_   _|  _  |  |  |  |   __|  |  |  _  |   __| __  |
@@ -24,9 +24,7 @@ def _ftp_connect(settings):
 	"""
 	try:
 		ftps = FTP_TLS(settings.get('server'), settings.get('user'), settings.get('password'))
-
-		# Set debug (if debug mode is ON)
-		if request.debug:
+		if _debug_level:
 			ftps.set_debuglevel(_debug_level)
 		# Secure connection
 		ftps.prot_p()

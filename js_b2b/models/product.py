@@ -27,7 +27,7 @@ class PublicImage(models.AbstractModel):
 	@api.multi
 	def _ftp_save_base64(self, settings, base64_str):
 		self.ensure_one()
-		self._ftp_delete_file()
+		self._ftp_delete_file(settings)
 		return ftp.save_base64(base64_str, settings)
 
 	@api.multi
@@ -81,7 +81,7 @@ class PublicImage(models.AbstractModel):
 			for record in self:
 				try:
 					if new_image is False:
-						record._ftp_delete_file()
+						record._ftp_delete_file(settings)
 						vals.update({ self._attr_public_file_name: False })
 					else:
 						img = self._resize_large_image(new_image) if resize else new_image
