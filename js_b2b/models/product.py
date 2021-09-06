@@ -26,13 +26,11 @@ class PublicImage(models.AbstractModel):
 
 	@api.multi
 	def _ftp_save_base64(self, settings, base64_str):
-		self.ensure_one()
 		self._ftp_delete_file(settings)
 		return ftp.save_base64(base64_str, settings)
 
 	@api.multi
 	def _ftp_delete_file(self, settings, name=None):
-		self.ensure_one()
 		# Delete old image
 		if name:
 			return ftp.delete_file(name, settings)
@@ -50,15 +48,18 @@ class PublicImage(models.AbstractModel):
 	def create(self, vals):
 		resize = self.env.context.get('resize_img', True)
 		new_image = vals.get(self._attr_image_model_field)
+		new_image_name = None
 
 		if new_image:
 			settings = self.env['b2b.settings'].get_default_params(fields=['server', 'user', 'password'])
 			try:
 				img = self._resize_large_image(new_image) if resize else new_image
-				vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: self._ftp_save_base64(settings, img) })
+				new_image_name = self._ftp_save_base64(settings, img)
+				vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: new_image_name })
 				return super(PublicImage, self).create(vals)
 			except Exception:
-				self._ftp_delete_file(settings)
+				if new_image_name:
+					self._ftp_delete_file(settings, new_image_name)
 				return False
 
 		return super(PublicImage, self).create(vals)
