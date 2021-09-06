@@ -52,17 +52,14 @@ class PublicImage(models.AbstractModel):
 		new_image = vals.get(self._attr_image_model_field)
 
 		if new_image:
-			# Si hay que guardar la imágen como es una para cada producto
-			# hay que procesar los registros por separado y guardar una copia
-			# en el servidor FTP ¡no vale meterlos todos con una consulta!
 			settings = self.env['b2b.settings'].get_default_params(fields=['server', 'user', 'password'])
-				try:
-					img = self._resize_large_image(new_image) if resize else new_image
-					vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: self._ftp_save_base64(settings, img) })
-					return super(PublicImage, self).create(vals)
-				except Exception:
-					self._ftp_delete_file(settings)
-					return False
+			try:
+				img = self._resize_large_image(new_image) if resize else new_image
+				vals.update({ self._attr_image_model_field: img, self._attr_public_file_name: self._ftp_save_base64(settings, img) })
+				return super(PublicImage, self).create(vals)
+			except Exception:
+				self._ftp_delete_file(settings)
+				return False
 
 		return super(PublicImage, self).create(vals)
 
